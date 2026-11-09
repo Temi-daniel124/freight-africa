@@ -169,6 +169,8 @@ git push                                              # CI builds a fresh databa
 Migration rules:
 - One concern per migration; file names say what they do.
 - Every new table: `alter table … enable row level security;` plus its policies **in the same file**.
+- New objects in `public` grant nothing by default: write explicit `grant`s for each role that needs the
+  table or function, including `service_role` for server code that uses the secret key.
 - Money columns are `bigint` kobo; time is `timestamptz`; IDs are `uuid default gen_random_uuid()`.
 - Migrations are forward-only. A mistake is fixed by a new migration, never by editing an applied one.
 - Destructive changes (drop or rename a column or table, change a type with data) use
@@ -176,7 +178,9 @@ Migration rules:
 
 ### 4.3 Applying it to the remote project
 
-**Before launch (D029):** once the pull request's `database` job is green:
+**Before launch (D029):** once the pull request's `database` job is green. The laptop only holds the
+database password during a session it was supplied for; otherwise run the `migrate` workflow, which uses
+the GitHub secrets:
 
 ```bash
 node scripts/check-supabase-target.mjs               # must print OK for czlowhaycaivpgimcefk
