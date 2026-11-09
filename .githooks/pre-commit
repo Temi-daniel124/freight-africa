@@ -1,0 +1,6 @@
+#!/bin/sh
+# Refuses commits that would not be authored as Temi-daniel124 (D024).
+node scripts/check-git-identity.mjs --quick || {
+  echo "Commit refused: fix the Git identity first (docs/DEVELOPMENT-WORKFLOW.md section 3)." >&2
+  exit 1
+}

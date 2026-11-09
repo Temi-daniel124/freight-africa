@@ -1,0 +1,118 @@
+# CI for Freight Africa. Docker work happens HERE, on GitHub's runner, never on the laptop (D025).
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PROJECT_REF: czlowhaycaivpgimcefk # the ONLY Supabase project this repository may touch (D026)
+
+jobs:
+  author-check:
+    name: Commit author is Temi-daniel124 (D024)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check every new commit
+        env:
+          BASE: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+          HEAD_SHA: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || github.sha }}
+        run: |
+          set -eu
+          EXPECTED="Temi-daniel124 <temmydaniel124@gmail.com>"
+          if [ -z "${BASE:-}" ] || ! git cat-file -e "${BASE}^{commit}" 2>/dev/null; then
+            RANGE="$HEAD_SHA"            # first push: check the whole history
+          else
+            RANGE="$BASE..$HEAD_SHA"
+          fi
+          bad=0
+          for c in $(git rev-list "$RANGE"); do
+            author=$(git log -1 --format='%an <%ae>' "$c")
+            if [ "$author" != "$EXPECTED" ]; then
+              echo "::error::Commit $c is authored by '$author' (expected '$EXPECTED')"
+              bad=1
+            fi
+            if git log -1 --format=%B "$c" | grep -qiE '^[[:space:]]*co-authored-by:'; then
+              echo "::error::Commit $c has a Co-authored-by line"
+              bad=1
+            fi
+          done
+          if [ "$bad" -ne 0 ]; then
+            echo "Fix: docs/DEVELOPMENT-WORKFLOW.md section 3.4"
+            exit 1
+          fi
+          echo "All commits authored as $EXPECTED"
+
+  app:
+    name: Lint, types, unit tests, build
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: https://czlowhaycaivpgimcefk.supabase.co
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+      NEXT_PUBLIC_SITE_URL: https://freight-africa.com
+      SKIP_ENV_VALIDATION: "1" # src/lib/env.ts skips server-secret checks only when CI=true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm audit --audit-level=high --omit=dev
+      - run: npm run build
+      # Playwright and screenshot tests run on the laptop (baselines are platform-specific).
+
+  database:
+    name: pgTAP and RLS tests on a fresh Supabase stack
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - name: Start Supabase (Docker, on this runner)
+        run: supabase db start
+      - name: Run database tests (supabase/tests)
+        run: supabase test db
+
+  drift:
+    name: Remote database matches the migrations
+    # Before launch (D029) migrations are pushed before merge, so main must never drift.
+    # After launch, move this job to a nightly schedule and to the end of migrate.yml.
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: database
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - run: supabase link --project-ref "$PROJECT_REF"
+      - name: Confirm the linked project
+        run: test "$(cat supabase/.temp/project-ref)" = "$PROJECT_REF"
+      - name: Diff remote against migrations (uses Docker here)
+        run: |
+          supabase db diff --linked --schema public > drift.sql
+          if [ -s drift.sql ]; then
+            echo "::error::The remote database differs from the migration files:"
+            cat drift.sql
+            exit 1
+          fi
+          echo "No drift."

@@ -1,0 +1,49 @@
+# dependencies
+node_modules/
+
+# Next.js and builds
+.next/
+out/
+build/
+*.tsbuildinfo
+next-env.d.ts
+
+# environment (secrets never committed; .env.example is the template)
+.env
+.env.*
+!.env.example
+
+# Vercel
+.vercel/
+
+# Supabase CLI local state
+supabase/.temp/
+supabase/.branches/
+
+# tests
+coverage/
+playwright-report/
+test-results/
+blob-report/
+
+# service worker build output
+public/sw.js
+public/sw.js.map
+public/swe-worker-*.js
+
+# backups and dumps
+*.sql.gpg
+*.tar.gz.gpg
+dump/
+
+# OS and editors
+.DS_Store
+Thumbs.db
+*.log
+.idea/
+
+# Claude Code personal settings
+.claude/settings.local.json
+
+# Written by next dev; this repository's agent manual is AGENT.md
+AGENTS.md

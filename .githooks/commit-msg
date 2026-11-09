@@ -1,0 +1,6 @@
+#!/bin/sh
+# Refuses commit messages with Co-authored-by lines: they can block Vercel deployments (D024).
+if grep -qiE '^[[:space:]]*co-authored-by:' "$1"; then
+  echo "Commit refused: Co-authored-by lines are not allowed in this repository (D024)." >&2
+  exit 1
+fi

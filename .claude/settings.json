@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
+  "includeCoAuthoredBy": false,
+  "permissions": {
+    "deny": [
+      "Bash(docker:*)",
+      "Bash(docker-compose:*)",
+      "Bash(podman:*)",
+      "Bash(supabase start:*)",
+      "Bash(npx supabase start:*)",
+      "Bash(supabase db start:*)",
+      "Bash(npx supabase db start:*)",
+      "Bash(supabase db reset:*)",
+      "Bash(npx supabase db reset:*)",
+      "Bash(supabase db diff:*)",
+      "Bash(npx supabase db diff:*)",
+      "Bash(supabase db pull:*)",
+      "Bash(npx supabase db pull:*)",
+      "Bash(supabase db dump:*)",
+      "Bash(npx supabase db dump:*)",
+      "Bash(supabase test db:*)",
+      "Bash(npx supabase test db:*)",
+      "Bash(git push --force origin main:*)",
+      "Bash(git push -f origin main:*)"
+    ]
+  }
+}

@@ -1,0 +1,58 @@
+# Nightly encrypted backup of the Freight Africa database (Supabase Free has no daily backups).
+# Also pings the project so it isn't paused for inactivity. SECURITY.md section 12.
+name: Backup
+
+on:
+  schedule:
+    - cron: "0 1 * * *" # 01:00 UTC = 02:00 in Lagos
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    env:
+      PROJECT_REF: czlowhaycaivpgimcefk
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+      BACKUP_PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+      SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+      - run: supabase link --project-ref "$PROJECT_REF"
+      - run: test "$(cat supabase/.temp/project-ref)" = "$PROJECT_REF"
+      - name: Dump roles, schema and data
+        run: |
+          mkdir -p dump
+          supabase db dump --linked --role-only -f dump/roles.sql
+          supabase db dump --linked -f dump/schema.sql
+          supabase db dump --linked --data-only --use-copy -f dump/data.sql
+      - name: Encrypt
+        run: |
+          STAMP=$(date -u +%Y-%m-%dT%H%MZ)
+          echo "STAMP=$STAMP" >> "$GITHUB_ENV"
+          tar -czf backup.tar.gz dump
+          gpg --batch --yes --pinentry-mode loopback --passphrase "$BACKUP_PASSPHRASE" \
+            --symmetric --cipher-algo AES256 -o "freight-africa-$STAMP.tar.gz.gpg" backup.tar.gz
+          rm -rf dump backup.tar.gz
+      - uses: actions/upload-artifact@v4
+        with:
+          name: freight-africa-db-${{ env.STAMP }}
+          path: freight-africa-*.tar.gz.gpg
+          retention-days: 30
+      - name: Keep the project active
+        run: |
+          curl -fsS -o /dev/null -w "Auth health: %{http_code}\n" \
+            "https://$PROJECT_REF.supabase.co/auth/v1/health" -H "apikey: $SUPABASE_PUBLISHABLE_KEY" || true
+# Restore (drill): download the artifact, then
+#   gpg --decrypt freight-africa-<stamp>.tar.gz.gpg > backup.tar.gz && tar -xzf backup.tar.gz
+# and load dump/roles.sql, dump/schema.sql, dump/data.sql into a CI database with psql.
