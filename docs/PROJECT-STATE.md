@@ -28,6 +28,7 @@ The phases are defined in `BUILD.md` §3. Update this table as work progresses.
 | Phase | Name | Status | Notes |
 | --- | --- | --- | --- |
 | 0 | Bootstrap: repo, scaffold, accounts linked, CI green | Not started | First session |
+| 0L | Launch page: pre-launch home, waitlist, privacy and terms (D030) | Not started | Right after Phase 0; needs DNS to share on freight-africa.com |
 | 1 | Foundations: auth, organisations, roles, RLS, tokens, ledger, settings, audit | Not started | |
 | 2 | Supply: owner and driver onboarding, Didit, trucks, documents, catalogue, verification queue | Not started | |
 | 3 | Booking and money: quotes, loads, payments, escrow, releases, refunds, receipts | Not started | Needs Bachs keys and API docs |
@@ -39,7 +40,8 @@ The phases are defined in `BUILD.md` §3. Update this table as work progresses.
 
 ## 3. Current task
 
-**Next task:** Phase 0, step 1 in `BUILD.md` §2 (verify identity and target, create the repository).
+**Next task:** finish Phase 0 (`BUILD.md` §2 from step 0.6: link Supabase, push the first migration,
+Resend SMTP, domain, design foundation), then the launch page (`BUILD.md` §2A, D030).
 
 ## 4. Things only the founder can do
 
@@ -50,7 +52,7 @@ for these at the moment they're needed, with exact steps.
 | --- | --- | --- |
 | Supabase database password (or reset it in the dashboard) for `supabase link` | Phase 0 | Set when the project was created; only the owner has it |
 | Supabase CLI login (one browser approval) and a personal access token from supabase.com/dashboard/account/tokens (for CI and the SMTP script) | Phase 0 | Account authorisation |
-| DNS records at GoDaddy for Vercel (apex A record and `www` CNAME; Claude Code reads the exact values from Vercel) | Phase 0 or 7 | GoDaddy access |
+| DNS records at GoDaddy for Vercel (apex A record and `www` CNAME; Claude Code reads the exact values from Vercel) | Before the launch page is shared | GoDaddy access |
 | Google OAuth client (Google Cloud console) for "Continue with Google" | Phase 1 | Google account ownership; until then, email and WhatsApp codes work |
 | Bachs live and test API keys, webhook secret, and API documentation | Phase 3 | Merchant account |
 | Didit account, API key, webhook secret, and the two verification workflows (owner, driver) | Phase 2 | Account ownership |
@@ -78,4 +80,5 @@ None. All earlier questions were answered (D009, D013, D017 to D021).
 
 Add one line per session, newest first: date · what was done · what's next.
 
+- 9 Nov 2026 · Launch page moved forward to right after Phase 0 (D030) · Finish Phase 0, then the launch page.
 - 9 Nov 2026 · Supabase project ref corrected to czlowhaycaivpgimcefk (Freight Africa, eu-west-1, verified) · Governance documents created; scope document named docs/PLATFORM-SCOPE.md (full platform, D014) · Start Phase 0.

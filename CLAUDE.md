@@ -70,6 +70,25 @@ It adds Claude Code-specific rules on top of `AGENT.md`, which is imported below
 Secrets you create or receive go straight into Vercel env vars, GitHub Actions secrets or the
 git-ignored `.env.local`. Never echo them into the chat, a commit, a log or an issue.
 
+## 5A. Other work on this laptop: hands off
+
+The founder runs other Claude Code sessions and programs on this laptop at the same time, for other
+projects. They are important.
+- Never stop, kill or restart a process you didn't start in this session: no `taskkill`,
+  `Stop-Process`, `pkill`, `killall`, and no "kill all node processes" to free a port. Stop only your
+  own background tasks, by their task ID.
+- If a port is busy, use another port (`npm run dev -- -p 3001`), don't free it.
+- Don't change machine-wide settings while other work is running: no `nvm use`, no global npm
+  installs or config changes, no global Git config. Node 24 is already active.
+- Stay inside `C:\Users\hp\Documents\Freight Africa`; don't read or change other folders.
+
+## 5B. Database password
+
+Use the Supabase database password exactly as it is, in `.env.founder.local` and in the
+`SUPABASE_DB_PASSWORD` secret. Never URL-encode it (no `%40` for `@`); the CLI handles special
+characters itself. If a password causes trouble, ask the founder to reset it to a long password of
+letters and numbers only.
+
 ## 6. Windows notes
 
 - The founder's shell is PowerShell. Prefer cross-platform commands (`npx`, `node`, `git`). Put npm

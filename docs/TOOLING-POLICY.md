@@ -45,6 +45,7 @@ not, and the bar a new one has to clear. Rule zero: **no paid tools or services 
 | `web-push` | Sending Web Push from the server |
 | `resend` | App emails (receipts, statements, alerts) |
 | `@sentry/nextjs` | Error reporting (free plan) |
+| `@vercel/analytics` | Cookieless visit and sign-up counts on the website (free on Hobby) |
 | `server-only` | Marks server modules so they can't be imported by the browser |
 | `date-fns`, `date-fns-tz` | Dates in Africa/Lagos time |
 | `qrcode` | Agent invite QR codes |

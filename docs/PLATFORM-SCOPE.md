@@ -228,6 +228,9 @@ Feature IDs (`F-xx`) are referenced from the UX blueprints.
 
 ## 6. Build order (D014)
 
+A pre-launch launch page (home, waitlist, privacy, terms) is built right after the bootstrap, before
+step 1 (D030).
+
 1. Foundations: auth, organisations, roles, RLS, i18n, design system, ledger, settings, audit log.
 2. Supply: owner/driver onboarding, Didit, trucks, documents, goods catalogue, truck types,
    verification queue.

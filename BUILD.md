@@ -10,7 +10,7 @@ Progress is recorded in `docs/PROJECT-STATE.md` §2.
 ## 1. Lifecycle
 
 ```
-Phase 0 Bootstrap ─► 1 Foundations ─► 2 Supply ─► 3 Booking & money ─► 4 The trip
+Phase 0 Bootstrap ─► Launch page (D030) ─► 1 Foundations ─► 2 Supply ─► 3 Booking & money ─► 4 The trip
    ─► 5 Problems ─► 6 Growth ─► 7 Website & SEO ─► 8 Hardening & launch
 ```
 
@@ -224,6 +224,68 @@ existing Resend records for `mail.freight-africa.com`.
 
 ---
 
+## 2A. Launch page (pre-launch website, D030)
+
+Goal: a public page the founder can send out today that looks like a finished product and collects a
+clean waitlist. It starts as soon as Phase 0's design foundation (step 0.13) is accepted.
+
+**Pages**
+- `/` Home, following `DESIGN_SYSTEM.md` §13.3 with the pre-launch limits in D030:
+  1. Header (§13.2) with only: logo, in-page links **How it works**, **Routes**, **Pricing**,
+     **Questions**, and the primary pill **Join the waitlist**.
+  2. Hero: headline and lead from §13.3; the white level-2 card is the **waitlist card**: segmented
+     switch **I send goods / I own trucks**, phone (WhatsApp) with +234 prefix, **Join the waitlist**.
+     Full details are asked on the next step (`/waitlist`, prefilled). Brand hero background (Freight
+     Green, Africa outline at 4%, road line) unless real, permitted Nigerian photography is available.
+  3. Proof strip (§13.3 item 2).
+  4. How it works: the four-step scroll story with the road line and truck marker; illustrated step
+     cards stand in for app screenshots until the app exists.
+  5. Escrow story animation (item 4) with the worked example from `docs/PRODUCT.md` §7.
+  6. For senders / For truck owners switch (item 5), buttons lead to the waitlist with the role set.
+  7. Our routes: the stylised Nigeria map with the four corridors (D013) drawing themselves; cards show
+     the corridor and "Coming soon", no prices.
+  8. Pricing: fee steps for senders and commission for owners (D009), with the worked example;
+     NumberFlow on switch.
+  9. Questions: FAQ with FAQPage structured data (booking, payments, trucks and drivers, safety,
+     "When do you launch?").
+  10. Final band: "Be first on the road." with **Join the waitlist**.
+  11. Footer: corridors as text, legal links, contact email, © Freight Africa.
+- `/waitlist` (P-17): name, phone, email (optional), I am (sender / truck owner / agent), corridor
+  interest (chips), number of trucks (owners only); success state with a share link and copy button.
+- `/legal/privacy` and `/legal/terms`: short, plain-English pre-launch versions (what is collected,
+  why, how long, how to be removed, contact), version and date at the top (P-16, NDPA, `SECURITY.md` §11).
+- Not-found page (P-18, without the quote box).
+
+**Backend**
+- Migration: `waitlist_signups` as in `docs/DATA-MODEL.md`, plus `trucks_count`, `consent_at` and a
+  unique index on the normalised phone; RLS enabled with **no** policies for `anon` or
+  `authenticated` (server code writes with the secret key). pgTAP: anon and authenticated can't
+  select or insert.
+- Server action: zod validation, phone normalised to `+234…`, honeypot field, rate limit per IP and per
+  phone (a small `private.rate_limits` table and function, reused in Phase 1), duplicate phone returns
+  "You're already on the list" without revealing other details.
+- Confirmation email through Resend (`app-email` key) from `no-reply@mail.freight-africa.com`, plain and
+  branded, only when an email is given.
+- The founder reads sign-ups in the Supabase table editor (Freight Africa project) until the admin
+  console exists; `scripts/export-waitlist.mjs` writes a CSV on request.
+
+**SEO and sharing**: metadata and Open Graph from `public/brand/web/og-image-1200x630.png`, WhatsApp
+preview checked, `sitemap.ts`, `robots.ts`, `manifest.ts`, Organization and FAQPage structured data,
+canonical URL `https://freight-africa.com`. Vercel Web Analytics (free, cookieless) for visits and
+sign-up counts.
+
+**Accept when:**
+- [ ] Every section passes `DESIGN_SYSTEM.md` §19 and §20 with screenshots at 320, 375, 768, 1280 and
+      1440 px, reviewed and corrected; no generic or template look.
+- [ ] Lighthouse (mobile) 90+ in all four categories on `/` and `/waitlist`; LCP under 2.5 s on 4G.
+- [ ] A sign-up from a phone lands in `waitlist_signups`, the email arrives, a repeat sign-up is
+      handled, and the rate limit works.
+- [ ] pgTAP proves the table can't be read or written by `anon` or `authenticated`.
+- [ ] The WhatsApp link preview shows the right title, text and image.
+- [ ] Live on `https://freight-africa.com` (after the founder's DNS step), production deployment Ready.
+
+---
+
 ## 3. Phases 1 to 8
 
 Scope for each phase is in `docs/PLATFORM-SCOPE.md` §4, screens in `docs/planning/`, tables and rules in
@@ -293,7 +355,7 @@ recalculate advances, commission and early access; turning `agents_enabled` off 
 everywhere.
 
 ### Phase 7: Website and SEO
-Public pages from `docs/planning/ux-public-and-auth.md` and `DESIGN_SYSTEM.md` §13: home with hero, route
+Replaces and extends the launch page (D030). Public pages from `docs/planning/ux-public-and-auth.md` and `DESIGN_SYSTEM.md` §13: home with hero, route
 pages per corridor, pricing, how it works, help centre, legal pages, waitlist and quote widget;
 metadata, `sitemap.ts`, `robots.ts`, Open Graph images, structured data; real photography.
 

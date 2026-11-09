@@ -25,7 +25,14 @@
       "Bash(supabase test db:*)",
       "Bash(npx supabase test db:*)",
       "Bash(git push --force origin main:*)",
-      "Bash(git push -f origin main:*)"
+      "Bash(git push -f origin main:*)",
+      "Bash(taskkill:*)",
+      "Bash(pkill:*)",
+      "Bash(killall:*)",
+      "Bash(Stop-Process:*)",
+      "Bash(nvm use:*)",
+      "Bash(npm config set:*)",
+      "Bash(git config --global:*)"
     ]
   }
 }

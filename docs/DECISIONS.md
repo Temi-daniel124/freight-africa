@@ -383,3 +383,22 @@ previews. At launch it becomes production. From then on migrations are applied o
 
 **Why.** The free Supabase plan allows two projects per organisation, and the organisation already
 holds Orayn_Main. Paid branching or a separate staging project can come with revenue.
+
+## D030. A pre-launch landing page ships first, right after Phase 0
+
+**Decision.** A pre-launch website (the "launch page") is built and published immediately after Phase
+0, before Phase 1, so the founder can start sending it out and rebuilding the waitlist that was lost.
+It is a slice of Phase 7 brought forward, built to the full `DESIGN_SYSTEM.md` standard, with these
+limits until the platform launches:
+- No live prices, quotes, sign-in or booking. The hero card is a **waitlist card** instead of the quote
+  box. Published fees (D009) may be shown, because they are decided; lane prices may not.
+- Pages: home (`/`), waitlist (`/waitlist`), privacy notice (`/legal/privacy`), terms of the waitlist
+  (`/legal/terms`) and the not-found page. Header links to pages that don't exist yet are left out.
+- Waitlist sign-ups go into `waitlist_signups` (`docs/DATA-MODEL.md`) through server code only, with
+  rate limiting and a confirmation email when an email is given. WhatsApp confirmation waits for D021.
+- No 3D model and no background video yet; photography only where it is real and allowed
+  (`DESIGN_SYSTEM.md` §6.2), otherwise the brand hero (Freight Green, Africa outline, road line).
+- Phase 7 later replaces and extends it into the full website.
+
+**Why.** The founder needs a credible public page to share now; the rest of the platform takes longer.
+
