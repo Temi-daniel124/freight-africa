@@ -103,7 +103,7 @@ npx supabase login                         # founder approves once in the browse
 $env:SUPABASE_DB_PASSWORD = "<founder supplies>"   # for this session only, never written to a file
 npx supabase link --project-ref czlowhaycaivpgimcefk
 node scripts/check-supabase-target.mjs     # must print OK
-npx supabase migration list                # empty, no error
+npx supabase migration list --remote                # empty, no error
 ```
 
 When Claude Code first uses the project-scoped Supabase server from `.mcp.json`, the founder approves
@@ -149,9 +149,9 @@ gh secret set BACKUP_PASSPHRASE            # generate a long random value; also 
 
 ```powershell
 gh run watch                               # ci.yml: author-check, app, database must all pass
-npx supabase db push --dry-run
-npx supabase db push
-npx supabase migration list                # local and remote match
+npx supabase db push --remote --dry-run
+npx supabase db push --remote
+npx supabase migration list --remote                # local and remote match
 ```
 
 ### 0.10 Vercel

@@ -124,8 +124,8 @@ npm run dev                         # app on http://localhost:3000 (uses the rem
 npm run lint && npm run typecheck && npm test
 npm run e2e                         # Playwright
 npx supabase migration new <name>
-npx supabase db push --dry-run && npx supabase db push        # pre-launch only, after green CI
-npx supabase migration list
+npx supabase db push --remote --dry-run && npx supabase db push --remote        # pre-launch only, after green CI
+npx supabase migration list --remote
 npx supabase gen types typescript --project-id czlowhaycaivpgimcefk --schema public > src/lib/supabase/database.types.ts
 gh pr create --fill && gh pr checks --watch && gh pr merge --rebase --delete-branch
 ```

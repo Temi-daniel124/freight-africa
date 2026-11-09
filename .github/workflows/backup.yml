@@ -33,9 +33,9 @@ jobs:
       - name: Dump roles, schema and data
         run: |
           mkdir -p dump
-          supabase db dump --linked --role-only -f dump/roles.sql
-          supabase db dump --linked -f dump/schema.sql
-          supabase db dump --linked --data-only --use-copy -f dump/data.sql
+          supabase db dump --remote --role-only -f dump/roles.sql
+          supabase db dump --remote -f dump/schema.sql
+          supabase db dump --remote --data-only --use-copy -f dump/data.sql
       - name: Encrypt
         run: |
           STAMP=$(date -u +%Y-%m-%dT%H%MZ)

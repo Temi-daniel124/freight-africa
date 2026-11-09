@@ -38,11 +38,11 @@ jobs:
       - run: supabase link --project-ref "$PROJECT_REF"
       - run: test "$(cat supabase/.temp/project-ref)" = "$PROJECT_REF"
       - name: Show what will run
-        run: supabase db push --dry-run
+        run: supabase db push --remote --dry-run
       - name: Apply
-        run: supabase db push
-      - run: supabase migration list
+        run: supabase db push --remote --yes
+      - run: supabase migration list --remote
       - name: Check for drift
         run: |
-          supabase db diff --linked --schema public > drift.sql
+          supabase db diff --remote --schema public > drift.sql
           if [ -s drift.sql ]; then cat drift.sql; exit 1; fi

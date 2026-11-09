@@ -109,7 +109,7 @@ jobs:
         run: test "$(cat supabase/.temp/project-ref)" = "$PROJECT_REF"
       - name: Diff remote against migrations (uses Docker here)
         run: |
-          supabase db diff --linked --schema public > drift.sql
+          supabase db diff --remote --schema public > drift.sql
           if [ -s drift.sql ]; then
             echo "::error::The remote database differs from the migration files:"
             cat drift.sql

@@ -144,18 +144,18 @@ db`.
 | --- | --- | --- | --- |
 | `npx supabase login` / `link --project-ref czlowhaycaivpgimcefk` | No | ✓ | ✓ |
 | `npx supabase migration new <name>` | No | ✓ | |
-| `npx supabase migration list` | No | ✓ | ✓ |
-| `npx supabase db push --dry-run` / `db push` | No | ✓ (pre-launch) | ✓ (`migrate.yml`) |
+| `npx supabase migration list --remote` | No | ✓ | ✓ |
+| `npx supabase db push --remote --dry-run` / `db push` | No | ✓ (pre-launch) | ✓ (`migrate.yml`) |
 | `npx supabase gen types typescript --project-id czlowhaycaivpgimcefk` | No | ✓ | ✓ |
 | `npx supabase start` / `db start` / `db reset` (local) | **Yes** | **Never** | ✓ (`db start`) |
 | `npx supabase test db` (pgTAP, RLS tests) | **Yes** | **Never** | ✓ |
-| `npx supabase db diff` (including `--linked`) | **Yes** (shadow database) | **Never** | ✓ (drift check) |
+| `npx supabase db diff` (including `--remote`) | **Yes** (shadow database) | **Never** | ✓ (drift check) |
 | `npx supabase db pull` / `db dump` | **Yes** | **Never** | ✓ (`backup.yml`) |
 
 **About `db diff`.** The founder's note mentions `db diff` against the remote project. The Supabase CLI
-builds a temporary "shadow" database in Docker to compute any diff, even with `--linked`, so `db diff`
+builds a temporary "shadow" database in Docker to compute any diff, even with `--remote`, so `db diff`
 can't run on the laptop. Instead, migrations are **written by hand** as SQL files, and CI runs
-`db diff --linked` on every push to `main` to prove the remote project matches the migration files.
+`db diff --remote` on every push to `main` to prove the remote project matches the migration files.
 
 ### 4.2 Making a schema change on the laptop
 
@@ -180,9 +180,9 @@ Migration rules:
 
 ```bash
 node scripts/check-supabase-target.mjs               # must print OK for czlowhaycaivpgimcefk
-npx supabase db push --dry-run                       # shows exactly which migrations will run
-npx supabase db push
-npx supabase migration list                          # local and remote columns must match
+npx supabase db push --remote --dry-run                       # shows exactly which migrations will run
+npx supabase db push --remote
+npx supabase migration list --remote                          # local and remote columns must match
 npx supabase gen types typescript --project-id czlowhaycaivpgimcefk --schema public > src/lib/supabase/database.types.ts
 ```
 
@@ -216,7 +216,7 @@ pushed, write a reversing migration.
       - uses: actions/checkout@v4
       - uses: supabase/setup-cli@v1
       - run: supabase link --project-ref "$PROJECT_REF"
-      - run: supabase db diff --linked --schema public > drift.sql && test ! -s drift.sql
+      - run: supabase db diff --remote --schema public > drift.sql && test ! -s drift.sql
 ```
 
 ---
