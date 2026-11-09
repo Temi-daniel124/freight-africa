@@ -32,9 +32,9 @@ jobs:
             exit 1
           fi
       - uses: actions/checkout@v4
-      - uses: supabase/setup-cli@v1
+      - uses: supabase/setup-cli@1dedf2c611547ede7232d26866dd3c56ab903bbb # v1
         with:
-          version: latest
+          version: 3.0.0 # keep in step with the supabase dev dependency
       - run: supabase link --project-ref "$PROJECT_REF"
       - run: test "$(cat supabase/.temp/project-ref)" = "$PROJECT_REF"
       - name: Show what will run
