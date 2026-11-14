@@ -1,9 +1,9 @@
 "use client";
 
-import { useReducedMotion } from "motion/react";
 import * as m from "motion/react-m";
 import { useState, type ReactNode } from "react";
 import { StatusChip } from "@/components/ui/chip";
+import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion";
 import { cn } from "@/lib/utils";
 import { MAP_HEIGHT, MAP_WIDTH, cities, corridorPaths, labelled, outlinePath, point } from "./nigeria-map";
 
@@ -12,7 +12,7 @@ type RoutesMapProps = { heading: ReactNode; corridors: Corridor[]; status: strin
 
 // DESIGN_SYSTEM.md 13.3 item 6: the corridors draw themselves on scroll; a card highlights its corridor.
 export function RoutesMap({ heading, corridors, status, mapLabel }: RoutesMapProps) {
-  const reduce = useReducedMotion();
+  const reduce = usePrefersReducedMotion();
   const [focus, setFocus] = useState<string | null>(null);
 
   return (
@@ -59,10 +59,12 @@ export function RoutesMap({ heading, corridors, status, mapLabel }: RoutesMapPro
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     className="stroke-green-700"
-                    initial={reduce ? false : { pathLength: 0 }}
-                    whileInView={{ pathLength: 1 }}
+                    initial={{ pathLength: 0 }}
+                    // With reduced motion the corridors are simply there; otherwise they draw on scroll.
+                    animate={reduce ? { pathLength: 1 } : undefined}
+                    whileInView={reduce ? undefined : { pathLength: 1 }}
                     viewport={{ once: true, amount: 0.4 }}
-                    transition={{ duration: 1.2, delay: index * 0.3, ease: [0.2, 0.8, 0.2, 1] }}
+                    transition={reduce ? { duration: 0 } : { duration: 1.2, delay: index * 0.3, ease: [0.2, 0.8, 0.2, 1] }}
                   />
                   <path d={corridorPaths[corridor.slug]} fill="none" strokeWidth="1.5" strokeDasharray="4 4" strokeLinecap="round" className="stroke-white" />
                 </g>

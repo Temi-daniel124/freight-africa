@@ -13,7 +13,7 @@ import { formatNigerianPhone } from "@/lib/phone";
 import { cn } from "@/lib/utils";
 import type messages from "@/messages/en.json";
 import { joinWaitlist } from "./actions";
-import { waitlistRoles, type WaitlistRole } from "./schema";
+import { waitlistRoles, type WaitlistRole } from "./options";
 import type { WaitlistState } from "./state";
 
 type WaitlistCopy = typeof messages.waitlist;

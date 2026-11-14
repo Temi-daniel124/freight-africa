@@ -1,9 +1,8 @@
 "use client";
 
-import { Menu } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { Drawer } from "vaul";
+import { useEffect, useRef, useState } from "react";
 import { Logo } from "@/components/brand/Logo";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -23,6 +22,7 @@ type SiteHeaderProps = { nav: NavLabels; homeLabel: string; overlay?: boolean; s
 
 export function SiteHeader({ nav, homeLabel, overlay = false, showJoin = true }: SiteHeaderProps) {
   const [scrolled, setScrolled] = useState(false);
+  const menu = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
     if (!overlay) return;
@@ -34,6 +34,7 @@ export function SiteHeader({ nav, homeLabel, overlay = false, showJoin = true }:
 
   // Over the green hero the header is clear with white text; after 80 px it turns frosted (DESIGN_SYSTEM.md 13.2).
   const onGreen = overlay && !scrolled;
+  const close = () => menu.current?.close();
   const links = [
     { href: "/#how-it-works", label: nav.howItWorks },
     { href: "/#routes", label: nav.routes },
@@ -51,7 +52,7 @@ export function SiteHeader({ nav, homeLabel, overlay = false, showJoin = true }:
           <ul className="flex items-center gap-8">
             {links.map((link) => (
               <li key={link.href}>
-                <Link href={link.href} className={cn("text-body font-semibold hover:underline", onGreen ? "text-white" : "text-ink")}>
+                <Link href={link.href} className={cn("inline-flex min-h-12 items-center text-body font-semibold hover:underline", onGreen ? "text-white" : "text-ink")}>
                   {link.label}
                 </Link>
               </li>
@@ -63,48 +64,53 @@ export function SiteHeader({ nav, homeLabel, overlay = false, showJoin = true }:
             {nav.join}
           </Link>
         ) : null}
-        <Drawer.Root>
-          <Drawer.Trigger
-            aria-label={nav.menu}
-            className={cn(
-              buttonVariants({ variant: "icon", size: "icon" }),
-              "lg:hidden",
-              !showJoin && "ml-auto",
-              showJoin && "ml-auto sm:ml-0",
-              onGreen && "border-on-green bg-transparent text-white hover:bg-green-900",
-            )}
-          >
-            <Menu aria-hidden className="size-6" strokeWidth={1.75} />
-          </Drawer.Trigger>
-          <Drawer.Portal>
-            <Drawer.Overlay className="fixed inset-0 z-40 bg-scrim" />
-            <Drawer.Content className="pb-safe fixed inset-x-0 bottom-0 z-50 rounded-t-sheet bg-surface shadow-floating outline-none">
-              <div aria-hidden className="mx-auto mt-3 h-1 w-10 rounded-pill bg-line-strong" />
-              <Drawer.Title className="sr-only">{nav.menu}</Drawer.Title>
-              <nav aria-label={nav.label} className="flex flex-col gap-4 p-6">
-                <ul className="flex flex-col">
-                  {links.map((link) => (
-                    <li key={link.href}>
-                      <Drawer.Close asChild>
-                        <Link href={link.href} className="flex h-14 items-center border-b border-line text-body-lg font-semibold text-ink">
-                          {link.label}
-                        </Link>
-                      </Drawer.Close>
-                    </li>
-                  ))}
-                </ul>
-                {showJoin ? (
-                  <Drawer.Close asChild>
-                    <Link href="/waitlist" className={cn(buttonVariants(), "w-full")}>
-                      {nav.join}
-                    </Link>
-                  </Drawer.Close>
-                ) : null}
-              </nav>
-            </Drawer.Content>
-          </Drawer.Portal>
-        </Drawer.Root>
+        <button
+          type="button"
+          aria-label={nav.menu}
+          aria-haspopup="dialog"
+          onClick={() => menu.current?.showModal()}
+          className={cn(
+            buttonVariants({ variant: "icon", size: "icon" }),
+            "lg:hidden",
+            showJoin ? "ml-auto sm:ml-0" : "ml-auto",
+            onGreen && "border-on-green bg-transparent text-white hover:bg-green-900",
+          )}
+        >
+          <Menu aria-hidden className="size-6" strokeWidth={1.75} />
+        </button>
       </div>
+
+      {/* Phone menu: a native modal dialog styled as a bottom sheet (Escape and the backdrop close it). */}
+      <dialog
+        ref={menu}
+        aria-label={nav.menu}
+        onClick={(event) => event.target === menu.current && close()}
+        className="pb-safe m-0 mt-auto w-full max-w-full rounded-t-sheet bg-surface p-0 text-ink shadow-floating backdrop:bg-scrim lg:hidden"
+      >
+        <div className="flex flex-col gap-4 p-6">
+          <div className="flex justify-end">
+            <button type="button" aria-label={nav.closeMenu} onClick={close} className={buttonVariants({ variant: "icon", size: "icon" })}>
+              <X aria-hidden className="size-6" strokeWidth={1.75} />
+            </button>
+          </div>
+          <nav aria-label={nav.label}>
+            <ul className="flex flex-col">
+              {links.map((link) => (
+                <li key={link.href}>
+                  <Link href={link.href} onClick={close} className="flex h-14 items-center border-b border-line text-body-lg font-semibold text-ink">
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+          {showJoin ? (
+            <Link href="/waitlist" onClick={close} className={cn(buttonVariants(), "w-full")}>
+              {nav.join}
+            </Link>
+          ) : null}
+        </div>
+      </dialog>
     </header>
   );
 }

@@ -45,7 +45,7 @@ export const labelled: { key: CityKey; dx: number; dy: number; anchor: "start" |
   { key: "lagos", dx: -8, dy: 4, anchor: "end" },
   { key: "kano", dx: 10, dy: 4, anchor: "start" },
   { key: "abuja", dx: 10, dy: 4, anchor: "start" },
-  { key: "onitsha", dx: -8, dy: -6, anchor: "end" },
+  { key: "onitsha", dx: -6, dy: 22, anchor: "end" },
   { key: "enugu", dx: 10, dy: 0, anchor: "start" },
   { key: "aba", dx: 10, dy: 6, anchor: "start" },
   { key: "portHarcourt", dx: -8, dy: 12, anchor: "end" },
