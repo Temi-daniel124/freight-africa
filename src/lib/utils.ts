@@ -1,5 +1,16 @@
 import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { extendTailwindMerge } from "tailwind-merge";
+
+// Our font-size tokens would otherwise be read as text colours and dropped.
+const twMerge = extendTailwindMerge({
+  extend: {
+    theme: {
+      text: ["display", "title-1", "title-2", "body-lg", "body", "label", "caption"],
+      radius: ["button", "pill", "input", "inner", "nav", "map", "tile", "card", "sheet"],
+      shadow: ["raised", "floating"],
+    },
+  },
+});
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
