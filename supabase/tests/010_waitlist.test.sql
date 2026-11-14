@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(17);
+select plan(24);
 
 -- Locked down
 select ok(
@@ -24,6 +24,10 @@ select throws_ok(
 select throws_ok(
   $$select public.join_waitlist('Ngozi Okafor', '+2348031234567', null, 'shipper', '{}', null, 'website', 'ip-a')$$,
   '42501', null, 'anon cannot call join_waitlist'
+);
+select throws_ok(
+  $$select private.hit_rate_limit('x', 1, interval '1 hour')$$,
+  '42501', null, 'anon cannot call the rate limiter'
 );
 reset role;
 
@@ -65,6 +69,21 @@ select throws_ok(
   '23514', null, 'only truck owners can give a number of trucks'
 );
 select throws_ok('select * from private.rate_limits', '42501', null, 'the server cannot read the rate limit table directly');
+select throws_ok(
+  $$insert into public.waitlist_signups (name, phone, role, consent_at) values ('Emeka Obi', '+2349031234567', 'shipper', now())$$,
+  '42501', null, 'the server cannot write to the waitlist except through join_waitlist'
+);
+select throws_ok(
+  $$select public.join_waitlist('Emeka Obi', '+234123', null, 'shipper', '{}', null, 'website', 'ip-g')$$,
+  '23514', null, 'the database refuses a malformed phone number'
+);
+select is(public.join_waitlist('Bola Ade', '+2348091234567', null, 'shipper', '{}', null, 'website', 'ip-c'), 'joined', 'a new phone joins from another IP');
+select is(public.join_waitlist('Bola Ade', '+2348091234567', null, 'shipper', '{}', null, 'website', 'ip-d'), 'duplicate', 'second try for one phone');
+select is(public.join_waitlist('Bola Ade', '+2348091234567', null, 'shipper', '{}', null, 'website', 'ip-e'), 'duplicate', 'third try for one phone');
+select is(
+  public.join_waitlist('Bola Ade', '+2348091234567', null, 'shipper', '{}', null, 'website', 'ip-f'),
+  'rate_limited', 'the fourth try for one phone in an hour is refused, whatever the IP'
+);
 reset role;
 
 select * from finish();
