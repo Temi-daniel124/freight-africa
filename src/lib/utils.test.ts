@@ -9,4 +9,12 @@ describe("cn", () => {
   it("drops false values", () => {
     expect(cn("flex", false && "hidden")).toBe("flex");
   });
+
+  it("keeps a font-size token next to a text colour", () => {
+    expect(cn("text-label", "text-ink")).toBe("text-label text-ink");
+  });
+
+  it("merges two font-size tokens", () => {
+    expect(cn("text-label", "text-body")).toBe("text-body");
+  });
 });
