@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import { Figtree } from "next/font/google";
 import type { ReactNode } from "react";
 import { MotionProvider } from "@/components/motion-provider";
@@ -17,6 +18,7 @@ export const metadata: Metadata = {
   title: { default: messages.meta.title, template: `%s · ${messages.meta.name}` },
   description: messages.meta.description,
   applicationName: messages.meta.name,
+  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     siteName: messages.meta.name,
@@ -44,6 +46,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en-NG" className={figtree.variable}>
       <body className="min-h-dvh bg-paper text-ink antialiased">
         <MotionProvider>{children}</MotionProvider>
+        <Analytics />
       </body>
     </html>
   );

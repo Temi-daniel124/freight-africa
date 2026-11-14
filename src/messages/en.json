@@ -2,7 +2,461 @@
   "meta": {
     "name": "Freight Africa",
     "title": "Freight Africa: full truckloads across Nigeria, paid safely",
-    "description": "Move full truckloads across Nigeria. Pay once, and your money is held safely until the goods arrive."
+    "description": "Move full truckloads across Nigeria. Pay once, and your money is held safely until the goods arrive. Join the waitlist.",
+    "waitlistTitle": "Join the waitlist",
+    "waitlistDescription": "Be first to book or carry full truckloads on Freight Africa's four Nigerian routes.",
+    "privacyTitle": "Privacy notice",
+    "privacyDescription": "What Freight Africa collects when you join the waitlist, why, and how to have it removed.",
+    "termsTitle": "Waitlist terms",
+    "termsDescription": "The terms for joining the Freight Africa waitlist.",
+    "notFoundTitle": "Page not found"
+  },
+  "site": {
+    "contactEmail": "hello@freight-africa.com",
+    "homeLabel": "Freight Africa home",
+    "nav": {
+      "label": "Main",
+      "howItWorks": "How it works",
+      "routes": "Routes",
+      "pricing": "Pricing",
+      "questions": "Questions",
+      "join": "Join the waitlist",
+      "menu": "Menu",
+      "closeMenu": "Close menu"
+    },
+    "corridors": [
+      {
+        "slug": "lagos-kano",
+        "name": "Lagos ⇄ Kano"
+      },
+      {
+        "slug": "lagos-abuja",
+        "name": "Lagos ⇄ Abuja"
+      },
+      {
+        "slug": "lagos-onitsha-aba",
+        "name": "Lagos ⇄ Onitsha/Aba"
+      },
+      {
+        "slug": "eastern-loop",
+        "name": "Port Harcourt ⇄ Aba ⇄ Onitsha ⇄ Enugu"
+      }
+    ],
+    "footer": {
+      "routes": "Routes",
+      "legal": "Legal",
+      "privacy": "Privacy notice",
+      "terms": "Waitlist terms",
+      "contact": "Contact",
+      "copyright": "© 2026 Freight Africa"
+    }
+  },
+  "home": {
+    "hero": {
+      "badge": "Launching soon on four routes",
+      "headline": "Move full truckloads across Nigeria.",
+      "lead": "Pay once. Your money is held safely until the goods arrive.",
+      "cardTitle": "Join the waitlist",
+      "roleLabel": "I am",
+      "roleSend": "I send goods",
+      "roleOwn": "I own trucks",
+      "phoneLabel": "Your WhatsApp number",
+      "submit": "Join the waitlist",
+      "note": "Free, and takes a minute. We'll ask a few details next."
+    },
+    "proof": [
+      {
+        "icon": "verified",
+        "title": "Verified truck owners",
+        "text": "Identity, truck and papers checked before the first load."
+      },
+      {
+        "icon": "held",
+        "title": "Money held until delivery",
+        "text": "The owner is paid in full only when your goods arrive."
+      },
+      {
+        "icon": "tracking",
+        "title": "Live tracking",
+        "text": "Follow the truck from pickup to drop-off."
+      }
+    ],
+    "how": {
+      "title": "How it works",
+      "lead": "Four steps from booking to delivery, with your money safe the whole way.",
+      "steps": [
+        {
+          "title": "Book",
+          "text": "Tell us where, when and what. You see the full price before you pay, and you pay once by bank transfer."
+        },
+        {
+          "title": "A verified truck accepts",
+          "text": "Only owners whose identity, truck and papers we've checked can take your load. Your money stays held safely."
+        },
+        {
+          "title": "Track it",
+          "text": "Follow the truck live from pickup to drop-off. Your receiver gets a tracking link too."
+        },
+        {
+          "title": "Confirm with a code",
+          "text": "Your receiver checks the goods and gives the driver a delivery code. Only then is the owner paid in full."
+        }
+      ],
+      "bookRoute": "Lagos to Kano",
+      "bookPickup": "Pickup",
+      "bookPickupValue": "Ojota, Lagos · Tue 12 Nov",
+      "bookGoods": "Goods",
+      "bookGoodsValue": "600 bags of rice · 30 tonnes",
+      "bookPrice": "Price shown before you pay",
+      "acceptStatus": "Truck accepted",
+      "acceptPlate": "KJA 482 XA",
+      "acceptTruck": "Flatbed · 30 tonnes",
+      "acceptDriver": "Musa Ibrahim",
+      "acceptVerified": "Verified",
+      "trackStatus": "In transit",
+      "trackPlace": "Passing Lokoja",
+      "trackEta": "Arrives at Dawanau, Kano by 4:30 pm Thu",
+      "trackLabel": "Trip 60% complete",
+      "codeLabel": "Delivery code",
+      "code": "482916",
+      "codeStatus": "Delivered",
+      "codeResult": "Goods checked. Balance paid to the owner."
+    },
+    "escrow": {
+      "title": "Your money is safe",
+      "lead": "You pay once. We hold it, and the truck owner is paid in two parts as the trip happens.",
+      "held": "Held safely",
+      "keeps": "Freight Africa's fee and commission",
+      "stops": [
+        "Paid",
+        "Loaded",
+        "Delivered"
+      ],
+      "rows": [
+        {
+          "label": "You pay",
+          "amount": 1030000
+        },
+        {
+          "label": "Loaded: the owner gets",
+          "amount": 400000
+        },
+        {
+          "label": "Delivered: the owner gets",
+          "amount": 550000
+        },
+        {
+          "label": "Freight Africa keeps",
+          "amount": 80000
+        }
+      ],
+      "keepsDetail": "₦30,000 service fee and ₦50,000 commission",
+      "replay": "Play again",
+      "note": "Example: ₦1,000,000 freight with an established truck owner. Your own price is always shown before you pay."
+    },
+    "audience": {
+      "title": "Built for both sides of the road",
+      "label": "Show benefits for",
+      "senders": "For senders",
+      "owners": "For truck owners",
+      "sendersBenefits": [
+        {
+          "title": "One price, shown upfront",
+          "text": "See the full price before you pay. No haggling at the park."
+        },
+        {
+          "title": "Money held until delivery",
+          "text": "We release payment only when your receiver confirms the goods arrived."
+        },
+        {
+          "title": "Know where your goods are",
+          "text": "Live tracking, and a delivery code for your receiver."
+        }
+      ],
+      "ownersBenefits": [
+        {
+          "title": "Paid before you move",
+          "text": "Every load is fully paid before your truck is sent."
+        },
+        {
+          "title": "Advance when loaded",
+          "text": "Part of your pay goes to your bank account once the goods are loaded, the rest minutes after delivery."
+        },
+        {
+          "title": "Return loads",
+          "text": "Find a paid load for the way back, so you don't drive home empty."
+        }
+      ],
+      "sendersAction": "Join as a sender",
+      "ownersAction": "Join as a truck owner"
+    },
+    "routes": {
+      "title": "Our routes",
+      "lead": "Four corridors when we launch, chosen with the people who move goods on them every day.",
+      "status": "Coming soon",
+      "mapLabel": "Map of Nigeria showing the four Freight Africa corridors"
+    },
+    "pricing": {
+      "title": "Simple, published fees",
+      "lead": "No subscriptions, no sign-up fees, and no charge for tracking, chat, support or payouts.",
+      "label": "Show fees for",
+      "senders": "Senders",
+      "owners": "Truck owners",
+      "sendersSteps": [
+        {
+          "label": "Trips 1 to 5 in a month",
+          "value": "3%"
+        },
+        {
+          "label": "Trips 6 to 15",
+          "value": "2%"
+        },
+        {
+          "label": "From trip 16",
+          "value": "1.5%"
+        }
+      ],
+      "sendersStepsTitle": "Service fee on the freight price",
+      "sendersOffer": "Your first trip has no service fee.",
+      "ownersSteps": [
+        {
+          "label": "Commission on the freight price",
+          "value": "5%"
+        },
+        {
+          "label": "Gold owners (25+ clean trips)",
+          "value": "4%"
+        }
+      ],
+      "ownersStepsTitle": "Commission",
+      "ownersOffer": "Your first 3 trips have no commission.",
+      "exampleTitle": "Worked example",
+      "freight": "Freight",
+      "fee": "Service fee (3%)",
+      "youPay": "You pay",
+      "commission": "Commission (5%)",
+      "youGet": "You get",
+      "ownersSplit": "₦400,000 when loaded and ₦550,000 after delivery, for an established owner."
+    },
+    "faq": {
+      "title": "Questions",
+      "groups": [
+        {
+          "title": "Booking",
+          "items": [
+            {
+              "q": "Which routes do you cover?",
+              "a": "Four corridors at launch: Lagos ⇄ Kano, Lagos ⇄ Abuja, Lagos ⇄ Onitsha/Aba, and Port Harcourt ⇄ Aba ⇄ Onitsha ⇄ Enugu."
+            },
+            {
+              "q": "Do you carry part loads?",
+              "a": "Not yet. Every booking is a full truckload: one sender, one truck."
+            }
+          ]
+        },
+        {
+          "title": "Payments",
+          "items": [
+            {
+              "q": "When do I pay?",
+              "a": "Before the truck is sent, by bank transfer to an account number made for your trip. We hold the money until your receiver confirms delivery."
+            },
+            {
+              "q": "What does it cost?",
+              "a": "The freight price plus a service fee of 3%, falling to 2% and then 1.5% as you book more trips in a month. Your first trip has no service fee."
+            }
+          ]
+        },
+        {
+          "title": "Trucks and drivers",
+          "items": [
+            {
+              "q": "How do you check truck owners?",
+              "a": "Before their first load we check the owner's identity, the truck and its papers, and the bank account we pay into."
+            },
+            {
+              "q": "How are truck owners paid?",
+              "a": "Part of the pay when the goods are loaded, and the rest minutes after the receiver gives the delivery code."
+            }
+          ]
+        },
+        {
+          "title": "Safety",
+          "items": [
+            {
+              "q": "What happens if something goes wrong on the way?",
+              "a": "Your money stays held. If there is a problem with the goods, only the amount in question is held while our team sorts it out with both sides."
+            }
+          ]
+        },
+        {
+          "title": "Launch",
+          "items": [
+            {
+              "q": "When do you launch?",
+              "a": "Soon. Join the waitlist and we'll contact you before your route opens."
+            },
+            {
+              "q": "Does joining cost anything?",
+              "a": "No. The waitlist is free and you can ask to be removed at any time."
+            }
+          ]
+        }
+      ]
+    },
+    "final": {
+      "title": "Be first on the road.",
+      "text": "Join the waitlist and we'll tell you when your route opens.",
+      "action": "Join the waitlist"
+    }
+  },
+  "waitlist": {
+    "title": "Join the waitlist",
+    "lead": "Tell us a little about you, and we'll contact you before your route opens.",
+    "name": "Full name",
+    "namePlaceholder": "Ngozi Okafor",
+    "phone": "WhatsApp number",
+    "phoneHelper": "We'll contact you on this number",
+    "email": "Email (optional)",
+    "emailPlaceholder": "ngozi@example.com",
+    "emailHelper": "For a confirmation and launch news",
+    "roleLabel": "I am",
+    "roles": {
+      "shipper": "A sender",
+      "owner": "A truck owner",
+      "agent": "An agent"
+    },
+    "corridorsLabel": "Routes you're interested in",
+    "corridorsHelper": "Choose any that apply",
+    "trucks": "How many trucks do you have?",
+    "trucksPlaceholder": "3",
+    "consent": "I agree that Freight Africa can contact me about the launch, and I've read the",
+    "consentLink": "privacy notice",
+    "submit": "Join the waitlist",
+    "submitting": "Joining the waitlist",
+    "honeypot": "Leave this field empty",
+    "errors": {
+      "name": "Enter your full name",
+      "phone": "Enter a Nigerian mobile number, like 0803 123 4567",
+      "email": "Enter a full email address, like ngozi@example.com",
+      "role": "Choose what describes you",
+      "trucks": "Enter a number of trucks from 1 to 1000",
+      "consent": "Tick the box to join the waitlist",
+      "summary": "Check the highlighted fields.",
+      "rateLimited": "Too many tries from here. Please wait an hour and try again.",
+      "failed": "Something went wrong on our side. Please try again in a minute."
+    },
+    "joinedTitle": "You're on the list, {name}.",
+    "duplicateTitle": "You're already on the list.",
+    "joinedText": "We'll contact you on {phone} before your route opens.",
+    "duplicateText": "We'll contact you before your route opens. There's nothing more to do.",
+    "emailSent": "A confirmation is on its way to {email}.",
+    "shareTitle": "Know someone who moves goods?",
+    "shareWhatsApp": "Share on WhatsApp",
+    "shareText": "Freight Africa: book full truckloads across Nigeria, with your money held safely until delivery. Join the waitlist:",
+    "copyLink": "Copy link",
+    "copied": "Link copied",
+    "backHome": "Back to the home page",
+    "loading": "Loading the form"
+  },
+  "email": {
+    "subject": "You're on the Freight Africa waitlist",
+    "greeting": "Hello {name},",
+    "body": "Thank you for joining the Freight Africa waitlist. We'll contact you on {phone} before your route opens.",
+    "why": "Freight Africa moves full truckloads across Nigeria. You pay once, and the money is held safely until the goods arrive.",
+    "remove": "Didn't sign up, or want to be removed? Reply to {contact} and we'll delete your details.",
+    "signoff": "The Freight Africa team"
+  },
+  "legal": {
+    "version": "Version 1 · 14 November 2026",
+    "privacy": {
+      "title": "Privacy notice",
+      "intro": "This notice explains what Freight Africa collects when you join our waitlist, why, and what you can ask us to do with it. It follows the Nigeria Data Protection Act 2023.",
+      "sections": [
+        {
+          "title": "What we collect",
+          "body": [
+            "Your name, WhatsApp number, and email address if you give one.",
+            "Whether you send goods, own trucks or work as an agent, the routes you're interested in, and for truck owners, how many trucks you have.",
+            "Where you heard about us, if the link you used tells us, and the time you joined.",
+            "To stop abuse, we keep a scrambled version of your internet address for one day. We can't turn it back into the address."
+          ]
+        },
+        {
+          "title": "Why we collect it",
+          "body": [
+            "To contact you before your route opens, and to plan which routes and trucks we need first. We don't sell your details or use them for anything else."
+          ]
+        },
+        {
+          "title": "Who handles it for us",
+          "body": [
+            "Supabase stores the waitlist on servers in Ireland. Resend sends our emails. Vercel runs this website. Each handles your details only to provide that service to us."
+          ]
+        },
+        {
+          "title": "How long we keep it",
+          "body": [
+            "Until we launch on your route and for 12 months after, or until you ask us to remove it, whichever comes first."
+          ]
+        },
+        {
+          "title": "Your rights",
+          "body": [
+            "You can ask for a copy of your details, ask us to correct them, or ask us to delete them. Email us and we'll reply within 30 days.",
+            "If you're unhappy with how we handle your details, you can complain to the Nigeria Data Protection Commission."
+          ]
+        },
+        {
+          "title": "Contact",
+          "body": [
+            "Email {contact} about anything in this notice."
+          ]
+        }
+      ]
+    },
+    "terms": {
+      "title": "Waitlist terms",
+      "intro": "These terms cover joining the Freight Africa waitlist before we launch. Full terms of service will apply when you start booking or carrying loads.",
+      "sections": [
+        {
+          "title": "Joining is free",
+          "body": [
+            "The waitlist costs nothing and doesn't commit you to anything."
+          ]
+        },
+        {
+          "title": "No booking yet",
+          "body": [
+            "Joining doesn't book a truck, reserve a load or fix a price. Fees and routes on this website describe our plans for launch and may change before then."
+          ]
+        },
+        {
+          "title": "Correct details",
+          "body": [
+            "Please give your own name and a number you use. We may remove entries that look false."
+          ]
+        },
+        {
+          "title": "Leaving the list",
+          "body": [
+            "Email {contact} at any time and we'll remove your details."
+          ]
+        },
+        {
+          "title": "Your details",
+          "body": [
+            "Our {privacy} explains what we collect and why."
+          ]
+        }
+      ]
+    },
+    "privacyLinkText": "privacy notice"
+  },
+  "notFound": {
+    "title": "We can't find that page.",
+    "text": "The link may be old or mistyped.",
+    "action": "Go to the home page"
   },
   "gallery": {
     "title": "Components",
@@ -30,7 +484,12 @@
     "phoneLabel": "WhatsApp number",
     "phoneHelper": "We'll send your code here",
     "chips": "Chips",
-    "chipOptions": ["Lagos ⇄ Kano", "Lagos ⇄ Abuja", "Lagos ⇄ Onitsha/Aba", "Port Harcourt ⇄ Aba ⇄ Onitsha ⇄ Enugu"],
+    "chipOptions": [
+      "Lagos ⇄ Kano",
+      "Lagos ⇄ Abuja",
+      "Lagos ⇄ Onitsha/Aba",
+      "Port Harcourt ⇄ Aba ⇄ Onitsha ⇄ Enugu"
+    ],
     "status": "Status",
     "statusInfo": "In transit",
     "statusWarning": "Tracking paused",

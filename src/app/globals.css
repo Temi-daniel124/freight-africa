@@ -102,6 +102,8 @@
   --breakpoint-lg: 64rem;
   --breakpoint-xl: 90rem;
 
+  --tracking-caps: 0.06em;
+
   --container-text: 42.5rem;
   --container-site: 75rem;
 
@@ -205,6 +207,12 @@
   transition-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
+/* The home hero: at most 88% of a desktop screen, so the next section peeks (DESIGN_SYSTEM.md 13.3). */
+@utility hero-height {
+  @media (width >= 64rem) {
+    min-height: min(88dvh, 52rem);
+  }
+}
 @utility shimmer-block {
   background-image: linear-gradient(90deg, var(--color-line), var(--color-paper), var(--color-line));
   background-size: 200% 100%;
@@ -254,6 +262,9 @@
   }
   button:not(:disabled) {
     cursor: pointer;
+  }
+  summary::-webkit-details-marker {
+    display: none;
   }
   @media (prefers-reduced-motion: reduce) {
     html {
