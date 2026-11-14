@@ -1,8 +1,5 @@
 "use client";
 
-import * as m from "motion/react-m";
-import { useId } from "react";
-import { springUi } from "@/lib/motion";
 import { cn } from "@/lib/utils";
 
 type Option<T extends string> = { value: T; label: string };
@@ -15,10 +12,17 @@ type SegmentedControlProps<T extends string> = {
   className?: string;
 };
 
+// Pill segmented control (DESIGN_SYSTEM.md 10.3). The green pill slides with a CSS transform, so this
+// needs no animation library; options share the width equally.
 export function SegmentedControl<T extends string>({ options, value, onChange, label, className }: SegmentedControlProps<T>) {
-  const pillId = useId();
+  const index = Math.max(0, options.findIndex((option) => option.value === value));
   return (
-    <div role="radiogroup" aria-label={label} className={cn("flex rounded-pill bg-green-50 p-1", className)}>
+    <div role="radiogroup" aria-label={label} className={cn("relative flex rounded-pill bg-green-50 p-1", className)}>
+      <span
+        aria-hidden
+        className="absolute inset-y-1 left-1 rounded-pill bg-green-700 transition-transform motion-standard"
+        style={{ width: `calc((100% - 0.5rem) / ${options.length})`, transform: `translateX(${index * 100}%)` }}
+      />
       {options.map((option) => {
         const active = option.value === value;
         return (
@@ -29,12 +33,11 @@ export function SegmentedControl<T extends string>({ options, value, onChange, l
             aria-checked={active}
             onClick={() => onChange(option.value)}
             className={cn(
-              "relative h-12 flex-1 rounded-pill px-4 text-label whitespace-nowrap transition-colors motion-quick",
+              "relative h-12 min-w-0 flex-1 rounded-pill px-3 text-label whitespace-nowrap transition-colors motion-quick sm:px-4",
               active ? "text-white" : "text-ink-2 hover:text-ink",
             )}
           >
-            {active ? <m.span layoutId={pillId} transition={springUi} className="absolute inset-0 rounded-pill bg-green-700" /> : null}
-            <span className="relative">{option.label}</span>
+            {option.label}
           </button>
         );
       })}

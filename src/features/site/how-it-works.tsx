@@ -113,7 +113,7 @@ export function HowItWorks({ heading, steps, illustrations }: HowItWorksProps) {
                     <h3 className="type-h3 text-ink">{step.title}</h3>
                     <p className="type-copy text-ink-2">{step.text}</p>
                   </div>
-                  <div className="lg:mx-auto lg:max-w-md">{illustrations[index]}</div>
+                  <div className="lg:mx-auto lg:w-full lg:max-w-md">{illustrations[index]}</div>
                 </div>
               </li>
             ))}

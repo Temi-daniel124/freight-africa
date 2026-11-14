@@ -1,11 +1,19 @@
 import { z } from "zod";
 import { normaliseNigerianPhone } from "@/lib/phone";
 
-export const corridorSlugs = ["lagos-kano", "lagos-abuja", "lagos-onitsha-aba", "eastern-loop"] as const;
-export const waitlistRoles = ["shipper", "owner", "agent"] as const;
+import { corridorSlugs, waitlistRoles } from "./options";
 
-export type WaitlistRole = (typeof waitlistRoles)[number];
+export { corridorSlugs, waitlistRoles, type WaitlistRole } from "./options";
 export type WaitlistField = "name" | "phone" | "email" | "role" | "trucks" | "consent";
+
+// Truck owners give a whole number of trucks from 1 to 1000; everyone else gives none.
+// Returns the number, null when not needed, or "invalid". Also used by the action so this error
+// shows together with the others (object-level checks only run once every field parses).
+export function checkTrucks(role: string, trucks: string | undefined): number | null | "invalid" {
+  if (role !== "owner") return null;
+  const count = Number(trucks?.trim() || NaN);
+  return Number.isInteger(count) && count >= 1 && count <= 1000 ? count : "invalid";
+}
 
 // Error messages are field names; the form shows the matching text from en.json.
 export const waitlistSchema = z
@@ -39,13 +47,10 @@ export const waitlistSchema = z
       .catch(undefined),
   })
   .transform((data, ctx) => {
-    let trucks: number | null = null;
-    if (data.role === "owner") {
-      trucks = Number(data.trucks);
-      if (!Number.isInteger(trucks) || trucks < 1 || trucks > 1000) {
-        ctx.addIssue({ code: "custom", message: "trucks", path: ["trucks"] });
-        return z.NEVER;
-      }
+    const trucks = checkTrucks(data.role, data.trucks);
+    if (trucks === "invalid") {
+      ctx.addIssue({ code: "custom", message: "trucks", path: ["trucks"] });
+      return z.NEVER;
     }
     return { ...data, trucks, source: data.source || "website" };
   });

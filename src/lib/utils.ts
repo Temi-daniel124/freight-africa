@@ -8,6 +8,10 @@ const twMerge = extendTailwindMerge({
       text: ["display", "title-1", "title-2", "body-lg", "body", "label", "caption"],
       radius: ["button", "pill", "input", "inner", "nav", "map", "tile", "card", "sheet"],
       shadow: ["raised", "floating"],
+      tracking: ["caps"],
+    },
+    classGroups: {
+      "border-w": [{ border: ["field"] }],
     },
   },
 });

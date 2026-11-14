@@ -2,13 +2,14 @@
 
 import NumberFlow from "@number-flow/react";
 import { Lock, RotateCcw, Truck } from "lucide-react";
-import { AnimatePresence, useInView, useReducedMotion } from "motion/react";
+import { AnimatePresence, useInView } from "motion/react";
 import * as m from "motion/react-m";
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import useMeasure from "react-use-measure";
 import { Button } from "@/components/ui/button";
 import { springSoft, springUi } from "@/lib/motion";
 import { formatNaira, nairaFormat } from "@/lib/money";
+import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion";
 import { cn } from "@/lib/utils";
 
 type EscrowStoryProps = {
@@ -30,7 +31,7 @@ const LAST = HELD.length - 1;
 
 // DESIGN_SYSTEM.md 13.3 item 4: plays once when 40% visible.
 export function EscrowStory({ heading, t }: EscrowStoryProps) {
-  const reduce = useReducedMotion();
+  const reduce = usePrefersReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.4 });
   const [step, setStep] = useState(0);
@@ -116,7 +117,7 @@ export function EscrowStory({ heading, t }: EscrowStoryProps) {
             </div>
             <ol className="flex justify-between text-label">
               {t.stops.map((stop, index) => (
-                <li key={stop} className={cn("w-20 first:-ml-10 first:text-center last:-mr-10 last:text-center", index > 0 && index < LAST && "text-center", index <= stage ? "text-ink" : "text-ink-3")}>
+                <li key={stop} className={cn("w-20 first:-ml-10 first:text-center last:-mr-10 last:text-center", index > 0 && index < LAST && "text-center", index <= stage ? "text-ink" : "text-ink-2")}>
                   {stop}
                 </li>
               ))}
@@ -143,7 +144,7 @@ export function EscrowStory({ heading, t }: EscrowStoryProps) {
             </AnimatePresence>
           </ul>
 
-          <Button variant="tertiary" size="text" onClick={replay} className="self-start" disabled={stage !== LAST || Boolean(reduce)}>
+          <Button variant="tertiary" size="text" onClick={replay} className="self-start" disabled={stage !== LAST || reduce}>
             <RotateCcw aria-hidden className="size-4" strokeWidth={1.75} />
             {t.replay}
           </Button>

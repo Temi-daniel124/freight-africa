@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { waitlistSchema, type WaitlistInput } from "./schema";
+import { checkTrucks, waitlistSchema, type WaitlistInput } from "./schema";
 
 const base: WaitlistInput = {
   name: "  Ngozi Okafor ",
@@ -37,6 +37,13 @@ describe("waitlistSchema", () => {
     expect(fieldErrors({ ...base, role: "owner", trucks: "" })).toEqual(["trucks"]);
     expect(fieldErrors({ ...base, role: "owner", trucks: "1001" })).toEqual(["trucks"]);
     expect(waitlistSchema.parse({ ...base, role: "owner", trucks: "12" }).trucks).toBe(12);
+  });
+
+  it("checks trucks on their own, so the error shows with the others", () => {
+    expect(checkTrucks("owner", "")).toBe("invalid");
+    expect(checkTrucks("owner", "2.5")).toBe("invalid");
+    expect(checkTrucks("owner", " 40 ")).toBe(40);
+    expect(checkTrucks("shipper", "")).toBeNull();
   });
 
   it("ignores a number of trucks from a sender", () => {

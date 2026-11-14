@@ -322,9 +322,9 @@
     "emailHelper": "For a confirmation and launch news",
     "roleLabel": "I am",
     "roles": {
-      "shipper": "A sender",
-      "owner": "A truck owner",
-      "agent": "An agent"
+      "shipper": "Sender",
+      "owner": "Truck owner",
+      "agent": "Agent"
     },
     "corridorsLabel": "Routes you're interested in",
     "corridorsHelper": "Choose any that apply",

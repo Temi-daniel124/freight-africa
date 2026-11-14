@@ -14,6 +14,7 @@ export function Hero() {
         width={572}
         height={620}
         unoptimized
+        priority
         className="pointer-events-none absolute -top-12 -right-40 -z-10 h-160 w-auto opacity-4 lg:-right-16 lg:h-200"
       />
       {/* The road line running through the hero */}

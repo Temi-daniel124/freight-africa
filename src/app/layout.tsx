@@ -46,7 +46,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     <html lang="en-NG" className={figtree.variable}>
       <body className="min-h-dvh bg-paper text-ink antialiased">
         <MotionProvider>{children}</MotionProvider>
-        <Analytics />
+        {/* Loads only once Web Analytics is switched on for the Vercel project, so no failing script request. */}
+        {process.env.NEXT_PUBLIC_ANALYTICS === "on" ? <Analytics /> : null}
       </body>
     </html>
   );

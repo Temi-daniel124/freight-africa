@@ -14,6 +14,10 @@ describe("cn", () => {
     expect(cn("text-label", "text-ink")).toBe("text-label text-ink");
   });
 
+  it("keeps the field border width next to a border colour", () => {
+    expect(cn("border-field", "border-line-strong")).toBe("border-field border-line-strong");
+  });
+
   it("merges two font-size tokens", () => {
     expect(cn("text-label", "text-body")).toBe("text-body");
   });

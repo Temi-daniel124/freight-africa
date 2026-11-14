@@ -4,7 +4,7 @@
 start of every session and updates it at the end (`CLAUDE.md` §2). It records facts about progress; it
 never overrides a higher document.
 
-**Last updated:** 9 Nov 2026, by planning (before any code).
+**Last updated:** 15 Nov 2026, by Claude Code (Phase 0 done, launch page built).
 
 ---
 
@@ -13,12 +13,12 @@ never overrides a higher document.
 | Area | Status |
 | --- | --- |
 | Planning and specifications | **Done** (all documents in this repository) |
-| Repository | Not created yet |
-| Code | None yet |
-| Supabase project | Created by the founder: **Freight Africa**, ref `czlowhaycaivpgimcefk`, `https://czlowhaycaivpgimcefk.supabase.co`. Empty |
-| Vercel project | Not created yet |
-| Resend | Account exists; sending domain `mail.freight-africa.com` verified. Not yet linked to Supabase Auth |
-| Domain | `freight-africa.com` owned; DNS at GoDaddy |
+| Repository | Private `Temi-daniel124/freight-africa`; CI green (`author-check`, `app`, `database`, `drift`) |
+| Code | Next.js 16 app: design foundation, `/dev/components` gallery, launch page (home, waitlist, privacy, terms) |
+| Supabase project | Created by the founder: **Freight Africa**, ref `czlowhaycaivpgimcefk`, `https://czlowhaycaivpgimcefk.supabase.co`. Linked; migrations applied through `migrate.yml`; nightly backup running |
+| Vercel project | `freight-africa` on Hobby, linked to GitHub; env vars set; production and previews Ready |
+| Resend | Account exists; sending domain `mail.freight-africa.com` verified. Supabase Auth sends through Resend SMTP (test email delivered); keys `supabase-auth-smtp` and `app-email` |
+| Domain | `freight-africa.com` and `www` added to Vercel; waiting for the founder's GoDaddy DNS records |
 | Launch | Not launched; one database environment (D029) |
 
 ## 2. Build phases
@@ -27,8 +27,8 @@ The phases are defined in `BUILD.md` §3. Update this table as work progresses.
 
 | Phase | Name | Status | Notes |
 | --- | --- | --- | --- |
-| 0 | Bootstrap: repo, scaffold, accounts linked, CI green | Not started | First session |
-| 0L | Launch page: pre-launch home, waitlist, privacy and terms (D030) | Not started | Right after Phase 0; needs DNS to share on freight-africa.com |
+| 0 | Bootstrap: repo, scaffold, accounts linked, CI green | Done | Domain DNS waits on the founder |
+| 0L | Launch page: pre-launch home, waitlist, privacy and terms (D030) | Built; founder review | Right after Phase 0; needs DNS to share on freight-africa.com |
 | 1 | Foundations: auth, organisations, roles, RLS, tokens, ledger, settings, audit | Not started | |
 | 2 | Supply: owner and driver onboarding, Didit, trucks, documents, catalogue, verification queue | Not started | |
 | 3 | Booking and money: quotes, loads, payments, escrow, releases, refunds, receipts | Not started | Needs Bachs keys and API docs |
@@ -40,8 +40,7 @@ The phases are defined in `BUILD.md` §3. Update this table as work progresses.
 
 ## 3. Current task
 
-**Next task:** finish Phase 0 (`BUILD.md` §2 from step 0.6: link Supabase, push the first migration,
-Resend SMTP, domain, design foundation), then the launch page (`BUILD.md` §2A, D030).
+**Next task:** launch page acceptance (`BUILD.md` §2A): founder's GoDaddy DNS, contact email and retention period confirmed, one real sign-up from a phone, PageSpeed Insights on `https://freight-africa.com` (LCP under 2.5 s), Web Analytics switched on. Then Phase 1.
 
 ## 4. Things only the founder can do
 
@@ -74,11 +73,14 @@ for these at the moment they're needed, with exact steps.
 
 ## 6. Open questions
 
-None. All earlier questions were answered (D009, D013, D017 to D021).
+- Contact email on the website and privacy notice: `hello@freight-africa.com` is a placeholder until the founder confirms a real mailbox.
+- Privacy notice retention ("until launch on your route and 12 months after"): needs the founder's confirmation.
 
 ## 7. Session log
 
 Add one line per session, newest first: date · what was done · what's next.
+
+- 15 Nov 2026 · Phase 0 finished: Supabase linked and migrations applied, CI and drift green, Resend SMTP, domains added, design foundation and gallery · Launch page built with waitlist backend, screenshots reviewed at 5 widths, Lighthouse 93+ (CPU-calibrated) · DNS, contact email, real sign-up test, then Phase 1.
 
 - 9 Nov 2026 · Launch page moved forward to right after Phase 0 (D030) · Finish Phase 0, then the launch page.
 - 9 Nov 2026 · Supabase project ref corrected to czlowhaycaivpgimcefk (Freight Africa, eu-west-1, verified) · Governance documents created; scope document named docs/PLATFORM-SCOPE.md (full platform, D014) · Start Phase 0.

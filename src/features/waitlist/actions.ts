@@ -7,7 +7,7 @@ import { resendEmailSender } from "@/lib/email/sender";
 import { serverEnv } from "@/lib/env.server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { waitlistConfirmationEmail } from "./confirmation-email";
-import { waitlistSchema, type WaitlistField } from "./schema";
+import { checkTrucks, waitlistSchema, type WaitlistField } from "./schema";
 import type { WaitlistState, WaitlistValues } from "./state";
 
 const text = (formData: FormData, key: string) => {
@@ -41,6 +41,7 @@ export async function joinWaitlist(previous: WaitlistState, formData: FormData):
   if (!parsed.success) {
     const errors: WaitlistState["errors"] = {};
     for (const issue of parsed.error.issues) errors[issue.message as WaitlistField] = true;
+    if (checkTrucks(values.role, values.trucks) === "invalid") errors.trucks = true;
     return { status: "invalid", errors, values, attempt };
   }
   const data = parsed.data;
