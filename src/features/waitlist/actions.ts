@@ -70,6 +70,10 @@ export async function joinWaitlist(previous: WaitlistState, formData: FormData):
 
   if (outcome === "rate_limited") return { status: "rate_limited", errors: {}, values, attempt };
 
+  // Accepted trade-offs (independent review, Nov 2026), both bounded by the rate limit above:
+  // "already on the list" reveals that a number is registered, and the confirmation email goes to an
+  // address we haven't verified.
+
   const firstName = data.name.split(/\s+/)[0];
   if (outcome === "joined" && data.email) {
     const email = data.email;
