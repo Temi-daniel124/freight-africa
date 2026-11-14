@@ -47,3 +47,6 @@ Thumbs.db
 
 # Written by next dev; this repository's agent manual is AGENT.md
 AGENTS.md
+
+# Waitlist exports (personal data)
+exports/
