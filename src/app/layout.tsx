@@ -17,18 +17,18 @@ const inter = localFont({
   fallback: ["-apple-system", "Segoe UI", "Roboto", "Helvetica Neue", "Arial", "sans-serif"],
 });
 
+// Each page sets its own canonical; no og:url here, so a shared link previews as the page that was shared
+// and the 404 page never claims to be the home page.
 export const metadata: Metadata = {
   metadataBase: new URL("https://freight-africa.com"),
   title: { default: messages.meta.title, template: `%s · ${messages.meta.name}` },
   description: messages.meta.description,
   applicationName: messages.meta.name,
-  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     siteName: messages.meta.name,
     title: messages.meta.title,
     description: messages.meta.description,
-    url: "/",
     locale: "en_NG",
     images: [{ url: "/brand/web/og-image-1200x630.png", width: 1200, height: 630, alt: messages.meta.name }],
   },

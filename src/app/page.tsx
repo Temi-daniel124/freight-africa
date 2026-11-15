@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { AudienceSwitch } from "@/features/site/audience-switch";
 import { EscrowStory } from "@/features/site/escrow-story";
 import { Faq, faqStructuredData } from "@/features/site/faq";
@@ -13,6 +14,8 @@ import { SiteFooter } from "@/features/site/site-footer";
 import { SiteHeader } from "@/features/site/site-header";
 import { stepIllustrations } from "@/features/site/step-illustrations";
 import messages from "@/messages/en.json";
+
+export const metadata: Metadata = { alternates: { canonical: "/" } };
 
 const home = messages.home;
 

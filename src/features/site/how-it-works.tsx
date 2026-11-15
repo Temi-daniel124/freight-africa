@@ -83,8 +83,9 @@ export function HowItWorks({ heading, steps, illustrations }: HowItWorksProps) {
                     </div>
                   ) : null}
                 </div>
-                <div className={cn("flex flex-col gap-1 pt-2 pb-8 transition-opacity motion-standard", index === active ? "opacity-100" : "opacity-60")}>
-                  <h3 className="type-h3 text-ink">{step.title}</h3>
+                {/* Inactive steps dim only the heading colour: fading the whole block took the body text below 4.5:1. */}
+                <div className="flex flex-col gap-1 pt-2 pb-8">
+                  <h3 className={cn("type-h3 transition-colors motion-standard", index === active ? "text-ink" : "text-ink-2")}>{step.title}</h3>
                   <p className="type-copy text-ink-2">{step.text}</p>
                 </div>
               </li>
