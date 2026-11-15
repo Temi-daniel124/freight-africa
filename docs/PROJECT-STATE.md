@@ -29,7 +29,7 @@ The phases are defined in `BUILD.md` §3. Update this table as work progresses.
 | --- | --- | --- | --- |
 | 0 | Bootstrap: repo, scaffold, accounts linked, CI green | Done | |
 | 0L | Launch page: pre-launch home, waitlist, privacy and terms (D030) | **Accepted** 15 Nov 2026 | PageSpeed Insights mobile 98 (LCP 2.5 s, TBT 40 ms), desktop 100; real phone sign-up and confirmation email delivered |
-| 1 | Foundations: auth, organisations, roles, RLS, tokens, ledger, settings, audit | Not started | |
+| 1 | Foundations: auth, organisations, roles, RLS, tokens, ledger, settings, audit | In progress | Slice 1 groundwork done |
 | 2 | Supply: owner and driver onboarding, Didit, trucks, documents, catalogue, verification queue | Not started | |
 | 3 | Booking and money: quotes, loads, payments, escrow, releases, refunds, receipts | Not started | Needs Bachs keys and API docs |
 | 4 | The trip: load board, offers, trips, driver flow, trip mode, codes, receiver pages, notifications, live map | Not started | Needs WhatsApp setup |
@@ -40,7 +40,7 @@ The phases are defined in `BUILD.md` §3. Update this table as work progresses.
 
 ## 3. Current task
 
-**Next task:** Phase 1, Foundations (`BUILD.md` §3): auth, organisations, roles, RLS, tokens, ledger, settings, audit. First save the generated database types to `src/lib/supabase/database.types.ts`.
+**Next task:** Phase 1 slice 2, sign-in (email code; WhatsApp and Google behind settings that stay off), from `docs/planning/ux-public-and-auth.md`.
 
 ## 4. Things only the founder can do
 
@@ -78,6 +78,7 @@ for these at the moment they're needed, with exact steps.
 
 Add one line per session, newest first: date · what was done · what's next.
 
+- 15 Nov 2026 · Phase 1 slice 1 groundwork: generated types, src/lib/env.ts, typed browser/server/admin clients, session refresh in src/proxy.ts for /app, /admin and /auth only; share links and QR (docs/launch) with the source kept across pages · Slice 2, sign-in.
 - 15 Nov 2026 · Launch page accepted on freight-africa.com: domains valid with HTTPS, www → apex 308, hello@ forwarding works, test sign-up and email verified then deleted, sitemap/robots/canonicals on https://freight-africa.com, og:url no longer points subpages at home, How it works steps no longer faded below 4.5:1, PageSpeed mobile 98 / desktop 100, Web Analytics on · Phase 1.
 - 15 Nov 2026 · Copy tweaks: hero switch has no visible label (named 'Who's joining' for screen readers); waitlist role 'I'm joining as' with A sender / A truck owner / An agent, stacked on phones; step 1 card says 'Tomorrow morning' and shows the price line as a label · DNS (Vercel + ImprovMX), PageSpeed on freight-africa.com, then Phase 1.
 - 15 Nov 2026 · Launch page revised (D031, D032): Inter subset, floating pill header, 4-photo Nigerian slideshow (plates and adverts blurred, credits recorded, white text 4.78:1 or better on every photo), copy from launch-page-copy.md with no rates or amounts, font-coverage test, corridor arrows as icons · DNS (Vercel + ImprovMX), ImprovMX account, PageSpeed on Vercel, then Phase 1.
