@@ -1,13 +1,14 @@
 "use server";
 
 import { createHmac } from "node:crypto";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { after } from "next/server";
 import { resendEmailSender } from "@/lib/email/sender";
 import { serverEnv } from "@/lib/env.server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { waitlistConfirmationEmail } from "./confirmation-email";
 import { checkTrucks, waitlistSchema, type WaitlistField } from "./schema";
+import { cleanSource, SOURCE_COOKIE } from "./source";
 import type { WaitlistState, WaitlistValues } from "./state";
 
 const text = (formData: FormData, key: string) => {
@@ -36,7 +37,8 @@ export async function joinWaitlist(previous: WaitlistState, formData: FormData):
   const parsed = waitlistSchema.safeParse({
     ...values,
     consent: values.consent ? "on" : undefined,
-    source: values.source || undefined,
+    // The link in the address bar wins; otherwise the share link the visitor arrived by (src/proxy.ts).
+    source: values.source || cleanSource((await cookies()).get(SOURCE_COOKIE)?.value),
   });
   if (!parsed.success) {
     const errors: WaitlistState["errors"] = {};
