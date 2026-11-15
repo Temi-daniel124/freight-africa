@@ -21,7 +21,7 @@ export function HeroCard({ t }: HeroCardProps) {
     <form action="/waitlist" method="get" className="flex flex-col gap-5 rounded-card bg-surface p-5 text-ink shadow-floating lg:p-6">
       <h2 className="text-title-2">{t.cardTitle}</h2>
       <div className="flex flex-col gap-2">
-        <span className="text-label text-ink-2">{t.roleLabel}</span>
+        {/* No visible label: the two options say it. The radio group is still named for screen readers. */}
         <SegmentedControl label={t.roleLabel} options={options} value={role} onChange={setRole} />
         <input type="hidden" name="role" value={role} />
       </div>

@@ -1,5 +1,6 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import { cn } from "@/lib/utils";
 
 type Option<T extends string> = { value: T; label: string };
@@ -10,18 +11,29 @@ type SegmentedControlProps<T extends string> = {
   onChange: (value: T) => void;
   label: string;
   className?: string;
+  /** Below 600 px, stack the options vertically (for labels too long to share a phone's width). */
+  stackOnPhone?: boolean;
 };
 
 // Pill segmented control (DESIGN_SYSTEM.md 10.3). The green pill slides with a CSS transform, so this
-// needs no animation library; options share the width equally.
-export function SegmentedControl<T extends string>({ options, value, onChange, label, className }: SegmentedControlProps<T>) {
+// needs no animation library; options share the width (or, stacked, the height) equally.
+export function SegmentedControl<T extends string>({ options, value, onChange, label, className, stackOnPhone = false }: SegmentedControlProps<T>) {
   const index = Math.max(0, options.findIndex((option) => option.value === value));
+  const position = { "--count": options.length, "--index": index } as CSSProperties;
   return (
-    <div role="radiogroup" aria-label={label} className={cn("relative flex rounded-pill bg-green-50 p-1", className)}>
+    <div
+      role="radiogroup"
+      aria-label={label}
+      style={position}
+      className={cn("relative flex rounded-pill bg-green-50 p-1", stackOnPhone && "max-sm:flex-col max-sm:rounded-card", className)}
+    >
       <span
         aria-hidden
-        className="absolute inset-y-1 left-1 rounded-pill bg-green-700 transition-transform motion-standard"
-        style={{ width: `calc((100% - 0.5rem) / ${options.length})`, transform: `translateX(${index * 100}%)` }}
+        className={cn(
+          "absolute inset-y-1 left-1 w-[calc((100%-0.5rem)/var(--count))] translate-x-[calc(var(--index)*100%)] rounded-pill bg-green-700 transition-transform motion-standard",
+          stackOnPhone &&
+            "max-sm:inset-x-1 max-sm:top-1 max-sm:bottom-auto max-sm:h-[calc((100%-0.5rem)/var(--count))] max-sm:w-auto max-sm:translate-x-0 max-sm:translate-y-[calc(var(--index)*100%)]",
+        )}
       />
       {options.map((option) => {
         const active = option.value === value;
@@ -34,6 +46,7 @@ export function SegmentedControl<T extends string>({ options, value, onChange, l
             onClick={() => onChange(option.value)}
             className={cn(
               "relative h-12 min-w-0 flex-1 rounded-pill px-3 text-label whitespace-nowrap transition-colors motion-quick sm:px-4",
+              stackOnPhone && "max-sm:flex-none",
               active ? "text-white" : "text-ink-2 hover:text-ink",
             )}
           >

@@ -81,7 +81,7 @@ function Fields({ state, action, pending, t, corridors }: FieldsProps) {
 
       <div className="flex flex-col gap-2">
         <span className="text-label text-ink-2">{t.roleLabel}</span>
-        <SegmentedControl label={t.roleLabel} options={roleOptions} value={role} onChange={setRole} />
+        <SegmentedControl stackOnPhone label={t.roleLabel} options={roleOptions} value={role} onChange={setRole} />
         <input type="hidden" name="role" value={role} />
       </div>
 

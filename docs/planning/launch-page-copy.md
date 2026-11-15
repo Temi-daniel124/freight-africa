@@ -32,6 +32,8 @@ file.
 - Headline: **Move full truckloads across Nigeria.**
 - Lead: **Pay once. We hold your money and release it only as your goods move.**
 - Card title: **Join the waitlist** (other card text unchanged)
+- Card switch: **I send goods / I own trucks**, with no visible label above it. Its hidden accessible
+  label (for screen readers) is **Who's joining**.
 
 ## 2. Proof strip
 
@@ -52,6 +54,9 @@ Lead: **Four steps from booking to delivery, with your money protected the whole
 3. **Track it** · Follow the truck live from pickup to drop-off. Your receiver gets a tracking link too.
 4. **Confirm with a code** · Your receiver checks the goods and gives the driver a delivery code. Only
    then is the final payment released.
+
+Step 1 illustration card: pickup line **Ojota, Lagos · Tomorrow morning** (no calendar date, so it never
+goes stale). **Price shown before you pay** is a plain label at the foot of the card, not a button.
 
 ## 4. "Your money is protected" (replaces the escrow numbers)
 
@@ -130,6 +135,11 @@ in our Terms of Service.**
 - **Nothing here is an offer** · Information on this website describes how we plan to work at launch.
   It isn't an offer, a quote or a commitment to a price, charge, payout time or service level. The
   Terms of Service that apply when you book or accept a load will govern.
+
+## 8A. Waitlist page (`/waitlist`)
+
+- Role label: **I'm joining as**
+- Options: **A sender** · **A truck owner** · **An agent**
 
 ## 9. Final band, footer, other pages
 

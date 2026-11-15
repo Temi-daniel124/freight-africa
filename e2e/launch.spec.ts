@@ -71,6 +71,6 @@ test("the hero card carries the role and phone to the waitlist", async ({ page }
   await page.getByLabel("Your WhatsApp number").fill("08031234567");
   await page.getByRole("button", { name: "Join the waitlist" }).first().click();
   await expect(page).toHaveURL(/\/waitlist\?role=owner&phone=803\+123\+4567/);
-  await expect(page.getByRole("radio", { name: "Truck owner" })).toHaveAttribute("aria-checked", "true");
+  await expect(page.getByRole("radio", { name: "A truck owner" })).toHaveAttribute("aria-checked", "true");
   await expect(page.getByLabel("WhatsApp number")).toHaveValue("803 123 4567");
 });
