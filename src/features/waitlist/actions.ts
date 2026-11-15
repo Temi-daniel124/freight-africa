@@ -53,13 +53,15 @@ export async function joinWaitlist(previous: WaitlistState, formData: FormData):
   const ip = requestHeaders.get("x-forwarded-for")?.split(",")[0]?.trim() || requestHeaders.get("x-real-ip") || "unknown";
   const ipKey = createHmac("sha256", serverEnv().CODE_HMAC_SECRET).update(`rate-limit:${ip}`).digest("hex");
 
+  // join_waitlist takes null for "no email" and "no trucks"; generated types cannot mark SQL arguments as
+  // nullable, so these two are narrowed by hand.
   const { data: outcome, error } = await supabaseAdmin().rpc("join_waitlist", {
     p_name: data.name,
     p_phone: data.phone,
-    p_email: data.email,
+    p_email: data.email as string,
     p_role: data.role,
     p_corridors: data.corridors,
-    p_trucks: data.trucks,
+    p_trucks: data.trucks as number,
     p_source: data.source,
     p_ip_key: ipKey,
   });

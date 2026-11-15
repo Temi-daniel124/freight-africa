@@ -130,12 +130,14 @@ freight-africa/
 │  │  └─ brand/            Logo, RoadLine, TruckMarker
 │  ├─ features/            one folder per domain: booking, loads, trips, money, kyc, trucks, agents, admin…
 │  ├─ lib/
-│  │  ├─ supabase/         client.ts (browser), server.ts (server), admin.ts (service key, server only)
+│  │  ├─ supabase/         client.ts (browser), server.ts (server), admin.ts (secret key, server only),
+│  │  │                    session.ts (session refresh for src/proxy.ts), database.types.ts (generated)
 │  │  ├─ payments/         provider.ts (interface), bachs.ts
 │  │  ├─ verification/     provider.ts, didit.ts, smile-id.ts
 │  │  ├─ notify/           notify.ts, whatsapp.ts, email.ts, sms.ts, push.ts
 │  │  ├─ money.ts          kobo helpers, formatting
-│  │  └─ env.ts            validated environment variables (zod)
+│  │  ├─ env.ts            validated public environment variables (zod)
+│  │  └─ env.server.ts     validated server secrets (zod, server only)
 │  └─ messages/en.json     all user-facing text (D017)
 ├─ supabase/
 │  ├─ config.toml
