@@ -10,7 +10,7 @@ export function Chip({ selected, className, children, type = "button", ...props 
       type={type}
       aria-pressed={selected}
       className={cn(
-        "inline-flex h-12 items-center gap-2 rounded-pill border px-4 text-label transition motion-quick active:scale-press",
+        "inline-flex min-h-12 items-center gap-2 rounded-pill border px-4 py-2 text-left text-label transition motion-quick active:scale-press",
         selected ? "border-green-100 bg-green-100 text-green-700" : "border-line bg-surface text-ink hover:bg-green-50",
         className,
       )}

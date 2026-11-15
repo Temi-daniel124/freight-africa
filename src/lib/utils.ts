@@ -7,7 +7,7 @@ const twMerge = extendTailwindMerge({
     theme: {
       text: ["display", "title-1", "title-2", "body-lg", "body", "label", "caption"],
       radius: ["button", "pill", "input", "inner", "nav", "map", "tile", "card", "sheet"],
-      shadow: ["raised", "floating"],
+      shadow: ["raised", "floating", "pill", "pill-scrolled"],
       tracking: ["caps"],
     },
     classGroups: {

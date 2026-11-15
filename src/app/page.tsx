@@ -29,7 +29,7 @@ const organization = {
 export default function HomePage() {
   return (
     <>
-      <SiteHeader overlay nav={messages.site.nav} homeLabel={messages.site.homeLabel} />
+      <SiteHeader nav={messages.site.nav} homeLabel={messages.site.homeLabel} />
       <main>
         <Hero />
         <ProofStrip />

@@ -1,16 +1,20 @@
 import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/next";
-import { Figtree } from "next/font/google";
+import localFont from "next/font/local";
 import type { ReactNode } from "react";
 import { MotionProvider } from "@/components/motion-provider";
 import messages from "@/messages/en.json";
 import "./globals.css";
 
-const figtree = Figtree({
-  variable: "--font-figtree",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+// D032: Inter, subset for Freight Africa (naira sign, Hausa/Yoruba/Igbo letters), optical sizes 14–32.
+const inter = localFont({
+  src: "./fonts/InterFA.woff2",
+  variable: "--font-inter",
+  weight: "400 800",
   display: "swap",
+  preload: true,
+  adjustFontFallback: "Arial",
+  fallback: ["-apple-system", "Segoe UI", "Roboto", "Helvetica Neue", "Arial", "sans-serif"],
 });
 
 export const metadata: Metadata = {
@@ -43,7 +47,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en-NG" className={figtree.variable}>
+    <html lang="en-NG" className={inter.variable}>
       <body className="min-h-dvh bg-paper text-ink antialiased">
         <MotionProvider>{children}</MotionProvider>
         {/* Loads only once Web Analytics is switched on for the Vercel project, so no failing script request. */}

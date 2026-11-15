@@ -18,22 +18,21 @@ type NavLabels = {
   closeMenu: string;
 };
 
-type SiteHeaderProps = { nav: NavLabels; homeLabel: string; overlay?: boolean; showJoin?: boolean };
+type SiteHeaderProps = { nav: NavLabels; homeLabel: string; showJoin?: boolean };
 
-export function SiteHeader({ nav, homeLabel, overlay = false, showJoin = true }: SiteHeaderProps) {
+// The floating pill (DESIGN_SYSTEM.md 13.2, D031). It looks the same over the photo hero and over light
+// sections, so its text is always ink on white; only the shadow deepens after 80 px.
+export function SiteHeader({ nav, homeLabel, showJoin = true }: SiteHeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const menu = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
-    if (!overlay) return;
     const update = () => setScrolled(window.scrollY > 80);
     update();
     window.addEventListener("scroll", update, { passive: true });
     return () => window.removeEventListener("scroll", update);
-  }, [overlay]);
+  }, []);
 
-  // Over the green hero the header is clear with white text; after 80 px it turns frosted (DESIGN_SYSTEM.md 13.2).
-  const onGreen = overlay && !scrolled;
   const close = () => menu.current?.close();
   const links = [
     { href: "/#how-it-works", label: nav.howItWorks },
@@ -43,41 +42,53 @@ export function SiteHeader({ nav, homeLabel, overlay = false, showJoin = true }:
   ];
 
   return (
-    <header className={cn("fixed inset-x-0 top-0 z-30 transition-colors motion-header", onGreen ? "bg-transparent" : "frosted border-b border-line")}>
-      <div className="mx-auto flex h-16 max-w-site items-center gap-4 px-4 lg:gap-8 lg:px-6">
-        <Link href="/" aria-label={homeLabel} className="shrink-0 rounded-nav">
-          <Logo variant={onGreen ? "primary-white" : "primary-green"} alt="" className="h-9" priority />
-        </Link>
-        <nav aria-label={nav.label} className="ml-auto hidden lg:block">
-          <ul className="flex items-center gap-8">
-            {links.map((link) => (
-              <li key={link.href}>
-                <Link href={link.href} className={cn("inline-flex min-h-12 items-center text-body font-semibold hover:underline", onGreen ? "text-white" : "text-ink")}>
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
-        {showJoin ? (
-          <Link href="/waitlist" className={cn(buttonVariants({ variant: onGreen ? "inverse" : "primary", size: "md" }), "ml-auto hidden sm:inline-flex lg:ml-0")}>
-            {nav.join}
-          </Link>
-        ) : null}
-        <button
-          type="button"
-          aria-label={nav.menu}
-          aria-haspopup="dialog"
-          onClick={() => menu.current?.showModal()}
+    <header className="pointer-events-none fixed inset-x-0 top-0 z-30 pt-[calc(0.75rem+env(safe-area-inset-top))]">
+      {/* Same width and side insets as the page content, so the pill's edges line up with it. */}
+      <div className="mx-auto max-w-site px-4 lg:px-6">
+        <div
           className={cn(
-            buttonVariants({ variant: "icon", size: "icon" }),
-            "lg:hidden",
-            showJoin ? "ml-auto sm:ml-0" : "ml-auto",
-            onGreen && "border-on-green bg-transparent text-white hover:bg-green-900",
+            "nav-pill pointer-events-auto flex h-14 items-center gap-1.5 rounded-button p-1.5 transition-shadow duration-200 ease-out lg:h-16 lg:gap-2 lg:p-2",
+            scrolled ? "shadow-pill-scrolled" : "shadow-pill",
           )}
         >
-          <Menu aria-hidden className="size-6" strokeWidth={1.75} />
-        </button>
+          <Link href="/" aria-label={homeLabel} className="flex h-full shrink-0 items-center rounded-button pr-1 pl-2.5 lg:pl-4">
+            <Logo variant="primary-green" alt="" className="h-7 min-[22.5rem]:h-8 lg:h-9" priority />
+          </Link>
+          <nav aria-label={nav.label} className="mx-auto hidden lg:block">
+            <ul className="flex items-center gap-1">
+              {links.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="inline-flex h-12 items-center rounded-button px-4 text-body font-medium text-ink-2 transition-colors duration-150 hover:bg-green-50 hover:text-ink"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+          {showJoin ? (
+            <Link
+              href="/waitlist"
+              className={cn(buttonVariants({ variant: "primary", size: "md" }), "ml-auto h-11 px-4 text-label hover:translate-y-0 sm:px-5 sm:text-body lg:ml-0 lg:h-12 lg:px-6")}
+            >
+              {nav.join}
+            </Link>
+          ) : null}
+          <button
+            type="button"
+            aria-label={nav.menu}
+            aria-haspopup="dialog"
+            onClick={() => menu.current?.showModal()}
+            className={cn(
+              "inline-flex size-11 shrink-0 items-center justify-center rounded-pill bg-green-50 text-ink transition-colors hover:bg-green-100 lg:hidden",
+              !showJoin && "ml-auto",
+            )}
+          >
+            <Menu aria-hidden className="size-5" strokeWidth={1.75} />
+          </button>
+        </div>
       </div>
 
       {/* Phone menu: a native modal dialog styled as a bottom sheet (Escape and the backdrop close it). */}
@@ -85,7 +96,7 @@ export function SiteHeader({ nav, homeLabel, overlay = false, showJoin = true }:
         ref={menu}
         aria-label={nav.menu}
         onClick={(event) => event.target === menu.current && close()}
-        className="pb-safe m-0 mt-auto w-full max-w-full rounded-t-sheet bg-surface p-0 text-ink shadow-floating backdrop:bg-scrim lg:hidden"
+        className="pb-safe pointer-events-auto m-0 mt-auto w-full max-w-full rounded-t-sheet bg-surface p-0 text-ink shadow-floating backdrop:bg-scrim lg:hidden"
       >
         <div className="flex flex-col gap-4 p-6">
           <div className="flex justify-end">

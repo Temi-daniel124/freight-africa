@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Logo } from "@/components/brand/Logo";
 import messages from "@/messages/en.json";
+import { CorridorText } from "@/components/ui/corridor-text";
 
 const t = messages.site;
 
@@ -16,7 +17,7 @@ export function SiteFooter() {
           <ul className="flex flex-col gap-2">
             {t.corridors.map((corridor) => (
               <li key={corridor.slug} className="text-body text-ink">
-                {corridor.name}
+                <CorridorText text={corridor.name} />
               </li>
             ))}
           </ul>
@@ -42,7 +43,11 @@ export function SiteFooter() {
             {t.contactEmail}
           </a>
         </div>
-        <p className="text-caption text-ink-2 sm:col-span-2 lg:col-span-12">{t.footer.copyright}</p>
+        <div className="flex flex-col gap-1 text-caption text-ink-2 sm:col-span-2 sm:flex-row sm:justify-between lg:col-span-12">
+          <p>{t.footer.copyright}</p>
+          {/* Credits for the hero photos: public/photos/CREDITS.md */}
+          <p>{t.footer.photos}</p>
+        </div>
       </div>
     </footer>
   );

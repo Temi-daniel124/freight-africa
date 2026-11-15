@@ -6,6 +6,7 @@ import { StatusChip } from "@/components/ui/chip";
 import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion";
 import { cn } from "@/lib/utils";
 import { MAP_HEIGHT, MAP_WIDTH, cities, corridorPaths, labelled, outlinePath, point } from "./nigeria-map";
+import { CorridorText } from "@/components/ui/corridor-text";
 
 type Corridor = { slug: string; name: string };
 type RoutesMapProps = { heading: ReactNode; corridors: Corridor[]; status: string; mapLabel: string };
@@ -36,7 +37,7 @@ export function RoutesMap({ heading, corridors, status, mapLabel }: RoutesMapPro
                     focus === corridor.slug ? "border-green-700 bg-green-50" : "border-line bg-surface hover:bg-green-50",
                   )}
                 >
-                  <span className="text-body-lg font-semibold text-ink">{corridor.name}</span>
+                  <span className="text-body-lg font-semibold text-ink"><CorridorText text={corridor.name} /></span>
                   <StatusChip tone="neutral" className="shrink-0">
                     {status}
                   </StatusChip>

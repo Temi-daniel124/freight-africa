@@ -2,7 +2,7 @@
   "meta": {
     "name": "Freight Africa",
     "title": "Freight Africa: full truckloads across Nigeria, paid safely",
-    "description": "Move full truckloads across Nigeria. Pay once, and your money is held safely until the goods arrive. Join the waitlist.",
+    "description": "Move full truckloads across Nigeria. Pay once. We hold your money and release it only as your goods move. Join the waitlist.",
     "waitlistTitle": "Join the waitlist",
     "waitlistDescription": "Be first to book or carry full truckloads on Freight Africa's four Nigerian routes.",
     "privacyTitle": "Privacy notice",
@@ -48,32 +48,35 @@
       "privacy": "Privacy notice",
       "terms": "Waitlist terms",
       "contact": "Contact",
-      "copyright": "© 2026 Freight Africa"
+      "copyright": "© 2026 Freight Africa",
+      "photos": "Photos: Unsplash contributors"
     }
   },
   "home": {
     "hero": {
       "badge": "Launching soon on four routes",
       "headline": "Move full truckloads across Nigeria.",
-      "lead": "Pay once. Your money is held safely until the goods arrive.",
+      "lead": "Pay once. We hold your money and release it only as your goods move.",
       "cardTitle": "Join the waitlist",
       "roleLabel": "I am",
       "roleSend": "I send goods",
       "roleOwn": "I own trucks",
       "phoneLabel": "Your WhatsApp number",
       "submit": "Join the waitlist",
-      "note": "Free, and takes a minute. We'll ask a few details next."
+      "note": "Free, and takes a minute. We'll ask a few details next.",
+      "pause": "Pause the photos",
+      "play": "Play the photos"
     },
     "proof": [
       {
         "icon": "verified",
         "title": "Verified truck owners",
-        "text": "Identity, truck and papers checked before the first load."
+        "text": "We check every owner's identity, truck and papers before their first load."
       },
       {
         "icon": "held",
-        "title": "Money held until delivery",
-        "text": "The owner is paid in full only when your goods arrive."
+        "title": "Money held, then released",
+        "text": "The final payment goes to the owner only after your receiver confirms delivery."
       },
       {
         "icon": "tracking",
@@ -83,7 +86,7 @@
     ],
     "how": {
       "title": "How it works",
-      "lead": "Four steps from booking to delivery, with your money safe the whole way.",
+      "lead": "Four steps from booking to delivery, with your money protected the whole way.",
       "steps": [
         {
           "title": "Book",
@@ -91,7 +94,7 @@
         },
         {
           "title": "A verified truck accepts",
-          "text": "Only owners whose identity, truck and papers we've checked can take your load. Your money stays held safely."
+          "text": "Only owners whose identity, truck and papers we've checked can take your load."
         },
         {
           "title": "Track it",
@@ -99,7 +102,7 @@
         },
         {
           "title": "Confirm with a code",
-          "text": "Your receiver checks the goods and gives the driver a delivery code. Only then is the owner paid in full."
+          "text": "Your receiver checks the goods and gives the driver a delivery code. Only then is the final payment released."
         }
       ],
       "bookRoute": "Lagos to Kano",
@@ -120,39 +123,30 @@
       "codeLabel": "Delivery code",
       "code": "482916",
       "codeStatus": "Delivered",
-      "codeResult": "Goods checked. Balance paid to the owner."
+      "codeResult": "Goods checked. Final payment released."
     },
     "escrow": {
-      "title": "Your money is safe",
-      "lead": "You pay once. We hold it, and the truck owner is paid in two parts as the trip happens.",
-      "held": "Held safely",
-      "keeps": "Freight Africa's fee and commission",
+      "title": "Your money is protected",
+      "lead": "You pay once. We hold it and release it in stages, tied to what actually happens on the road.",
       "stops": [
-        "Paid",
-        "Loaded",
-        "Delivered"
-      ],
-      "rows": [
         {
-          "label": "You pay",
-          "amount": 1030000
+          "stop": "Paid",
+          "label": "Held safely",
+          "text": "Your payment is held from the moment you pay."
         },
         {
-          "label": "Loaded: the owner gets",
-          "amount": 400000
+          "stop": "Loaded",
+          "label": "Part released",
+          "text": "The loading code is given. The owner receives part of the pay to cover the trip."
         },
         {
-          "label": "Delivered: the owner gets",
-          "amount": 550000
-        },
-        {
-          "label": "Freight Africa keeps",
-          "amount": 80000
+          "stop": "Delivered",
+          "label": "Balance released",
+          "text": "Your receiver confirms delivery with a code. The balance is released."
         }
       ],
-      "keepsDetail": "₦30,000 service fee and ₦50,000 commission",
-      "replay": "Play again",
-      "note": "Example: ₦1,000,000 freight with an established truck owner. Your own price is always shown before you pay."
+      "note": "If something goes wrong, only the amount in question is held while we sort it out with both sides.",
+      "replay": "Play again"
     },
     "audience": {
       "title": "Built for both sides of the road",
@@ -165,8 +159,8 @@
           "text": "See the full price before you pay. No haggling at the park."
         },
         {
-          "title": "Money held until delivery",
-          "text": "We release payment only when your receiver confirms the goods arrived."
+          "title": "Money released step by step",
+          "text": "The final payment is released only after your receiver confirms delivery."
         },
         {
           "title": "Know where your goods are",
@@ -175,16 +169,16 @@
       ],
       "ownersBenefits": [
         {
-          "title": "Paid before you move",
-          "text": "Every load is fully paid before your truck is sent."
+          "title": "Paid for before you set off",
+          "text": "Every load is paid for before your truck is sent."
         },
         {
-          "title": "Advance when loaded",
-          "text": "Part of your pay goes to your bank account once the goods are loaded, the rest minutes after delivery."
+          "title": "Part of your pay at loading",
+          "text": "The rest follows once delivery is confirmed, straight to your verified bank account."
         },
         {
-          "title": "Return loads",
-          "text": "Find a paid load for the way back, so you don't drive home empty."
+          "title": "Loads for the way back",
+          "text": "Find paid return loads, so you don't drive home empty."
         }
       ],
       "sendersAction": "Join as a sender",
@@ -197,46 +191,25 @@
       "mapLabel": "Map of Nigeria showing the four Freight Africa corridors"
     },
     "pricing": {
-      "title": "Simple, published fees",
-      "lead": "No subscriptions, no sign-up fees, and no charge for tracking, chat, support or payouts.",
-      "label": "Show fees for",
+      "title": "Clear pricing. No surprises.",
+      "lead": "You see the full price before you pay. Truck owners see exactly what they'll receive before they accept.",
+      "label": "Show pricing for",
       "senders": "Senders",
       "owners": "Truck owners",
-      "sendersSteps": [
-        {
-          "label": "Trips 1 to 5 in a month",
-          "value": "3%"
-        },
-        {
-          "label": "Trips 6 to 15",
-          "value": "2%"
-        },
-        {
-          "label": "From trip 16",
-          "value": "1.5%"
-        }
+      "sendersTitle": "For senders",
+      "sendersPoints": [
+        "One all-in price for your load, shown before you pay",
+        "No subscriptions and no sign-up fees",
+        "Tracking, support and delivery codes included"
       ],
-      "sendersStepsTitle": "Service fee on the freight price",
-      "sendersOffer": "Your first trip has no service fee.",
-      "ownersSteps": [
-        {
-          "label": "Commission on the freight price",
-          "value": "5%"
-        },
-        {
-          "label": "Gold owners (25+ clean trips)",
-          "value": "4%"
-        }
+      "ownersTitle": "For truck owners",
+      "ownersPoints": [
+        "No membership or listing fees",
+        "A service charge applies only to trips you complete",
+        "Your payout is shown before you accept, and paid to your verified bank account"
       ],
-      "ownersStepsTitle": "Commission",
-      "ownersOffer": "Your first 3 trips have no commission.",
-      "exampleTitle": "Worked example",
-      "freight": "Freight",
-      "fee": "Service fee (3%)",
-      "youPay": "You pay",
-      "commission": "Commission (5%)",
-      "youGet": "You get",
-      "ownersSplit": "₦400,000 when loaded and ₦550,000 after delivery, for an established owner."
+      "offer": "Early members get launch offers.",
+      "notice": "Prices, charges and payment timing are shown in full in the app before you confirm, and are set out in our Terms of Service."
     },
     "faq": {
       "title": "Questions",
@@ -259,11 +232,15 @@
           "items": [
             {
               "q": "When do I pay?",
-              "a": "Before the truck is sent, by bank transfer to an account number made for your trip. We hold the money until your receiver confirms delivery."
+              "a": "Before the truck is sent, by bank transfer to an account number made for your trip. We hold the money and release it in stages as the trip happens."
             },
             {
               "q": "What does it cost?",
-              "a": "The freight price plus a service fee of 3%, falling to 2% and then 1.5% as you book more trips in a month. Your first trip has no service fee."
+              "a": "You see one all-in price for your load before you pay, with nothing added later. There are no subscriptions or sign-up fees."
+            },
+            {
+              "q": "Is my money safe?",
+              "a": "Your payment is held from the moment you pay and released in stages as the trip happens. The final payment is released only after your receiver confirms delivery."
             }
           ]
         },
@@ -276,7 +253,7 @@
             },
             {
               "q": "How are truck owners paid?",
-              "a": "Part of the pay when the goods are loaded, and the rest minutes after the receiver gives the delivery code."
+              "a": "Part of the pay is released when the goods are loaded, and the balance after the receiver confirms delivery with a code. Payouts go to the owner's verified bank account."
             }
           ]
         },
@@ -285,7 +262,7 @@
           "items": [
             {
               "q": "What happens if something goes wrong on the way?",
-              "a": "Your money stays held. If there is a problem with the goods, only the amount in question is held while our team sorts it out with both sides."
+              "a": "Your payment stays protected. If there's a problem with the goods, only the amount in question is held while our team works it out with both sides."
             }
           ]
         },
@@ -353,7 +330,7 @@
     "emailSent": "A confirmation is on its way to {email}.",
     "shareTitle": "Know someone who moves goods?",
     "shareWhatsApp": "Share on WhatsApp",
-    "shareText": "Freight Africa: book full truckloads across Nigeria, with your money held safely until delivery. Join the waitlist:",
+    "shareText": "Freight Africa: book full truckloads across Nigeria. Pay once, and your money is held and released only as your goods move. Join the waitlist:",
     "copyLink": "Copy link",
     "copied": "Link copied",
     "backHome": "Back to the home page",
@@ -363,12 +340,12 @@
     "subject": "You're on the Freight Africa waitlist",
     "greeting": "Hello {name},",
     "body": "Thank you for joining the Freight Africa waitlist. We'll contact you on {phone} before your route opens.",
-    "why": "Freight Africa moves full truckloads across Nigeria. You pay once, and the money is held safely until the goods arrive.",
+    "why": "Freight Africa moves full truckloads across Nigeria. You pay once. We hold your money and release it only as your goods move.",
     "remove": "Didn't sign up, or want to be removed? Reply to {contact} and we'll delete your details.",
     "signoff": "The Freight Africa team"
   },
   "legal": {
-    "version": "Version 1 · 14 November 2026",
+    "version": "Version 2 · 15 November 2026",
     "privacy": {
       "title": "Privacy notice",
       "intro": "This notice explains what Freight Africa collects when you join our waitlist, why, and what you can ask us to do with it. It follows the Nigeria Data Protection Act 2023.",
@@ -428,7 +405,13 @@
         {
           "title": "No booking yet",
           "body": [
-            "Joining doesn't book a truck, reserve a load or fix a price. Fees and routes on this website describe our plans for launch and may change before then."
+            "Joining doesn't book a truck, reserve a load or fix a price. Routes on this website describe our plans for launch and may change before then."
+          ]
+        },
+        {
+          "title": "Nothing here is an offer",
+          "body": [
+            "Information on this website describes how we plan to work at launch. It isn't an offer, a quote or a commitment to a price, charge, payout time or service level. The Terms of Service that apply when you book or accept a load will govern."
           ]
         },
         {
@@ -505,7 +488,7 @@
     "moneyTitle": "Your price",
     "moneyFreight": "Freight",
     "moneyFreightValue": "₦1,000,000",
-    "moneyFee": "Service fee (3%)",
+    "moneyFee": "Service charge",
     "moneyFeeValue": "₦30,000",
     "moneyTotal": "You pay",
     "moneyTotalValue": "₦1,030,000",

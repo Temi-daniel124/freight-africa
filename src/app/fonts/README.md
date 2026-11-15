@@ -3,8 +3,7 @@
 Inter 4.1.1 (SIL Open Font License 1.1, see `OFL.txt`), subset for Freight Africa (D032):
 
 - Axes kept: `opsz` 14–32 (optical sizes), `wght` limited to 400–800.
-- Characters: Basic Latin and Latin-1, the naira sign `₦` (U+20A6), arrows used in corridor names
-  (`⇄`), and the letters needed later for Hausa, Yoruba and Igbo (ɓ ɗ ƙ Ɓ Ɗ Ƙ ẹ ọ ṣ ị ụ ṅ ǹ and the
+- Characters: Basic Latin and Latin-1, the naira sign `₦` (U+20A6), the arrows ← → ↑ ↓, and the letters needed later for Hausa, Yoruba and Igbo (ɓ ɗ ƙ Ɓ Ɗ Ƙ ẹ ọ ṣ ị ụ ṅ ǹ and the
   combining accents and dot below).
 - OpenType features kept: kern, liga, calt, ccmp, locl, mark, mkmk, tnum, pnum, case, cv05, cv08, ss02,
   ss04.
@@ -17,5 +16,8 @@ pyftsubset InterVariable.woff2 --unicodes="U+0000-00FF,U+0131,U+0152-0153,U+02BB
 fonttools varLib.instancer inter-fa.woff2 wght=400:800 -o inter-fa.ttf
 pyftsubset inter-fa.ttf --unicodes="*" --layout-features="*" --flavor=woff2 --output-file=InterFA.woff2
 ```
+
+Inter has no `⇄` (U+21C4), so the subset doesn't either (checked 15 Nov 2026); corridor names draw it as a
+Lucide icon through `src/components/ui/corridor-text.tsx`.
 
 Add a character to the `--unicodes` list (and rebuild) before using it anywhere in the interface.

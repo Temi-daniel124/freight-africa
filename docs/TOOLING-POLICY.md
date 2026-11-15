@@ -70,6 +70,7 @@ not, and the bar a new one has to clear. Rule zero: **no paid tools or services 
 | Vercel (Hobby) | Hosting | Personal, non-commercial terms: move to Pro before paid trips |
 | Supabase (Free) | Database, auth, storage, realtime, cron | 500 MB database, 1 GB storage, pausing |
 | Resend (Free) | Email and Supabase Auth SMTP | Daily and monthly email limits |
+| ImprovMX (Free) | Forwards `hello@freight-africa.com` to the founder's Gmail (receiving only; sending stays on Resend) | 1 domain, 25 aliases, 500 forwards a day |
 | Meta WhatsApp Cloud API | Messages and codes | 250 recipients per 24 h while unverified (D021) |
 | Didit | Identity checks | Free checks per month, then per-check pricing (D006) |
 | Bachs | Payments | Per-transaction fees, paid out of revenue |
