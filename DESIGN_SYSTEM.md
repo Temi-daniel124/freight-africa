@@ -441,8 +441,9 @@ waitlist**.)
 
 - **Shape:** fixed, centred, 12 px from the top (plus the safe area), the site's content width
   (`max-w-site`) with 16 px side insets on phones; height 64 px desktop, 56 px phone; radius 45 px
-  (fully round ends), inner padding 8 px so the button inside sits concentric with the bar.
-- **Surface:** white at 80% with `backdrop-filter: blur(16px) saturate(1.5)` (solid white where blur
+  (fully round ends), inner padding 8 px (6 px on phones, so the 44 px buttons fit the 56 px bar) so the button inside sits
+  concentric with the bar.
+- **Surface:** white at 88% (80% looked grey-green over the dark hero photos; tuned 15 Nov 2026) with `backdrop-filter: blur(16px) saturate(1.5)` (solid white where blur
   isn't supported), a 1 px hairline border in `--line` at 70%, and one quiet shadow:
   `0 1px 2px rgb(8 56 38 / .06), 0 8px 24px -12px rgb(8 56 38 / .18)`. It looks the same over the photo
   hero and over light sections, so text is always ink on white.

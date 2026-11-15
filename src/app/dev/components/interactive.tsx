@@ -9,6 +9,7 @@ import { Chip } from "@/components/ui/chip";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { Sheet } from "@/components/ui/sheet";
 import { Toaster } from "@/components/ui/toaster";
+import { CorridorText } from "@/components/ui/corridor-text";
 
 export function ChipsDemo({ options }: { options: string[] }) {
   const [selected, setSelected] = useState(options[0]);
@@ -16,7 +17,7 @@ export function ChipsDemo({ options }: { options: string[] }) {
     <div className="flex flex-wrap gap-2">
       {options.map((option) => (
         <Chip key={option} selected={option === selected} onClick={() => setSelected(option)}>
-          {option}
+          <CorridorText text={option} />
         </Chip>
       ))}
     </div>

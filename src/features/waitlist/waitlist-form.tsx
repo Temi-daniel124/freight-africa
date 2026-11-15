@@ -15,6 +15,7 @@ import type messages from "@/messages/en.json";
 import { joinWaitlist } from "./actions";
 import { waitlistRoles, type WaitlistRole } from "./options";
 import type { WaitlistState } from "./state";
+import { CorridorText } from "@/components/ui/corridor-text";
 
 type WaitlistCopy = typeof messages.waitlist;
 type Corridor = { slug: string; name: string };
@@ -143,7 +144,7 @@ function Fields({ state, action, pending, t, corridors }: FieldsProps) {
                 selected={selected}
                 onClick={() => setPicked(selected ? picked.filter((slug) => slug !== corridor.slug) : [...picked, corridor.slug])}
               >
-                {corridor.name}
+                <CorridorText text={corridor.name} />
               </Chip>
             );
           })}

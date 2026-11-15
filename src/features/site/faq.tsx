@@ -1,6 +1,7 @@
 import { ChevronDown } from "lucide-react";
 import messages from "@/messages/en.json";
 import { SectionHeading } from "./section-heading";
+import { CorridorText } from "@/components/ui/corridor-text";
 
 const t = messages.home.faq;
 
@@ -19,7 +20,7 @@ export function Faq() {
                     {item.q}
                     <ChevronDown aria-hidden className="size-5 shrink-0 text-ink-2 transition-transform motion-quick group-open:rotate-180" strokeWidth={1.75} />
                   </summary>
-                  <p className="type-copy max-w-text pb-5 text-ink-2">{item.a}</p>
+                  <p className="type-copy max-w-text pb-5 text-ink-2"><CorridorText text={item.a} /></p>
                 </details>
               ))}
             </div>
