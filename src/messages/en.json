@@ -58,7 +58,7 @@
       "headline": "Move full truckloads across Nigeria.",
       "lead": "Pay once. We hold your money and release it only as your goods move.",
       "cardTitle": "Join the waitlist",
-      "roleLabel": "I am",
+      "roleLabel": "Who's joining",
       "roleSend": "I send goods",
       "roleOwn": "I own trucks",
       "phoneLabel": "Your WhatsApp number",
@@ -107,7 +107,7 @@
       ],
       "bookRoute": "Lagos to Kano",
       "bookPickup": "Pickup",
-      "bookPickupValue": "Ojota, Lagos · Tue 12 Nov",
+      "bookPickupValue": "Ojota, Lagos · Tomorrow morning",
       "bookGoods": "Goods",
       "bookGoodsValue": "600 bags of rice · 30 tonnes",
       "bookPrice": "Price shown before you pay",
@@ -297,11 +297,11 @@
     "email": "Email (optional)",
     "emailPlaceholder": "ngozi@example.com",
     "emailHelper": "For a confirmation and launch news",
-    "roleLabel": "I am",
+    "roleLabel": "I'm joining as",
     "roles": {
-      "shipper": "Sender",
-      "owner": "Truck owner",
-      "agent": "Agent"
+      "shipper": "A sender",
+      "owner": "A truck owner",
+      "agent": "An agent"
     },
     "corridorsLabel": "Routes you're interested in",
     "corridorsHelper": "Choose any that apply",

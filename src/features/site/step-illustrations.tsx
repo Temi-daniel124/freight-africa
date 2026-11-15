@@ -1,4 +1,4 @@
-import { Check, MapPin, Package, ShieldCheck, Truck } from "lucide-react";
+import { Check, MapPin, Package, ShieldCheck, Tag, Truck } from "lucide-react";
 import { StatusChip } from "@/components/ui/chip";
 import { RoadLine } from "@/components/ui/road-line";
 import messages from "@/messages/en.json";
@@ -22,7 +22,7 @@ function Row({ icon: Icon, label, value }: { icon: typeof Truck; label: string; 
       </span>
       <div className="min-w-0">
         <p className="text-caption text-ink-2">{label}</p>
-        <p className="truncate text-body font-semibold text-ink">{value}</p>
+        <p className="text-body font-semibold text-ink">{value}</p>
       </div>
     </div>
   );
@@ -34,7 +34,11 @@ export function BookIllustration() {
       <p className="text-title-2 text-ink">{t.bookRoute}</p>
       <Row icon={MapPin} label={t.bookPickup} value={t.bookPickupValue} />
       <Row icon={Package} label={t.bookGoods} value={t.bookGoodsValue} />
-      <div className="flex h-12 items-center justify-center rounded-button bg-green-700 text-body font-semibold text-white">{t.bookPrice}</div>
+      {/* A statement, not an action: no pill shape or solid fill, so it can't be mistaken for a button. */}
+      <p className="flex items-center gap-2 border-t border-line pt-4 text-label text-green-800">
+        <Tag aria-hidden className="size-4 shrink-0" strokeWidth={1.75} />
+        {t.bookPrice}
+      </p>
     </Frame>
   );
 }
