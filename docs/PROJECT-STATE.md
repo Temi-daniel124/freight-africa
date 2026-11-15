@@ -40,7 +40,7 @@ The phases are defined in `BUILD.md` §3. Update this table as work progresses.
 
 ## 3. Current task
 
-**Next task:** launch page acceptance (`BUILD.md` §2A): founder's GoDaddy DNS, contact email and retention period confirmed, one real sign-up from a phone, PageSpeed Insights on `https://freight-africa.com` (LCP under 2.5 s), Web Analytics switched on. Then Phase 1.
+**Next task:** launch page revision (D031, D032): Inter font, floating pill header, photo slideshow hero, copy from `docs/planning/launch-page-copy.md`, then acceptance (`BUILD.md` §2A): founder's GoDaddy DNS, contact email and retention period confirmed, one real sign-up from a phone, PageSpeed Insights on `https://freight-africa.com` (LCP under 2.5 s), Web Analytics switched on. Then Phase 1.
 
 ## 4. Things only the founder can do
 

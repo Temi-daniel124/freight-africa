@@ -103,11 +103,18 @@ stays #0C5034 with a #7FC4A2 outline for visibility.
 
 ### 2.1 Typeface
 
-**Figtree** for everything (Google Fonts, served from our own domain with `next/font`, weights 400,
-500, 600, 700 and 800). It is clean, modern and friendly, very readable on small screens, and sits well
-next to the bold rounded wordmark without competing with it. No second typeface: one family keeps the
-app light to download and consistent. Fallback stack: `Figtree, "Segoe UI", Roboto, "Helvetica Neue",
-Arial, sans-serif`.
+**Inter** for everything (D032), self-hosted as `src/app/fonts/InterFA.woff2` through
+`next/font/local`: one 57 KB variable file with optical sizes (`opsz` 14–32) and weights 400–800,
+including the naira sign and the Hausa, Yoruba and Igbo letters. No second typeface. Fallback stack:
+`InterFA, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif`, with
+`adjustFontFallback` so text doesn't jump when the font arrives.
+
+- `font-optical-sizing: auto` everywhere, so large headlines use Inter's display cut automatically.
+- `font-feature-settings: "cv05", "cv08"` on `body` (l with a tail, I with serifs).
+- Weights used: 400, 500, 600, 700. 800 only for the money hero. Never synthesise bold or italic
+  (`font-synthesis: none`).
+- Emails can't load web fonts; they use the fallback stack.
+- Any new character in the interface must exist in the subset (see `src/app/fonts/README.md`).
 
 Numerals use tabular figures (`font-variant-numeric: tabular-nums`) for money, plates, codes, times and
 any column of numbers.
@@ -116,7 +123,7 @@ any column of numbers.
 
 | Token | Size / line height | Weight | Use |
 | --- | --- | --- | --- |
-| `display` | 34 / 40 | 800 | Money hero (amount to pay, payout received) |
+| `display` | 34 / 40 | 700 | Money hero (amount to pay, payout received) |
 | `title-1` | 26 / 32 | 700 | Screen titles |
 | `title-2` | 20 / 26 | 700 | Section and card titles |
 | `body-lg` | 17 / 26 | 500 | Driver screens, important lines |
@@ -124,7 +131,8 @@ any column of numbers.
 | `label` | 13 / 18 | 600 | Field labels, chips, tab labels, table headers |
 | `caption` | 12 / 16 | 500 | Timestamps, helper text |
 
-- Letter spacing: titles −0.01em; labels +0.01em; all caps only for very short labels, +0.06em.
+- Letter spacing: `display` −0.02em; titles −0.012em; body 0; labels and captions +0.005em; all caps
+  only for very short labels, +0.06em.
 - Line length for reading text: 60 to 70 characters.
 - Headings use `text-wrap: balance`.
 - Never below 12 px. Text scales with the phone's text-size setting to at least 200% without breaking.
@@ -133,8 +141,8 @@ any column of numbers.
 
 | Token | Phone | Desktop | Weight |
 | --- | --- | --- | --- |
-| `hero` | 40 / 44 | 64 / 68 | 800, −0.02em |
-| `h2` | 28 / 34 | 40 / 46 | 800, −0.015em |
+| `hero` | 40 / 44 | 64 / 68 | 700, −0.025em |
+| `h2` | 28 / 34 | 40 / 46 | 700, −0.02em |
 | `h3` | 20 / 26 | 24 / 30 | 700 |
 | `lead` | 17 / 26 | 20 / 30 | 400 |
 | `body` | 16 / 26 | 17 / 28 | 400 |
@@ -426,10 +434,25 @@ between sections, scroll-driven storytelling, and one 3D moment. It stays light,
 
 ### 13.2 Header
 
-Based on **Navigation-5** (§17): logo (primary horizontal) left; links **Send goods**, **Own trucks**,
-**Agents**, **Pricing**, **Help**; right: **Sign in** (tertiary) and **Get started** (primary pill).
-Over the hero it's transparent with white text; after 80 px of scroll it becomes frosted white with ink
-text (200 ms). On phones: logo, **Get started**, and a menu icon opening a full-height sheet.
+A **floating pill** (D031), based on **Navigation-5** (§17): logo (primary horizontal) left; links
+**Send goods**, **Own trucks**, **Agents**, **Pricing**, **Help**; right: **Sign in** (tertiary) and
+**Get started** (primary pill). (The launch page shows only its in-page links and **Join the
+waitlist**.)
+
+- **Shape:** fixed, centred, 12 px from the top (plus the safe area), the site's content width
+  (`max-w-site`) with 16 px side insets on phones; height 64 px desktop, 56 px phone; radius 45 px
+  (fully round ends), inner padding 8 px so the button inside sits concentric with the bar.
+- **Surface:** white at 80% with `backdrop-filter: blur(16px) saturate(1.5)` (solid white where blur
+  isn't supported), a 1 px hairline border in `--line` at 70%, and one quiet shadow:
+  `0 1px 2px rgb(8 56 38 / .06), 0 8px 24px -12px rgb(8 56 38 / .18)`. It looks the same over the photo
+  hero and over light sections, so text is always ink on white.
+- **Scroll:** stays visible; after 80 px the shadow grows slightly
+  (`0 12px 32px -12px rgb(8 56 38 / .22)`), 200 ms. No hide-on-scroll.
+- **Phones:** logo, **Join the waitlist** (small pill), and a 44 px round menu button opening the
+  bottom sheet.
+- **Check:** at every width the pill's left and right edges align with the page content below it, the
+  logo and the button are optically centred vertically, and nothing touches the pill's curved ends.
+  If it looks heavy over a photo, reduce the shadow before changing anything else.
 
 ### 13.3 Home page, section by section
 
@@ -443,6 +466,13 @@ text (200 ms). On phones: logo, **Get started**, and a menu icon opening a full-
      The video loads only on desktop or fast connections (`navigator.connection.effectiveType` 4g and
      `saveData` off) and after the first paint; everyone else gets the slideshow. A poster image shows
      instantly in both cases.
+   - **Until our own shoot** the slideshow uses 4 licensed photographs taken in Nigeria (credits in
+     `public/photos/CREDITS.md`, number plates blurred). Image 1 is preloaded (AVIF/WebP, at most
+     250 KB at 1920 px, 120 KB at 828 px for phones); images 2 to 4 load after first paint. The
+     slideshow pauses when the tab is hidden, shows only image 1 with reduced motion, and has a 44 px
+     pause/play button in the hero's bottom-left corner (it moves for more than 5 s, WCAG 2.2.2). A
+     green gradient (`rgba(8,56,38,.78)` at the text side to `.35`) keeps white text at 4.5:1 or more
+     on every image; check each image, not just the first.
    - **Faint Africa outline** watermark at 4% white behind the headline.
    - **Headline** (hero size, white): "Move full truckloads across Nigeria." **Line 2** (lead): "Pay once.
      Your money is held safely until the goods arrive."
@@ -644,7 +674,8 @@ registry. Check each component's licence on watermelon.sh before shipping.
 
 - **Tokens in one place:** a `@theme` block in `app/globals.css` with every colour, radius, shadow, font
   and motion token from this file; components never use raw hex values.
-- **Font:** `next/font/google` for Figtree with `display: swap` and the five weights.
+- **Font:** `next/font/local` for `InterFA.woff2` (D032), variable weight `400 800`, `display: swap`,
+  preloaded, `adjustFontFallback: "Arial"`.
 - **Images:** `next/image` with AVIF/WebP, fixed sizes, `priority` only on the hero image.
 - **Video:** `<video muted playsinline loop preload="none" poster>`; the source is added by script after
   checking the connection and reduced-motion setting.

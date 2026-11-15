@@ -42,7 +42,7 @@ progress.
 
 All visual decisions (colour, type, shape, elevation, icons, imagery, motion, the website's look and
 the component library) live in `DESIGN_SYSTEM.md`, which this file defers to. In short: light theme
-only (with a night look on live driver trip screens), Figtree, Freight Green for every primary action,
+only (with a night look on live driver trip screens), Inter (D032), Freight Green for every primary action,
 45 px pill buttons, 24 px cards, Lucide icons, the road-line motif, calm motion on work screens.
 
 ## 4. Components

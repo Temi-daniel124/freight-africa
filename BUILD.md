@@ -200,7 +200,7 @@ existing Resend records for `mail.freight-africa.com`.
 
 1. Tokens: one `@theme` block in `src/app/globals.css` with every colour, radius, shadow, spacing and
    type token from `DESIGN_SYSTEM.md` §1 to §5 (light theme only; buttons radius 45px).
-2. Figtree through `next/font/google`; Lucide icons.
+2. Inter (`src/app/fonts/InterFA.woff2`) through `next/font/local` (D032); Lucide icons.
 3. Brand: wire `public/brand/web` (favicon, apple touch icon, 192/512 icons, maskable icon, Open Graph
    image) into `src/app/icon.svg`, `apple-icon.png`, `favicon.ico`, `manifest.ts` and the root
    metadata. `src/components/brand/Logo.tsx` renders the SVGs from `public/brand/svg`.
@@ -229,23 +229,24 @@ existing Resend records for `mail.freight-africa.com`.
 Goal: a public page the founder can send out today that looks like a finished product and collects a
 clean waitlist. It starts as soon as Phase 0's design foundation (step 0.13) is accepted.
 
+**Copy:** word for word from `docs/planning/launch-page-copy.md` (D031).
+
 **Pages**
 - `/` Home, following `DESIGN_SYSTEM.md` §13.3 with the pre-launch limits in D030:
-  1. Header (§13.2) with only: logo, in-page links **How it works**, **Routes**, **Pricing**,
-     **Questions**, and the primary pill **Join the waitlist**.
+  1. Header: the floating pill (§13.2) with only: logo, in-page links **How it works**, **Routes**,
+     **Pricing**, **Questions**, and the primary pill **Join the waitlist**.
   2. Hero: headline and lead from §13.3; the white level-2 card is the **waitlist card**: segmented
      switch **I send goods / I own trucks**, phone (WhatsApp) with +234 prefix, **Join the waitlist**.
-     Full details are asked on the next step (`/waitlist`, prefilled). Brand hero background (Freight
-     Green, Africa outline at 4%, road line) unless real, permitted Nigerian photography is available.
+     Full details are asked on the next step (`/waitlist`, prefilled). Background: the photo
+     slideshow (§13.3, D031) with the green gradient, Africa outline and road line.
   3. Proof strip (§13.3 item 2).
   4. How it works: the four-step scroll story with the road line and truck marker; illustrated step
      cards stand in for app screenshots until the app exists.
-  5. Escrow story animation (item 4) with the worked example from `docs/PRODUCT.md` §7.
+  5. "Your money is protected": the escrow animation (item 4) with stages and no naira amounts (D031).
   6. For senders / For truck owners switch (item 5), buttons lead to the waitlist with the role set.
   7. Our routes: the stylised Nigeria map with the four corridors (D013) drawing themselves; cards show
      the corridor and "Coming soon", no prices.
-  8. Pricing: fee steps for senders and commission for owners (D009), with the worked example;
-     NumberFlow on switch.
+  8. Pricing: "Clear pricing. No surprises." with no rates or figures (D031).
   9. Questions: FAQ with FAQPage structured data (booking, payments, trucks and drivers, safety,
      "When do you launch?").
   10. Final band: "Be first on the road." with **Join the waitlist**.

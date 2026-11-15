@@ -33,7 +33,7 @@ not, and the bar a new one has to clear. Rule zero: **no paid tools or services 
 | `@number-flow/react` | Animated numbers (prices, counters) |
 | `react-use-measure` | Measuring for animated layouts (needed by some Watermelon components) |
 | `lucide-react` | **The only icon set** |
-| `next/font` (Figtree) | The only typeface |
+| `next/font/local` with `src/app/fonts/InterFA.woff2` (Inter, OFL) | The only typeface (D032) |
 | `@supabase/supabase-js`, `@supabase/ssr` | Database, auth, storage, realtime |
 | `zod` | Validation at every boundary |
 | `@tanstack/react-query` | Live client data |

@@ -391,14 +391,52 @@ holds Orayn_Main. Paid branching or a separate staging project can come with rev
 It is a slice of Phase 7 brought forward, built to the full `DESIGN_SYSTEM.md` standard, with these
 limits until the platform launches:
 - No live prices, quotes, sign-in or booking. The hero card is a **waitlist card** instead of the quote
-  box. Published fees (D009) may be shown, because they are decided; lane prices may not.
+  box. No fee rates or lane prices are shown (D031).
 - Pages: home (`/`), waitlist (`/waitlist`), privacy notice (`/legal/privacy`), terms of the waitlist
   (`/legal/terms`) and the not-found page. Header links to pages that don't exist yet are left out.
 - Waitlist sign-ups go into `waitlist_signups` (`docs/DATA-MODEL.md`) through server code only, with
   rate limiting and a confirmation email when an email is given. WhatsApp confirmation waits for D021.
 - No 3D model and no background video yet; photography only where it is real and allowed
-  (`DESIGN_SYSTEM.md` §6.2), otherwise the brand hero (Freight Green, Africa outline, road line).
+  (`DESIGN_SYSTEM.md` §6.2). Until our own shoot, the hero uses licensed filler photographs taken in
+  Nigeria (D031).
 - Phase 7 later replaces and extends it into the full website.
 
 **Why.** The founder needs a credible public page to share now; the rest of the platform takes longer.
+
+## D031. The public website explains how it works, never the numbers behind it
+
+**Decision.** Public pages (website, launch page, social posts, emails to prospects) show **no**
+percentages, fee tiers, commission rates, advance shares or worked examples of what Freight Africa
+keeps. They describe the process: one all-in price shown before paying, money held and released in
+stages, the final payment released only after delivery is confirmed, no subscriptions or sign-up fees,
+a service charge on completed trips only, and unspecified "launch offers" for early members. Exact
+prices, charges and payout timing appear in the app before a person confirms, and in the Terms of
+Service, which govern. Wording rules and the approved copy are in
+`docs/planning/launch-page-copy.md`.
+
+The launch-page hero becomes a photo slideshow (`DESIGN_SYSTEM.md` §13.3), using licensed filler
+photographs taken in Nigeria until our own shoot (Phase 7). The header becomes a floating pill
+(`DESIGN_SYSTEM.md` §13.2).
+
+**Why.** Published rates invite argument, anchor negotiations and expose the business model;
+absolute promises ("paid in minutes", "nothing released until delivery") become liabilities and, for
+the advance released at loading, would be untrue. D009's rates are unchanged; only where they are
+shown changes.
+
+## D032. Typeface: Inter, in a Freight Africa subset
+
+**Decision.** Inter (SIL Open Font License) replaces Figtree everywhere, self-hosted as one file,
+`src/app/fonts/InterFA.woff2` (57 KB): optical sizes (`opsz` 14–32), weights 400–800, the naira sign,
+and the letters Hausa, Yoruba and Igbo need. Loaded with `next/font/local`, preloaded, `display: swap`.
+Features `cv05` (l with a tail) and `cv08` (I with serifs) are on everywhere, so plates, codes and names
+like "Ilorin" or "KJA 482 XA" can't be misread; tabular figures for money, plates, codes and times.
+
+**Why.** Tested on 15 Nov 2026 against more than 40 free fonts (Figtree, Plus Jakarta Sans, Manrope, Geist, DM
+Sans, Onest, Instrument Sans, Mona Sans, Google Sans Flex, Public Sans, Work Sans, Bricolage Grotesque
+and others): **Figtree has no naira sign**, so every "₦" on the site was drawn in a different fallback
+font. Only Inter and Noto Sans contain the naira sign *and* every Hausa, Yoruba and Igbo letter needed
+for the later languages (D017). Inter is the closer match to Apple's system type, has true optical
+sizes for large headlines, and keeps one family for the whole product. Its common use elsewhere is
+offset by the tuned optical sizes, tracking and character variants above and by the craft standard in
+`DESIGN_SYSTEM.md` §20.
 
