@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(25);
+select plan(26);
 
 -- Only the server may count codes.
 set local role anon;
@@ -40,7 +40,8 @@ select is(public.auth_code_failed('k-musa-0000000000001'), 1, 'four wrong tries 
 select ok(public.auth_code_open('k-musa-0000000000001'), 'still open with one try left');
 select is(public.auth_code_failed('k-musa-0000000000001'), 0, 'the fifth wrong try leaves none');
 select ok(not public.auth_code_open('k-musa-0000000000001'), 'after 5 wrong tries the code is closed');
-select ok(public.auth_code_sending('k-musa-0000000000001', 'ip-b') and public.auth_code_open('k-musa-0000000000001'), 'a new code opens it again');
+select ok(public.auth_code_sending('k-musa-0000000000001', 'ip-b'), 'a new code can be sent');
+select ok(public.auth_code_open('k-musa-0000000000001'), 'and the new code is open again');
 
 -- A right code clears the count.
 select is(public.auth_code_failed('k-musa-0000000000001'), 4, 'a wrong try on the new code');
