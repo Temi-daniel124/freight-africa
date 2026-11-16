@@ -200,7 +200,7 @@ existing Resend records for `mail.freight-africa.com`.
 
 1. Tokens: one `@theme` block in `src/app/globals.css` with every colour, radius, shadow, spacing and
    type token from `DESIGN_SYSTEM.md` §1 to §5 (light theme only; buttons radius 45px).
-2. Inter (`src/app/fonts/InterFA.woff2`) through `next/font/local` (D032); Lucide icons.
+2. Plus Jakarta Sans (`src/app/fonts/JakartaFA.woff2`) through `next/font/local` (D034); Lucide icons.
 3. Brand: wire `public/brand/web` (favicon, apple touch icon, 192/512 icons, maskable icon, Open Graph
    image) into `src/app/icon.svg`, `apple-icon.png`, `favicon.ico`, `manifest.ts` and the root
    metadata. `src/components/brand/Logo.tsx` renders the SVGs from `public/brand/svg`.

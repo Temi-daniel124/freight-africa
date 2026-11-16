@@ -103,14 +103,12 @@ stays #0C5034 with a #7FC4A2 outline for visibility.
 
 ### 2.1 Typeface
 
-**Inter** for everything (D032), self-hosted as `src/app/fonts/InterFA.woff2` through
-`next/font/local`: one 57 KB variable file with optical sizes (`opsz` 14–32) and weights 400–800,
+**Plus Jakarta Sans** for everything (D034), self-hosted as `src/app/fonts/JakartaFA.woff2` through
+`next/font/local` (`src/app/fonts/brand-font.ts`): one variable file of about 20 KB with weights 400–800,
 including the naira sign and the Hausa, Yoruba and Igbo letters. No second typeface. Fallback stack:
-`InterFA, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif`, with
+`-apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif`, with
 `adjustFontFallback` so text doesn't jump when the font arrives.
 
-- `font-optical-sizing: auto` everywhere, so large headlines use Inter's display cut automatically.
-- `font-feature-settings: "cv05", "cv08"` on `body` (l with a tail, I with serifs).
 - Weights used: 400, 500, 600, 700. 800 only for the money hero. Never synthesise bold or italic
   (`font-synthesis: none`).
 - Emails can't load web fonts; they use the fallback stack.
@@ -675,7 +673,7 @@ registry. Check each component's licence on watermelon.sh before shipping.
 
 - **Tokens in one place:** a `@theme` block in `app/globals.css` with every colour, radius, shadow, font
   and motion token from this file; components never use raw hex values.
-- **Font:** `next/font/local` for `InterFA.woff2` (D032), variable weight `400 800`, `display: swap`,
+- **Font:** `next/font/local` for `JakartaFA.woff2` (D034), variable weight `400 800`, `display: swap`,
   preloaded, `adjustFontFallback: "Arial"`.
 - **Images:** `next/image` with AVIF/WebP, fixed sizes, `priority` only on the hero image.
 - **Video:** `<video muted playsinline loop preload="none" poster>`; the source is added by script after

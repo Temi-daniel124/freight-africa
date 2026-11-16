@@ -423,7 +423,7 @@ absolute promises ("paid in minutes", "nothing released until delivery") become 
 the advance released at loading, would be untrue. D009's rates are unchanged; only where they are
 shown changes.
 
-## D032. Typeface: Inter, in a Freight Africa subset
+## D032. Typeface: Inter, in a Freight Africa subset (replaced by D034)
 
 **Decision.** Inter (SIL Open Font License) replaces Figtree everywhere, self-hosted as one file,
 `src/app/fonts/InterFA.woff2` (57 KB): optical sizes (`opsz` 14–32), weights 400–800, the naira sign,
@@ -467,6 +467,21 @@ redirect list.
 **Why.** Separate hosts give the browser's own cookie and origin rules as a wall between the public
 site, customers and staff; let the app be installed without the marketing pages inside it; and keep
 the public website fast and static.
+
+## D034. Typeface: Plus Jakarta Sans, in a Freight Africa subset (replaces D032)
+
+**Decision.** Plus Jakarta Sans (SIL Open Font License) replaces Inter everywhere, self-hosted as one
+variable file, `src/app/fonts/JakartaFA.woff2` (about 20 KB): weights 400–800, the designer's own naira
+sign, and the letters Hausa, Yoruba and Igbo need. The original lacks ɓ ɗ ƙ Ɓ Ɗ Ƙ ǹ Ǹ; the build script
+(`scripts/fonts/build-jakarta.py`) adds them from the font's own letters at both ends of the weight
+range. Loaded with `next/font/local` from `src/app/fonts/brand-font.ts`, preloaded, `display: swap`;
+everything reads the `--font-brand` variable, so trying another typeface is a change to one line once
+its subset is built. Tabular figures stay on for money, plates, codes and times. Inter's character
+variants (`cv05`, `cv08`) and optical sizes no longer apply.
+
+**Why.** The founder compared six open-licence typefaces on real Freight Africa screens (16 Nov 2026,
+`/dev/fonts`) and chose Plus Jakarta Sans: warmer and more distinctive than Inter, with its own naira
+sign. Manrope stays a possible alternative until the redesign screenshots are reviewed.
 
 ## D035. Bot check on sign-in: built, switched off
 
