@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { safeNext } from "@/features/auth/next-path";
 import { requestHome } from "@/lib/ip-key";
+import { turnstileSiteKey } from "@/lib/turnstile";
 import { signInOptions } from "@/features/auth/options";
 import { SignInForm } from "@/features/auth/sign-in-form";
 import { supabaseServer } from "@/lib/supabase/server";
@@ -37,7 +38,7 @@ async function SignIn({ searchParams }: { searchParams: Params }) {
   const { data } = await (await supabaseServer()).auth.getClaims();
   if (data?.claims) redirect(next);
 
-  return <SignInForm t={messages.auth} options={signInOptions()} next={next} googleFailed={first(params.error) === "google"} />;
+  return <SignInForm t={messages.auth} options={signInOptions()} next={next} googleFailed={first(params.error) === "google"} turnstileSiteKey={turnstileSiteKey()} />;
 }
 
 // A-01 Sign in or sign up.

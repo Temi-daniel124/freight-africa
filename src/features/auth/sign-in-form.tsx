@@ -9,6 +9,7 @@ import { PhoneField } from "@/components/ui/phone-field";
 import { sendCode, signInWithGoogle } from "./actions";
 import type { CodeChannel } from "./schema";
 import type { SendState } from "./state";
+import { useTurnstile } from "./turnstile-field";
 
 export type SignInText = {
   title: string;
@@ -26,7 +27,7 @@ export type SignInText = {
   agree: string;
   termsLink: string;
   privacyLink: string;
-  errors: { email: string; phone: string; rateLimited: string; failed: string; google: string };
+  errors: { email: string; phone: string; rateLimited: string; captcha: string; failed: string; google: string };
 };
 
 type SignInFormProps = {
@@ -34,6 +35,8 @@ type SignInFormProps = {
   options: { google: boolean; whatsapp: boolean };
   next: string;
   googleFailed: boolean;
+  /** Cloudflare Turnstile site key, or null while the bot check is switched off. */
+  turnstileSiteKey: string | null;
 };
 
 // Google's mark keeps Google's own colours (their brand rules), so these four are not design tokens.
@@ -49,15 +52,16 @@ function GoogleMark() {
 }
 
 // A-01: Google (when switched on), then a code on WhatsApp (when switched on) or by email.
-export function SignInForm({ t, options, next, googleFailed }: SignInFormProps) {
+export function SignInForm({ t, options, next, googleFailed, turnstileSiteKey }: SignInFormProps) {
   const [channel, setChannel] = useState<CodeChannel>(options.whatsapp ? "whatsapp" : "email");
   const initial: SendState = { status: "idle", channel, value: "", attempt: 0 };
   const [state, action, pending] = useActionState(sendCode, initial);
+  const turnstile = useTurnstile(turnstileSiteKey, state.attempt);
 
   // Messages from the last attempt only apply to the method that attempt used.
   const current = state.channel === channel ? state : initial;
   const banner =
-    current.status === "rate_limited" ? t.errors.rateLimited : current.status === "error" ? t.errors.failed : googleFailed ? t.errors.google : null;
+    current.status === "rate_limited" ? t.errors.rateLimited : current.status === "captcha" ? t.errors.captcha : current.status === "error" ? t.errors.failed : googleFailed ? t.errors.google : null;
   const [before, between, after] = splitAgree(t.agree);
 
   return (
@@ -94,7 +98,7 @@ export function SignInForm({ t, options, next, googleFailed }: SignInFormProps) 
         </>
       ) : null}
 
-      <form action={action} noValidate className="flex flex-col gap-5">
+      <form action={action} onSubmit={turnstile.onSubmit} noValidate className="flex flex-col gap-5">
         <input type="hidden" name="channel" value={channel} />
         <input type="hidden" name="next" value={next} />
         {channel === "whatsapp" ? (
@@ -124,7 +128,8 @@ export function SignInForm({ t, options, next, googleFailed }: SignInFormProps) 
             required
           />
         )}
-        <Button type="submit" className="w-full" loading={pending} loadingLabel={t.sending}>
+        {turnstile.field}
+        <Button type="submit" className="w-full" loading={pending || turnstile.holding} loadingLabel={t.sending}>
           {channel === "whatsapp" ? t.sendWhatsApp : t.sendEmail}
         </Button>
       </form>

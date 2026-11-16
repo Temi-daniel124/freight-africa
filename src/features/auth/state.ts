@@ -1,7 +1,7 @@
 import type { CodeChannel } from "./schema";
 
 export type SendState = {
-  status: "idle" | "invalid" | "rate_limited" | "error";
+  status: "idle" | "invalid" | "rate_limited" | "captcha" | "error";
   channel: CodeChannel;
   value: string;
   attempt: number;
