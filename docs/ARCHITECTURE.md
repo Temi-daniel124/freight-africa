@@ -146,7 +146,7 @@ freight-africa/
 │  └─ seed.sql             catalogue, corridors, truck types, settings
 ├─ tests/                  Vitest unit tests
 ├─ e2e/                    Playwright end-to-end and screenshot tests
-├─ scripts/                check-git-identity.mjs, check-supabase-target.mjs, configure-auth-smtp.mjs
+├─ scripts/                check-git-identity.mjs, check-supabase-target.mjs, configure-auth-smtp.mjs, configure-auth-settings.mjs
 ├─ .githooks/              pre-commit, commit-msg
 ├─ .github/workflows/      ci.yml, migrate.yml, backup.yml
 ├─ .claude/settings.json   Claude Code: no attribution lines, Docker commands denied
