@@ -9,8 +9,6 @@ export type SendState = {
 
 export type VerifyState = {
   status: "idle" | "wrong" | "locked" | "error" | "ok";
-  /** Where to go once the code is right. */
-  next?: string;
   attempt: number;
 };
 

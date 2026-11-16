@@ -116,7 +116,8 @@ export async function verifyCode(previous: VerifyState, formData: FormData): Pro
 
   if (error) {
     // Supabase answers 4xx for a wrong or expired code; anything else is our problem, not a wrong try.
-    if (!error.status || error.status >= 500) {
+    // 429 is Supabase's own rate limit, which says nothing about this code.
+    if (!error.status || error.status >= 500 || error.status === 429) {
       console.error("verifyOtp failed", error.code ?? error.status);
       return { status: "error", attempt };
     }
@@ -125,9 +126,9 @@ export async function verifyCode(previous: VerifyState, formData: FormData): Pro
   }
 
   await admin.rpc("auth_code_passed", { p_key: key });
-  // The screen shows the boxes turning green, then goes to `next`. The "code on its way" cookie is left to
-  // expire (15 minutes): clearing it here would re-render this page into a redirect before that can show.
-  return { status: "ok", next: pending.next, attempt };
+  // The screen shows the boxes turning green, then opens /auth/done, which clears the "code on its way"
+  // cookie and goes to `next`. Clearing it here would re-render this page into a redirect too early.
+  return { status: "ok", attempt };
 }
 
 export async function signInWithGoogle(formData: FormData) {
