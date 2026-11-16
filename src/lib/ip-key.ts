@@ -2,6 +2,7 @@ import "server-only";
 import { createHmac } from "node:crypto";
 import { headers } from "next/headers";
 import { serverEnv } from "@/lib/env.server";
+import { homePath } from "@/lib/hosts";
 
 /**
  * A keyed hash of the caller's internet address, for rate limits only. The address itself is never
@@ -19,4 +20,10 @@ export async function requestOrigin(): Promise<string> {
   const host = requestHeaders.get("x-forwarded-host") || requestHeaders.get("host") || "freight-africa.com";
   const local = host.startsWith("localhost") || host.startsWith("127.0.0.1");
   return `${requestHeaders.get("x-forwarded-proto") || (local ? "http" : "https")}://${host}`;
+}
+
+/** Where a signed-in person lands on the host this request came in on (D033). */
+export async function requestHome(): Promise<string> {
+  const requestHeaders = await headers();
+  return homePath(requestHeaders.get("host") || requestHeaders.get("x-forwarded-host") || "");
 }

@@ -1,11 +1,12 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { safeNext } from "@/features/auth/next-path";
+import { requestHome } from "@/lib/ip-key";
 import { supabaseServer } from "@/lib/supabase/server";
 
 // Google sends the person back here with a one-time code; exchanging it signs them in (A-01).
 export async function GET(request: NextRequest) {
   const code = request.nextUrl.searchParams.get("code");
-  const next = safeNext(request.nextUrl.searchParams.get("next"));
+  const next = safeNext(request.nextUrl.searchParams.get("next"), await requestHome());
 
   if (code) {
     const supabase = await supabaseServer();

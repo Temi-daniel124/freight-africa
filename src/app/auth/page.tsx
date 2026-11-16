@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { safeNext } from "@/features/auth/next-path";
+import { requestHome } from "@/lib/ip-key";
 import { signInOptions } from "@/features/auth/options";
 import { SignInForm } from "@/features/auth/sign-in-form";
 import { supabaseServer } from "@/lib/supabase/server";
@@ -30,7 +31,7 @@ function FormSkeleton() {
 
 async function SignIn({ searchParams }: { searchParams: Params }) {
   const params = await searchParams;
-  const next = safeNext(first(params.next));
+  const next = safeNext(first(params.next), await requestHome());
 
   // Someone already signed in goes straight to where they were heading.
   const { data } = await (await supabaseServer()).auth.getClaims();

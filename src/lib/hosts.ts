@@ -12,8 +12,17 @@ export type HostRoute = { kind: "pass" } | { kind: "redirect"; to: string } | { 
 
 const under = (pathname: string, prefix: string) => pathname === prefix || pathname.startsWith(`${prefix}/`);
 // Files every host serves itself: Next's own assets, API routes, and anything with a file extension
-// (fonts, images, icons, the web app manifest).
+// (fonts, images, icons, the web app manifest). Checked only after the signed-in areas, so a page such
+// as /admin/trips/abc.1 is never mistaken for a file.
 const shared = (pathname: string) => under(pathname, "/_next") || under(pathname, "/api") || /\.[a-z0-9]+$/i.test(pathname);
+
+/** The host name alone: lower case, no port, no trailing dot. */
+const hostName = (host: string) => host.toLowerCase().replace(/:\d+$/, "").replace(/\.$/, "");
+
+/** Where a signed-in person lands on this host: the staff console on the admin host, the app elsewhere. */
+export function homePath(host: string) {
+  return hostName(host) === ADMIN_HOST ? "/admin" : "/app";
+}
 
 /**
  * Where a request belongs. Only the three production hosts are sorted; preview deployments and
@@ -21,7 +30,7 @@ const shared = (pathname: string) => under(pathname, "/_next") || under(pathname
  * `rest` is the path plus query string, kept on redirects.
  */
 export function hostRoute(host: string, pathname: string, rest: string = pathname): HostRoute {
-  const name = host.toLowerCase().replace(/:\d+$/, "");
+  const name = hostName(host);
   const pass: HostRoute = { kind: "pass" };
   const to = (origin: string, path = rest): HostRoute => ({ kind: "redirect", to: `${origin}${path}` });
 
@@ -36,11 +45,11 @@ export function hostRoute(host: string, pathname: string, rest: string = pathnam
     // Signed-in hosts are never indexed.
     if (pathname === "/robots.txt") return { kind: "robots" };
     if (pathname === "/sitemap.xml") return to(SITE_ORIGIN);
-    if (shared(pathname)) return pass;
     // Each host has its own sign-in, because cookies stay on the host that set them.
     if (under(pathname, "/auth")) return pass;
     if (under(pathname, "/admin")) return admin ? pass : to(ADMIN_ORIGIN);
     if (under(pathname, "/app")) return admin ? to(APP_ORIGIN) : pass;
+    if (shared(pathname)) return pass;
     if (pathname === "/") return to(admin ? ADMIN_ORIGIN : APP_ORIGIN, admin ? "/admin" : "/app");
     // Everything else (launch page, waitlist, legal pages) belongs to the public website.
     return to(SITE_ORIGIN);
