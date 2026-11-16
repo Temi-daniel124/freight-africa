@@ -26,9 +26,9 @@ select ok(public.auth_code_sending('k-ngozi-000000000001', 'ip-a') and public.au
 select ok(not public.auth_code_sending('k-ngozi-000000000001', 'ip-a'), 'the sixth code in the hour is refused');
 select ok(public.auth_code_sending('k-musa-0000000000001', 'ip-a'), 'another person is not affected');
 
--- One internet address: 20 codes an hour, whoever they are for (7 used above).
-select ok((select bool_and(public.auth_code_sending('k-many-' || lpad(n::text, 12, '0'), 'ip-a')) from generate_series(1, 13) n), 'codes 8 to 20 from one address');
-select ok(not public.auth_code_sending('k-extra-000000000001', 'ip-a'), 'the 21st code from one address is refused');
+-- One internet address: 60 codes an hour, whoever they are for (7 used above).
+select ok((select bool_and(public.auth_code_sending('k-many-' || lpad(n::text, 12, '0'), 'ip-a')) from generate_series(1, 53) n), 'codes 8 to 60 from one address');
+select ok(not public.auth_code_sending('k-extra-000000000001', 'ip-a'), 'the 61st code from one address is refused');
 select ok(public.auth_code_sending('k-extra-000000000001', 'ip-b'), 'the same person from another address is fine');
 
 -- Wrong tries: 5 per code.
