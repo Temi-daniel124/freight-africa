@@ -13,7 +13,8 @@
     "signInTitle": "Sign in",
     "signInDescription": "Sign in to Freight Africa or create your account with a code. No password needed.",
     "codeTitle": "Enter your code",
-    "accountTitle": "Your account"
+    "accountTitle": "Your account",
+    "staffTitle": "Staff console"
   },
   "site": {
     "contactEmail": "hello@freight-africa.com",
@@ -574,12 +575,18 @@
     "email": {
       "subject": "{code} is your Freight Africa code",
       "intro": "Here is your code to sign in to Freight Africa:",
-      "note": "It stops working after a short while, so use it now. If you didn't ask for a code, you can ignore this email.",
+      "note": "It works for 10 minutes, so use it now. If you didn't ask for a code, you can ignore this email.",
       "signoff": "Freight Africa"
     },
     "account": {
       "title": "You're signed in",
       "text": "Your account is ready. Choosing what you're joining as comes next.",
+      "signedInAs": "Signed in as {who}",
+      "signOut": "Sign out"
+    },
+    "staff": {
+      "title": "Staff console",
+      "text": "This area is for Freight Africa staff. The console opens here once staff accounts are set up.",
       "signedInAs": "Signed in as {who}",
       "signOut": "Sign out"
     }

@@ -467,3 +467,17 @@ redirect list.
 **Why.** Separate hosts give the browser's own cookie and origin rules as a wall between the public
 site, customers and staff; let the app be installed without the marketing pages inside it; and keep
 the public website fast and static.
+
+## D035. Bot check on sign-in: built, switched off
+
+**Decision.** The Cloudflare Turnstile check on "Send code" (`src/lib/turnstile.ts`,
+`src/features/auth/turnstile-field.tsx`) stays in the code but is not switched on: no Cloudflare
+account, no keys, and Supabase Auth's CAPTCHA setting stays off. It is switched on only if real bot
+abuse appears (many codes requested for addresses that never sign in). Until then the database limits
+do the work: 5 codes an hour per person, 60 an hour per internet address, 5 tries per code, and codes
+that last 10 minutes. Switching on later means setting `NEXT_PUBLIC_TURNSTILE_SITE_KEY` and
+`TURNSTILE_SECRET_KEY`, turning on Supabase Auth's CAPTCHA with the same secret, and first fixing the
+two WhatsApp items in `docs/PROJECT-STATE.md` §3.
+
+**Why.** There is no abuse yet, and every extra account and third-party script is something to
+maintain and something that can fail for a real visitor on a poor connection.

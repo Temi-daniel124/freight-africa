@@ -20,7 +20,7 @@ function FormSkeleton() {
 }
 
 async function EnterCode() {
-  // Without a code on its way there is nothing to enter (the page was opened directly, or 15 minutes passed).
+  // Without a code on its way there is nothing to enter (the page was opened directly, or 10 minutes passed).
   const pending = await readPendingCode();
   if (!pending) redirect("/auth");
 
