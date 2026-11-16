@@ -86,7 +86,8 @@ export function useTurnstile(siteKey: string | null, resetKey: number) {
       })
       .catch(fail);
     const giveUp = window.setInterval(() => {
-      if (held.current && Date.now() - heldAt.current > GIVE_UP_MS) release();
+      // Once the widget is on the page the person may be ticking its box, so only give up before that.
+      if (held.current && !widget.current && Date.now() - heldAt.current > GIVE_UP_MS) release();
     }, 500);
     return () => {
       gone = true;
