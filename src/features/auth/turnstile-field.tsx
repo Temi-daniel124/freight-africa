@@ -48,12 +48,18 @@ export function useTurnstile(siteKey: string | null, resetKey: number) {
   const held = useRef(false);
   const released = useRef(false);
   const heldAt = useRef(0);
+  // Cloudflare could not be loaded at all: nothing to wait for, so the server answers straight away.
+  const failed = useRef(false);
   const [holding, setHolding] = useState(false);
 
   useEffect(() => {
     if (!siteKey || !box.current) return;
     let gone = false;
     const element = box.current;
+    const fail = () => {
+      failed.current = true;
+      release();
+    };
     const release = () => {
       if (!held.current) return;
       held.current = false;
@@ -78,7 +84,7 @@ export function useTurnstile(siteKey: string | null, resetKey: number) {
           "error-callback": release,
         });
       })
-      .catch(release);
+      .catch(fail);
     const giveUp = window.setInterval(() => {
       if (held.current && Date.now() - heldAt.current > GIVE_UP_MS) release();
     }, 500);
@@ -98,7 +104,7 @@ export function useTurnstile(siteKey: string | null, resetKey: number) {
   }, [resetKey]);
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
-    if (!siteKey || input.current?.value || released.current) {
+    if (!siteKey || input.current?.value || released.current || failed.current) {
       released.current = false;
       setHolding(false);
       return;
