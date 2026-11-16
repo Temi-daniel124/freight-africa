@@ -550,6 +550,7 @@
       "email": "Enter a valid email address, like ngozi@example.com",
       "phone": "Enter a Nigerian mobile number, like 0803 123 4567",
       "rateLimited": "You've asked for too many codes. Try again in an hour.",
+      "captcha": "We couldn't confirm this request came from a person. Refresh the page and try again.",
       "failed": "We couldn't send the code. Check your connection and try again.",
       "google": "Google sign-in didn't finish. Try again, or use a code."
     },

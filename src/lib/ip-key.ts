@@ -9,9 +9,14 @@ import { homePath } from "@/lib/hosts";
  * stored (privacy notice: "we keep a scrambled version of your internet address for one day").
  */
 export async function ipKey(): Promise<string> {
-  const requestHeaders = await headers();
-  const ip = requestHeaders.get("x-forwarded-for")?.split(",")[0]?.trim() || requestHeaders.get("x-real-ip") || "unknown";
+  const ip = (await requestIp()) ?? "unknown";
   return createHmac("sha256", serverEnv().CODE_HMAC_SECRET).update(`rate-limit:${ip}`).digest("hex");
+}
+
+/** The caller's internet address, for a check made during this request only. Never stored or logged. */
+export async function requestIp(): Promise<string | null> {
+  const requestHeaders = await headers();
+  return requestHeaders.get("x-forwarded-for")?.split(",")[0]?.trim() || requestHeaders.get("x-real-ip") || null;
 }
 
 /** The address this request came in on (https://freight-africa.com, a preview URL, or localhost). */

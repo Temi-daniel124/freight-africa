@@ -6,18 +6,21 @@ import { publicEnv } from "@/lib/env";
  * Scripts still allow inline code because Next's partly pre-rendered pages can't carry a per-request
  * nonce; moving to nonces is tracked in docs/PROJECT-STATE.md.
  */
+// The bot check on "Send code" loads its script and its frame from Cloudflare.
+const TURNSTILE = "https://challenges.cloudflare.com";
+
 export function signedInCsp(): string {
   const supabase = new URL(publicEnv().NEXT_PUBLIC_SUPABASE_URL);
   const dev = process.env.NODE_ENV !== "production";
   return [
     "default-src 'self'",
-    `script-src 'self' 'unsafe-inline'${dev ? " 'unsafe-eval'" : ""}`,
+    `script-src 'self' 'unsafe-inline' ${TURNSTILE}${dev ? " 'unsafe-eval'" : ""}`,
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob:",
     "font-src 'self'",
     `connect-src 'self' ${supabase.origin} wss://${supabase.host}${dev ? " ws:" : ""}`,
     "worker-src 'self' blob:",
-    "frame-src 'none'",
+    `frame-src ${TURNSTILE}`,
     "frame-ancestors 'none'",
     "object-src 'none'",
     "base-uri 'self'",

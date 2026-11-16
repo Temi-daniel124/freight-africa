@@ -2,9 +2,10 @@
 
 import { redirect } from "next/navigation";
 import { resendEmailSender } from "@/lib/email/sender";
-import { ipKey, requestHome, requestOrigin } from "@/lib/ip-key";
+import { ipKey, requestHome, requestIp, requestOrigin } from "@/lib/ip-key";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { supabaseServer } from "@/lib/supabase/server";
+import { passesTurnstile, turnstileSiteKey } from "@/lib/turnstile";
 import { signInCodeEmail } from "./code-email";
 import { safeNext } from "./next-path";
 import { signInOptions } from "./options";
@@ -23,7 +24,7 @@ const WHATSAPP_CODE_LENGTH = 6;
 type Issued = { ok: true; length: number } | { ok: false; reason: "rate_limited" | "error" };
 
 /** Counts the request, then issues a code and delivers it. No personal data is logged (AGENT.md 6). */
-async function issueCode(channel: CodeChannel, to: string): Promise<Issued> {
+async function issueCode(channel: CodeChannel, to: string, captchaToken?: string): Promise<Issued> {
   // The secret-key client is needed here: the counting functions are service_role only, and
   // auth.admin.generateLink creates the code without Supabase sending its own email.
   const admin = supabaseAdmin();
@@ -39,7 +40,7 @@ async function issueCode(channel: CodeChannel, to: string): Promise<Issued> {
 
   if (channel === "whatsapp") {
     // Supabase creates the code and calls /api/auth/sms-hook, which delivers it on WhatsApp.
-    const { error } = await (await supabaseServer()).auth.signInWithOtp({ phone: to });
+    const { error } = await (await supabaseServer()).auth.signInWithOtp({ phone: to, options: { captchaToken } });
     if (error) {
       console.error("whatsapp code failed", error.code ?? error.status);
       return { ok: false, reason: "error" };
@@ -73,7 +74,14 @@ export async function sendCode(previous: SendState, formData: FormData): Promise
   const to = requested === channel ? parseDestination(channel, value) : null;
   if (!to) return { status: "invalid", channel: requested, value, attempt };
 
-  const issued = await issueCode(channel, to);
+  // Bot check (Cloudflare Turnstile), when switched on. A token works once: for email we check it here,
+  // because our code is made through the admin API; for WhatsApp, Supabase Auth checks it itself.
+  const captcha = text(formData, "captcha");
+  if (channel === "email" ? !(await passesTurnstile(captcha, await requestIp())) : turnstileSiteKey() !== null && !captcha) {
+    return { status: "captcha", channel, value, attempt };
+  }
+
+  const issued = await issueCode(channel, to, captcha || undefined);
   if (!issued.ok) return { status: issued.reason, channel, value, attempt };
 
   await setPendingCode({ channel, to, next: safeNext(text(formData, "next"), await requestHome()), length: issued.length });
