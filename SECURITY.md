@@ -46,13 +46,15 @@ Rules:
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Vercel, `.env.local` | Yes | Browser client (RLS applies) |
 | `SUPABASE_SECRET_KEY` | Vercel, `.env.local` | **No** | Server-only admin client; bypasses RLS |
 | `NEXT_PUBLIC_SITE_URL` | Vercel, `.env.local` | Yes | Absolute links |
+| `AUTH_GOOGLE`, `AUTH_WHATSAPP` | Vercel | No (not secret) | `on` switches that sign-in method on; unset means off |
+| `SEND_SMS_HOOK_SECRET` | Vercel, Supabase Auth hook | No | Signs Supabase's "Send SMS" hook calls to `/api/auth/sms-hook` (WhatsApp codes) |
 | `JOBS_SECRET` | Vercel, Supabase Vault | No | Authenticates `pg_net` calls to `/api/jobs/dispatch` |
 | `CODE_HMAC_SECRET` | Vercel | No | Loading and delivery codes |
 | `TRACK_TOKEN_SECRET` | Vercel | No | Receiver and pickup tracking links |
 | `BACHS_API_KEY`, `BACHS_WEBHOOK_SECRET`, `BACHS_BASE_URL` | Vercel | No | Payments |
 | `DIDIT_API_KEY`, `DIDIT_WEBHOOK_SECRET`, `DIDIT_WORKFLOW_OWNER`, `DIDIT_WORKFLOW_DRIVER` | Vercel | No | Identity checks |
 | `SMILE_ID_PARTNER_ID`, `SMILE_ID_API_KEY` | Vercel | No | Fallback identity checks |
-| `WHATSAPP_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_APP_SECRET`, `WHATSAPP_VERIFY_TOKEN` | Vercel | No | WhatsApp Cloud API |
+| `WHATSAPP_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_APP_SECRET`, `WHATSAPP_VERIFY_TOKEN`, `WHATSAPP_AUTH_TEMPLATE` | Vercel | No | WhatsApp Cloud API |
 | `RESEND_API_KEY`, `EMAIL_FROM` | Vercel | No | App emails (`app-email` key) |
 | `SMS_PROVIDER_API_KEY`, `SMS_SENDER_ID` | Vercel | No | SMS backup (optional) |
 | `NEXT_PUBLIC_VAPID_PUBLIC_KEY` / `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT` | Vercel | Public / **No** | Web Push |

@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 const variants = {
   "primary-green": { src: "/brand/svg/primary-green.svg", width: 1535, height: 620 },
   "primary-white": { src: "/brand/svg/primary-white.svg", width: 1535, height: 620 },
+  "stacked-green": { src: "/brand/svg/secondary-stacked-green.svg", width: 927, height: 1022 },
   "icon-green": { src: "/brand/svg/icon-green.svg", width: 572, height: 620 },
   "icon-white": { src: "/brand/svg/icon-white.svg", width: 572, height: 620 },
 } as const;
