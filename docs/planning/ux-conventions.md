@@ -19,7 +19,7 @@ Each screen has:
 
 ## 2. App shells and navigation
 
-One PWA. After sign-in, `/app` redirects to the shell for the person's active role (the last used,
+One PWA, on `app.freight-africa.com`; the staff console is on `admin.freight-africa.com` (D033). After sign-in, `/app` redirects to the shell for the person's active role (the last used,
 stored in `profiles.last_active_org_id`).
 
 | Shell | Base route | Bottom tabs on phone (side nav on desktop) |

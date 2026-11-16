@@ -34,7 +34,7 @@ organisation is never touched (D026).
 | Public website (`/`, `/routes/*`, `/help/*`…) | Vercel, server-rendered and static | Marketing, SEO, quotes, waitlist |
 | PWA app shells (`/app/ship`, `/app/haul`, `/app/drive`, `/app/agent`) | Vercel; installed on phones and desktops | Every user-facing screen in `docs/planning/` |
 | Receiver tracking (`/track/[token]`) | Vercel | Token-gated page with minimal data (`SYSTEM-LOGIC.md` §5.4) |
-| Admin console (`/admin`) | Vercel | Staff screens (`ux-admin.md`) |
+| Admin console (`/admin`, on `admin.freight-africa.com`, D033) | Vercel | Staff screens (`ux-admin.md`) |
 | Route handlers (`/api/*`) | Vercel serverless functions (Node runtime) | Webhooks (Bachs, Didit, WhatsApp, Traccar), the job dispatcher, uploads signing, push subscription |
 | Postgres + RLS + functions | Supabase | Data, ledger, state machines, access rules |
 | `pg_cron` jobs | Supabase | Pure-SQL jobs run in the database (tracking states, expiries, auto-release, tiers) |

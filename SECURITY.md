@@ -142,7 +142,8 @@ For Bachs, Didit, WhatsApp and Traccar:
 
 ## 9. Web security headers
 
-Set in `next.config.ts` (and nonce-based CSP in middleware):
+Set in `src/proxy.ts` for the signed-in areas (`src/lib/security-headers.ts`). Until per-request nonces are
+added, scripts allow `'self'` and inline code; every other rule below is enforced. Target:
 - `Content-Security-Policy`: `default-src 'self'`; scripts `'self'` with a nonce; `connect-src 'self'`
   `https://czlowhaycaivpgimcefk.supabase.co` `wss://czlowhaycaivpgimcefk.supabase.co`, Sentry, the
   route service and map tiles; `img-src 'self' data: blob:` plus Supabase storage and map tiles;

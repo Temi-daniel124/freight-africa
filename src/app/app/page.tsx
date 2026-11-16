@@ -9,7 +9,7 @@ import { formatNigerianPhone } from "@/lib/phone";
 import { supabaseServer } from "@/lib/supabase/server";
 import messages from "@/messages/en.json";
 
-export const metadata: Metadata = { title: messages.meta.accountTitle, robots: { index: false, follow: false } };
+export const metadata: Metadata = { title: messages.meta.accountTitle, robots: { index: false, follow: false }, manifest: "/app.webmanifest" };
 
 const t = messages.auth.account;
 

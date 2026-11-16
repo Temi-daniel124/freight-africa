@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import type { ReactNode } from "react";
 import { Logo } from "@/components/brand/Logo";
+import { siteHref } from "@/lib/hosts";
 import messages from "@/messages/en.json";
 
 // Sign-in pages are for people, not search engines.
-export const metadata: Metadata = { robots: { index: false, follow: false } };
+export const metadata: Metadata = { robots: { index: false, follow: false }, manifest: "/app.webmanifest" };
 
 // DESIGN_SYSTEM.md section 14.3. Phone: paper background, the stacked logo, one white card.
 // Desktop: a photograph with the green gradient and one line on the left, the same card on the right.
@@ -19,17 +19,17 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
         </picture>
         <div aria-hidden className="hero-scrim absolute inset-0" />
         <div className="relative flex h-full flex-col justify-between p-12">
-          <Link href="/" aria-label={messages.site.homeLabel} className="self-start rounded-button">
+          <a href={siteHref()} aria-label={messages.site.homeLabel} className="self-start rounded-button">
             <Logo variant="primary-white" alt="" className="h-10" priority />
-          </Link>
+          </a>
           <p className="type-h2 max-w-md text-white">{messages.auth.photoLine}</p>
         </div>
       </aside>
 
       <main className="flex min-h-dvh flex-col items-center gap-8 px-4 py-8 lg:justify-center lg:py-12">
-        <Link href="/" aria-label={messages.site.homeLabel} className="rounded-card lg:hidden">
+        <a href={siteHref()} aria-label={messages.site.homeLabel} className="rounded-card lg:hidden">
           <Logo variant="stacked-green" alt="" className="h-24" priority />
-        </Link>
+        </a>
         <div className="w-full max-w-md rounded-card bg-surface p-5 shadow-raised lg:p-8">{children}</div>
       </main>
     </div>
