@@ -47,6 +47,7 @@ Rules:
 | `SUPABASE_SECRET_KEY` | Vercel, `.env.local` | **No** | Server-only admin client; bypasses RLS |
 | `NEXT_PUBLIC_SITE_URL` | Vercel, `.env.local` | Yes | Absolute links |
 | `AUTH_GOOGLE`, `AUTH_WHATSAPP` | Vercel | No (not secret) | `on` switches that sign-in method on; unset means off |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY` | Vercel (the secret key also in Supabase Auth → Bot and Abuse Protection) | Site key no; secret key yes | Cloudflare Turnstile bot check on "Send code"; off until both are set |
 | `SEND_SMS_HOOK_SECRET` | Vercel, Supabase Auth hook | No | Signs Supabase's "Send SMS" hook calls to `/api/auth/sms-hook` (WhatsApp codes) |
 | `JOBS_SECRET` | Vercel, Supabase Vault | No | Authenticates `pg_net` calls to `/api/jobs/dispatch` |
 | `CODE_HMAC_SECRET` | Vercel | No | Loading and delivery codes |
