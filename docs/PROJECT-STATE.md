@@ -40,7 +40,7 @@ The phases are defined in `BUILD.md` §3. Update this table as work progresses.
 
 ## 3. Current task
 
-**Next task:** Phase 1 slice 3, profiles and onboarding entry (A-03 "What brings you here?", consents), replacing the temporary `/app` page that sign-in lands on. Open items from slice 2: sign-in codes follow the project's email code length (8 today; the founder sets it to 6, section 4); the limits of 5 codes an hour and 5 tries a code move to the settings table in the settings slice; SMS fallback for WhatsApp codes comes with Phase 4 notifications; the sign-in footer links to the launch-time Terms and Privacy notice until the full legal pages exist (Phase 7).
+**Next task:** Phase 1 slice 3, profiles and onboarding entry (A-03 "What brings you here?", consents), replacing the temporary `/app` page that sign-in lands on. Open items from slice 2: sign-in codes follow the project's email code length (8 today; the founder sets it to 6, section 4); the limits of 5 codes an hour and 5 tries a code move to the settings table in the settings slice; drop the unused `auth_code_open` and `auth_code_failed` functions; remember webhook ids in the Send SMS hook before WhatsApp codes are switched on; Supabase's own sign-in endpoints sit outside our counters, so tighten its code expiry and rate limits when the founder supplies the access token; SMS fallback for WhatsApp codes comes with Phase 4 notifications; the sign-in footer links to the launch-time Terms and Privacy notice until the full legal pages exist (Phase 7).
 
 ## 4. Things only the founder can do
 
@@ -80,6 +80,7 @@ for these at the moment they're needed, with exact steps.
 
 Add one line per session, newest first: date · what was done · what's next.
 
+- 16 Nov 2026 · Sign-in review fixes (independent review and commit security check): return paths checked after normalising, signed code cookie, lockout recovery, /auth/done, tries counted atomically (auth_code_try), 60 codes an hour per internet address. Left open: auth_code_open and auth_code_failed are unused and to be dropped; the Send SMS hook does not remember message ids (replay within 5 minutes, hook is off) · Slice 3.
 - 16 Nov 2026 · Phase 1 slice 2 sign-in: /auth and /auth/code (A-01, A-02) with email codes sent through Resend, 5 codes an hour and 5 tries a code counted in the database, Google and WhatsApp built behind AUTH_GOOGLE / AUTH_WHATSAPP (off), safe return paths, temporary /app landing; tested end to end with a Resend test inbox, screenshots at 5 widths · Slice 3, profiles and onboarding entry.
 - 15 Nov 2026 · Phase 1 slice 1 groundwork: generated types, src/lib/env.ts, typed browser/server/admin clients, session refresh in src/proxy.ts for /app, /admin and /auth only; share links and QR (docs/launch) with the source kept across pages · Slice 2, sign-in.
 - 15 Nov 2026 · Launch page accepted on freight-africa.com: domains valid with HTTPS, www → apex 308, hello@ forwarding works, test sign-up and email verified then deleted, sitemap/robots/canonicals on https://freight-africa.com, og:url no longer points subpages at home, How it works steps no longer faded below 4.5:1, PageSpeed mobile 98 / desktop 100, Web Analytics on · Phase 1.

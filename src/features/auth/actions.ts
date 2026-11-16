@@ -101,12 +101,14 @@ export async function verifyCode(previous: VerifyState, formData: FormData): Pro
 
   const admin = supabaseAdmin();
   const key = codeKey(pending.channel, pending.to);
-  const { data: open, error: openError } = await admin.rpc("auth_code_open", { p_key: key });
-  if (openError) {
-    console.error("auth_code_open failed", openError.code);
+  // The try is counted before the code is checked, in one database statement, so guesses sent at the
+  // same moment can't all slip past the limit of five.
+  const { data: left, error: tryError } = await admin.rpc("auth_code_try", { p_key: key });
+  if (tryError || typeof left !== "number") {
+    console.error("auth_code_try failed", tryError?.code ?? "no count");
     return { status: "error", attempt };
   }
-  if (!open) return { status: "locked", attempt };
+  if (left < 0) return { status: "locked", attempt };
 
   const supabase = await supabaseServer();
   const { error } =
@@ -119,9 +121,10 @@ export async function verifyCode(previous: VerifyState, formData: FormData): Pro
     // 429 is Supabase's own rate limit, which says nothing about this code.
     if (!error.status || error.status >= 500 || error.status === 429) {
       console.error("verifyOtp failed", error.code ?? error.status);
+      // The code was never checked, so the try is given back.
+      await admin.rpc("auth_code_refund", { p_key: key });
       return { status: "error", attempt };
     }
-    const { data: left } = await admin.rpc("auth_code_failed", { p_key: key });
     return { status: left === 0 ? "locked" : "wrong", attempt };
   }
 
