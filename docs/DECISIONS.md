@@ -440,3 +440,30 @@ sizes for large headlines, and keeps one family for the whole product. Its commo
 offset by the tuned optical sizes, tracking and character variants above and by the craft standard in
 `DESIGN_SYSTEM.md` §20.
 
+
+## D033. Three hosts: website, app and staff console
+
+**Decision.** One deployment serves three hosts:
+
+| Host | Serves |
+| --- | --- |
+| `freight-africa.com` (and `www`, which redirects to it) | The public website: launch page, waitlist, legal pages |
+| `app.freight-africa.com` | The signed-in app (`/app/...`) and its sign-in (`/auth`) |
+| `admin.freight-africa.com` | The staff console (`/admin/...`) and its own sign-in (`/auth`) |
+
+Paths keep their names on every host (`app.freight-africa.com/app/ship`,
+`admin.freight-africa.com/admin`), so screen specs, preview deployments and localhost are unchanged.
+The root of each signed-in host opens its home (`/app`, `/admin`). A path on the wrong host is
+redirected to the right one with a permanent redirect, including the old `/auth` and `/app` paths on
+`freight-africa.com`. Routing lives in `src/lib/hosts.ts` and `src/proxy.ts`.
+
+Cookies carry no `Domain` attribute, so each host keeps its own: a session on the app is not a session
+on the staff console, and the website never receives either. Staff therefore sign in on the admin host.
+Both signed-in hosts answer `robots.txt` with `Disallow: /` and send `X-Robots-Tag: noindex`. The
+installable app's manifest (`/app.webmanifest`) starts at `/app` with scope `/` on the app host.
+Supabase Auth's Site URL is `https://app.freight-africa.com`, with both hosts' `/auth/callback` on the
+redirect list.
+
+**Why.** Separate hosts give the browser's own cookie and origin rules as a wall between the public
+site, customers and staff; let the app be installed without the marketing pages inside it; and keep
+the public website fast and static.
