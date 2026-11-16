@@ -56,7 +56,7 @@ it only where they state a visual rule explicitly.
 7. **Only the Freight Africa Supabase project** (`czlowhaycaivpgimcefk`). The **Orayn_Main** project in
    the same organisation is never read, changed, paused, linked, listed for action or queried (D026).
 8. **English only**, all text in `src/messages/en.json` (D017). Plain words, no trade jargon.
-9. **Light theme only**, Inter (D032), Lucide icons, 45px-radius buttons, tokens only (D022, D023).
+9. **Light theme only**, Plus Jakarta Sans (D034), Lucide icons, 45px-radius buttons, tokens only (D022, D023).
 10. **No paid tools** until revenue (`TOOLING-POLICY.md`).
 
 ## 4. Decision boundaries

@@ -4,7 +4,7 @@ import { brotliDecompressSync } from "node:zlib";
 import { describe, expect, it } from "vitest";
 import messages from "@/messages/en.json";
 
-// DESIGN_SYSTEM.md 2.1: every character in the interface must exist in InterFA.woff2, or it is drawn in a
+// DESIGN_SYSTEM.md 2.1: every character in the interface must exist in JakartaFA.woff2, or it is drawn in a
 // fallback font. This reads the font's character map straight from the WOFF2 file.
 
 // The WOFF2 known-table list, in spec order (index = the low 6 bits of a directory entry's flags).
@@ -83,11 +83,11 @@ function strings(value: unknown): string[] {
   return [];
 }
 
-describe("InterFA.woff2", () => {
-  const font = codePoints(join(__dirname, "InterFA.woff2"));
+describe("JakartaFA.woff2", () => {
+  const font = codePoints(join(__dirname, "JakartaFA.woff2"));
 
   it("has the naira sign and the letters for Hausa, Yoruba and Igbo", () => {
-    for (const ch of "₦ɓɗƙƁƊƘẹọṣịụṅǹ") expect(font.has(ch.codePointAt(0)!), ch).toBe(true);
+    for (const ch of "₦ɓɗƙƁƊƘẹọṣịụṅǹǸ→") expect(font.has(ch.codePointAt(0)!), ch).toBe(true);
   });
 
   it("has no ⇄, which is why CorridorText draws it as an icon", () => {
