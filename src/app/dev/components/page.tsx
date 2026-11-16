@@ -13,7 +13,7 @@ import { PhoneField } from "@/components/ui/phone-field";
 import { RoadLine } from "@/components/ui/road-line";
 import { Skeleton } from "@/components/ui/skeleton";
 import messages from "@/messages/en.json";
-import { BottomTabsDemo, ChipsDemo, SegmentedDemo, SheetToastDemo } from "./interactive";
+import { BottomTabsDemo, ChipsDemo, CodeInputDemo, SegmentedDemo, SheetToastDemo } from "./interactive";
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
@@ -116,6 +116,10 @@ export default function ComponentsGalleryPage() {
 
       <Section title={t.segmented}>
         <SegmentedDemo label={t.segmentedLabel} send={t.segmentedSend} own={t.segmentedOwn} />
+      </Section>
+
+      <Section title={t.code}>
+        <CodeInputDemo label={t.codeLabel} />
       </Section>
 
       <Section title={t.cards}>

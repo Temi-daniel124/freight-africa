@@ -9,7 +9,11 @@
     "privacyDescription": "What Freight Africa collects when you join the waitlist, why, and how to have it removed.",
     "termsTitle": "Waitlist terms",
     "termsDescription": "The terms for joining the Freight Africa waitlist.",
-    "notFoundTitle": "Page not found"
+    "notFoundTitle": "Page not found",
+    "signInTitle": "Sign in",
+    "signInDescription": "Sign in to Freight Africa or create your account with a code. No password needed.",
+    "codeTitle": "Enter your code",
+    "accountTitle": "Your account"
   },
   "site": {
     "contactEmail": "hello@freight-africa.com",
@@ -521,6 +525,62 @@
     "emptyIllustration": "An empty road",
     "skeletons": "Loading skeletons",
     "road": "Road line",
-    "roadLabel": "Trip 60% complete"
+    "roadLabel": "Trip 60% complete",
+    "code": "Code input",
+    "codeLabel": "6-digit code"
+  },
+  "auth": {
+    "title": "Welcome to Freight Africa",
+    "lead": "Sign in or create your account. We send you a code, so there's no password to remember.",
+    "photoLine": "Pay once. We hold your money and release it only as your goods move.",
+    "google": "Continue with Google",
+    "or": "or",
+    "phoneLabel": "WhatsApp number",
+    "sendWhatsApp": "Send code on WhatsApp",
+    "useEmail": "Use email instead",
+    "usePhone": "Use WhatsApp instead",
+    "emailLabel": "Email address",
+    "emailPlaceholder": "ngozi@example.com",
+    "sendEmail": "Send code by email",
+    "sending": "Sending your code",
+    "agree": "By continuing you agree to the {terms} and {privacy}.",
+    "termsLink": "Terms",
+    "privacyLink": "Privacy notice",
+    "errors": {
+      "email": "Enter a valid email address, like ngozi@example.com",
+      "phone": "Enter a Nigerian mobile number, like 0803 123 4567",
+      "rateLimited": "You've asked for too many codes. Try again in an hour.",
+      "failed": "We couldn't send the code. Check your connection and try again.",
+      "google": "Google sign-in didn't finish. Try again, or use a code."
+    },
+    "code": {
+      "title": "Enter your code",
+      "sentEmail": "Sent to {to} by email.",
+      "sentWhatsApp": "Sent to {to} on WhatsApp.",
+      "change": "Change",
+      "label": "{count}-digit code",
+      "submit": "Continue",
+      "checking": "Checking your code",
+      "resend": "Resend code",
+      "resendIn": "Resend code in {seconds} s",
+      "resent": "New code sent",
+      "wrong": "That code isn't right. Check the latest message.",
+      "locked": "Too many tries. Get a new code.",
+      "rateLimited": "You've asked for too many codes. Try again in an hour.",
+      "failed": "Something went wrong. Check your connection and try again.",
+      "done": "Code accepted"
+    },
+    "email": {
+      "subject": "{code} is your Freight Africa code",
+      "intro": "Here is your code to sign in to Freight Africa:",
+      "note": "It stops working after a short while, so use it now. If you didn't ask for a code, you can ignore this email.",
+      "signoff": "Freight Africa"
+    },
+    "account": {
+      "title": "You're signed in",
+      "text": "Your account is ready. Choosing what you're joining as comes next.",
+      "signedInAs": "Signed in as {who}",
+      "signOut": "Sign out"
+    }
   }
 }

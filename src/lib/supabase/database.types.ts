@@ -61,6 +61,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      auth_code_failed: { Args: { p_key: string }; Returns: number }
+      auth_code_open: { Args: { p_key: string }; Returns: boolean }
+      auth_code_passed: { Args: { p_key: string }; Returns: undefined }
+      auth_code_sending: {
+        Args: { p_ip_key: string; p_key: string }
+        Returns: boolean
+      }
       join_waitlist: {
         Args: {
           p_corridors: string[]

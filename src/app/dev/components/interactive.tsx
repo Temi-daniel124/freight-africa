@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { BottomTabs } from "@/components/ui/bottom-tabs";
 import { Button } from "@/components/ui/button";
 import { Chip } from "@/components/ui/chip";
+import { CodeInput } from "@/components/ui/code-input";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { Sheet } from "@/components/ui/sheet";
 import { Toaster } from "@/components/ui/toaster";
@@ -66,4 +67,16 @@ export function BottomTabsDemo({ label, home, trips, book, money, me }: TabLabel
     { key: "me", label: me, icon: User },
   ];
   return <BottomTabs tabs={tabs} label={label} />;
+}
+
+export function CodeInputDemo({ label }: { label: string }) {
+  const [code, setCode] = useState("482");
+  return (
+    <div className="flex max-w-96 flex-col gap-6">
+      <CodeInput id="demo-code" name="demo-code" length={6} label={label} value={code} onChange={setCode} />
+      <CodeInput id="demo-code-error" name="demo-code-error" length={6} label={label} value="" onChange={() => {}} state="error" />
+      <CodeInput id="demo-code-done" name="demo-code-done" length={6} label={label} value="482916" onChange={() => {}} state="success" disabled />
+      <CodeInput id="demo-code-off" name="demo-code-off" length={6} label={label} value="" onChange={() => {}} disabled />
+    </div>
+  );
 }

@@ -29,7 +29,7 @@ The phases are defined in `BUILD.md` §3. Update this table as work progresses.
 | --- | --- | --- | --- |
 | 0 | Bootstrap: repo, scaffold, accounts linked, CI green | Done | |
 | 0L | Launch page: pre-launch home, waitlist, privacy and terms (D030) | **Accepted** 15 Nov 2026 | PageSpeed Insights mobile 98 (LCP 2.5 s, TBT 40 ms), desktop 100; real phone sign-up and confirmation email delivered |
-| 1 | Foundations: auth, organisations, roles, RLS, tokens, ledger, settings, audit | In progress | Slice 1 groundwork done |
+| 1 | Foundations: auth, organisations, roles, RLS, tokens, ledger, settings, audit | In progress | Slices 1 (groundwork) and 2 (sign-in) done |
 | 2 | Supply: owner and driver onboarding, Didit, trucks, documents, catalogue, verification queue | Not started | |
 | 3 | Booking and money: quotes, loads, payments, escrow, releases, refunds, receipts | Not started | Needs Bachs keys and API docs |
 | 4 | The trip: load board, offers, trips, driver flow, trip mode, codes, receiver pages, notifications, live map | Not started | Needs WhatsApp setup |
@@ -40,7 +40,7 @@ The phases are defined in `BUILD.md` §3. Update this table as work progresses.
 
 ## 3. Current task
 
-**Next task:** Phase 1 slice 2, sign-in (email code; WhatsApp and Google behind settings that stay off), from `docs/planning/ux-public-and-auth.md`.
+**Next task:** Phase 1 slice 3, profiles and onboarding entry (A-03 "What brings you here?", consents), replacing the temporary `/app` page that sign-in lands on. Open items from slice 2: sign-in codes follow the project's email code length (8 today; the founder sets it to 6, section 4); the limits of 5 codes an hour and 5 tries a code move to the settings table in the settings slice; SMS fallback for WhatsApp codes comes with Phase 4 notifications; the sign-in footer links to the launch-time Terms and Privacy notice until the full legal pages exist (Phase 7).
 
 ## 4. Things only the founder can do
 
@@ -51,7 +51,9 @@ for these at the moment they're needed, with exact steps.
 | --- | --- | --- |
 | Supabase database password (or reset it in the dashboard) for `supabase link` | Phase 0 | Set when the project was created; only the owner has it |
 | Supabase CLI login (one browser approval) and a personal access token from supabase.com/dashboard/account/tokens (for CI and the SMTP script) | Phase 0 | Account authorisation |
-| Google OAuth client (Google Cloud console) for "Continue with Google" | Phase 1 | Google account ownership; until then, email and WhatsApp codes work |
+| Supabase dashboard → Authentication → Sign In / Providers → Email → set **Email OTP Length** to 6 | Phase 1, any time | The spec asks for six-digit codes and the project sends eight; the screen follows whatever is set, so nothing is blocked |
+| Google OAuth client (Google Cloud console) for "Continue with Google"; then `AUTH_GOOGLE=on` | Phase 1, when ready | Google account ownership; until then email codes work and the Google button is hidden |
+| WhatsApp sign-in codes: needs the Meta items below, an approved authentication template, then `AUTH_WHATSAPP=on` and the Supabase Send SMS hook | Phase 4 (or sooner) | Built and switched off; cannot be tested without the WhatsApp number |
 | Bachs live and test API keys, webhook secret, and API documentation | Phase 3 | Merchant account |
 | Didit account, API key, webhook secret, and the two verification workflows (owner, driver) | Phase 2 | Account ownership |
 | Meta Business portfolio, WhatsApp number on a new SIM, app credentials (D021) | Phase 4 | Personal Facebook login required by Meta |
@@ -78,6 +80,7 @@ for these at the moment they're needed, with exact steps.
 
 Add one line per session, newest first: date · what was done · what's next.
 
+- 16 Nov 2026 · Phase 1 slice 2 sign-in: /auth and /auth/code (A-01, A-02) with email codes sent through Resend, 5 codes an hour and 5 tries a code counted in the database, Google and WhatsApp built behind AUTH_GOOGLE / AUTH_WHATSAPP (off), safe return paths, temporary /app landing; tested end to end with a Resend test inbox, screenshots at 5 widths · Slice 3, profiles and onboarding entry.
 - 15 Nov 2026 · Phase 1 slice 1 groundwork: generated types, src/lib/env.ts, typed browser/server/admin clients, session refresh in src/proxy.ts for /app, /admin and /auth only; share links and QR (docs/launch) with the source kept across pages · Slice 2, sign-in.
 - 15 Nov 2026 · Launch page accepted on freight-africa.com: domains valid with HTTPS, www → apex 308, hello@ forwarding works, test sign-up and email verified then deleted, sitemap/robots/canonicals on https://freight-africa.com, og:url no longer points subpages at home, How it works steps no longer faded below 4.5:1, PageSpeed mobile 98 / desktop 100, Web Analytics on · Phase 1.
 - 15 Nov 2026 · Copy tweaks: hero switch has no visible label (named 'Who's joining' for screen readers); waitlist role 'I'm joining as' with A sender / A truck owner / An agent, stacked on phones; step 1 card says 'Tomorrow morning' and shows the price line as a label · DNS (Vercel + ImprovMX), PageSpeed on freight-africa.com, then Phase 1.
