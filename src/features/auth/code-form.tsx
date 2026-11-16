@@ -45,7 +45,9 @@ export function CodeForm({ t, channel, to, length }: CodeFormProps) {
   // What the person last did decides which message shows: a wrong code, or a new code being sent.
   const [latest, setLatest] = useState<"verify" | "resend">("verify");
   const done = verify.status === "ok";
-  const locked = latest === "verify" && verify.status === "locked";
+  // No tries left on the current code. Its own state, so asking for a new code lifts it and typing that
+  // code doesn't bring it back.
+  const [locked, setLocked] = useState(false);
 
   useEffect(() => {
     if (seconds <= 0) return;
@@ -60,12 +62,14 @@ export function CodeForm({ t, channel, to, length }: CodeFormProps) {
     setSeenVerify(verify.attempt);
     // A wrong code clears the boxes for the next try.
     if (verify.status === "wrong" || verify.status === "locked") setCode("");
+    if (verify.status === "locked") setLocked(true);
   }
   const [seenResend, setSeenResend] = useState(0);
   if (resend.attempt !== seenResend) {
     setSeenResend(resend.attempt);
     // A new code restarts the wait and clears the boxes.
     if (resend.status === "sent") {
+      setLocked(false);
       setCode("");
       setSeconds(RESEND_SECONDS);
     }
@@ -73,18 +77,22 @@ export function CodeForm({ t, channel, to, length }: CodeFormProps) {
 
   // Right code: the boxes turn green one after another, then the app opens.
   useEffect(() => {
-    if (!done || !verify.next) return;
-    const next = verify.next;
-    const id = window.setTimeout(() => window.location.replace(next), reduced ? 0 : 400 + length * 60);
+    if (!done) return;
+    // /auth/done clears the "code on its way" cookie and sends the person on to where they were heading.
+    const id = window.setTimeout(() => window.location.replace("/auth/done"), reduced ? 0 : 400 + length * 60);
     return () => window.clearTimeout(id);
-  }, [done, verify.next, reduced, length]);
+  }, [done, reduced, length]);
 
   const change = (value: string) => {
     setCode(value);
     if (value.length === length && !verifying && !done) {
       setLatest("verify");
       // Wait for React to put the value in the field before sending the form.
-      window.setTimeout(() => formRef.current?.requestSubmit(), 0);
+      window.setTimeout(() => {
+        const field = formRef.current?.elements.namedItem("code");
+        // A disabled field is left out of the form, which would read as a wrong code.
+        if (field instanceof HTMLInputElement && !field.disabled) formRef.current?.requestSubmit();
+      }, 0);
     }
   };
 
