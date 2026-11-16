@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { hostRoute } from "./hosts";
+import { homePath, hostRoute } from "./hosts";
 
 const pass = { kind: "pass" };
 const redirect = (to: string) => ({ kind: "redirect", to });
@@ -44,5 +44,27 @@ describe("hostRoute (D033)", () => {
     expect(hostRoute("localhost:3100", "/auth")).toEqual(pass);
     expect(hostRoute("freight-africa-git-x.vercel.app", "/app")).toEqual(pass);
     expect(hostRoute("APP.freight-africa.com:443", "/")).toEqual(redirect("https://app.freight-africa.com/app"));
+  });
+
+  it("never mistakes a signed-in page for a file because it ends in an extension", () => {
+    expect(hostRoute("app.freight-africa.com", "/admin/trips/abc.1")).toEqual(redirect("https://admin.freight-africa.com/admin/trips/abc.1"));
+    expect(hostRoute("admin.freight-africa.com", "/app/x.png")).toEqual(redirect("https://app.freight-africa.com/app/x.png"));
+    expect(hostRoute("www.freight-africa.com", "/admin")).toEqual(redirect("https://admin.freight-africa.com/admin"));
+  });
+
+  it("treats a trailing dot as the same host and ignores look-alikes", () => {
+    expect(hostRoute("app.freight-africa.com.", "/admin")).toEqual(redirect("https://admin.freight-africa.com/admin"));
+    expect(hostRoute("freight-africa.com.", "/auth")).toEqual(redirect("https://app.freight-africa.com/auth"));
+    expect(hostRoute("app.freight-africa.com.evil.example", "/admin")).toEqual(pass);
+  });
+
+  it("keeps the query on redirects between signed-in hosts", () => {
+    expect(hostRoute("app.freight-africa.com", "/admin/trips", "/admin/trips?tab=open")).toEqual(redirect("https://admin.freight-africa.com/admin/trips?tab=open"));
+  });
+
+  it("lands staff on the console and everyone else on the app", () => {
+    expect(homePath("admin.freight-africa.com")).toBe("/admin");
+    expect(homePath("app.freight-africa.com")).toBe("/app");
+    expect(homePath("localhost:3100")).toBe("/app");
   });
 });

@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { resendEmailSender } from "@/lib/email/sender";
-import { ipKey, requestOrigin } from "@/lib/ip-key";
+import { ipKey, requestHome, requestOrigin } from "@/lib/ip-key";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { supabaseServer } from "@/lib/supabase/server";
 import { signInCodeEmail } from "./code-email";
@@ -76,7 +76,7 @@ export async function sendCode(previous: SendState, formData: FormData): Promise
   const issued = await issueCode(channel, to);
   if (!issued.ok) return { status: issued.reason, channel, value, attempt };
 
-  await setPendingCode({ channel, to, next: safeNext(text(formData, "next")), length: issued.length });
+  await setPendingCode({ channel, to, next: safeNext(text(formData, "next"), await requestHome()), length: issued.length });
   redirect("/auth/code");
 }
 
@@ -136,7 +136,7 @@ export async function verifyCode(previous: VerifyState, formData: FormData): Pro
 
 export async function signInWithGoogle(formData: FormData) {
   if (!signInOptions().google) redirect("/auth");
-  const next = safeNext(text(formData, "next"));
+  const next = safeNext(text(formData, "next"), await requestHome());
   const supabase = await supabaseServer();
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
