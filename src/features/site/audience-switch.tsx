@@ -39,16 +39,16 @@ export function AudienceSwitch({ heading, t }: AudienceSwitchProps) {
         <SegmentedControl className="w-full max-w-96" label={t.label} options={options} value={audience} onChange={setAudience} />
         <AnimatePresence mode="wait" initial={false}>
           <m.div key={audience} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }} className="flex flex-col gap-8">
-            <ul className="grid gap-4 sm:grid-cols-3">
+            {/* An open list with rules between items, not three boxed cards: the benefits read as one
+                argument, left to right (docs/planning/design-research-sign-in-landing.md, point 8). */}
+            <ul className="grid border-t border-line-strong sm:grid-cols-3 sm:divide-x sm:divide-line">
               {benefits.map((benefit, index) => {
                 const Icon = icons[audience][index];
                 return (
-                  <li key={benefit.title} className="flex flex-col gap-3 rounded-card border border-line bg-surface p-5">
-                    <span className="flex size-10 items-center justify-center rounded-pill bg-green-50 text-green-700">
-                      <Icon aria-hidden className="size-5" strokeWidth={1.75} />
-                    </span>
+                  <li key={benefit.title} className="flex flex-col gap-3 border-b border-line py-6 sm:border-b-0 sm:px-6 sm:py-8 sm:first:pl-0 sm:last:pr-0">
+                    <Icon aria-hidden className="size-6 text-green-700" strokeWidth={1.75} />
                     <h3 className="type-h3 text-ink">{benefit.title}</h3>
-                    <p className="type-copy text-ink-2">{benefit.text}</p>
+                    <p className="type-copy max-w-80 text-ink-2">{benefit.text}</p>
                   </li>
                 );
               })}

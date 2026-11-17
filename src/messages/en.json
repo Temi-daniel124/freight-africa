@@ -683,7 +683,7 @@
   },
   "authStates": {
     "title": "Sign-in: every state",
-    "intro": "The ten states of the sign-in screens, side by side. Preview only.",
+    "intro": "Every state of the sign-in screens, side by side. Preview only.",
     "empty": "Empty",
     "typing": "Typing",
     "sending": "Sending",

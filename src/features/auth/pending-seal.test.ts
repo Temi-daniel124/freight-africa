@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { openPending, sealPending, type PendingCode } from "./pending-seal";
+import { codeExpired, openPending, sealPending, type PendingCode } from "./pending-seal";
 
 const secret = "test-secret-test-secret-test-secret-0123";
 const pending: PendingCode = { channel: "email", to: "ngozi.okafor@example.com", next: "/app/ship", length: 6 };
@@ -38,5 +38,15 @@ describe("pending code cookie", () => {
   it("re-checks the return path and the code length", () => {
     expect(openPending(sealPending({ ...pending, next: "/a/..//evil.example" }, secret), secret)?.next).toBe("/app");
     expect(openPending(sealPending({ ...pending, length: 99 }, secret), secret)?.length).toBe(6);
+  });
+
+  it("keeps when the code was sent, and knows when it has expired", () => {
+    const sentAt = Date.UTC(2026, 10, 17, 9, 0);
+    const opened = openPending(sealPending({ ...pending, sentAt }, secret), secret);
+    expect(opened?.sentAt).toBe(sentAt);
+    expect(codeExpired(opened!, sentAt + 9 * 60_000)).toBe(false);
+    expect(codeExpired(opened!, sentAt + 11 * 60_000)).toBe(true);
+    // A cookie from before this change has no time, so it is never called expired by us.
+    expect(codeExpired(pending, sentAt + 60 * 60_000)).toBe(false);
   });
 });
