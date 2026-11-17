@@ -5,13 +5,14 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { RoadLine } from "@/components/ui/road-line";
 import { Skeleton } from "@/components/ui/skeleton";
 import { signOut } from "@/features/auth/actions";
-import type { JoiningAs } from "@/features/onboarding/roles";
+import { agentsEnabled, type JoiningAs } from "@/features/onboarding/roles";
 import { onboardingSession } from "@/features/onboarding/session";
 import messages from "@/messages/en.json";
 
 const t = messages.onboarding.next;
 
 async function Next({ role }: { role: JoiningAs }) {
+  if (role === "agent" && !agentsEnabled()) redirect("/onboarding/role");
   const { agreed, name } = await onboardingSession(`/onboarding/${role}`);
   // The agreements come first.
   if (!agreed) redirect(`/onboarding/role?role=${role}`);
