@@ -36,7 +36,8 @@ select is((select full_name from public.profiles), 'Ngozi A. Okafor', 'the chang
 select throws_ok($$update public.profiles set kyc_status = 'approved' where id = '11111111-1111-4111-8111-111111111111'$$, '42501', null, 'she cannot mark herself verified');
 select throws_ok($$update public.profiles set email = 'other@example.com' where id = '11111111-1111-4111-8111-111111111111'$$, '42501', null, 'she cannot change her verified email directly');
 select throws_ok($$update public.profiles set status = 'active' where id = '22222222-2222-4222-8222-222222222222'$$, '42501', null, 'she cannot touch another profile''s status');
-select is((select count(*)::int from (update public.profiles set full_name = 'Taken' where id = '22222222-2222-4222-8222-222222222222' returning 1) changed), 0, 'and cannot rename another person');
+with changed as (update public.profiles set full_name = 'Taken' where id = '22222222-2222-4222-8222-222222222222' returning 1)
+select is((select count(*)::int from changed), 0, 'and cannot rename another person');
 select throws_ok($$insert into public.profiles (id) values (gen_random_uuid())$$, '42501', null, 'she cannot create profiles');
 
 select ok(not public.has_accepted_terms('2026-11-15'), 'before the role step she has not accepted the terms');
