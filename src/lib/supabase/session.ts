@@ -4,7 +4,7 @@ import { publicEnv } from "@/lib/env";
 import type { Database } from "./database.types";
 
 // Signed-in areas. The public launch pages never run this, so they stay static and fast.
-const SESSION_PREFIXES = ["/app", "/admin", "/auth"];
+const SESSION_PREFIXES = ["/app", "/admin", "/auth", "/onboarding"];
 
 export function needsSession(pathname: string) {
   return SESSION_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));

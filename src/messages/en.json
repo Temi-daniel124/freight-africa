@@ -14,7 +14,8 @@
     "signInDescription": "Sign in to Freight Africa or create your account with a code. No password needed.",
     "codeTitle": "Enter your code",
     "accountTitle": "Your account",
-    "staffTitle": "Staff console"
+    "staffTitle": "Staff console",
+    "onboardingTitle": "Get started"
   },
   "site": {
     "contactEmail": "hello@freight-africa.com",
@@ -624,5 +625,51 @@
     "bodyTwo": "Ngozi Okafor booked a 30-tonne flatbed from Apapa, Lagos to Sabon Gari, Kano on 16 November 2026. The truck, KJA 482 XA, loaded at 07:45 and is expected in Kano by 18:30 the next day. She paid ₦1,850,000 and can follow every stop.",
     "detailsSample": "Ilorin · Illela · O0 · l1I · 5S · 8B · ₦1,234,567.89 · 0803 123 4567 · KJA 482 XA · ABC-123DE",
     "lettersSample": "Ọjọ́ · Ẹ̀kọ́ · ṣe · Ƙofar Mata · ɗan · ɓangare · ị ụ ṅ ǹ"
+  },
+  "onboarding": {
+    "step": "Step 1 of 3",
+    "title": "What brings you here?",
+    "lead": "Choose one. You can add another role later.",
+    "rolesLabel": "I’m joining as",
+    "roles": {
+      "shipper": {
+        "title": "I send goods",
+        "text": "Book trucks for your loads"
+      },
+      "owner": {
+        "title": "I own trucks",
+        "text": "Find loads and get paid fast"
+      },
+      "agent": {
+        "title": "I’m an agent",
+        "text": "Earn by bringing truck owners and senders"
+      }
+    },
+    "driver": "Are you a driver? Ask the truck owner to add you. You’ll get a WhatsApp invite.",
+    "agreeTitle": "Before you continue",
+    "terms": "I agree to the {terms} and the {privacy}.",
+    "termsLink": "Terms",
+    "privacyLink": "Privacy notice",
+    "whatsapp": "Send me WhatsApp messages about my trips.",
+    "whatsappHelp": "Pickup times, driver arrivals and delivery codes. We never send adverts here.",
+    "marketing": "Send me occasional news and offers. (Optional)",
+    "submit": "Continue",
+    "saving": "Saving",
+    "errors": {
+      "role": "Choose what you’re joining as",
+      "terms": "Tick this to continue",
+      "whatsapp": "Tick this to continue. Trip updates come by WhatsApp.",
+      "summary": "Check the highlighted parts.",
+      "failed": "We couldn’t save that. Check your connection and try again."
+    },
+    "next": {
+      "title": "Thanks, {name}",
+      "anon": "Thanks",
+      "shipper": "Setting up your sender account comes next. We’re building it now, so check back soon.",
+      "owner": "Setting up your truck business comes next. We’re building it now, so check back soon.",
+      "agent": "Setting up as an agent comes next. We’re building it now, so check back soon.",
+      "change": "Choose a different role",
+      "signOut": "Sign out"
+    }
   }
 }

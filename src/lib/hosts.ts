@@ -35,7 +35,7 @@ export function hostRoute(host: string, pathname: string, rest: string = pathnam
   const to = (origin: string, path = rest): HostRoute => ({ kind: "redirect", to: `${origin}${path}` });
 
   if (name === SITE_HOST || name === `www.${SITE_HOST}`) {
-    if (under(pathname, "/app") || under(pathname, "/auth")) return to(APP_ORIGIN);
+    if (under(pathname, "/app") || under(pathname, "/auth") || under(pathname, "/onboarding")) return to(APP_ORIGIN);
     if (under(pathname, "/admin")) return to(ADMIN_ORIGIN);
     return pass;
   }
@@ -48,7 +48,7 @@ export function hostRoute(host: string, pathname: string, rest: string = pathnam
     // Each host has its own sign-in, because cookies stay on the host that set them.
     if (under(pathname, "/auth")) return pass;
     if (under(pathname, "/admin")) return admin ? pass : to(ADMIN_ORIGIN);
-    if (under(pathname, "/app")) return admin ? to(APP_ORIGIN) : pass;
+    if (under(pathname, "/app") || under(pathname, "/onboarding")) return admin ? to(APP_ORIGIN) : pass;
     if (shared(pathname)) return pass;
     if (pathname === "/") return to(admin ? ADMIN_ORIGIN : APP_ORIGIN, admin ? "/admin" : "/app");
     // Everything else (launch page, waitlist, legal pages) belongs to the public website.
