@@ -3,7 +3,15 @@ import { safeNext } from "./next-path";
 import { parseDestination, type CodeChannel } from "./schema";
 
 /** A code that is on its way. `length` is how many digits it has (it follows the Supabase project setting). */
-export type PendingCode = { channel: CodeChannel; to: string; next: string; length: number };
+export type PendingCode = { channel: CodeChannel; to: string; next: string; length: number; sentAt?: number };
+
+/** How long a code works (Supabase Auth setting, scripts/configure-auth-settings.mjs). */
+export const CODE_MINUTES = 10;
+
+/** True once the code that was sent can no longer work. */
+export function codeExpired(pending: PendingCode, now: number = Date.now()) {
+  return typeof pending.sentAt === "number" && now - pending.sentAt > CODE_MINUTES * 60_000;
+}
 
 const sign = (payload: string, secret: string) => createHmac("sha256", secret).update(`auth-pending:${payload}`).digest("base64url");
 
@@ -35,7 +43,8 @@ export function openPending(value: string | undefined, secret: string): PendingC
     // checked again on the way back in.
     if (parseDestination(data.channel, data.to) !== data.to) return null;
     const length = typeof data.length === "number" && Number.isInteger(data.length) && data.length >= 6 && data.length <= 10 ? data.length : 6;
-    return { channel: data.channel, to: data.to, next: safeNext(data.next), length };
+    const sentAt = typeof data.sentAt === "number" && Number.isFinite(data.sentAt) ? data.sentAt : undefined;
+    return { channel: data.channel, to: data.to, next: safeNext(data.next), length, ...(sentAt === undefined ? {} : { sentAt }) };
   } catch {
     return null;
   }

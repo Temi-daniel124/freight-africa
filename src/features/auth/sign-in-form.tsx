@@ -1,11 +1,12 @@
 "use client";
 
-import { CircleAlert } from "lucide-react";
+import { CircleAlert, WifiOff } from "lucide-react";
 import Link from "next/link";
 import { useActionState, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { TextField } from "@/components/ui/field";
 import { PhoneField } from "@/components/ui/phone-field";
+import { useOnline } from "@/lib/use-online";
 import { sendCode, signInWithGoogle } from "./actions";
 import type { CodeChannel } from "./schema";
 import type { SendState } from "./state";
@@ -24,6 +25,7 @@ export type SignInText = {
   emailPlaceholder: string;
   sendEmail: string;
   sending: string;
+  offline: string;
   agree: string;
   termsLink: string;
   privacyLink: string;
@@ -37,6 +39,8 @@ type SignInFormProps = {
   googleFailed: boolean;
   /** Cloudflare Turnstile site key, or null while the bot check is switched off. */
   turnstileSiteKey: string | null;
+  /** Preview-only: start in a given state (the /dev/sign-in page). Never set on the real page. */
+  preview?: { state?: SendState; offline?: boolean; sending?: boolean };
 };
 
 // Google's mark keeps Google's own colours (their brand rules), so these four are not design tokens.
@@ -52,10 +56,11 @@ function GoogleMark() {
 }
 
 // A-01: Google (when switched on), then a code on WhatsApp (when switched on) or by email.
-export function SignInForm({ t, options, next, googleFailed, turnstileSiteKey }: SignInFormProps) {
+export function SignInForm({ t, options, next, googleFailed, turnstileSiteKey, preview }: SignInFormProps) {
+  const online = useOnline() && !preview?.offline;
   const [channel, setChannel] = useState<CodeChannel>(options.whatsapp ? "whatsapp" : "email");
   const initial: SendState = { status: "idle", channel, value: "", attempt: 0 };
-  const [state, action, pending] = useActionState(sendCode, initial);
+  const [state, action, pending] = useActionState(sendCode, preview?.state ?? initial);
   const turnstile = useTurnstile(turnstileSiteKey, state.attempt);
 
   // Messages from the last attempt only apply to the method that attempt used.
@@ -98,6 +103,13 @@ export function SignInForm({ t, options, next, googleFailed, turnstileSiteKey }:
         </>
       ) : null}
 
+      {online ? null : (
+        <p role="status" className="flex items-start gap-2 rounded-inner bg-warning-100 p-4 text-body text-ink">
+          <WifiOff aria-hidden className="mt-0.5 size-5 shrink-0 text-warning" strokeWidth={1.75} />
+          {t.offline}
+        </p>
+      )}
+
       <form action={action} onSubmit={turnstile.onSubmit} noValidate className="flex flex-col gap-5">
         <input type="hidden" name="channel" value={channel} />
         <input type="hidden" name="next" value={next} />
@@ -129,7 +141,7 @@ export function SignInForm({ t, options, next, googleFailed, turnstileSiteKey }:
           />
         )}
         {turnstile.field}
-        <Button type="submit" className="w-full" loading={pending || turnstile.holding} loadingLabel={t.sending}>
+        <Button type="submit" className="w-full" disabled={!online} loading={pending || turnstile.holding || preview?.sending} loadingLabel={t.sending}>
           {channel === "whatsapp" ? t.sendWhatsApp : t.sendEmail}
         </Button>
       </form>
