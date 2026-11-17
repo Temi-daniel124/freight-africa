@@ -8,6 +8,7 @@ import { CodeInput } from "@/components/ui/code-input";
 import { useOnline } from "@/lib/use-online";
 import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion";
 import { resendCode, verifyCode } from "./actions";
+import { CODE_MINUTES } from "./code-rules";
 import type { ResendState, VerifyState } from "./state";
 
 export type CodeText = {
@@ -38,8 +39,9 @@ type CodeFormProps = {
   channel: "email" | "whatsapp";
   to: string;
   length: number;
-  /** When the code stops working (milliseconds since 1970), or null when unknown. */
-  expiresAt?: number | null;
+  /** How long the code has left, measured on the server, or null when unknown. Counted from page load so a
+   * phone with a wrong clock can't call a good code expired. */
+  expiresInMs?: number | null;
   preview?: CodePreview;
 };
 
@@ -48,7 +50,7 @@ const fill = (text: string, values: Record<string, string | number>) => text.rep
 
 // A-02: enter the code. A full code is sent as soon as it's typed or pasted; a wrong one shakes the boxes;
 // five wrong tries need a new code; "Resend code" unlocks after 30 seconds.
-export function CodeForm({ t, channel, to, length, expiresAt = null, preview }: CodeFormProps) {
+export function CodeForm({ t, channel, to, length, expiresInMs = null, preview }: CodeFormProps) {
   const reduced = usePrefersReducedMotion();
   const formRef = useRef<HTMLFormElement>(null);
   const online = useOnline() && !preview?.offline;
@@ -67,11 +69,13 @@ export function CodeForm({ t, channel, to, length, expiresAt = null, preview }: 
   const [expired, setExpired] = useState(preview?.expired ?? false);
   const blocked = locked || expired;
 
+  // Time left on the current code; a new code starts a fresh ten minutes.
+  const [timeLeft, setTimeLeft] = useState(expiresInMs);
   useEffect(() => {
-    if (expiresAt === null || expired) return;
-    const id = window.setTimeout(() => setExpired(true), Math.max(0, expiresAt - Date.now()));
+    if (timeLeft === null || expired) return;
+    const id = window.setTimeout(() => setExpired(true), timeLeft);
     return () => window.clearTimeout(id);
-  }, [expiresAt, expired]);
+  }, [timeLeft, expired]);
 
   useEffect(() => {
     if (seconds <= 0) return;
@@ -96,6 +100,7 @@ export function CodeForm({ t, channel, to, length, expiresAt = null, preview }: 
     if (resend.status === "sent") {
       setLocked(false);
       setExpired(false);
+      setTimeLeft(CODE_MINUTES * 60_000);
       setCode("");
       setSeconds(RESEND_SECONDS);
     }

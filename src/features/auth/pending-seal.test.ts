@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { codeExpired, openPending, sealPending, type PendingCode } from "./pending-seal";
+import { codeExpired, codeTimeLeft, openPending, sealPending, type PendingCode } from "./pending-seal";
 
 const secret = "test-secret-test-secret-test-secret-0123";
 const pending: PendingCode = { channel: "email", to: "ngozi.okafor@example.com", next: "/app/ship", length: 6 };
@@ -46,6 +46,9 @@ describe("pending code cookie", () => {
     expect(opened?.sentAt).toBe(sentAt);
     expect(codeExpired(opened!, sentAt + 9 * 60_000)).toBe(false);
     expect(codeExpired(opened!, sentAt + 11 * 60_000)).toBe(true);
+    expect(codeTimeLeft(opened!, sentAt + 4 * 60_000)).toBe(6 * 60_000);
+    expect(codeTimeLeft(opened!, sentAt + 11 * 60_000)).toBe(0);
+    expect(codeTimeLeft(pending)).toBeNull();
     // A cookie from before this change has no time, so it is never called expired by us.
     expect(codeExpired(pending, sentAt + 60 * 60_000)).toBe(false);
   });
