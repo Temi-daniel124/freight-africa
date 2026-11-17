@@ -24,6 +24,7 @@ It adds Claude Code-specific rules on top of `AGENT.md`, which is imported below
    any commit. This prevents the Vercel "Blocked" deployment (D024).
 3. Run `node scripts/check-supabase-target.mjs`. It must print `OK` for `czlowhaycaivpgimcefk`.
 4. `git status`, then `git pull --rebase` on the current branch.
+5. While GitHub issue #22 ("Waiting on picomatch fix") is open: check it and `npm view picomatch versions`. When a patched version exists, update it on a branch, get CI green, merge, and close the issue.
 
 (Before Phase 0 creates the scripts and the repository, do steps 0.1 to 0.3 of `BUILD.md` §2 first.)
 

@@ -481,7 +481,7 @@ variants (`cv05`, `cv08`) and optical sizes no longer apply.
 
 **Why.** The founder compared six open-licence typefaces on real Freight Africa screens (16 Nov 2026,
 `/dev/fonts`) and chose Plus Jakarta Sans: warmer and more distinctive than Inter, with its own naira
-sign. Manrope stays a possible alternative until the redesign screenshots are reviewed.
+sign. The founder confirmed Plus Jakarta Sans as final on 17 Nov 2026, after comparing it with Manrope on the hero and sign-in screens; the comparison is closed and its page (`/dev/fonts`) and files are removed.
 
 ## D035. Bot check on sign-in: built, switched off
 
