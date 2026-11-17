@@ -48,17 +48,32 @@ $$;
 
 create trigger profiles_touch before update on public.profiles for each row execute function private.touch_updated_at();
 
+-- Makes the profile for one auth user. It must never fail, because a failure here would stop the account
+-- being created: values that don't fit are dropped (the person can add them later), and if the email or
+-- phone already belongs to another profile, the profile is made without them.
+create function private.insert_profile(p_id uuid, p_email text, p_phone text, p_meta jsonb) returns void language plpgsql security definer set search_path = '' as $$
+declare
+  v_email text := case when char_length(p_email) between 3 and 254 then lower(p_email) end;
+  v_phone text := case when coalesce(p_phone, '') = '' then null when p_phone like '+%' then p_phone else '+' || p_phone end;
+  v_name text := nullif(left(trim(coalesce(p_meta ->> 'full_name', p_meta ->> 'name', '')), 120), '');
+begin
+  if v_phone !~ '^\+[1-9][0-9]{7,14}$' then
+    v_phone := null;
+  end if;
+  begin
+    insert into public.profiles (id, email, phone, full_name) values (p_id, v_email, v_phone, v_name) on conflict (id) do nothing;
+  exception when unique_violation or check_violation then
+    insert into public.profiles (id, full_name) values (p_id, v_name) on conflict (id) do nothing;
+  end;
+end;
+$$;
+
+revoke all on function private.insert_profile(uuid, text, text, jsonb) from public;
+
 -- Every new account gets its profile at once, with the address it signed in with.
 create function private.create_profile_for_user() returns trigger language plpgsql security definer set search_path = '' as $$
 begin
-  insert into public.profiles (id, email, phone, full_name)
-  values (
-    new.id,
-    nullif(lower(new.email), ''),
-    case when coalesce(new.phone, '') = '' then null when new.phone like '+%' then new.phone else '+' || new.phone end,
-    nullif(trim(coalesce(new.raw_user_meta_data ->> 'full_name', new.raw_user_meta_data ->> 'name', '')), '')
-  )
-  on conflict (id) do nothing;
+  perform private.insert_profile(new.id, new.email, new.phone, new.raw_user_meta_data);
   return new;
 end;
 $$;
@@ -67,11 +82,8 @@ revoke all on function private.create_profile_for_user() from public;
 
 create trigger on_auth_user_created after insert on auth.users for each row execute function private.create_profile_for_user();
 
--- Accounts made before this migration.
-insert into public.profiles (id, email, phone)
-select u.id, nullif(lower(u.email), ''), case when coalesce(u.phone, '') = '' then null when u.phone like '+%' then u.phone else '+' || u.phone end
-from auth.users u
-on conflict (id) do nothing;
+-- Accounts made before this migration, through the same path, so one odd row can't stop the migration.
+select private.insert_profile(u.id, u.email, u.phone, u.raw_user_meta_data) from auth.users u order by u.created_at;
 
 -- Consents (F-10): append-only. A change of mind is a new row; the latest row per kind is what counts.
 -- ip_key is the keyed hash used for rate limits, never the address itself (privacy notice).

@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(24);
+select plan(28);
 
 -- Two people, made the way Supabase Auth makes them.
 insert into auth.users (id, instance_id, aud, role, email, phone, raw_user_meta_data, created_at, updated_at)
@@ -15,6 +15,16 @@ select is((select email from public.profiles where id = '11111111-1111-4111-8111
 select is((select full_name from public.profiles where id = '11111111-1111-4111-8111-111111111111'), 'Ngozi Okafor', 'the name from Google is kept');
 select is((select phone from public.profiles where id = '22222222-2222-4222-8222-222222222222'), '+2348031234567', 'a phone account gets its number in E.164');
 select is((select kyc_status::text || '/' || status::text || '/' || language::text from public.profiles where id = '22222222-2222-4222-8222-222222222222'), 'not_started/active/en', 'defaults');
+
+-- Sign-up never fails on odd data: a very long name, a phone that isn't a number, an email already taken.
+insert into auth.users (id, instance_id, aud, role, email, phone, raw_user_meta_data, is_sso_user, created_at, updated_at)
+values
+  ('33333333-3333-4333-8333-333333333333', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'musa@example.com', '12', jsonb_build_object('name', repeat('A', 300)), false, now(), now()),
+  ('44444444-4444-4444-8444-444444444444', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'NGOZI.OKAFOR@EXAMPLE.COM', null, '{}', true, now(), now());
+select is((select char_length(full_name) from public.profiles where id = '33333333-3333-4333-8333-333333333333'), 120, 'a very long name is cut to 120 characters');
+select is((select phone from public.profiles where id = '33333333-3333-4333-8333-333333333333'), null, 'a phone that is not a real number is left out');
+select ok(exists (select 1 from public.profiles where id = '44444444-4444-4444-8444-444444444444'), 'an email that clashes after lower-casing still gets a profile');
+select is((select email from public.profiles where id = '44444444-4444-4444-8444-444444444444'), null, 'but without the clashing email');
 
 -- Nobody signed out can see anything.
 set local role anon;
