@@ -8,8 +8,9 @@ import type { CodeChannel } from "./schema";
 // Between "Send code" and "Enter code" we remember where the code went in a short-lived, server-only,
 // signed cookie, so the phone number or email never appears in a URL and can't be swapped in the browser.
 const PENDING_COOKIE = "fa_auth_pending";
-// Matches how long a code lasts (Supabase Auth: 10 minutes, scripts/configure-auth-settings.mjs).
-const PENDING_MINUTES = 10;
+// A little longer than a code lasts (10 minutes), so the code screen can say "that code has expired"
+// and offer a new one instead of dropping the person back at the start.
+const PENDING_MINUTES = 30;
 
 export type { PendingCode };
 

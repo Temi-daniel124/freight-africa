@@ -15,7 +15,8 @@
     "codeTitle": "Enter your code",
     "accountTitle": "Your account",
     "staffTitle": "Staff console",
-    "onboardingTitle": "Get started"
+    "onboardingTitle": "Get started",
+    "signInStatesTitle": "Sign-in states"
   },
   "site": {
     "contactEmail": "hello@freight-africa.com",
@@ -571,7 +572,9 @@
       "locked": "Too many tries. Get a new code.",
       "rateLimited": "You've asked for too many codes. Try again in an hour.",
       "failed": "Something went wrong. Check your connection and try again.",
-      "done": "Code accepted"
+      "done": "Code accepted",
+      "expired": "That code has expired. Get a new code.",
+      "sent": "Code sent"
     },
     "email": {
       "subject": "{code} is your Freight Africa code",
@@ -590,7 +593,10 @@
       "text": "This area is for Freight Africa staff. The console opens here once staff accounts are set up.",
       "signedInAs": "Signed in as {who}",
       "signOut": "Sign out"
-    }
+    },
+    "offline": "You’re offline. Connect to the internet to continue.",
+    "backToSite": "Back to the website",
+    "help": "Need help? Email"
   },
   "fonts": {
     "title": "Font comparison",
@@ -671,5 +677,22 @@
       "change": "Choose a different role",
       "signOut": "Sign out"
     }
+  },
+  "authStates": {
+    "title": "Sign-in: every state",
+    "intro": "Every state of the sign-in screens, side by side. Preview only.",
+    "empty": "Empty",
+    "typing": "Typing",
+    "sending": "Sending",
+    "invalid": "Not an email address",
+    "error": "Could not send",
+    "offline": "Offline",
+    "codeSent": "Code sent",
+    "codeTyping": "Typing the code",
+    "wrong": "Wrong code",
+    "locked": "Too many tries",
+    "expired": "Expired code",
+    "success": "Success",
+    "rateLimited": "Too many codes asked for"
   }
 }

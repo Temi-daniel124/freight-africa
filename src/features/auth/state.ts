@@ -8,7 +8,7 @@ export type SendState = {
 };
 
 export type VerifyState = {
-  status: "idle" | "wrong" | "locked" | "error" | "ok";
+  status: "idle" | "wrong" | "locked" | "expired" | "error" | "ok";
   attempt: number;
 };
 
