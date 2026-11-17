@@ -189,6 +189,7 @@ export function RoleForm({
                 value={choice}
                 checked={selected}
                 onChange={() => setRole(choice)}
+                aria-invalid={invalid && state.missing.role ? true : undefined}
                 className="sr-only"
               />
               <span
