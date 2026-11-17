@@ -10,6 +10,7 @@ import { signInCodeEmail } from "./code-email";
 import { safeNext } from "./next-path";
 import { signInOptions } from "./options";
 import { clearPendingCode, codeKey, readPendingCode, setPendingCode } from "./pending";
+import { codeExpired } from "./pending-seal";
 import { parseCode, parseDestination, type CodeChannel } from "./schema";
 import type { ResendState, SendState, VerifyState } from "./state";
 
@@ -84,7 +85,7 @@ export async function sendCode(previous: SendState, formData: FormData): Promise
   const issued = await issueCode(channel, to, captcha || undefined);
   if (!issued.ok) return { status: issued.reason, channel, value, attempt };
 
-  await setPendingCode({ channel, to, next: safeNext(text(formData, "next"), await requestHome()), length: issued.length });
+  await setPendingCode({ channel, to, next: safeNext(text(formData, "next"), await requestHome()), length: issued.length, sentAt: Date.now() });
   redirect("/auth/code");
 }
 
@@ -95,7 +96,7 @@ export async function resendCode(previous: ResendState): Promise<ResendState> {
 
   const issued = await issueCode(pending.channel, pending.to);
   if (!issued.ok) return { status: issued.reason, attempt };
-  await setPendingCode({ ...pending, length: issued.length });
+  await setPendingCode({ ...pending, length: issued.length, sentAt: Date.now() });
   return { status: "sent", attempt };
 }
 
@@ -103,6 +104,9 @@ export async function verifyCode(previous: VerifyState, formData: FormData): Pro
   const attempt = previous.attempt + 1;
   const pending = await readPendingCode();
   if (!pending) redirect("/auth");
+
+  // A code past its ten minutes can't be right, so it isn't counted as a wrong try.
+  if (codeExpired(pending)) return { status: "expired", attempt };
 
   const code = parseCode(text(formData, "code"), pending.length);
   if (!code) return { status: "wrong", attempt };

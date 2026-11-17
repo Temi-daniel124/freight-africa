@@ -280,6 +280,14 @@
   }
 }
 /* Section 13.3: green over the photo, darkest on the text side, so white text stays at 4.5:1 or more. */
+/* Sign-in photo (A-01): a neutral fade only where white text sits, so the photograph keeps its colour. */
+@utility photo-fade {
+  background-image: linear-gradient(180deg, rgb(0 0 0 / 0.32) 0%, rgb(0 0 0 / 0) 28%, rgb(0 0 0 / 0) 52%, rgb(0 0 0 / 0.6) 100%);
+}
+/* Focal point of the Okene photo: the truck, not the sky. */
+@utility object-focus-okene {
+  object-position: 40% 62%;
+}
 @utility hero-scrim {
   background-image: linear-gradient(180deg, rgb(8 56 38 / 0.8) 0%, rgb(8 56 38 / 0.72) 55%, rgb(8 56 38 / 0.5) 100%);
   @media (width >= 64rem) {

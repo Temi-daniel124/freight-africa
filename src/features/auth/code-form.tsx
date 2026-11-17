@@ -1,12 +1,14 @@
 "use client";
 
-import { CircleAlert, CircleCheck } from "lucide-react";
+import { CircleAlert, CircleCheck, WifiOff } from "lucide-react";
 import Link from "next/link";
 import { startTransition, useActionState, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CodeInput } from "@/components/ui/code-input";
+import { useOnline } from "@/lib/use-online";
 import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion";
 import { resendCode, verifyCode } from "./actions";
+import { CODE_MINUTES } from "./code-rules";
 import type { ResendState, VerifyState } from "./state";
 
 export type CodeText = {
@@ -22,32 +24,58 @@ export type CodeText = {
   resent: string;
   wrong: string;
   locked: string;
+  expired: string;
+  offline: string;
   rateLimited: string;
   failed: string;
   done: string;
 };
 
-type CodeFormProps = { t: CodeText; channel: "email" | "whatsapp"; to: string; length: number };
+/** Preview-only: start the screen in a given state (the /dev/sign-in page). Never set on the real page. */
+export type CodePreview = { verify?: VerifyState; resend?: ResendState; latest?: "verify" | "resend"; code?: string; locked?: boolean; expired?: boolean; offline?: boolean; seconds?: number };
+
+type CodeFormProps = {
+  t: CodeText;
+  channel: "email" | "whatsapp";
+  to: string;
+  length: number;
+  /** How long the code has left, measured on the server, or null when unknown. Counted from page load so a
+   * phone with a wrong clock can't call a good code expired. */
+  expiresInMs?: number | null;
+  preview?: CodePreview;
+};
 
 const RESEND_SECONDS = 30;
 const fill = (text: string, values: Record<string, string | number>) => text.replace(/\{(\w+)\}/g, (_, key: string) => String(values[key] ?? ""));
 
 // A-02: enter the code. A full code is sent as soon as it's typed or pasted; a wrong one shakes the boxes;
 // five wrong tries need a new code; "Resend code" unlocks after 30 seconds.
-export function CodeForm({ t, channel, to, length }: CodeFormProps) {
+export function CodeForm({ t, channel, to, length, expiresInMs = null, preview }: CodeFormProps) {
   const reduced = usePrefersReducedMotion();
   const formRef = useRef<HTMLFormElement>(null);
-  const [code, setCode] = useState("");
-  const [seconds, setSeconds] = useState(RESEND_SECONDS);
-  const [verify, verifyAction, verifying] = useActionState(verifyCode, { status: "idle", attempt: 0 } satisfies VerifyState);
-  const [resend, resendAction, resending] = useActionState(resendCode, { status: "idle", attempt: 0 } satisfies ResendState);
+  const online = useOnline() && !preview?.offline;
+  const [code, setCode] = useState(preview?.code ?? "");
+  const [seconds, setSeconds] = useState(preview?.seconds ?? RESEND_SECONDS);
+  const [verify, verifyAction, verifying] = useActionState(verifyCode, preview?.verify ?? ({ status: "idle", attempt: 0 } satisfies VerifyState));
+  const [resend, resendAction, resending] = useActionState(resendCode, preview?.resend ?? ({ status: "idle", attempt: 0 } satisfies ResendState));
 
   // What the person last did decides which message shows: a wrong code, or a new code being sent.
-  const [latest, setLatest] = useState<"verify" | "resend">("verify");
+  const [latest, setLatest] = useState<"verify" | "resend">(preview?.latest ?? "verify");
   const done = verify.status === "ok";
   // No tries left on the current code. Its own state, so asking for a new code lifts it and typing that
   // code doesn't bring it back.
-  const [locked, setLocked] = useState(false);
+  const [locked, setLocked] = useState(preview?.locked ?? false);
+  // The code has passed its ten minutes: the same way out as "no tries left", a new code.
+  const [expired, setExpired] = useState(preview?.expired ?? false);
+  const blocked = locked || expired;
+
+  // Time left on the current code; a new code starts a fresh ten minutes.
+  const [timeLeft, setTimeLeft] = useState(expiresInMs);
+  useEffect(() => {
+    if (timeLeft === null || expired) return;
+    const id = window.setTimeout(() => setExpired(true), timeLeft);
+    return () => window.clearTimeout(id);
+  }, [timeLeft, expired]);
 
   useEffect(() => {
     if (seconds <= 0) return;
@@ -57,19 +85,22 @@ export function CodeForm({ t, channel, to, length }: CodeFormProps) {
 
   // When a result comes back, reset the boxes during render (React: "adjusting state when a prop changes"),
   // so there is no extra paint with the old digits.
-  const [seenVerify, setSeenVerify] = useState(0);
+  const [seenVerify, setSeenVerify] = useState(preview?.verify?.attempt ?? 0);
   if (verify.attempt !== seenVerify) {
     setSeenVerify(verify.attempt);
     // A wrong code clears the boxes for the next try.
-    if (verify.status === "wrong" || verify.status === "locked") setCode("");
+    if (verify.status === "wrong" || verify.status === "locked" || verify.status === "expired") setCode("");
     if (verify.status === "locked") setLocked(true);
+    if (verify.status === "expired") setExpired(true);
   }
-  const [seenResend, setSeenResend] = useState(0);
+  const [seenResend, setSeenResend] = useState(preview?.resend?.attempt ?? 0);
   if (resend.attempt !== seenResend) {
     setSeenResend(resend.attempt);
     // A new code restarts the wait and clears the boxes.
     if (resend.status === "sent") {
       setLocked(false);
+      setExpired(false);
+      setTimeLeft(CODE_MINUTES * 60_000);
       setCode("");
       setSeconds(RESEND_SECONDS);
     }
@@ -77,15 +108,16 @@ export function CodeForm({ t, channel, to, length }: CodeFormProps) {
 
   // Right code: the boxes turn green one after another, then the app opens.
   useEffect(() => {
-    if (!done) return;
+    // The preview page shows the success state without leaving.
+    if (!done || preview) return;
     // /auth/done clears the "code on its way" cookie and sends the person on to where they were heading.
     const id = window.setTimeout(() => window.location.replace("/auth/done"), reduced ? 0 : 400 + length * 60);
     return () => window.clearTimeout(id);
-  }, [done, reduced, length]);
+  }, [done, reduced, length, preview]);
 
   const change = (value: string) => {
     setCode(value);
-    if (value.length === length && !verifying && !done) {
+    if (value.length === length && !verifying && !done && online) {
       setLatest("verify");
       // Wait for React to put the value in the field before sending the form.
       window.setTimeout(() => {
@@ -103,19 +135,21 @@ export function CodeForm({ t, channel, to, length }: CodeFormProps) {
         : resend.status === "error"
           ? t.failed
           : null
-      : verify.status === "wrong"
-        ? t.wrong
-        : verify.status === "locked"
-          ? t.locked
+      : expired
+        ? t.expired
+        : verify.status === "wrong"
+          ? t.wrong
+          : locked
+            ? t.locked
           : verify.status === "error"
             ? t.failed
             : null;
-  const inputState = done ? "success" : latest === "verify" && (verify.status === "wrong" || verify.status === "locked") && code === "" ? "error" : "idle";
+  const inputState = done ? "success" : latest === "verify" && (verify.status === "wrong" || verify.status === "locked" || verify.status === "expired") && code === "" ? "error" : "idle";
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-2">
-        <h1 className="text-title-1 text-ink">{t.title}</h1>
+    <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-3">
+        <h1 className="type-h2 text-balance text-ink">{t.title}</h1>
         <p className="text-body text-ink-2">
           {fill(channel === "email" ? t.sentEmail : t.sentWhatsApp, { to })}{" "}
           <Link href="/auth" className="font-semibold text-green-700 hover:underline">
@@ -135,7 +169,7 @@ export function CodeForm({ t, channel, to, length }: CodeFormProps) {
             onChange={change}
             state={inputState}
             attempt={verify.attempt}
-            disabled={locked || done}
+            disabled={blocked || done}
             autoFocus
             describedBy={message ? "auth-code-message" : undefined}
           />
@@ -158,10 +192,18 @@ export function CodeForm({ t, channel, to, length }: CodeFormProps) {
           ) : null}
         </div>
 
-        {locked ? (
+        {online ? null : (
+          <p role="status" className="flex items-start gap-2 rounded-inner bg-warning-100 p-4 text-body text-ink">
+            <WifiOff aria-hidden className="mt-0.5 size-5 shrink-0 text-warning" strokeWidth={1.75} />
+            {t.offline}
+          </p>
+        )}
+
+        {blocked ? (
           // With no tries left, getting a new code is the one thing to do, so it becomes the main button.
           <Button
             className="w-full"
+            disabled={!online}
             loading={resending}
             loadingLabel={t.checking}
             onClick={() => {
@@ -172,13 +214,13 @@ export function CodeForm({ t, channel, to, length }: CodeFormProps) {
             {t.resend}
           </Button>
         ) : (
-          <Button type="submit" className="w-full" loading={verifying || done} loadingLabel={t.checking}>
+          <Button type="submit" className="w-full" disabled={!online} loading={verifying || done} loadingLabel={t.checking}>
             {t.submit}
           </Button>
         )}
       </form>
 
-      {locked || done ? null : seconds > 0 ? (
+      {blocked || done ? null : seconds > 0 ? (
         <p className="tabular flex min-h-12 items-center self-center text-body font-semibold text-ink-2" aria-live="off">
           {fill(t.resendIn, { seconds })}
         </p>
@@ -187,6 +229,7 @@ export function CodeForm({ t, channel, to, length }: CodeFormProps) {
           variant="tertiary"
           size="text"
           className="self-center"
+          disabled={!online}
           loading={resending}
           loadingLabel={t.checking}
           onClick={() => {

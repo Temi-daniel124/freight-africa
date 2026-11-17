@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CodeForm } from "@/features/auth/code-form";
 import { readPendingCode } from "@/features/auth/pending";
+import { codeTimeLeft } from "@/features/auth/pending-seal";
 import { formatNigerianPhone } from "@/lib/phone";
 import messages from "@/messages/en.json";
 
@@ -20,12 +22,14 @@ function FormSkeleton() {
 }
 
 async function EnterCode() {
-  // Without a code on its way there is nothing to enter (the page was opened directly, or 10 minutes passed).
+  // Without a code on its way there is nothing to enter (the page was opened directly, or half an hour passed).
   const pending = await readPendingCode();
   if (!pending) redirect("/auth");
+  // The time left is read from the clock, so this part always renders per request.
+  await connection();
 
   const to = pending.channel === "whatsapp" ? `+234 ${formatNigerianPhone(pending.to)}` : pending.to;
-  return <CodeForm t={messages.auth.code} channel={pending.channel} to={to} length={pending.length} />;
+  return <CodeForm t={{ ...messages.auth.code, offline: messages.auth.offline }} channel={pending.channel} to={to} length={pending.length} expiresInMs={codeTimeLeft(pending)} />;
 }
 
 // A-02 Enter code.
