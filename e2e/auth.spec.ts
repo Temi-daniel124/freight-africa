@@ -68,3 +68,8 @@ test("a return path that normalises to another site is ignored", async ({ page }
   await page.goto("/auth?next=/a/..//example.com", { waitUntil: "networkidle" });
   await expect(page.locator('input[name="next"]').first()).toHaveValue("/app");
 });
+
+test("the role step needs a session and returns there after sign-in", async ({ page }) => {
+  await page.goto("/onboarding/role?role=owner");
+  await expect(page).toHaveURL(/\/auth\?next=%2Fonboarding%2Frole$/);
+});

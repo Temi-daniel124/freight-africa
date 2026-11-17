@@ -62,6 +62,12 @@ describe("hostRoute (D033)", () => {
     expect(hostRoute("app.freight-africa.com", "/admin/trips", "/admin/trips?tab=open")).toEqual(redirect("https://admin.freight-africa.com/admin/trips?tab=open"));
   });
 
+  it("serves onboarding on the app host only", () => {
+    expect(hostRoute("app.freight-africa.com", "/onboarding/role")).toEqual(pass);
+    expect(hostRoute("freight-africa.com", "/onboarding/role", "/onboarding/role?role=owner")).toEqual(redirect("https://app.freight-africa.com/onboarding/role?role=owner"));
+    expect(hostRoute("admin.freight-africa.com", "/onboarding/role")).toEqual(redirect("https://app.freight-africa.com/onboarding/role"));
+  });
+
   it("lands staff on the console and everyone else on the app", () => {
     expect(homePath("admin.freight-africa.com")).toBe("/admin");
     expect(homePath("app.freight-africa.com")).toBe("/app");

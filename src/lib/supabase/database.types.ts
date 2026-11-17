@@ -14,6 +14,110 @@ export type Database = {
   }
   public: {
     Tables: {
+      consents: {
+        Row: {
+          at: string
+          granted: boolean
+          id: number
+          ip_key: string | null
+          kind: Database["public"]["Enums"]["consent_kind"]
+          user_agent: string | null
+          user_id: string
+          version: string
+        }
+        Insert: {
+          at?: string
+          granted: boolean
+          id?: never
+          ip_key?: string | null
+          kind: Database["public"]["Enums"]["consent_kind"]
+          user_agent?: string | null
+          user_id: string
+          version: string
+        }
+        Update: {
+          at?: string
+          granted?: boolean
+          id?: never
+          ip_key?: string | null
+          kind?: Database["public"]["Enums"]["consent_kind"]
+          user_agent?: string | null
+          user_id?: string
+          version?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consents_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_path: string | null
+          created_at: string
+          date_of_birth: string | null
+          deleted_at: string | null
+          email: string | null
+          emergency_contact_name: string | null
+          emergency_contact_phone: string | null
+          full_name: string | null
+          id: string
+          kyc_status: Database["public"]["Enums"]["kyc_status"]
+          language: Database["public"]["Enums"]["language_code"]
+          last_active_org_id: string | null
+          night_look: string
+          nin_enc: string | null
+          nin_last4: string | null
+          phone: string | null
+          status: Database["public"]["Enums"]["account_status"]
+          updated_at: string
+        }
+        Insert: {
+          avatar_path?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          deleted_at?: string | null
+          email?: string | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          full_name?: string | null
+          id: string
+          kyc_status?: Database["public"]["Enums"]["kyc_status"]
+          language?: Database["public"]["Enums"]["language_code"]
+          last_active_org_id?: string | null
+          night_look?: string
+          nin_enc?: string | null
+          nin_last4?: string | null
+          phone?: string | null
+          status?: Database["public"]["Enums"]["account_status"]
+          updated_at?: string
+        }
+        Update: {
+          avatar_path?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          deleted_at?: string | null
+          email?: string | null
+          emergency_contact_name?: string | null
+          emergency_contact_phone?: string | null
+          full_name?: string | null
+          id?: string
+          kyc_status?: Database["public"]["Enums"]["kyc_status"]
+          language?: Database["public"]["Enums"]["language_code"]
+          last_active_org_id?: string | null
+          night_look?: string
+          nin_enc?: string | null
+          nin_last4?: string | null
+          phone?: string | null
+          status?: Database["public"]["Enums"]["account_status"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       waitlist_signups: {
         Row: {
           consent_at: string
@@ -66,6 +170,16 @@ export type Database = {
       auth_code_passed: { Args: { p_key: string }; Returns: undefined }
       auth_code_refund: { Args: { p_key: string }; Returns: undefined }
       auth_code_try: { Args: { p_key: string }; Returns: number }
+      give_onboarding_consents: {
+        Args: {
+          p_ip_key?: string
+          p_marketing: boolean
+          p_user_agent?: string
+          p_version: string
+        }
+        Returns: undefined
+      }
+      has_accepted_terms: { Args: { p_version: string }; Returns: boolean }
       auth_code_sending: {
         Args: { p_ip_key: string; p_key: string }
         Returns: boolean
@@ -85,7 +199,16 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      account_status: "active" | "pending" | "suspended" | "banned"
+      consent_kind: "terms" | "privacy" | "whatsapp" | "location" | "marketing"
+      kyc_status:
+        | "not_started"
+        | "in_progress"
+        | "approved"
+        | "declined"
+        | "needs_review"
+        | "expired"
+      language_code: "en" | "pcm" | "ha" | "yo" | "ig"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -212,6 +335,18 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      account_status: ["active", "pending", "suspended", "banned"],
+      consent_kind: ["terms", "privacy", "whatsapp", "location", "marketing"],
+      kyc_status: [
+        "not_started",
+        "in_progress",
+        "approved",
+        "declined",
+        "needs_review",
+        "expired",
+      ],
+      language_code: ["en", "pcm", "ha", "yo", "ig"],
+    },
   },
 } as const

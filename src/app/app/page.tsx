@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { Logo } from "@/components/brand/Logo";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { signOut } from "@/features/auth/actions";
+import { TERMS_VERSION } from "@/features/onboarding/roles";
 import { formatNigerianPhone } from "@/lib/phone";
 import { supabaseServer } from "@/lib/supabase/server";
 import messages from "@/messages/en.json";
@@ -15,9 +17,14 @@ const t = messages.auth.account;
 
 async function Account() {
   // The server checks the session itself; the proxy only refreshes it.
-  const { data } = await (await supabaseServer()).auth.getClaims();
+  await connection();
+  const supabase = await supabaseServer();
+  const { data } = await supabase.auth.getClaims();
   const claims = data?.claims;
   if (!claims) redirect("/auth?next=/app");
+  // A-03 comes first for anyone who hasn't chosen what they're joining as.
+  const { data: agreed } = await supabase.rpc("has_accepted_terms", { p_version: TERMS_VERSION });
+  if (agreed !== true) redirect("/onboarding/role");
 
   const who = typeof claims.email === "string" && claims.email ? claims.email : typeof claims.phone === "string" && claims.phone ? `+234 ${formatNigerianPhone(claims.phone)}` : "";
   return (

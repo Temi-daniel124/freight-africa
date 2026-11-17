@@ -7,7 +7,7 @@ import { needsSession, refreshSession } from "@/lib/supabase/session";
 // Three jobs, each limited by config.matcher so ordinary visits to the launch page skip the proxy:
 // 1. Hosts (D033): the app lives on app.freight-africa.com and the staff console on
 //    admin.freight-africa.com; paths on the wrong host are redirected to the right one.
-// 2. Signed-in areas (/app, /admin, /auth): refresh the Supabase session before the page renders,
+// 2. Signed-in areas (/app, /admin, /auth, /onboarding): refresh the Supabase session before the page renders,
 //    and send the security headers.
 // 3. Share links (?ref= or ?utm_source=): remember the link's name for the waitlist.
 export async function proxy(request: NextRequest) {
@@ -39,6 +39,7 @@ export const config = {
     "/app/:path*",
     "/admin/:path*",
     "/auth/:path*",
+    "/onboarding/:path*",
     { source: "/((?!_next/|api/)[^.]*)", has: [{ type: "query", key: "ref" }] },
     { source: "/((?!_next/|api/)[^.]*)", has: [{ type: "query", key: "utm_source" }] },
     // Every path on the two signed-in hosts, so pages that belong elsewhere are redirected.
