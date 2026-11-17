@@ -1,0 +1,55 @@
+# Weekly check on the picomatch advisory (issue #22). We wait for the upstream fix and add no audit
+# exception (founder, 17 Nov 2026). This job tries the update in a throwaway checkout and comments on the
+# issue once `npm audit` passes with it, so the fix can't be forgotten.
+name: audit-watch
+
+on:
+  schedule:
+    - cron: "0 7 * * 1" # Mondays 07:00 UTC (08:00 in Lagos)
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+env:
+  ISSUE: "22"
+  ADVISORY: GHSA-fc5q-39xc-vjpf
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Is the issue still open?
+        id: open
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: echo "state=$(gh issue view "$ISSUE" --json state --jq .state)" >> "$GITHUB_OUTPUT"
+      - name: Try the update and audit
+        if: steps.open.outputs.state == 'OPEN'
+        id: audit
+        run: |
+          patched=$(curl -fsSL "https://api.github.com/advisories/$ADVISORY" | jq -r '[.vulnerabilities[] | select(.package.name == "picomatch") | .first_patched_version // empty] | join(", ")')
+          echo "patched=${patched:-none}" >> "$GITHUB_OUTPUT"
+          # Only the lockfile changes, in this runner's checkout; nothing is committed.
+          npm update picomatch --package-lock-only --ignore-scripts >/dev/null 2>&1 || true
+          if npm audit --audit-level=high --omit=dev --package-lock-only >/dev/null 2>&1; then
+            echo "clean=yes" >> "$GITHUB_OUTPUT"
+          else
+            echo "clean=no" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Comment when a fix is available
+        if: steps.open.outputs.state == 'OPEN' && (steps.audit.outputs.clean == 'yes' || steps.audit.outputs.patched != 'none')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CLEAN: ${{ steps.audit.outputs.clean }}
+          PATCHED: ${{ steps.audit.outputs.patched }}
+        run: |
+          gh issue comment "$ISSUE" --body "audit-watch ($(date -u +%F)): the advisory now lists a patched picomatch: **${PATCHED}**. \`npm audit\` after updating the lockfile: **$([ "$CLEAN" = yes ] && echo passes || echo still fails, a parent package may need updating too)**. Next: update the package on a branch, get CI green, merge, close this issue."
+      - name: Still waiting
+        if: steps.open.outputs.state == 'OPEN' && steps.audit.outputs.clean == 'no' && steps.audit.outputs.patched == 'none'
+        run: echo "No patched picomatch yet; nothing to report."

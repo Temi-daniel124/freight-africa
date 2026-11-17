@@ -40,6 +40,8 @@ The phases are defined in `BUILD.md` §3. Update this table as work progresses.
 
 ## 3. Current task
 
+**Blocking merges: the picomatch advisory (issue #22).** Since 17 Nov 2026 `npm audit` fails in CI because every published picomatch is listed as affected (GHSA-fc5q-39xc-vjpf). Founder decision: wait for the upstream fix, no audit exception, work continues on branches. Check issue #22 and `npm view picomatch versions` at the start of every session; the weekly `audit-watch` workflow comments on the issue when a fix exists (it runs only once merged to main). When the fix lands: update the package on a branch, CI green, merge, close #22, remove this paragraph.
+
 **Next task:** Phase 1 slice 4, organisations (shipper and transporter), members with every sub-role, invites and the account switcher, with the RLS helper functions and pgTAP for every row of ROLES-AND-PERMISSIONS §2 and §3; the role step (A-03) now hands off to placeholder pages at /onboarding/shipper, /onboarding/owner and /onboarding/agent, which slice 4 replaces with A-04, T-ON-01 and G-ON-01. Waiting on the founder: approve the sign-in and landing redesign (PR #19, preview link in its comments), then PageSpeed is re-run on production; choose Plus Jakarta Sans or Manrope from docs/design/font-call. Open items: the code screen's cookie and expiry changes ship with PR #19; consents are deleted with the account (cascade), revisit for legal retention in Phase 8; the drawn Hausa capitals (Ɓ Ɗ Ƙ) want a type designer's pass before Hausa ships; the dev server on port 3100 from an earlier session is still running (rules forbid stopping it by process id), and only one Next dev server can run per folder.
 
 ## 4. Things only the founder can do

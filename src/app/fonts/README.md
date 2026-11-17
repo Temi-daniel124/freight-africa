@@ -25,5 +25,3 @@ The font has no `⇄` (U+21C4); corridor names draw it as a Lucide icon through
 Add a character to `UNICODES` in the script (and rebuild) before using it anywhere in the interface.
 `font-coverage.test.ts` fails if the interface uses a character the file lacks.
 
-The previous typeface (Inter, D032) is kept only for the private comparison page, as
-`public/dev-fonts/inter-fa.woff2`.
