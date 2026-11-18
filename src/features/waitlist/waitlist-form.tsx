@@ -13,7 +13,7 @@ import { formatNigerianPhone } from "@/lib/phone";
 import { cn } from "@/lib/utils";
 import type messages from "@/messages/en.json";
 import { joinWaitlist } from "./actions";
-import { waitlistRoles, type WaitlistRole } from "./options";
+import { corridorSlugs, waitlistRoles, type WaitlistRole } from "./options";
 import type { WaitlistState } from "./state";
 import { CorridorText } from "@/components/ui/corridor-text";
 
@@ -39,7 +39,8 @@ export function WaitlistForm({ searchParams, t, corridors }: WaitlistFormProps) 
       phone: first(params.phone),
       email: "",
       role: (waitlistRoles as readonly string[]).includes(role) ? role : "shipper",
-      corridors: [],
+      // The hero bar sends the route it was set to; only known corridors are kept.
+      corridors: (Array.isArray(params.corridors) ? params.corridors : params.corridors ? [params.corridors] : []).filter((slug): slug is string => (corridorSlugs as readonly string[]).includes(slug)),
       trucks: "",
       consent: false,
       source: first(params.ref) || first(params.utm_source),

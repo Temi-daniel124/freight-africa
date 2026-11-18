@@ -432,30 +432,31 @@ between sections, scroll-driven storytelling, and one 3D moment. It stays light,
 
 ### 13.2 Header
 
-A **floating pill** (D031), based on **Navigation-5** (§17): logo (primary horizontal) left; links
-**Send goods**, **Own trucks**, **Agents**, **Pricing**, **Help**; right: **Sign in** (tertiary) and
-**Get started** (primary pill). (The launch page shows only its in-page links and **Join the
-waitlist**.)
+Built to the approved Gate 2 target, `docs/design/targets/gate-2/` (founder, 18 Nov 2026); the target wins
+over this summary.
 
-- **Shape:** fixed, centred, 12 px from the top (plus the safe area), the site's content width
-  (`max-w-site`) with 16 px side insets on phones; height 64 px desktop, 56 px phone; radius 45 px
-  (fully round ends), inner padding 8 px (6 px on phones, so the 44 px buttons fit the 56 px bar) so the button inside sits
-  concentric with the bar.
-- **Surface:** white at 88% (80% looked grey-green over the dark hero photos; tuned 15 Nov 2026) with `backdrop-filter: blur(16px) saturate(1.5)` (solid white where blur
-  isn't supported), a 1 px hairline border in `--line` at 70%, and one quiet shadow:
-  `0 1px 2px rgb(8 56 38 / .06), 0 8px 24px -12px rgb(8 56 38 / .18)`. It looks the same over the photo
-  hero and over light sections, so text is always ink on white.
-- **Scroll:** stays visible; after 80 px the shadow grows slightly
-  (`0 12px 32px -12px rgb(8 56 38 / .22)`), 200 ms. No hide-on-scroll.
-- **Phones:** logo, **Join the waitlist** (small pill), and a 44 px round menu button opening the
-  bottom sheet.
-- **Check:** at every width the pill's left and right edges align with the page content below it, the
-  logo and the button are optically centred vertically, and nothing touches the pill's curved ends.
-  If it looks heavy over a photo, reduce the shadow before changing anything else.
+- **Shape:** a **solid white pill** (nothing shows through it), fixed, 28 px from the top on desktop
+  (12 px on phones), at most 1200 px wide with 40 px side insets (12 px on phones); 64 px tall (56 px on
+  phones), fully round ends, padding 8 px (6 px on phones), the `--shadow-pill` shadow, a little deeper
+  after 80 px of scrolling.
+- **Desktop:** logo left; **How it works, Routes, Pricing, Questions** centred (15 px semibold, a green-50
+  pill on hover); right: **Sign in** (to `app.freight-africa.com/auth`) and **Join the waitlist**.
+- **Phones:** logo, a 44 px round menu button (opens the bottom sheet with the links, Sign in and Join),
+  and **Join the waitlist**.
 
 ### 13.3 Home page, section by section
 
-1. **Hero** (based on Hero-32). Full-bleed background, **at most 88% of the screen height on desktop
+1. **Hero** (Gate 2 target, 18 Nov 2026; supersedes the description below where they differ): an inset
+   rounded photo (16 px margin and 32 px radius on desktop, 8 px and 24 px on phones; 680 px tall, 560 px
+   on phones) with the `hero-fade` dark fade on the text side; the badge, headline (`type-hero-xl`) and
+   lead (`type-hero-lead`); the slideshow's progress bars and pause button; the **waitlist bar** on the
+   photo's bottom edge (I send goods / I own trucks, Your route, Your WhatsApp number, Join the waitlist;
+   it hands the sign-up to `/waitlist`, prefilled); and the proof row under it. On phones the bar stacks
+   into a card under the headline. Its states are on `/dev/landing-states`. New tokens: `--radius-field`
+   (14), `--radius-tray` (18), `--radius-hero` (32), `--shadow-bar`, and the utilities `hero-fade`,
+   `type-hero-xl`, `type-hero-lead`, `grid-cols-waitlist`, `object-photo`.
+   The earlier description, kept for the parts it still governs (photos, slideshow timing):
+   **Hero** (based on Hero-32). Full-bleed background, **at most 88% of the screen height on desktop
    and 80% on phones**, so the next section peeks and invites scrolling.
    - **Background, choose one:** (a) a **slideshow** of 4 photographs (truck on the Lagos–Ibadan
      expressway at dawn; a loaded flatbed at a Kano park; goods being checked at an Onitsha market;

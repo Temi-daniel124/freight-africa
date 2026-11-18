@@ -14,15 +14,16 @@ type NavLabels = {
   pricing: string;
   questions: string;
   join: string;
+  signIn: string;
   menu: string;
   closeMenu: string;
 };
 
-type SiteHeaderProps = { nav: NavLabels; homeLabel: string; showJoin?: boolean };
+type SiteHeaderProps = { nav: NavLabels; homeLabel: string; showJoin?: boolean; signInHref: string };
 
-// The floating pill (DESIGN_SYSTEM.md 13.2, D031). It looks the same over the photo hero and over light
-// sections, so its text is always ink on white; only the shadow deepens after 80 px.
-export function SiteHeader({ nav, homeLabel, showJoin = true }: SiteHeaderProps) {
+// The floating pill (DESIGN_SYSTEM.md 13.2, D031), built to the Gate 2 target: solid white, so nothing
+// shows through it over the photo or the page; only the shadow deepens after 80 px.
+export function SiteHeader({ nav, homeLabel, showJoin = true, signInHref }: SiteHeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const menu = useRef<HTMLDialogElement>(null);
 
@@ -42,53 +43,50 @@ export function SiteHeader({ nav, homeLabel, showJoin = true }: SiteHeaderProps)
   ];
 
   return (
-    <header className="pointer-events-none fixed inset-x-0 top-0 z-30 pt-[calc(0.75rem+env(safe-area-inset-top))]">
-      {/* Same width and side insets as the page content, so the pill's edges line up with it. */}
-      <div className="mx-auto max-w-site px-4 lg:px-6">
-        <div
-          className={cn(
-            "nav-pill pointer-events-auto flex h-14 items-center gap-1.5 rounded-button p-1.5 transition-shadow duration-200 ease-out lg:h-16 lg:gap-2 lg:p-2",
-            scrolled ? "shadow-pill-scrolled" : "shadow-pill",
-          )}
+    <header className="pointer-events-none fixed inset-x-0 top-3 z-30 px-3 lg:top-7 lg:px-10">
+      <div
+        className={cn(
+          "pointer-events-auto mx-auto flex h-14 max-w-300 items-center gap-2 rounded-pill bg-surface py-1.5 pr-1.5 pl-3.5 transition-shadow duration-200 ease-out lg:h-16 lg:py-2 lg:pr-2 lg:pl-5",
+          scrolled ? "shadow-pill-scrolled" : "shadow-pill",
+        )}
+      >
+        <Link href="/" aria-label={homeLabel} className="flex shrink-0 items-center rounded-button">
+          <Logo variant="primary-green" alt="" className="h-7.5 lg:h-9" priority />
+        </Link>
+        <nav aria-label={nav.label} className="mx-auto hidden lg:block">
+          <ul className="flex items-center gap-1">
+            {links.map((link) => (
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  className="inline-flex h-10 items-center rounded-pill px-4 text-body font-semibold text-ink-2 transition-colors duration-150 hover:bg-green-50 hover:text-ink"
+                >
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+        <a href={signInHref} className="hidden h-12 items-center rounded-pill px-4 text-body font-semibold text-ink transition-colors hover:bg-green-50 lg:inline-flex">
+          {nav.signIn}
+        </a>
+        <button
+          type="button"
+          aria-label={nav.menu}
+          aria-haspopup="dialog"
+          onClick={() => menu.current?.showModal()}
+          className="ml-auto inline-flex size-11 shrink-0 items-center justify-center rounded-pill border border-line bg-surface text-ink transition-colors hover:bg-green-50 lg:hidden"
         >
-          <Link href="/" aria-label={homeLabel} className="flex h-full shrink-0 items-center rounded-button pr-1 pl-2.5 lg:pl-4">
-            <Logo variant="primary-green" alt="" className="h-7 min-[22.5rem]:h-8 lg:h-9" priority />
-          </Link>
-          <nav aria-label={nav.label} className="mx-auto hidden lg:block">
-            <ul className="flex items-center gap-1">
-              {links.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="inline-flex h-12 items-center rounded-button px-4 text-body font-medium text-ink-2 transition-colors duration-150 hover:bg-green-50 hover:text-ink"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </nav>
-          {showJoin ? (
-            <Link
-              href="/waitlist"
-              className={cn(buttonVariants({ variant: "primary", size: "md" }), "ml-auto h-11 px-4 text-label hover:translate-y-0 sm:px-5 sm:text-body lg:ml-0 lg:h-12 lg:px-6")}
-            >
-              {nav.join}
-            </Link>
-          ) : null}
-          <button
-            type="button"
-            aria-label={nav.menu}
-            aria-haspopup="dialog"
-            onClick={() => menu.current?.showModal()}
-            className={cn(
-              "inline-flex size-11 shrink-0 items-center justify-center rounded-pill bg-green-50 text-ink transition-colors hover:bg-green-100 lg:hidden",
-              !showJoin && "ml-auto",
-            )}
+          <Menu aria-hidden className="size-5" strokeWidth={1.75} />
+        </button>
+        {showJoin ? (
+          <Link
+            href="/waitlist"
+            className="inline-flex h-11 shrink-0 items-center rounded-pill bg-green-700 px-4 text-body-sm font-bold text-white transition-colors hover:bg-green-800 max-[22.5rem]:px-3.5 lg:h-12 lg:px-5.5 lg:text-body lg:font-bold"
           >
-            <Menu aria-hidden className="size-5" strokeWidth={1.75} />
-          </button>
-        </div>
+            {nav.join}
+          </Link>
+        ) : null}
       </div>
 
       {/* Phone menu: a native modal dialog styled as a bottom sheet (Escape and the backdrop close it). */}
@@ -115,6 +113,9 @@ export function SiteHeader({ nav, homeLabel, showJoin = true }: SiteHeaderProps)
               ))}
             </ul>
           </nav>
+          <a href={signInHref} onClick={close} className={cn(buttonVariants({ variant: "secondary" }), "w-full")}>
+            {nav.signIn}
+          </a>
           {showJoin ? (
             <Link href="/waitlist" onClick={close} className={cn(buttonVariants(), "w-full")}>
               {nav.join}

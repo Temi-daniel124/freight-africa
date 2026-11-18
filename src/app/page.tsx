@@ -7,11 +7,11 @@ import { Hero } from "@/features/site/hero";
 import { HowItWorks } from "@/features/site/how-it-works";
 import { JsonLd } from "@/features/site/json-ld";
 import { Pricing } from "@/features/site/pricing";
-import { ProofStrip } from "@/features/site/proof-strip";
 import { RoutesMap } from "@/features/site/routes-map";
 import { SectionHeading } from "@/features/site/section-heading";
 import { SiteFooter } from "@/features/site/site-footer";
 import { SiteHeader } from "@/features/site/site-header";
+import { appHref } from "@/lib/hosts";
 import { stepIllustrations } from "@/features/site/step-illustrations";
 import messages from "@/messages/en.json";
 
@@ -48,10 +48,10 @@ const website = {
 export default function HomePage() {
   return (
     <>
-      <SiteHeader nav={messages.site.nav} homeLabel={messages.site.homeLabel} />
-      <main>
+      <SiteHeader nav={messages.site.nav} homeLabel={messages.site.homeLabel} signInHref={appHref()} />
+      {/* The hero sits on white, inset from the edges (Gate 2); the sections below keep their own colours. */}
+      <main className="bg-surface">
         <Hero />
-        <ProofStrip />
         <HowItWorks
           heading={<SectionHeading id="how-title" title={home.how.title} lead={home.how.lead} />}
           steps={home.how.steps}

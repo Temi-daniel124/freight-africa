@@ -104,12 +104,18 @@
   --radius-map: 20px;
   --radius-tile: 20px;
   --radius-card: 24px;
+  /* Gate 2 hero (docs/design/targets/gate-2): fields in the waitlist bar, its tray on phones, the inset photo. */
+  --radius-field: 14px;
+  --radius-tray: 18px;
+  --radius-hero: 32px;
   --radius-sheet: 28px;
 
   --shadow-*: initial;
   --shadow-raised: 0 1px 2px rgba(15, 26, 20, 0.06), 0 8px 24px -12px rgba(12, 80, 52, 0.18);
   --shadow-floating: 0 12px 40px -8px rgba(15, 26, 20, 0.22);
   /* The floating pill header (section 13.2): one quiet shadow, a little deeper after scrolling. */
+  /* The waitlist bar sitting on the hero photo (Gate 2). */
+  --shadow-bar: 0 1px 2px rgba(8, 56, 38, 0.08), 0 24px 56px -20px rgba(8, 56, 38, 0.35);
   /* Cards floating on the deep-green sign-in panel. */
   --shadow-panel-card: 0 1px 2px rgba(8, 56, 38, 0.08), 0 24px 48px -16px rgba(8, 56, 38, 0.45);
   --shadow-pill: 0 1px 2px rgb(8 56 38 / 0.06), 0 8px 24px -12px rgb(8 56 38 / 0.18);
@@ -286,16 +292,53 @@
 }
 /* Section 13.2: frosted white with blur; solid white where blur isn't supported. 88% rather than 80%:
    at 80% the dark hero photos tinted the pill grey-green, and it should look the same everywhere. */
-@utility nav-pill {
-  background-color: rgb(255 255 255 / 0.88);
-  backdrop-filter: blur(16px) saturate(1.5);
-  -webkit-backdrop-filter: blur(16px) saturate(1.5);
-  border: 1px solid rgb(226 232 227 / 0.7);
-  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-    background-color: var(--color-surface);
+/* Section 13.3: green over the photo, darkest on the text side, so white text stays at 4.5:1 or more. */
+/* Gate 2 hero: dark fade on the text side (left on desktop, bottom on phones). */
+@utility hero-fade {
+  background-image: linear-gradient(0deg, rgb(6 36 24 / 0.9) 0%, rgb(6 36 24 / 0.65) 45%, rgb(6 36 24 / 0.25) 75%, rgb(6 36 24 / 0.35) 100%);
+  @media (width >= 64rem) {
+    background-image:
+      linear-gradient(90deg, rgb(6 36 24 / 0.82) 0%, rgb(6 36 24 / 0.55) 38%, rgb(6 36 24 / 0.05) 70%),
+      linear-gradient(0deg, rgb(6 36 24 / 0.55) 0%, rgb(6 36 24 / 0) 40%);
   }
 }
-/* Section 13.3: green over the photo, darkest on the text side, so white text stays at 4.5:1 or more. */
+/* Gate 2 headline: 38/42 on phones (34/38 below 360 px), 68/72 from 1024 px. */
+@utility type-hero-xl {
+  font-size: 2.375rem;
+  line-height: 2.625rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  @media (width < 22.5rem) {
+    font-size: 2.125rem;
+    line-height: 2.375rem;
+  }
+  @media (width >= 64rem) {
+    font-size: 4.25rem;
+    line-height: 4.5rem;
+    letter-spacing: -0.035em;
+  }
+}
+/* Gate 2 lead: 16/24 on phones, 19/28 from 1024 px. */
+@utility type-hero-lead {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 500;
+  @media (width >= 64rem) {
+    font-size: 1.1875rem;
+    line-height: 1.75rem;
+  }
+}
+/* Waitlist bar on desktop: route, WhatsApp number, button. */
+@utility grid-cols-waitlist {
+  grid-template-columns: 1.1fr 1.3fr auto;
+}
+/* Each hero photo sets its own focal point, with a second one for phones. */
+@utility object-photo {
+  object-position: var(--photo-pos-phone, var(--photo-pos));
+  @media (width >= 64rem) {
+    object-position: var(--photo-pos);
+  }
+}
 /* Sign-in panel (Gate 1 target): deep green with a soft light from the top right. */
 @utility panel-glow {
   background-image:

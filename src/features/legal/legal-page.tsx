@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Fragment, type ReactNode } from "react";
 import { SiteFooter } from "@/features/site/site-footer";
 import { SiteHeader } from "@/features/site/site-header";
+import { appHref } from "@/lib/hosts";
 import messages from "@/messages/en.json";
 
 type Section = { title: string; body: string[] };
@@ -31,7 +32,7 @@ function rich(text: string): ReactNode {
 export function LegalPage({ title, intro, sections }: LegalPageProps) {
   return (
     <>
-      <SiteHeader nav={messages.site.nav} homeLabel={messages.site.homeLabel} />
+      <SiteHeader nav={messages.site.nav} homeLabel={messages.site.homeLabel} signInHref={appHref()} />
       <main className="px-4 pt-24 pb-16 lg:pt-32 lg:pb-24">
         <article className="mx-auto flex max-w-text flex-col gap-8">
           <header className="flex flex-col gap-3">

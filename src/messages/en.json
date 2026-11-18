@@ -16,7 +16,8 @@
     "accountTitle": "Your account",
     "staffTitle": "Staff console",
     "onboardingTitle": "Get started",
-    "signInStatesTitle": "Sign-in states"
+    "signInStatesTitle": "Sign-in states",
+    "landingStatesTitle": "Landing states"
   },
   "site": {
     "contactEmail": "hello@freight-africa.com",
@@ -29,7 +30,8 @@
       "questions": "Questions",
       "join": "Join the waitlist",
       "menu": "Menu",
-      "closeMenu": "Close menu"
+      "closeMenu": "Close menu",
+      "signIn": "Sign in"
     },
     "corridors": [
       {
@@ -72,7 +74,13 @@
       "submit": "Join the waitlist",
       "note": "Free, and takes a minute. We'll ask a few details next.",
       "pause": "Pause the photos",
-      "play": "Play the photos"
+      "play": "Play the photos",
+      "routeLabel": "Your route",
+      "phonePlaceholder": "803 123 4567",
+      "sending": "Opening the next step",
+      "errorPhone": "Enter a Nigerian mobile number, like 0803 123 4567",
+      "offline": "You’re offline. Connect to the internet to join.",
+      "photosLabel": "Photos"
     },
     "proof": [
       {
@@ -721,5 +729,15 @@
     "expired": "Expired code",
     "success": "Success",
     "rateLimited": "Too many codes asked for"
+  },
+  "landingStates": {
+    "title": "Landing hero: waitlist bar states",
+    "intro": "Every state of the waitlist bar, side by side. Preview only.",
+    "empty": "Empty",
+    "typing": "Typing the number",
+    "owner": "Truck owner, another route",
+    "invalid": "Not a Nigerian mobile number",
+    "sending": "Sending",
+    "offline": "Offline"
   }
 }
