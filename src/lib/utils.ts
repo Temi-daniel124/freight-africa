@@ -5,10 +5,10 @@ import { extendTailwindMerge } from "tailwind-merge";
 const twMerge = extendTailwindMerge({
   extend: {
     theme: {
-      text: ["display", "title-1", "title-2", "body-lg", "body", "label", "caption"],
+      text: ["display", "title-1", "title-2", "body-lg", "body", "body-sm", "control", "label", "caption", "micro"],
       radius: ["button", "pill", "input", "inner", "nav", "map", "tile", "card", "sheet"],
-      shadow: ["raised", "floating", "pill", "pill-scrolled"],
-      tracking: ["caps"],
+      shadow: ["raised", "floating", "pill", "pill-scrolled", "panel-card"],
+      tracking: ["caps", "plate"],
     },
     classGroups: {
       "border-w": [{ border: ["field"] }],

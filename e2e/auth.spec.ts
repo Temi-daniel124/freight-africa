@@ -16,7 +16,7 @@ for (const width of widths) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/auth", { waitUntil: "networkidle" });
     await page.evaluate(() => document.fonts.ready);
-    await expect(page.getByRole("heading", { level: 1, name: "Welcome to Freight Africa" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "Sign in or create your account" })).toBeVisible();
     await expect(page).toHaveScreenshot(`sign-in-${width}.png`, { fullPage: true });
   });
 
@@ -28,7 +28,7 @@ for (const width of widths) {
     await page.goto("/auth/code", { waitUntil: "networkidle" });
     await page.evaluate(() => document.fonts.ready);
     await expect(page.getByRole("heading", { level: 1, name: "Enter your code" })).toBeVisible();
-    await page.getByLabel("6-digit code").fill("482");
+    await page.getByLabel(/digit code/).fill("482");
     await expect(page).toHaveScreenshot(`enter-code-${width}.png`, { fullPage: true });
   });
 }
@@ -37,7 +37,7 @@ test("sign-in refuses an address that isn't an email", async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 900 });
   await page.goto("/auth", { waitUntil: "networkidle" });
   await page.getByLabel("Email address").fill("ngozi@");
-  await page.getByRole("button", { name: "Send code by email" }).click();
+  await page.getByRole("button", { name: "Send code" }).click();
   await expect(page.getByText("Enter a valid email address, like ngozi@example.com")).toBeVisible();
   await expect(page).toHaveURL(/\/auth$/);
   await expect(page).toHaveScreenshot("sign-in-invalid-375.png", { fullPage: true });
