@@ -64,13 +64,19 @@ test("waitlist shows every missing field", async ({ page }) => {
   await expect(page).toHaveScreenshot("waitlist-errors-375.png", { fullPage: true });
 });
 
-test("the hero card carries the role and phone to the waitlist", async ({ page }) => {
+test("the hero bar checks the number, then carries the role, route and number to the waitlist", async ({ page }) => {
   await page.setViewportSize({ width: 375, height: 900 });
   await page.goto("/", { waitUntil: "networkidle" });
-  await page.getByRole("radio", { name: "I own trucks" }).click();
-  await page.getByLabel("Your WhatsApp number").fill("08031234567");
-  await page.getByRole("button", { name: "Join the waitlist" }).first().click();
-  await expect(page).toHaveURL(/\/waitlist\?role=owner&phone=803\+123\+4567/);
+  await page.getByRole("radio", { name: "I own trucks" }).check({ force: true });
+  await page.getByLabel("Your route").selectOption("lagos-abuja");
+  await page.locator("#hero-phone").fill("12345");
+  await page.getByRole("button", { name: /Join the waitlist/ }).last().click();
+  await expect(page.getByText("Enter a Nigerian mobile number, like 0803 123 4567")).toBeVisible();
+  await expect(page).toHaveURL(/\/$/);
+  await page.locator("#hero-phone").fill("08031234567");
+  await page.getByRole("button", { name: /Join the waitlist/ }).last().click();
+  await expect(page).toHaveURL(/\/waitlist\?role=owner&corridors=lagos-abuja&phone=803\+123\+4567/);
   await expect(page.getByRole("radio", { name: "A truck owner" })).toHaveAttribute("aria-checked", "true");
   await expect(page.getByLabel("WhatsApp number")).toHaveValue("803 123 4567");
+  await expect(page.getByRole("button", { name: /Lagos.*Abuja/ })).toHaveAttribute("aria-pressed", "true");
 });

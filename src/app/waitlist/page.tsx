@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SiteFooter } from "@/features/site/site-footer";
 import { SiteHeader } from "@/features/site/site-header";
+import { appHref } from "@/lib/hosts";
 import { WaitlistForm } from "@/features/waitlist/waitlist-form";
 import messages from "@/messages/en.json";
 
@@ -29,7 +30,7 @@ function FormSkeleton() {
 export default function WaitlistPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   return (
     <>
-      <SiteHeader nav={messages.site.nav} homeLabel={messages.site.homeLabel} showJoin={false} />
+      <SiteHeader nav={messages.site.nav} homeLabel={messages.site.homeLabel} signInHref={appHref()} showJoin={false} />
       <main className="px-4 pt-24 pb-16 lg:pt-32 lg:pb-24">
         <div className="mx-auto flex max-w-text flex-col gap-8">
           <div className="flex flex-col gap-3">

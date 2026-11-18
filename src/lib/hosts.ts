@@ -65,3 +65,8 @@ export function hostRoute(host: string, pathname: string, rest: string = pathnam
 export function siteHref(path: string = "/") {
   return process.env.VERCEL_ENV === "production" ? `${SITE_ORIGIN}${path}` : path;
 }
+
+/** A link into the app (sign-in) from the public website: another host in production, a path elsewhere. */
+export function appHref(path: string = "/auth") {
+  return process.env.VERCEL_ENV === "production" ? `${APP_ORIGIN}${path}` : path;
+}

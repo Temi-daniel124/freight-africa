@@ -1,16 +1,18 @@
 "use client";
 
-import { Pause, Play } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Play } from "lucide-react";
+import { useEffect, useState, type CSSProperties } from "react";
 import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion";
 import { cn } from "@/lib/utils";
 
-export type HeroPhoto = { name: string; position: string };
+/** `position` is the focal point from 1024 px; `phone` the focal point below it, when it differs. */
+export type HeroPhoto = { name: string; position: string; phone?: string };
 
-type HeroSlideshowProps = { photos: HeroPhoto[]; pauseLabel: string; playLabel: string };
+type HeroSlideshowProps = { photos: HeroPhoto[]; pauseLabel: string; playLabel: string; photosLabel: string };
 
 const SLIDE_MS = 6000;
-const PHONE = "(width < 37.5rem)";
+// Below 1024 px the hero uses the phone layout, and the portrait crop (Gate 2 target).
+const PHONE = "(width < 64rem)";
 
 function Photo({ photo, eager }: { photo: HeroPhoto; eager: boolean }) {
   const base = `/photos/${photo.name}`;
@@ -26,8 +28,8 @@ function Photo({ photo, eager }: { photo: HeroPhoto; eager: boolean }) {
         height={1280}
         loading={eager ? "eager" : "lazy"}
         fetchPriority={eager ? "high" : "low"}
-        className="size-full object-cover"
-        style={{ objectPosition: photo.position }}
+        className="object-photo size-full object-cover"
+        style={{ "--photo-pos": photo.position, "--photo-pos-phone": photo.phone ?? photo.position } as CSSProperties}
       />
     </picture>
   );
@@ -35,7 +37,7 @@ function Photo({ photo, eager }: { photo: HeroPhoto; eager: boolean }) {
 
 // DESIGN_SYSTEM.md 13.3: four photos crossfading every 6 s with a slow zoom. Photo 1 is preloaded; 2 to 4
 // load after the first paint. Pauses when the tab is hidden; reduced motion shows photo 1 only.
-export function HeroSlideshow({ photos, pauseLabel, playLabel }: HeroSlideshowProps) {
+export function HeroSlideshow({ photos, pauseLabel, playLabel, photosLabel }: HeroSlideshowProps) {
   const reduced = usePrefersReducedMotion();
   const [loadRest, setLoadRest] = useState(false);
   const [active, setActive] = useState(0);
@@ -71,7 +73,7 @@ export function HeroSlideshow({ photos, pauseLabel, playLabel }: HeroSlideshowPr
 
   return (
     <>
-      <div aria-hidden className="absolute inset-0 -z-20 bg-green-800">
+      <div aria-hidden className="absolute inset-0 -z-20 bg-green-900">
         {photos.map((photo, index) =>
           index === 0 || (loadRest && !reduced) ? (
             <div
@@ -87,20 +89,46 @@ export function HeroSlideshow({ photos, pauseLabel, playLabel }: HeroSlideshowPr
             </div>
           ) : null,
         )}
-        <div className="hero-scrim absolute inset-0" />
+        <div className="hero-fade absolute inset-0" />
       </div>
-      {/* WCAG 2.2.2: anything that moves for more than 5 s can be paused. */}
-      {reduced ? null : (
-        <button
-          type="button"
-          onClick={() => setPaused((value) => !value)}
-          aria-label={paused ? playLabel : pauseLabel}
-          aria-pressed={paused}
-          className="absolute bottom-4 left-4 z-10 inline-flex size-11 items-center justify-center rounded-pill border border-white/30 bg-green-900/50 text-white backdrop-blur-sm transition-colors hover:bg-green-900/70 lg:bottom-6 lg:left-6"
-        >
-          {paused ? <Play aria-hidden className="size-4 fill-current" strokeWidth={1.75} /> : <Pause aria-hidden className="size-4 fill-current" strokeWidth={1.75} />}
-        </button>
-      )}
+      {/* Progress bars (one per photo, the current one wide and white) and the pause button.
+          WCAG 2.2.2: anything that moves for more than 5 s can be paused. */}
+      <div
+        role="group"
+        aria-label={photosLabel}
+        className="absolute top-21 left-5 z-10 flex items-center gap-3 lg:top-auto lg:right-8 lg:bottom-32 lg:left-auto"
+      >
+        <div aria-hidden className="flex gap-1.5">
+          {photos.map((photo, index) => (
+            <i
+              key={photo.name}
+              className={cn(
+                "h-1 rounded-pill transition-all duration-300 ease-out",
+                index === shown ? "w-7 bg-white lg:w-10" : "w-4 bg-white/35 lg:w-6",
+              )}
+            />
+          ))}
+        </div>
+        {reduced ? null : (
+          <button
+            type="button"
+            onClick={() => setPaused((value) => !value)}
+            aria-label={paused ? playLabel : pauseLabel}
+            aria-pressed={paused}
+            className="grid size-8 place-items-center rounded-pill border border-white/25 bg-white/16 text-white transition-colors hover:bg-white/25 lg:size-9"
+          >
+            {paused ? (
+              <Play aria-hidden className="size-3.5" strokeWidth={2.25} />
+            ) : (
+              // Two strokes, as in the Gate 2 target (Lucide's Pause draws two outlined bars).
+              <svg aria-hidden viewBox="0 0 24 24" className="size-3.5 fill-none stroke-current" strokeWidth={2.25} strokeLinecap="round">
+                <path d="M9 5v14" />
+                <path d="M15 5v14" />
+              </svg>
+            )}
+          </button>
+        )}
+      </div>
     </>
   );
 }
