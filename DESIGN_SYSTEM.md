@@ -483,6 +483,27 @@ over this summary.
      the explainer video in a dialog (the Hero-32 play pattern).
    - **Entrance:** headline words rise and fade in, 40 ms apart; the quote card rises 24 px; total under
      800 ms. No blur on phones.
+   **Sections 2 to 12 below are superseded by the Gate 3 target (18 Nov 2026,
+   `docs/design/targets/gate-3/`)** where they differ. The page now runs: hero, How it works, How payment
+   works, Who it's for, Routes, Pricing, Questions, closing band, footer. Each section opens with the
+   shared `SectionHeading` (label pill, headline left, short paragraph right; stacked below 1024 px), or
+   with its `Eyebrow` alone where the layout splits. In order:
+   - **How it works:** four numbered cards on `--paper`, each with a small app screen (`Shot`) on top.
+   - **How payment works:** an inset `green-900` band (`money-glow`) with the note and a still Paid /
+     Loaded / Delivered timeline card. No animation.
+   - **Who it's for:** senders (`--paper`) and truck owners (`green-50`) side by side, no switch; each
+     button goes to `/waitlist?role=shipper|owner`.
+   - **Routes:** four numbered corridor cards with their stops on a dashed line and "Coming soon".
+   - **Pricing:** copy and the Senders / Truck owners segmented control left, one white card right,
+     with the yellow offer pill inside it and the notice under it. Switching is instant.
+   - **Questions:** heading and help email left (sticky on desktop), grouped `<details>` right, the
+     first open.
+   - **Closing band:** the Lagos photo with `final-fade`.
+   - **Footer:** logo and line, then Routes, Legal and Contact.
+   Content shows at once: no fade-ins. New tokens: `--color-success-200`, `--radius-digit` (10),
+   `--tracking-kv`, `--tracking-close`, `--text-plate`, `--text-lead`; new utilities `type-section`,
+   `type-section-lead`, `type-card-title`, `type-plan-title`, `type-plan-point`, `type-final`,
+   `grid-cols-pricing`, `grid-cols-faq`, `grid-cols-footer`, `money-glow`, `final-fade`, `dash-v`.
 2. **Proof strip.** Three statements with icons on `--surface`: Verified truck owners · Money held until
    delivery · Live tracking. No fake logos. When real business customers agree, their logos can be
    added in greyscale.

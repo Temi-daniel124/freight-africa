@@ -100,8 +100,8 @@
       }
     ],
     "how": {
-      "title": "How it works",
-      "lead": "Four steps from booking to delivery, with your money protected the whole way.",
+      "title": "Four steps from booking to delivery.",
+      "lead": "Your money is protected the whole way, and you see the full price before you pay.",
       "steps": [
         {
           "title": "Book",
@@ -134,7 +134,6 @@
       "trackStatus": "In transit",
       "trackPlace": "Passing Lokoja",
       "trackEta": "Arrives at Dawanau, Kano by 4:30 pm Thu",
-      "trackLabel": "Trip 60% complete",
       "codeLabel": "Delivery code",
       "code": "482916",
       "codeStatus": "Delivered",
@@ -161,11 +160,11 @@
         }
       ],
       "note": "If something goes wrong, only the amount in question is held while we sort it out with both sides.",
-      "replay": "Play again"
+      "card": "Lagos to Kano · KJA 482 XA",
+      "status": "In transit"
     },
     "audience": {
       "title": "Built for both sides of the road",
-      "label": "Show benefits for",
       "senders": "For senders",
       "owners": "For truck owners",
       "sendersBenefits": [
@@ -197,13 +196,14 @@
         }
       ],
       "sendersAction": "Join as a sender",
-      "ownersAction": "Join as a truck owner"
+      "ownersAction": "Join as a truck owner",
+      "lead": "Senders get one clear price and protected payments. Truck owners get loads that are paid for before they set off."
     },
     "routes": {
-      "title": "Our routes",
-      "lead": "Four corridors when we launch, chosen with the people who move goods on them every day.",
+      "title": "Four corridors at launch.",
+      "lead": "Chosen with the people who move goods on them every day.",
       "status": "Coming soon",
-      "mapLabel": "Map of Nigeria showing the four Freight Africa corridors"
+      "both": "Both directions"
     },
     "pricing": {
       "title": "Clear pricing. No surprises.",
@@ -227,7 +227,7 @@
       "notice": "Prices, charges and payment timing are shown in full in the app before you confirm, and are set out in our Terms of Service."
     },
     "faq": {
-      "title": "Questions",
+      "title": "Answers before you join.",
       "groups": [
         {
           "title": "Booking",
@@ -273,17 +273,12 @@
           ]
         },
         {
-          "title": "Safety",
+          "title": "Safety and launch",
           "items": [
             {
               "q": "What happens if something goes wrong on the way?",
               "a": "Your payment stays protected. If there's a problem with the goods, only the amount in question is held while our team works it out with both sides."
-            }
-          ]
-        },
-        {
-          "title": "Launch",
-          "items": [
+            },
             {
               "q": "When do you launch?",
               "a": "Soon. Join the waitlist and we'll contact you before your route opens."
@@ -294,12 +289,22 @@
             }
           ]
         }
-      ]
+      ],
+      "help": "Can't find your answer? Write to us and a person will reply."
     },
     "final": {
       "title": "Be first on the road.",
       "text": "Join the waitlist and we'll tell you when your route opens.",
       "action": "Join the waitlist"
+    },
+    "labels": {
+      "how": "How it works",
+      "payment": "How payment works",
+      "who": "Who it's for",
+      "routes": "Routes",
+      "pricing": "Pricing",
+      "questions": "Questions",
+      "launching": "Launching soon"
     }
   },
   "waitlist": {

@@ -1,105 +1,124 @@
-import { Check, MapPin, Package, ShieldCheck, Tag, Truck } from "lucide-react";
-import { StatusChip } from "@/components/ui/chip";
-import { RoadLine } from "@/components/ui/road-line";
+import { Check, ShieldCheck, Truck } from "lucide-react";
 import messages from "@/messages/en.json";
 
 const t = messages.home.how;
 
-// Illustrated stand-ins for app screens until the app exists (BUILD.md 2A). Decorative, so hidden from screen readers.
-function Frame({ children }: { children: React.ReactNode }) {
+// Small app screens on top of the How it works cards (Gate 3 target). Decorative, so hidden from screen
+// readers; the step text below each one says the same thing.
+function Shot({ children }: { children: React.ReactNode }) {
   return (
-    <div aria-hidden className="flex flex-col gap-4 rounded-card border border-line bg-surface p-5 shadow-raised">
+    <div aria-hidden className="flex min-h-37.5 flex-col justify-center gap-2.5 overflow-hidden rounded-tray border border-line bg-surface p-4 lg:h-52">
       {children}
     </div>
   );
 }
 
-function Row({ icon: Icon, label, value }: { icon: typeof Truck; label: string; value: string }) {
+const Title = ({ children }: { children: string }) => <div className="text-control leading-5.25 font-bold tracking-close">{children}</div>;
+
+function KeyValue({ label, value }: { label: string; value?: string }) {
   return (
-    <div className="flex items-center gap-3">
-      <span className="flex size-10 shrink-0 items-center justify-center rounded-pill bg-green-50 text-green-500">
-        <Icon className="size-5" strokeWidth={1.75} />
-      </span>
-      <div className="min-w-0">
-        <p className="text-caption text-ink-2">{label}</p>
-        <p className="text-body font-semibold text-ink">{value}</p>
-      </div>
+    <div className="flex flex-col gap-0.5">
+      <small className="text-micro leading-3.25 font-semibold tracking-kv text-ink-3">{label}</small>
+      {value ? <b className="text-label leading-4.5 font-semibold">{value}</b> : null}
     </div>
+  );
+}
+
+function Tick({ children }: { children: string }) {
+  return (
+    <div className="flex items-center gap-1.5 text-caption leading-3.75 font-semibold tracking-normal text-green-700">
+      <Check className="size-3.5 shrink-0" strokeWidth={1.75} />
+      {children}
+    </div>
+  );
+}
+
+const Rule = () => <hr className="border-line" />;
+
+function Chip({ tone, children, icon }: { tone: "ok" | "info"; children: string; icon?: boolean }) {
+  return (
+    <span
+      className={
+        "inline-flex h-6.5 items-center gap-1.5 self-start rounded-pill px-2.5 text-caption font-semibold tracking-normal " +
+        (tone === "ok" ? "bg-success-100 text-success" : "bg-info-100 text-info")
+      }
+    >
+      {icon ? <Check className="size-3.5" strokeWidth={1.75} /> : null}
+      {children}
+    </span>
   );
 }
 
 export function BookIllustration() {
   return (
-    <Frame>
-      <p className="text-title-2 text-ink">{t.bookRoute}</p>
-      <Row icon={MapPin} label={t.bookPickup} value={t.bookPickupValue} />
-      <Row icon={Package} label={t.bookGoods} value={t.bookGoodsValue} />
-      {/* A statement, not an action: no pill shape or solid fill, so it can't be mistaken for a button. */}
-      <p className="flex items-center gap-2 border-t border-line pt-4 text-label text-green-800">
-        <Tag aria-hidden className="size-4 shrink-0" strokeWidth={1.75} />
-        {t.bookPrice}
-      </p>
-    </Frame>
+    <Shot>
+      <Title>{t.bookRoute}</Title>
+      <KeyValue label={t.bookPickup} value={t.bookPickupValue} />
+      <KeyValue label={t.bookGoods} value={t.bookGoodsValue} />
+      <Rule />
+      <Tick>{t.bookPrice}</Tick>
+    </Shot>
   );
 }
 
 export function AcceptIllustration() {
   return (
-    <Frame>
-      <StatusChip tone="success" icon={Check} className="self-start">
+    <Shot>
+      <Chip tone="ok" icon>
         {t.acceptStatus}
-      </StatusChip>
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <p className="tabular text-title-2 text-ink">{t.acceptPlate}</p>
-          <p className="text-body text-ink-2">{t.acceptTruck}</p>
-        </div>
-        <Truck className="size-10 text-green-700" strokeWidth={1.5} />
+      </Chip>
+      <div>
+        <div className="tabular text-plate tracking-kv">{t.acceptPlate}</div>
+        <div className="text-caption leading-3.75 font-medium tracking-normal text-ink-2">{t.acceptTruck}</div>
       </div>
-      <div className="flex items-center gap-2 border-t border-line pt-4 text-body text-ink">
-        <span className="font-semibold">{t.acceptDriver}</span>
-        <span className="inline-flex items-center gap-1 text-label text-green-700">
-          <ShieldCheck className="size-4" strokeWidth={1.75} />
+      <Rule />
+      <div className="flex items-center gap-2 text-label leading-4.5 font-semibold">
+        <span className="grid size-7 place-items-center rounded-pill bg-green-100 text-micro font-bold text-green-700">MI</span>
+        {t.acceptDriver}
+        <span className="inline-flex items-center gap-0.75 text-caption font-semibold tracking-normal text-green-700">
+          <ShieldCheck className="size-3.25" strokeWidth={1.75} />
           {t.acceptVerified}
         </span>
       </div>
-    </Frame>
+    </Shot>
   );
 }
 
 export function TrackIllustration() {
   return (
-    <Frame>
-      <div className="flex items-center justify-between gap-3">
-        <p className="text-title-2 text-ink">{t.trackPlace}</p>
-        <StatusChip tone="info" icon={Truck}>
-          {t.trackStatus}
-        </StatusChip>
+    <Shot>
+      <div className="flex items-center justify-between">
+        <Title>{t.trackPlace}</Title>
+        <Chip tone="info">{t.trackStatus}</Chip>
       </div>
-      <RoadLine progress={60} className="my-2" />
-      <p className="text-body text-ink-2">{t.trackEta}</p>
-    </Frame>
+      <div className="relative h-5">
+        <span className="absolute top-2.25 left-0 h-0.5 w-3/5 rounded-pill bg-green-700" />
+        <svg className="absolute top-2.25 right-0 h-0.5 w-2/5" preserveAspectRatio="none">
+          <line x1="0" y1="1" x2="100%" y2="1" strokeWidth="2" strokeDasharray="6 5" className="stroke-line-strong" />
+        </svg>
+        <span className="absolute top-0 left-3/5 grid h-5 w-6.5 -translate-x-1/2 place-items-center rounded-pill bg-green-700 text-white">
+          <Truck className="size-3.5" strokeWidth={2} />
+        </span>
+      </div>
+      <div className="text-caption leading-3.75 font-medium tracking-normal text-ink-2">{t.trackEta}</div>
+    </Shot>
   );
 }
 
 export function CodeIllustration() {
   return (
-    <Frame>
-      <p className="text-label text-ink-2">{t.codeLabel}</p>
-      <div className="grid grid-cols-6 gap-2">
+    <Shot>
+      <KeyValue label={t.codeLabel} />
+      <div className="grid grid-cols-6 gap-1">
         {t.code.split("").map((digit, index) => (
-          <span key={index} className="tabular flex h-14 items-center justify-center rounded-inner border-2 border-success bg-success-100 text-title-1 text-success">
+          <span key={index} className="tabular grid h-9 place-items-center rounded-digit border border-success-200 bg-success-100 text-control font-bold text-success">
             {digit}
           </span>
         ))}
       </div>
-      <div className="flex flex-wrap items-center gap-3">
-        <StatusChip tone="success" icon={Check}>
-          {t.codeStatus}
-        </StatusChip>
-        <p className="text-body text-ink-2">{t.codeResult}</p>
-      </div>
-    </Frame>
+      <Rule />
+      <Tick>{`${t.codeStatus} · ${t.codeResult}`}</Tick>
+    </Shot>
   );
 }
 

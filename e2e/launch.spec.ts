@@ -80,3 +80,41 @@ test("the hero bar checks the number, then carries the role, route and number to
   await expect(page.getByLabel("WhatsApp number")).toHaveValue("803 123 4567");
   await expect(page.getByRole("button", { name: /Lagos.*Abuja/ })).toHaveAttribute("aria-pressed", "true");
 });
+
+test("each side of Who it's for opens the waitlist with its role chosen", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  for (const [action, role, option] of [
+    ["Join as a sender", "shipper", "A sender"],
+    ["Join as a truck owner", "owner", "A truck owner"],
+  ] as const) {
+    await page.goto("/", { waitUntil: "networkidle" });
+    await page.getByRole("link", { name: action }).click();
+    await expect(page).toHaveURL((url) => url.pathname === "/waitlist" && url.search === `?role=${role}`);
+    await expect(page.getByRole("radio", { name: option })).toHaveAttribute("aria-checked", "true");
+  }
+});
+
+test("content shows at once, pricing switches instantly, and questions open from the keyboard", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto("/", { waitUntil: "networkidle" });
+  // No fade-ins: a section far down the page is fully opaque before it is scrolled to.
+  const opacity = await page.locator("#routes").evaluate((el) => getComputedStyle(el).opacity);
+  expect(opacity).toBe("1");
+
+  const pricing = page.locator("#pricing");
+  await expect(pricing.getByRole("heading", { level: 3, name: "For senders" })).toBeVisible();
+  await pricing.getByRole("radio", { name: "Truck owners" }).click();
+  await expect(pricing.getByRole("heading", { level: 3, name: "For truck owners" })).toBeVisible();
+  await expect(pricing.getByText("Early members get launch offers.")).toBeVisible();
+
+  const questions = page.locator("#questions");
+  const first = questions.locator("details").first();
+  const second = questions.locator("details").nth(1);
+  await expect(first).toHaveAttribute("open", "");
+  await expect(second).not.toHaveAttribute("open", "");
+  await second.locator("summary").focus();
+  await page.keyboard.press("Enter");
+  await expect(second).toHaveAttribute("open", "");
+  await page.keyboard.press("Space");
+  await expect(second).not.toHaveAttribute("open", "");
+});
