@@ -328,6 +328,11 @@
     line-height: 1.75rem;
   }
 }
+/* Desktop hero height: 680 px, but never so tall that the waitlist bar starts below the fold (a 1366x768
+   laptop shows about 600 px): at most the screen height minus 44 px, which keeps the bar's top 120 px in view. */
+@utility hero-h {
+  height: min(42.5rem, calc(100dvh - 2.75rem));
+}
 /* Waitlist bar on desktop: route, WhatsApp number, button. */
 @utility grid-cols-waitlist {
   grid-template-columns: 1.1fr 1.3fr auto;

@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Landing sections · Freight Africa (Gate 3 design target)</title>
+<style>
+@font-face{font-family:"PJS";src:url("JakartaFA.woff2") format("woff2");font-weight:400 800;font-display:block}
+:root{
+  --g900:#083826;--g800:#0a4530;--g700:#0c5034;--g500:#2f7a57;--g200:#cfe3d7;--g100:#dcebe2;--g50:#eef5f0;
+  --yellow:#f2c230;--ink:#0f1a14;--ink2:#4a5a51;--ink3:#7a887f;--line:#e2e8e3;--line2:#c9d3cc;--paper:#f6f8f5;
+  --info:#1e5fbf;--info100:#e5eefb;--ok:#157347;--ok100:#e3f4ea;
+  --shadow-raised:0 1px 2px rgba(15,26,20,.06),0 8px 24px -12px rgba(12,80,52,.18);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"PJS",system-ui,sans-serif;color:var(--ink);background:#fff;-webkit-font-smoothing:antialiased;font-synthesis:none}
+button{font:inherit;color:inherit;border:0;background:none}
+svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.tnum{font-variant-numeric:tabular-nums}
+.wrap{max-width:1200px;margin:0 auto;padding:0 24px}
+section{padding:112px 0}
+
+/* one section-head pattern everywhere */
+.head{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:end;margin-bottom:56px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;height:28px;padding:0 12px 0 10px;border-radius:999px;background:var(--g50);color:var(--g700);font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.eyebrow i{width:6px;height:6px;border-radius:50%;background:var(--g500)}
+h2{margin-top:16px;font-size:48px;line-height:54px;font-weight:800;letter-spacing:-.03em;text-wrap:balance}
+.head p{font-size:18px;line-height:28px;color:var(--ink2);max-width:480px;justify-self:end}
+.on-dark .eyebrow{background:rgba(255,255,255,.1);color:#fff}
+.on-dark .eyebrow i{background:var(--yellow)}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:52px;padding:0 24px;border-radius:45px;background:var(--g700);color:#fff;font-size:15px;font-weight:700;text-decoration:none}
+.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line2)}
+.btn.white{background:#fff;color:var(--g700)}
+.btn svg.i{width:18px;height:18px}
+.chip{display:inline-flex;align-items:center;gap:6px;height:26px;padding:0 10px;border-radius:999px;font-size:12px;font-weight:600}
+.chip svg.i{width:14px;height:14px}
+.chip.info{background:var(--info100);color:var(--info)}
+.chip.ok{background:var(--ok100);color:var(--ok)}
+.chip.soon{background:var(--paper);color:var(--ink2);border:1px solid var(--line)}
+
+/* ---------- 1. How it works: numbered cards with real product UI on top ---------- */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.step{border-radius:24px;background:var(--paper);padding:8px 8px 24px;display:flex;flex-direction:column}
+.shot{height:208px;border-radius:18px;background:#fff;border:1px solid var(--line);padding:16px;display:flex;flex-direction:column;justify-content:center;gap:10px;overflow:hidden}
+.num{margin:20px 16px 0;font-size:13px;font-weight:700;color:var(--g500);letter-spacing:.04em}
+.step h3{margin:8px 16px 0;font-size:20px;line-height:26px;font-weight:700;letter-spacing:-.012em}
+.step p{margin:8px 16px 0;font-size:15px;line-height:22px;color:var(--ink2)}
+.kv{display:flex;flex-direction:column;gap:2px}
+.kv small{font-size:11px;font-weight:600;color:var(--ink3);letter-spacing:.02em}
+.kv b{font-size:13px;font-weight:600;line-height:18px}
+.shot .title{font-size:16px;font-weight:700;letter-spacing:-.01em}
+.shot hr{border:0;border-top:1px solid var(--line)}
+.price{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:var(--g700)}
+.price svg.i{width:14px;height:14px}
+.plate{font-size:18px;font-weight:800;letter-spacing:.02em}
+.sub{font-size:12px;color:var(--ink2);font-weight:500}
+.who{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600}
+.av{width:28px;height:28px;border-radius:50%;background:var(--g100);color:var(--g700);display:grid;place-items:center;font-size:11px;font-weight:700}
+.vf{display:inline-flex;align-items:center;gap:3px;color:var(--g700);font-size:12px;font-weight:600}
+.vf svg.i{width:13px;height:13px}
+.track{position:relative;height:20px}
+.track .a{position:absolute;left:0;top:9px;height:2px;width:60%;background:var(--g700);border-radius:2px}
+.track .b{position:absolute;right:0;top:9px;height:2px;width:40%;background:repeating-linear-gradient(90deg,var(--line2) 0 6px,transparent 6px 11px)}
+.track .t{position:absolute;left:60%;top:0;transform:translateX(-50%);width:26px;height:20px;border-radius:999px;background:var(--g700);color:#fff;display:grid;place-items:center}
+.track .t svg.i{width:14px;height:14px;stroke-width:2}
+.codes{display:grid;grid-template-columns:repeat(6,1fr);gap:4px}
+.codes span{height:36px;border-radius:10px;background:var(--ok100);border:1px solid #bfe2cc;color:var(--ok);display:grid;place-items:center;font-size:16px;font-weight:700}
+
+/* ---------- 2. Money: dark band, timeline card ---------- */
+.money{margin:0 16px;border-radius:32px;background:var(--g900);color:#fff;position:relative;overflow:hidden;isolation:isolate}
+.money::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(70% 80% at 100% 0%,rgba(47,122,87,.5),rgba(47,122,87,0) 60%)}
+.money .grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.money h2{color:#fff}
+.money .lead{margin-top:20px;font-size:18px;line-height:28px;color:rgba(255,255,255,.8);max-width:460px}
+.money .note{margin-top:32px;display:flex;gap:12px;align-items:flex-start;padding:16px 18px;border-radius:16px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);font-size:14px;line-height:21px;color:rgba(255,255,255,.85);max-width:460px}
+.money .note svg.i{color:var(--yellow);margin-top:1px}
+.tl{background:#fff;color:var(--ink);border-radius:24px;padding:28px}
+.tl .top{display:flex;justify-content:space-between;align-items:center;padding-bottom:20px;border-bottom:1px solid var(--line);margin-bottom:8px}
+.tl .top b{font-size:16px;font-weight:700}
+.stop{display:grid;grid-template-columns:40px 1fr;gap:16px;padding:16px 0;position:relative}
+.stop:not(:last-child)::after{content:"";position:absolute;left:19px;top:60px;bottom:-12px;width:2px;background:var(--g200)}
+.stop .dot{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--g700);color:#fff}
+.stop.next .dot{background:var(--paper);color:var(--ink3);border:1px solid var(--line)}
+.stop h4{font-size:16px;font-weight:700;line-height:22px;display:flex;align-items:center;gap:10px}
+.stop h4 span{font-size:12px;font-weight:600;color:var(--g700);background:var(--g50);border-radius:999px;padding:3px 10px}
+.stop.next h4 span{color:var(--ink2);background:var(--paper)}
+.stop p{margin-top:4px;font-size:14px;line-height:21px;color:var(--ink2)}
+
+/* ---------- 3. Both sides ---------- */
+.sides{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.side{border-radius:28px;padding:40px;display:flex;flex-direction:column}
+.side.send{background:var(--paper)}
+.side.own{background:var(--g50)}
+.side .tag{display:flex;align-items:center;gap:12px;font-size:22px;font-weight:800;letter-spacing:-.015em}
+.side .tag .ic{width:48px;height:48px;border-radius:14px;background:#fff;color:var(--g700);display:grid;place-items:center;box-shadow:var(--shadow-raised)}
+.side ul{list-style:none;margin:32px 0 36px;display:flex;flex-direction:column;gap:20px}
+.side li{display:grid;grid-template-columns:28px 1fr;gap:12px}
+.side li .ck{width:28px;height:28px;border-radius:50%;background:var(--g700);color:#fff;display:grid;place-items:center}
+.side li .ck svg.i{width:15px;height:15px;stroke-width:2.25}
+.side li b{display:block;font-size:16px;line-height:22px;font-weight:700}
+.side li p{margin-top:3px;font-size:15px;line-height:22px;color:var(--ink2)}
+.side .btn{margin-top:auto;align-self:flex-start}
+
+/* ---------- 4. Routes ---------- */
+.routes{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.route{border:1px solid var(--line);border-radius:24px;padding:24px;display:flex;flex-direction:column;gap:20px;background:#fff}
+.route .rtop{display:flex;justify-content:space-between;align-items:center}
+.route .rnum{font-size:13px;font-weight:700;color:var(--g500);letter-spacing:.04em}
+.line{display:flex;flex-direction:column;gap:0}
+.line .s{display:grid;grid-template-columns:16px 1fr;gap:12px;align-items:center;font-size:17px;font-weight:700;letter-spacing:-.01em;line-height:24px}
+.line .s i{width:12px;height:12px;border-radius:50%;border:2px solid var(--g700);background:#fff;justify-self:center}
+.line .s:first-child i,.line .s:last-child i{background:var(--g700)}
+.line .seg{width:16px;height:22px;display:flex;justify-content:center}
+.line .seg b{width:2px;height:100%;background:repeating-linear-gradient(180deg,var(--g200) 0 4px,transparent 4px 7px)}
+.route .foot{margin-top:auto;padding-top:16px;border-top:1px solid var(--line);display:flex;align-items:center;gap:6px;font-size:13px;color:var(--ink2);font-weight:500}
+.route .foot svg.i{width:16px;height:16px;color:var(--g700)}
+
+/* ---------- 5. Pricing: copy + toggle left, one card right (as the approved launch page) ---------- */
+.pricing{background:var(--paper)}
+.pgrid{display:grid;grid-template-columns:5fr 6fr;gap:64px;align-items:center}
+.plead{margin-top:20px;font-size:18px;line-height:28px;color:var(--ink2);max-width:480px}
+.seg{margin-top:32px;display:inline-grid;grid-template-columns:1fr 1fr;padding:4px;border-radius:999px;background:var(--g50);width:100%;max-width:456px}
+.seg button{height:52px;border-radius:999px;font-size:15px;font-weight:600;color:var(--ink2);cursor:pointer}
+.seg button.on{background:var(--g700);color:#fff;font-weight:700}
+.plan{background:#fff;border-radius:28px;padding:40px;box-shadow:var(--shadow-raised)}
+.plan h3{font-size:26px;line-height:32px;font-weight:800;letter-spacing:-.02em}
+.plan ul{list-style:none;margin-top:20px;display:flex;flex-direction:column}
+.plan li{display:grid;grid-template-columns:28px 1fr;gap:16px;align-items:start;padding:18px 0;border-top:1px solid var(--line);font-size:18px;line-height:28px}
+.plan li:first-child{border-top:0;padding-top:4px}
+.pck{width:28px;height:28px;border-radius:50%;background:var(--g100);color:var(--g700);display:grid;place-items:center}
+.pck svg.i{width:15px;height:15px;stroke-width:2.25}
+.offerpill{margin-top:28px;display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px;border-radius:999px;background:var(--yellow-100,#fdf3d0);color:var(--ink);font-size:15px;font-weight:700}
+.offerpill svg.i{width:18px;height:18px}
+.notice{margin-top:20px;font-size:13px;line-height:20px;color:var(--ink2);max-width:640px}
+
+/* ---------- 6. Questions ---------- */
+.faq{display:grid;grid-template-columns:5fr 7fr;gap:64px}
+.faq .side-help{position:sticky;top:120px;align-self:start}
+.faq .side-help p{margin-top:16px;font-size:17px;line-height:26px;color:var(--ink2)}
+.faq .side-help a{display:inline-flex;align-items:center;gap:8px;margin-top:24px;height:48px;padding:0 20px;border-radius:999px;border:1px solid var(--line2);color:var(--ink);font-weight:600;font-size:15px;text-decoration:none}
+.group{margin-bottom:28px}
+.group h4{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin-bottom:8px}
+.q{border-bottom:1px solid var(--line)}
+.q button{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 0;font-size:17px;font-weight:600;text-align:left;line-height:24px}
+.q button .pm{width:32px;height:32px;border-radius:50%;background:var(--paper);display:grid;place-items:center;flex:none}
+.q button .pm svg.i{width:16px;height:16px;stroke-width:2}
+.q.open button .pm{background:var(--g700);color:#fff}
+.q .a{padding:0 48px 20px 0;font-size:15px;line-height:24px;color:var(--ink2)}
+
+/* ---------- 7. Closing ---------- */
+.final{padding:0 16px 16px}
+.finalcard{position:relative;border-radius:32px;overflow:hidden;isolation:isolate;min-height:440px;display:flex;align-items:center}
+.finalcard img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:60% 50%;z-index:-2}
+.finalcard::after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,rgba(6,36,24,.9) 0%,rgba(6,36,24,.7) 45%,rgba(6,36,24,.15) 85%)}
+.finalcard .wrap{width:100%}
+.finalcard h2{color:#fff;font-size:56px;line-height:60px;max-width:560px;margin-top:0}
+.finalcard p{margin-top:16px;color:rgba(255,255,255,.86);font-size:18px;line-height:28px;max-width:440px}
+.finalcard .btn{margin-top:32px}
+
+/* ---------- 8. Footer ---------- */
+footer{padding:64px 0 32px}
+.fgrid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px}
+.fgrid .logo{height:36px}
+.fgrid .tagline{margin-top:16px;font-size:15px;line-height:22px;color:var(--ink2);max-width:320px}
+.fgrid h5{font-size:13px;font-weight:700;margin-bottom:16px}
+.fgrid a{display:block;font-size:14px;line-height:20px;color:var(--ink2);text-decoration:none;margin-bottom:12px}
+.fbot{margin-top:48px;padding-top:24px;border-top:1px solid var(--line);display:flex;justify-content:space-between;font-size:13px;color:var(--ink3)}
+
+/* ---------- phone ---------- */
+@media (max-width:1023px){
+  section{padding:72px 0}
+  .wrap{padding:0 20px}
+  .head{grid-template-columns:1fr;gap:16px;margin-bottom:32px}
+  .head p{justify-self:start;font-size:16px;line-height:24px}
+  h2{font-size:34px;line-height:40px;margin-top:14px}
+  .steps{grid-template-columns:1fr;gap:12px}
+  .shot{height:auto;min-height:150px}
+  .money{margin:0 8px;border-radius:24px}
+  .money .grid{grid-template-columns:1fr;gap:32px}
+  .money .lead{font-size:16px;line-height:24px}
+  .tl{padding:20px}
+  .sides{grid-template-columns:1fr;gap:12px}
+  .side{padding:28px 24px;border-radius:24px}
+  .side .btn{width:100%}
+  .routes{grid-template-columns:1fr 1fr;gap:12px}
+  .route{padding:20px;border-radius:20px}
+  .line .s{font-size:15px}
+  .pgrid{grid-template-columns:1fr;gap:32px}
+  .plead{font-size:16px;line-height:24px}
+  .seg{margin-top:24px;max-width:none}
+  .seg button{height:48px}
+  .plan{padding:24px;border-radius:24px}
+  .plan h3{font-size:22px;line-height:28px}
+  .plan li{font-size:16px;line-height:24px;padding:14px 0;gap:12px}
+  .offerpill{height:auto;min-height:40px;padding:8px 14px;font-size:14px}
+  .faq{grid-template-columns:1fr;gap:24px}
+  .faq .side-help{position:static}
+  .q button{font-size:16px}
+  .final{padding:0 8px 8px}
+  .finalcard{border-radius:24px;min-height:480px;align-items:flex-end;padding-bottom:40px}
+  .finalcard::after{background:linear-gradient(0deg,rgba(6,36,24,.92) 0%,rgba(6,36,24,.6) 55%,rgba(6,36,24,.2) 100%)}
+  .finalcard h2{font-size:38px;line-height:42px}
+  .finalcard .btn{width:100%}
+  .fgrid{grid-template-columns:1fr 1fr;gap:32px}
+  .fgrid > div:first-child{grid-column:1/-1}
+  .fbot{flex-direction:column;gap:8px}
+}
+@media (max-width:599px){.routes{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- 1. HOW IT WORKS -->
+<section id="how">
+  <div class="wrap">
+    <div class="head">
+      <div><span class="eyebrow"><i></i>How it works</span><h2>Four steps from booking to delivery.</h2></div>
+      <p>Your money is protected the whole way, and you see the full price before you pay.</p>
+    </div>
+    <div class="steps">
+      <article class="step">
+        <div class="shot" aria-hidden="true">
+          <div class="title">Lagos to Kano</div>
+          <div class="kv"><small>Pickup</small><b>Ojota, Lagos · Tomorrow morning</b></div>
+          <div class="kv"><small>Goods</small><b>600 bags of rice · 30 tonnes</b></div>
+          <hr><div class="price"><svg class="i" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Price shown before you pay</div>
+        </div>
+        <div class="num">01</div><h3>Book</h3>
+        <p>Tell us where, when and what. You see the full price before you pay, and you pay once by bank transfer.</p>
+      </article>
+      <article class="step">
+        <div class="shot" aria-hidden="true">
+          <span class="chip ok"><svg class="i" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Truck accepted</span>
+          <div><div class="plate tnum">KJA 482 XA</div><div class="sub">Flatbed · 30 tonnes</div></div>
+          <hr><div class="who"><span class="av">MI</span>Musa Ibrahim<span class="vf"><svg class="i" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>Verified</span></div>
+        </div>
+        <div class="num">02</div><h3>A verified truck accepts</h3>
+        <p>Only owners whose identity, truck and papers we've checked can take your load.</p>
+      </article>
+      <article class="step">
+        <div class="shot" aria-hidden="true">
+          <div style="display:flex;justify-content:space-between;align-items:center"><div class="title">Passing Lokoja</div><span class="chip info">In transit</span></div>
+          <div class="track"><i class="a"></i><i class="b"></i><span class="t"><svg class="i" viewBox="0 0 24 24"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg></span></div>
+          <div class="sub">Arrives at Dawanau, Kano by 4:30 pm Thu</div>
+        </div>
+        <div class="num">03</div><h3>Track it</h3>
+        <p>Follow the truck live from pickup to drop-off. Your receiver gets a tracking link too.</p>
+      </article>
+      <article class="step">
+        <div class="shot" aria-hidden="true">
+          <div class="kv"><small>Delivery code</small></div>
+          <div class="codes tnum"><span>4</span><span>8</span><span>2</span><span>9</span><span>1</span><span>6</span></div>
+          <hr><div class="price"><svg class="i" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>Delivered · Goods checked. Final payment released.</div>
+        </div>
+        <div class="num">04</div><h3>Confirm with a code</h3>
+        <p>Your receiver checks the goods and gives the driver a delivery code. Only then is the final payment released.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- 2. YOUR MONEY -->
+<section class="money on-dark">
+  <div class="wrap grid">
+    <div>
+      <span class="eyebrow"><i></i>How payment works</span>
+      <h2>Your money is protected</h2>
+      <p class="lead">You pay once. We hold it and release it in stages, tied to what actually happens on the road.</p>
+      <p class="note"><svg class="i" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>If something goes wrong, only the amount in question is held while we sort it out with both sides.</p>
+    </div>
+    <div class="tl" aria-hidden="true">
+      <div class="top"><b>Lagos to Kano · KJA 482 XA</b><span class="chip info">In transit</span></div>
+      <div class="stop"><span class="dot"><svg class="i" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><div><h4>Paid <span>Held safely</span></h4><p>Your payment is held from the moment you pay.</p></div></div>
+      <div class="stop"><span class="dot"><svg class="i" viewBox="0 0 24 24"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><path d="m3.3 7 8.7 5 8.7-5"/></svg></span><div><h4>Loaded <span>Part released</span></h4><p>The loading code is given. The owner receives part of the pay to cover the trip.</p></div></div>
+      <div class="stop next"><span class="dot"><svg class="i" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><div><h4>Delivered <span>Balance released</span></h4><p>Your receiver confirms delivery with a code. The balance is released.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 3. BOTH SIDES -->
+<section id="who">
+  <div class="wrap">
+    <div class="head">
+      <div><span class="eyebrow"><i></i>Who it's for</span><h2>Built for both sides of the road</h2></div>
+      <p>Senders get one clear price and protected payments. Truck owners get loads that are paid for before they set off.</p>
+    </div>
+    <div class="sides">
+      <div class="side send">
+        <div class="tag"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><path d="m3.3 7 8.7 5 8.7-5"/></svg></span>For senders</div>
+        <ul>
+          <li><span class="ck"><svg class="i" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><div><b>One price, shown upfront</b><p>See the full price before you pay. No haggling at the park.</p></div></li>
+          <li><span class="ck"><svg class="i" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><div><b>Money released step by step</b><p>The final payment is released only after your receiver confirms delivery.</p></div></li>
+          <li><span class="ck"><svg class="i" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><div><b>Know where your goods are</b><p>Live tracking, and a delivery code for your receiver.</p></div></li>
+        </ul>
+        <a class="btn" href="#">Join as a sender<svg class="i" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+      </div>
+      <div class="side own">
+        <div class="tag"><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg></span>For truck owners</div>
+        <ul>
+          <li><span class="ck"><svg class="i" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><div><b>Paid for before you set off</b><p>Every load is paid for before your truck is sent.</p></div></li>
+          <li><span class="ck"><svg class="i" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><div><b>Part of your pay at loading</b><p>The rest follows once delivery is confirmed, straight to your verified bank account.</p></div></li>
+          <li><span class="ck"><svg class="i" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span><div><b>Loads for the way back</b><p>Find paid return loads, so you don't drive home empty.</p></div></li>
+        </ul>
+        <a class="btn ghost" href="#">Join as a truck owner<svg class="i" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 4. ROUTES -->
+<section id="routes" style="padding-top:0">
+  <div class="wrap">
+    <div class="head">
+      <div><span class="eyebrow"><i></i>Routes</span><h2>Four corridors at launch.</h2></div>
+      <p>Chosen with the people who move goods on them every day.</p>
+    </div>
+    <div class="routes">
+      <div class="route"><div class="rtop"><span class="rnum">01</span><span class="chip soon">Coming soon</span></div>
+        <div class="line"><div class="s"><i></i>Lagos</div><div class="seg"><b></b></div><div class="s"><i></i>Kano</div></div>
+        <div class="foot"><svg class="i" viewBox="0 0 24 24"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>Both directions</div></div>
+      <div class="route"><div class="rtop"><span class="rnum">02</span><span class="chip soon">Coming soon</span></div>
+        <div class="line"><div class="s"><i></i>Lagos</div><div class="seg"><b></b></div><div class="s"><i></i>Abuja</div></div>
+        <div class="foot"><svg class="i" viewBox="0 0 24 24"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>Both directions</div></div>
+      <div class="route"><div class="rtop"><span class="rnum">03</span><span class="chip soon">Coming soon</span></div>
+        <div class="line"><div class="s"><i></i>Lagos</div><div class="seg"><b></b></div><div class="s"><i></i>Onitsha/Aba</div></div>
+        <div class="foot"><svg class="i" viewBox="0 0 24 24"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>Both directions</div></div>
+      <div class="route"><div class="rtop"><span class="rnum">04</span><span class="chip soon">Coming soon</span></div>
+        <div class="line"><div class="s"><i></i>Port Harcourt</div><div class="seg"><b></b></div><div class="s"><i></i>Aba</div><div class="seg"><b></b></div><div class="s"><i></i>Onitsha</div><div class="seg"><b></b></div><div class="s"><i></i>Enugu</div></div>
+        <div class="foot"><svg class="i" viewBox="0 0 24 24"><path d="M8 3 4 7l4 4"/><path d="M4 7h16"/><path d="m16 21 4-4-4-4"/><path d="M20 17H4"/></svg>Both directions</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 5. PRICING (same layout as the approved launch page: copy and toggle left, one card right) -->
+<section class="pricing" id="pricing">
+  <div class="wrap pgrid">
+    <div>
+      <span class="eyebrow"><i></i>Pricing</span>
+      <h2>Clear pricing. No surprises.</h2>
+      <p class="plead">You see the full price before you pay. Truck owners see exactly what they'll receive before they accept.</p>
+      <div class="seg" role="radiogroup" aria-label="Show pricing for">
+        <button role="radio" aria-checked="true" class="on" data-p="send">Senders</button>
+        <button role="radio" aria-checked="false" data-p="own">Truck owners</button>
+      </div>
+    </div>
+    <div>
+      <div class="plan">
+        <div data-panel="send"><h3>For senders</h3><ul>
+          <li><span class="pck"><svg class="i" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>One all-in price for your load, shown before you pay</li>
+          <li><span class="pck"><svg class="i" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>No subscriptions and no sign-up fees</li>
+          <li><span class="pck"><svg class="i" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>Tracking, support and delivery codes included</li></ul></div>
+        <div data-panel="own" hidden><h3>For truck owners</h3><ul>
+          <li><span class="pck"><svg class="i" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>No membership or listing fees</li>
+          <li><span class="pck"><svg class="i" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>A service charge applies only to trips you complete</li>
+          <li><span class="pck"><svg class="i" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>Your payout is shown before you accept, and paid to your verified bank account</li></ul></div>
+        <span class="offerpill"><svg class="i" viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/></svg>Early members get launch offers.</span>
+      </div>
+      <p class="notice">Prices, charges and payment timing are shown in full in the app before you confirm, and are set out in our Terms of Service.</p>
+    </div>
+  </div>
+</section>
+<script>
+document.querySelectorAll('.seg button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.seg button').forEach(x=>{x.classList.toggle('on',x===b);x.setAttribute('aria-checked',x===b)});
+  document.querySelectorAll('[data-panel]').forEach(p=>p.hidden=p.dataset.panel!==b.dataset.p);
+}));
+</script>
+
+<!-- 6. QUESTIONS -->
+<section id="questions">
+  <div class="wrap faq">
+    <div class="side-help">
+      <span class="eyebrow"><i></i>Questions</span><h2>Answers before you join.</h2>
+      <p>Can't find your answer? Write to us and a person will reply.</p>
+      <a href="#"><svg class="i" viewBox="0 0 24 24"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/></svg>hello@freight-africa.com</a>
+    </div>
+    <div>
+      <div class="group"><h4>Booking</h4>
+        <div class="q open"><button>Which routes do you cover?<span class="pm"><svg class="i" viewBox="0 0 24 24"><path d="M5 12h14"/></svg></span></button><p class="a">Four corridors at launch: Lagos ⇄ Kano, Lagos ⇄ Abuja, Lagos ⇄ Onitsha/Aba, and Port Harcourt ⇄ Aba ⇄ Onitsha ⇄ Enugu.</p></div>
+        <div class="q"><button>Do you carry part loads?<span class="pm"><svg class="i" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span></button></div></div>
+      <div class="group"><h4>Payments</h4>
+        <div class="q"><button>When do I pay?<span class="pm"><svg class="i" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span></button></div>
+        <div class="q"><button>What does it cost?<span class="pm"><svg class="i" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span></button></div>
+        <div class="q"><button>Is my money safe?<span class="pm"><svg class="i" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span></button></div></div>
+      <div class="group"><h4>Trucks and drivers</h4>
+        <div class="q"><button>How do you check truck owners?<span class="pm"><svg class="i" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span></button></div>
+        <div class="q"><button>How are truck owners paid?<span class="pm"><svg class="i" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span></button></div></div>
+      <div class="group"><h4>Safety and launch</h4>
+        <div class="q"><button>What happens if something goes wrong on the way?<span class="pm"><svg class="i" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span></button></div>
+        <div class="q"><button>When do you launch?<span class="pm"><svg class="i" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span></button></div>
+        <div class="q"><button>Does joining cost anything?<span class="pm"><svg class="i" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></svg></span></button></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 7. CLOSING -->
+<div class="final">
+  <div class="finalcard">
+    <img src="hero-lagos-1920.webp" srcset="hero-lagos-828.webp 828w, hero-lagos-1920.webp 1920w" sizes="100vw" alt="">
+    <div class="wrap">
+      <span class="eyebrow" style="background:rgba(255,255,255,.12);color:#fff"><i style="background:var(--yellow)"></i>Launching soon</span>
+      <h2 style="margin-top:16px">Be first on the road.</h2>
+      <p>Join the waitlist and we'll tell you when your route opens.</p>
+      <a class="btn white" href="#">Join the waitlist<svg class="i" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+    </div>
+  </div>
+</div>
+
+<!-- 8. FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="fgrid">
+      <div><img class="logo" src="primary-green.svg" alt="Freight Africa"><p class="tagline">Pay once. We hold your money and release it only as your goods move.</p></div>
+      <div><h5>Routes</h5><a href="#">Lagos ⇄ Kano</a><a href="#">Lagos ⇄ Abuja</a><a href="#">Lagos ⇄ Onitsha/Aba</a><a href="#">Port Harcourt ⇄ Enugu</a></div>
+      <div><h5>Legal</h5><a href="#">Privacy notice</a><a href="#">Waitlist terms</a></div>
+      <div><h5>Contact</h5><a href="#">hello@freight-africa.com</a></div>
+    </div>
+    <div class="fbot"><span>© 2026 Freight Africa</span><span>Photos: Unsplash contributors</span></div>
+  </div>
+</footer>
+</body>
+</html>

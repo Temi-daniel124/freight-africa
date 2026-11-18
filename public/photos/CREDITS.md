@@ -16,7 +16,9 @@ taken in Nigeria.
 | `hero-ibadan-*` | [Bucket of spices](https://unsplash.com/photos/tLZU4kcF058) | [sheyi owolabi](https://unsplash.com/@sheystics) | Ibadan Market (Ibadan, Oyo State, Nigeria) | No plates or brand names; resized, cropped for phones, compressed |
 
 Sizes (`DESIGN_SYSTEM.md` §6.2): `-1920` is the desktop file (at most 250 KB), `-828` the phone file,
-a 828 × 1200 portrait crop (at most 120 KB); each in AVIF and WebP.
+a 828 × 1200 portrait crop (at most 120 KB), and `-1200` the tablet file, the same portrait crop at
+1200 × 1739 (at most 180 KB, made from the originals by `scripts/photos/export-portrait.py`, with the same
+blurs); each in AVIF and WebP.
 
 Replace these with our own photographs (with written permission from everyone recognisable) before
 the full website launch.
