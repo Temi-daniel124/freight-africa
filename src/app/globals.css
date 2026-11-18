@@ -3,6 +3,9 @@
 @import "shadcn/tailwind.css";
 
 /* Every design value lives here (DESIGN_SYSTEM.md sections 1 to 5, 12 and 20). Light theme only (D022). */
+/* Short screens (a 1366x768 laptop shows about 600 px of page): sign-in tightens its spacing (Gate 1). */
+@custom-variant short (@media (height < 50rem));
+
 @theme {
   --color-*: initial;
   --color-white: #ffffff;

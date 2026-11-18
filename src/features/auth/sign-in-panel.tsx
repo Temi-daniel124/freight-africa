@@ -106,14 +106,14 @@ function MoneyCard() {
  */
 export function SignInPanel({ homeHref }: { homeHref: string }) {
   return (
-    <aside className="relative isolate h-74 shrink-0 overflow-hidden bg-green-900 px-5 pt-5 lg:flex lg:h-auto lg:flex-col lg:justify-between lg:rounded-sheet lg:p-10">
+    <aside className="relative isolate h-74 shrink-0 overflow-hidden bg-green-900 px-5 pt-5 lg:flex lg:h-auto lg:flex-col lg:justify-between lg:rounded-sheet lg:p-10 lg:short:p-6">
       <div aria-hidden className="panel-glow absolute inset-0 -z-20" />
       <Road />
       <a href={homeHref} aria-label={messages.site.homeLabel} className="block self-start rounded-button">
         <Logo variant="primary-white" alt="" className="h-8 lg:h-10" priority />
       </a>
 
-      <div aria-hidden className="absolute inset-x-5 top-18 lg:relative lg:inset-auto lg:my-6 lg:w-full lg:max-w-110 lg:self-center">
+      <div aria-hidden className="absolute inset-x-5 top-18 lg:relative lg:inset-auto lg:my-6 lg:w-full lg:max-w-110 lg:self-center lg:short:my-3">
         <TripCard />
         <MoneyCard />
       </div>

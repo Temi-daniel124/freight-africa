@@ -19,8 +19,8 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
     <div className="min-h-dvh bg-surface lg:grid lg:grid-cols-2 lg:p-4">
       <SignInPanel homeHref={home} />
 
-      <section className="relative -mt-7 flex flex-col rounded-t-sheet bg-surface px-5 pt-8 lg:mt-0 lg:rounded-none lg:px-12 lg:pt-2">
-        <header className="hidden h-16 items-center justify-end lg:flex">
+      <section className="relative -mt-7 flex flex-col rounded-t-sheet bg-surface px-5 pt-8 lg:mt-0 lg:rounded-none lg:px-12 lg:pt-2 lg:short:pt-0">
+        <header className="hidden h-16 items-center justify-end lg:flex lg:short:h-12">
           <a
             href={home}
             className="inline-flex h-11 items-center gap-2 rounded-pill border border-line px-4 text-body-sm text-ink-2 transition-colors motion-instant hover:bg-green-50 hover:text-ink"
@@ -34,7 +34,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
           <div className="w-full lg:max-w-100">{children}</div>
         </main>
 
-        <footer className="flex flex-col items-center gap-1 pt-6 pb-8 text-center text-caption text-ink-3 lg:h-18 lg:flex-row lg:justify-between lg:p-0 lg:text-left">
+        <footer className="flex flex-col items-center gap-1 pt-6 pb-8 text-center text-caption leading-3.75 text-ink-3 lg:h-18 lg:flex-row lg:justify-between lg:p-0 lg:text-left lg:short:h-12">
           <span>
             {t.help}{" "}
             <a href={`mailto:${messages.site.contactEmail}`} className="font-semibold text-green-700">

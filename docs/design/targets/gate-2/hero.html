@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Landing hero · Freight Africa (Gate 2 design target)</title>
+<style>
+@font-face{font-family:"PJS";src:url("JakartaFA.woff2") format("woff2");font-weight:400 800;font-display:block}
+:root{
+  --g900:#083826;--g800:#0a4530;--g700:#0c5034;--g500:#2f7a57;--g200:#cfe3d7;--g100:#dcebe2;--g50:#eef5f0;
+  --yellow:#f2c230;--ink:#0f1a14;--ink2:#4a5a51;--ink3:#7a887f;--line:#e2e8e3;--line2:#c9d3cc;--paper:#f6f8f5;
+  --shadow-pill:0 1px 2px rgba(8,56,38,.06),0 8px 24px -12px rgba(8,56,38,.18);
+  --shadow-bar:0 1px 2px rgba(8,56,38,.08),0 24px 56px -20px rgba(8,56,38,.35);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"PJS",system-ui,sans-serif;color:var(--ink);background:#fff;-webkit-font-smoothing:antialiased;font-synthesis:none}
+button,input,select{font:inherit;color:inherit}
+svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.tnum{font-variant-numeric:tabular-nums}
+
+/* ---------- header: solid white pill, nothing shows through ---------- */
+.hdr{position:absolute;z-index:10;top:28px;left:0;right:0;padding:0 40px}
+.pill{max-width:1200px;margin:0 auto;height:64px;display:flex;align-items:center;gap:8px;padding:8px 8px 8px 20px;border-radius:999px;background:#fff;box-shadow:var(--shadow-pill)}
+.pill .logo{height:36px;display:block}
+.pill nav{margin:0 auto;display:flex;gap:4px}
+.pill nav a{height:40px;display:flex;align-items:center;padding:0 16px;border-radius:999px;color:var(--ink2);font-size:15px;font-weight:600;text-decoration:none}
+.pill nav a:first-child{background:var(--g50);color:var(--ink)}
+.signin{height:48px;display:flex;align-items:center;padding:0 16px;color:var(--ink);font-size:15px;font-weight:600;text-decoration:none;border-radius:999px}
+.cta{height:48px;display:inline-flex;align-items:center;gap:8px;padding:0 22px;border-radius:999px;background:var(--g700);color:#fff;font-size:15px;font-weight:700;text-decoration:none;border:0}
+.menu{display:none;width:44px;height:44px;border-radius:999px;border:1px solid var(--line);background:#fff;place-items:center;margin-left:auto}
+
+/* ---------- hero: inset rounded photo ---------- */
+.hero{position:relative;margin:16px 16px 0;border-radius:32px;overflow:hidden;height:680px;isolation:isolate;background:var(--g900)}
+.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 62%;z-index:-2}
+.hero::after{content:"";position:absolute;inset:0;z-index:-1;
+  background:linear-gradient(90deg,rgba(6,36,24,.82) 0%,rgba(6,36,24,.55) 38%,rgba(6,36,24,.05) 70%),
+             linear-gradient(0deg,rgba(6,36,24,.55) 0%,rgba(6,36,24,0) 40%)}
+.copy{position:absolute;left:0;right:0;top:196px;max-width:1200px;margin:0 auto;padding:0 24px}
+.badge{display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 14px 0 12px;border-radius:999px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.22);color:#fff;font-size:13px;font-weight:600;backdrop-filter:blur(8px)}
+.badge i{width:8px;height:8px;border-radius:50%;background:var(--yellow);box-shadow:0 0 0 3px rgba(242,194,48,.25)}
+h1{margin-top:24px;color:#fff;font-size:68px;line-height:72px;font-weight:800;letter-spacing:-.035em;max-width:640px;text-wrap:balance}
+.lead{margin-top:20px;color:rgba(255,255,255,.86);font-size:19px;line-height:28px;font-weight:500;max-width:520px}
+.slides{position:absolute;right:32px;bottom:128px;display:flex;align-items:center;gap:12px}
+.dots{display:flex;gap:6px}
+.dots i{width:24px;height:4px;border-radius:4px;background:rgba(255,255,255,.35)}
+.dots i.on{width:40px;background:#fff}
+.pause{width:36px;height:36px;border-radius:999px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);color:#fff;display:grid;place-items:center}
+.pause svg.i{width:14px;height:14px;stroke-width:2.25}
+
+/* ---------- waitlist bar on the photo's bottom edge ---------- */
+.barwrap{position:relative;z-index:5;max-width:1080px;margin:-92px auto 0;padding:0 24px}
+.bar{background:#fff;border-radius:28px;box-shadow:var(--shadow-bar);padding:12px}
+.tabs{display:flex;align-items:center;gap:4px;padding:4px 4px 12px}
+.tab{height:36px;display:inline-flex;align-items:center;gap:8px;padding:0 14px;border-radius:999px;font-size:14px;font-weight:600;color:var(--ink2)}
+.tab.on{background:var(--g50);color:var(--g700)}
+.tab svg.i{width:16px;height:16px}
+.tabs .note{margin-left:auto;font-size:13px;color:var(--ink3);font-weight:500;padding-right:8px}
+.row{display:grid;grid-template-columns:1.1fr 1.3fr auto;gap:8px;background:var(--paper);border-radius:20px;padding:8px}
+.fld{background:#fff;border:1px solid var(--line);border-radius:14px;padding:9px 16px 10px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.fld small{font-size:12px;font-weight:600;color:var(--ink3);line-height:16px}
+.fld span{font-size:16px;font-weight:600;line-height:24px;display:flex;align-items:center;gap:8px;white-space:nowrap}
+.fld span .muted{color:var(--ink3);font-weight:500}
+.fld .chev{margin-left:auto;color:var(--ink3);width:18px;height:18px}
+.fld .arr{width:16px;height:16px;color:var(--g500)}
+.fld.focus{border-color:var(--g700);box-shadow:0 0 0 4px rgba(47,122,87,.16)}
+.cc{display:inline-flex;align-items:center;padding-right:10px;margin-right:2px;border-right:1px solid var(--line);color:var(--ink2)}
+.row .cta{height:auto;min-height:60px;padding:0 28px;border-radius:14px;font-size:16px;justify-content:center}
+
+/* ---------- proof row ---------- */
+.proof{max-width:1080px;margin:28px auto 0;padding:0 24px 64px;display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.proof div{display:flex;gap:12px;align-items:flex-start}
+.proof .ic{width:40px;height:40px;border-radius:12px;background:var(--g50);color:var(--g700);display:grid;place-items:center;flex:none}
+.proof b{display:block;font-size:15px;line-height:20px;font-weight:700}
+.proof p{font-size:14px;line-height:20px;color:var(--ink2);margin-top:2px}
+
+/* ---------- phone ---------- */
+@media (max-width:1023px){
+  .hdr{top:12px;padding:0 12px}
+  .pill{height:56px;padding:6px 6px 6px 14px}
+  .pill .logo{height:30px}
+  .pill nav,.signin{display:none}
+  .menu{display:grid}
+  .pill .cta{height:44px;padding:0 16px;font-size:14px}
+  .hero{margin:8px 8px 0;border-radius:24px;height:560px}
+  .hero img{object-position:58% 60%}
+  .hero::after{background:linear-gradient(0deg,rgba(6,36,24,.9) 0%,rgba(6,36,24,.65) 45%,rgba(6,36,24,.25) 75%,rgba(6,36,24,.35) 100%)}
+  .copy{top:auto;bottom:112px;padding:0 20px}
+  .badge{height:28px;font-size:12px}
+  h1{margin-top:16px;font-size:38px;line-height:42px;letter-spacing:-.03em}
+  .lead{margin-top:12px;font-size:16px;line-height:24px}
+  .slides{right:auto;left:20px;top:84px;bottom:auto}
+  .dots i{width:16px}.dots i.on{width:28px}
+  .pause{width:32px;height:32px}
+  .barwrap{margin-top:-80px;padding:0 16px}
+  .bar{border-radius:24px;padding:10px}
+  .tabs{padding:2px 2px 10px}
+  .tab{flex:1;justify-content:center;height:40px}
+  .tabs .note{display:none}
+  .row{grid-template-columns:1fr;padding:6px;gap:6px;border-radius:18px}
+  .row .cta{min-height:56px}
+  .foot-note{display:block !important}
+  .proof{grid-template-columns:1fr;gap:16px;margin-top:24px;padding:0 20px 48px}
+}
+.foot-note{display:none;text-align:center;font-size:12px;color:var(--ink3);font-weight:500;padding:10px 0 2px}
+@media (max-width:360px){h1{font-size:34px;line-height:38px}.tab{font-size:13px;padding:0 10px;gap:6px}.tab svg.i{display:none}.pill .cta{padding:0 14px}}
+.tab{white-space:nowrap}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="pill">
+    <img class="logo" src="primary-green.svg" alt="Freight Africa">
+    <nav><a href="#">How it works</a><a href="#">Routes</a><a href="#">Pricing</a><a href="#">Questions</a></nav>
+    <a class="signin" href="#">Sign in</a>
+    <button class="menu" aria-label="Menu"><svg class="i" viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M4 12h16"/><path d="M4 17h16"/></svg></button>
+    <a class="cta" href="#">Join the waitlist</a>
+  </div>
+</header>
+
+<section class="hero">
+  <img src="hero-truck-park-1920.webp" srcset="hero-truck-park-828.webp 828w, hero-truck-park-1920.webp 1920w" sizes="100vw" alt="">
+  <div class="copy">
+    <span class="badge"><i></i>Launching soon on four routes</span>
+    <h1>Move full truckloads across Nigeria.</h1>
+    <p class="lead">Pay once. We hold your money and release it only as your goods move.</p>
+  </div>
+  <div class="slides" aria-label="Photos">
+    <div class="dots"><i class="on"></i><i></i><i></i><i></i></div>
+    <button class="pause" aria-label="Pause the photos"><svg class="i" viewBox="0 0 24 24"><path d="M9 5v14"/><path d="M15 5v14"/></svg></button>
+  </div>
+</section>
+
+<div class="barwrap">
+  <form class="bar" onsubmit="return false">
+    <div class="tabs" role="radiogroup" aria-label="I’m joining as">
+      <span class="tab on" role="radio" aria-checked="true"><svg class="i" viewBox="0 0 24 24"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><path d="m3.3 7 8.7 5 8.7-5"/></svg>I send goods</span>
+      <span class="tab" role="radio" aria-checked="false"><svg class="i" viewBox="0 0 24 24"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>I own trucks</span>
+      <span class="note">Free, and takes a minute. We’ll ask a few details next.</span>
+    </div>
+    <div class="row">
+      <label class="fld"><small>Your route</small><span>Lagos<svg class="i arr" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>Kano<svg class="i chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></svg></span></label>
+      <label class="fld focus"><small>Your WhatsApp number</small><span><b class="cc tnum">+234</b><span class="tnum">803 123 4567</span></span></label>
+      <button class="cta">Join the waitlist<svg class="i" viewBox="0 0 24 24" style="width:18px;height:18px"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></button>
+    </div>
+    <p class="foot-note">Free, and takes a minute. We’ll ask a few details next.</p>
+  </form>
+</div>
+
+<section class="proof">
+  <div><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></span><span><b>Verified truck owners</b><p>We check every owner’s identity, truck and papers before their first load.</p></span></div>
+  <div><span class="ic"><svg class="i" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span><b>Money held, then released</b><p>The final payment goes to the owner only after your receiver confirms delivery.</p></span></div>
+  <div><span class="ic"><svg class="i" viewBox="0 0 24 24"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg></span><span><b>Live tracking</b><p>Follow the truck from pickup to drop-off.</p></span></div>
+</section>
+</body>
+</html>

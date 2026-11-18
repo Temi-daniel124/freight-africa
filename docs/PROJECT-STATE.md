@@ -40,7 +40,7 @@ The phases are defined in `BUILD.md` §3. Update this table as work progresses.
 
 ## 3. Current task
 
-**Next task:** Phase 1 slice 4, organisations (shipper and transporter), members with every sub-role, invites and the account switcher, with the RLS helper functions and pgTAP for every row of ROLES-AND-PERMISSIONS §2 and §3; the role step (A-03) now hands off to placeholder pages at /onboarding/shipper, /onboarding/owner and /onboarding/agent, which slice 4 replaces with A-04, T-ON-01 and G-ON-01. Waiting on the founder: approve the sign-in and landing redesign (PR #19, preview link in its comments), then PageSpeed is re-run on production; choose Plus Jakarta Sans or Manrope from docs/design/font-call. Open items: the code screen's cookie and expiry changes ship with PR #19; consents are deleted with the account (cascade), revisit for legal retention in Phase 8; the drawn Hausa capitals (Ɓ Ɗ Ƙ) want a type designer's pass before Hausa ships; the dev server on port 3100 from an earlier session is still running (rules forbid stopping it by process id), and only one Next dev server can run per folder.
+**Next task:** the redesign gates (founder brief, 17 Nov 2026): each gate is built to a design target the founder approves first (docs/design/targets/gate-N), compared side by side at 320/375/768/1280/1440, then stopped for approval. **Gate 1 (sign-in, A-01 and A-02) approved 18 Nov 2026** on PR #24 (branch feat/gate-1-sign-in, includes short-screen spacing for 1366x768 and 1280x600). Gate 2 (header and landing hero) next, then Gate 3 (rest of the landing page) and Gate 4 (signed-in app look); after all four are approved and CI passes again (issue #22, picomatch), merge and continue with Phase 1 slice 4 (organisations and members).
 
 ## 4. Things only the founder can do
 
@@ -78,6 +78,8 @@ for these at the moment they're needed, with exact steps.
 ## 7. Session log
 
 Add one line per session, newest first: date · what was done · what's next.
+
+- 18 Nov 2026 · Gate 1 sign-in rebuilt to the founder's approved target (green panel with trip and payment cards, 36 px title, 56 px email field, code boxes with focus ring; every state on /dev/sign-in), side-by-side comparisons in docs/design/targets/gate-1/compare, text positions within 1 px; fixed: autofocused code box showed no ring, text-input colour clash, pretty-wrapping; short-screen spacing; approved 18 Nov · Gate 2.
 
 - 17 Nov 2026 · Subdomain certificates issued, live sign-in on app.freight-africa.com verified, admin holding page; Supabase Auth settings script (Site URL app., redirect list, 10-minute codes); Turnstile paused (D035); Plus Jakarta Sans (D034); sign-in redesign and landing polish on PR #19 awaiting approval; slice 3: profiles and consents migration (trigger that cannot block sign-up, backfill, RLS, 28 pgTAP) applied by the migrate workflow, A-03 role step with consents, /app routes new people to it · Slice 4, organisations.
 - 16 Nov 2026 · Before slice 3: search basics (192px icon, WebSite and fuller Organization data); D033 hosts (app. and admin. subdomains, per-host robots, cookies and manifest, security headers on signed-in pages, both domains added in Vercel, DNS records with the founder); Cloudflare Turnstile on Send code (off until keys are set; verified with Cloudflare's test keys); private font comparison page /dev/fonts with six candidates and a drawn naira sign where a font has none · Founder: DNS, Search Console, Turnstile account, font choice; then the redesign and slice 3.
