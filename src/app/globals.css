@@ -33,6 +33,7 @@
   --color-danger-100: #fde7e5;
   --color-success: #157347;
   --color-success-100: #e3f4ea;
+  --color-success-200: #bfe2cc;
   --color-scrim: rgba(15, 26, 20, 0.32);
   --color-frost: rgba(255, 255, 255, 0.72);
   --color-on-green: rgba(255, 255, 255, 0.8);
@@ -87,6 +88,14 @@
   --text-body-sm: 0.875rem;
   --text-body-sm--line-height: 1.125rem;
   --text-body-sm--font-weight: 600;
+  /* Gate 3: the closing band paragraph, 18/28 at every width. */
+  --text-lead: 1.125rem;
+  --text-lead--line-height: 1.75rem;
+  --text-lead--font-weight: 400;
+  /* Gate 3: the plate number in the small "Truck accepted" card. */
+  --text-plate: 1.125rem;
+  --text-plate--line-height: 1.4375rem;
+  --text-plate--font-weight: 800;
   --text-micro: 0.6875rem;
   --text-micro--line-height: 0.875rem;
   --text-micro--font-weight: 600;
@@ -106,6 +115,8 @@
   --radius-card: 24px;
   /* Gate 2 hero (docs/design/targets/gate-2): fields in the waitlist bar, its tray on phones, the inset photo. */
   --radius-field: 14px;
+  /* Gate 3: digit boxes in the small delivery-code card. */
+  --radius-digit: 10px;
   --radius-tray: 18px;
   --radius-hero: 32px;
   --radius-sheet: 28px;
@@ -130,6 +141,8 @@
 
   --tracking-caps: 0.06em;
   --tracking-plate: 0.04em;
+  --tracking-kv: 0.02em;
+  --tracking-close: -0.01em;
 
   --container-text: 42.5rem;
   --container-site: 75rem;
@@ -271,11 +284,6 @@
 }
 
 /* The home hero: at most 88% of a desktop screen, so the next section peeks (DESIGN_SYSTEM.md 13.3). */
-@utility hero-height {
-  @media (width >= 64rem) {
-    min-height: min(88dvh, 52rem);
-  }
-}
 @utility shimmer-block {
   background-image: linear-gradient(90deg, var(--color-line), var(--color-paper), var(--color-line));
   background-size: 200% 100%;
@@ -286,13 +294,6 @@
 @utility scale-press {
   scale: 0.97;
 }
-@utility frosted {
-  background-color: var(--color-frost);
-  backdrop-filter: blur(12px);
-}
-/* Section 13.2: frosted white with blur; solid white where blur isn't supported. 88% rather than 80%:
-   at 80% the dark hero photos tinted the pill grey-green, and it should look the same everywhere. */
-/* Section 13.3: green over the photo, darkest on the text side, so white text stays at 4.5:1 or more. */
 /* Gate 2 hero: dark fade on the text side (left on desktop, bottom on phones). */
 @utility hero-fade {
   background-image: linear-gradient(0deg, rgb(6 36 24 / 0.9) 0%, rgb(6 36 24 / 0.65) 45%, rgb(6 36 24 / 0.25) 75%, rgb(6 36 24 / 0.35) 100%);
@@ -332,6 +333,88 @@
    laptop shows about 600 px): at most the screen height minus 44 px, which keeps the bar's top 120 px in view. */
 @utility hero-h {
   height: min(42.5rem, calc(100dvh - 2.75rem));
+}
+/* Gate 3 section headline: 34/40 on phones, 48/54 from 1024 px. */
+@utility type-section {
+  font-size: 2.125rem;
+  line-height: 2.5rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  @media (width >= 64rem) {
+    font-size: 3rem;
+    line-height: 3.375rem;
+  }
+}
+/* Gate 3 section paragraph: 16/24 on phones, 18/28 from 1024 px. */
+@utility type-section-lead {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  @media (width >= 64rem) {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+  }
+}
+/* Gate 3 card titles: "For senders" (22) and the pricing card (22 on phones, 26 from 1024 px). */
+@utility type-card-title {
+  font-size: 1.375rem;
+  line-height: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.015em;
+}
+@utility type-plan-title {
+  font-size: 1.375rem;
+  line-height: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  @media (width >= 64rem) {
+    font-size: 1.625rem;
+    line-height: 2rem;
+  }
+}
+/* Gate 3 pricing ticks: 16/24 on phones, 18/28 from 1024 px. */
+@utility type-plan-point {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  @media (width >= 64rem) {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+  }
+}
+/* Gate 3 closing band headline: 38/42 on phones, 56/60 from 1024 px. */
+@utility type-final {
+  font-size: 2.375rem;
+  line-height: 2.625rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  @media (width >= 64rem) {
+    font-size: 3.5rem;
+    line-height: 3.75rem;
+  }
+}
+/* Gate 3 grids: pricing (copy 5, card 6), questions (5, 7), footer (2, 1, 1, 1). */
+@utility grid-cols-pricing {
+  grid-template-columns: 5fr 6fr;
+}
+@utility grid-cols-faq {
+  grid-template-columns: 5fr 7fr;
+}
+@utility grid-cols-footer {
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+}
+/* Gate 3 payment band: deep green with a soft light from the top right. */
+@utility money-glow {
+  background-image: radial-gradient(70% 80% at 100% 0%, rgb(47 122 87 / 0.5), rgb(47 122 87 / 0) 60%);
+}
+/* Gate 3 closing band: dark on the text side (left on desktop, bottom on phones). */
+@utility final-fade {
+  background-image: linear-gradient(0deg, rgb(6 36 24 / 0.92) 0%, rgb(6 36 24 / 0.6) 55%, rgb(6 36 24 / 0.2) 100%);
+  @media (width >= 64rem) {
+    background-image: linear-gradient(90deg, rgb(6 36 24 / 0.9) 0%, rgb(6 36 24 / 0.7) 45%, rgb(6 36 24 / 0.15) 85%);
+  }
+}
+/* Gate 3 route cards: the dashed road between two stops. */
+@utility dash-v {
+  background-image: repeating-linear-gradient(180deg, var(--color-green-200) 0 4px, transparent 4px 7px);
 }
 /* Waitlist bar on desktop: route, WhatsApp number, button. */
 @utility grid-cols-waitlist {

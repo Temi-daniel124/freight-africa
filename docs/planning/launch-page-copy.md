@@ -45,7 +45,9 @@ file.
 
 ## 3. How it works
 
-Lead: **Four steps from booking to delivery, with your money protected the whole way.**
+Title (Gate 3): **Four steps from booking to delivery.** Lead (Gate 3): **Your money is protected the whole
+way, and you see the full price before you pay.** (Replaces the earlier single lead, "Four steps from booking
+to delivery, with your money protected the whole way.")
 
 1. **Book** · Tell us where, when and what. You see the full price before you pay, and you pay once
    by bank transfer.
@@ -63,7 +65,8 @@ goes stale). **Price shown before you pay** is a plain label at the foot of the 
 - Title: **Your money is protected**
 - Lead: **You pay once. We hold it and release it in stages, tied to what actually happens on the
   road.**
-- The animation keeps its three stops and the moving truck, with **no naira amounts**:
+- Gate 3: a still timeline card (no animation) headed **Lagos to Kano · KJA 482 XA** with the chip
+  **In transit**, showing the three stops with **no naira amounts**:
 
 | Stop | Label | Line under it |
 | --- | --- | --- |
@@ -74,9 +77,12 @@ goes stale). **Price shown before you pay** is a plain label at the foot of the 
 - Below it: **If something goes wrong, only the amount in question is held while we sort it out with
   both sides.**
 - Remove: the fee figure, the four amount rows, "Freight Africa keeps", the worked-example note.
-  Keep **Play again**.
+  **Play again** is gone with the animation (Gate 3).
 
 ## 5. Built for both sides of the road
+
+Lead (Gate 3, new): **Senders get one clear price and protected payments. Truck owners get loads that are
+paid for before they set off.** Both sides show at once (no switch), so "Show benefits for" is gone.
 
 Senders:
 | Title | Text |
@@ -118,6 +124,10 @@ in our Terms of Service.**
 
 ## 7. Questions (changed answers only)
 
+Gate 3: title **Answers before you join.**, help line **Can't find your answer? Write to us and a person
+will reply.** next to the email address, and the groups **Safety** and **Launch** merged into **Safety and
+launch** (same three questions, same answers).
+
 - **What does it cost?** · You see one all-in price for your load before you pay, with nothing added
   later. There are no subscriptions or sign-up fees.
 - **How are truck owners paid?** · Part of the pay is released when the goods are loaded, and the
@@ -146,3 +156,20 @@ in our Terms of Service.**
 Unchanged, except the footer gains the photo credit line from `DESIGN_SYSTEM.md` §13.3 when photos are
 in use: **Photos: Unsplash contributors** (linking to `/credits` is optional; a list in
 `public/photos/CREDITS.md` is required).
+
+## 10. Gate 3 additions (18 Nov 2026)
+
+New lines from the approved Gate 3 target (`docs/design/targets/gate-3/sections.html`). The answers,
+benefits, pricing points and notices are unchanged.
+
+| Where | Key | Wording |
+| --- | --- | --- |
+| Section labels | `home.labels.*` | **How it works** · **How payment works** · **Who it's for** · **Routes** · **Pricing** · **Questions** · **Launching soon** (closing band) |
+| How it works | `home.how.title` / `lead` | **Four steps from booking to delivery.** / **Your money is protected the whole way, and you see the full price before you pay.** |
+| How payment works | `home.escrow.card` / `status` | **Lagos to Kano · KJA 482 XA** / **In transit** |
+| Who it's for | `home.audience.lead` | **Senders get one clear price and protected payments. Truck owners get loads that are paid for before they set off.** |
+| Routes | `home.routes.title` / `lead` / `both` | **Four corridors at launch.** / **Chosen with the people who move goods on them every day.** / **Both directions** |
+| Questions | `home.faq.title` / `help` | **Answers before you join.** / **Can't find your answer? Write to us and a person will reply.** |
+
+Removed with the sections they belonged to: **Play again**, **Show benefits for**, the routes map's label,
+and the unused **Trip 60% complete**.
