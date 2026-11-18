@@ -1,10 +1,9 @@
 "use client";
 
-import { CircleAlert, WifiOff } from "lucide-react";
+import { ArrowRight, CircleAlert, Mail, ShieldCheck, WifiOff } from "lucide-react";
 import Link from "next/link";
 import { useActionState, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { TextField } from "@/components/ui/field";
 import { PhoneField } from "@/components/ui/phone-field";
 import { useOnline } from "@/lib/use-online";
 import { sendCode, signInWithGoogle } from "./actions";
@@ -26,6 +25,8 @@ export type SignInText = {
   sendEmail: string;
   sending: string;
   offline: string;
+  eyebrow: string;
+  codeNote: string;
   agree: string;
   termsLink: string;
   privacyLink: string;
@@ -70,32 +71,41 @@ export function SignInForm({ t, options, next, googleFailed, turnstileSiteKey, p
   const [before, between, after] = splitAgree(t.agree);
 
   return (
-    <div className="flex flex-col gap-8">
-      <div className="flex flex-col gap-3">
-        <h1 className="type-h2 text-balance text-ink">{t.title}</h1>
-        <p className="text-body text-ink-2">{t.lead}</p>
-      </div>
+    <div className="flex flex-col">
+      <span className="mb-5 inline-flex h-7 items-center gap-2 self-start rounded-pill bg-green-50 pr-3 pl-2.5 text-caption font-semibold text-green-700">
+        <i aria-hidden className="size-1.5 rounded-pill bg-green-500" />
+        {t.eyebrow}
+      </span>
+      <h1 className="type-signin text-balance text-ink">{t.title}</h1>
+      <p className="type-signin-lead mt-3 text-wrap text-ink-2">{t.lead}</p>
 
       {banner ? (
-        <p role="alert" className="flex items-start gap-2 rounded-inner bg-danger-100 p-4 text-body text-danger">
+        <p role="alert" className="mt-6 flex items-start gap-2 rounded-inner bg-danger-100 p-4 text-body text-danger">
           <CircleAlert aria-hidden className="mt-0.5 size-5 shrink-0" strokeWidth={1.75} />
           {banner}
         </p>
       ) : null}
 
+      {online ? null : (
+        <p role="status" className="mt-6 flex items-start gap-2 rounded-inner bg-warning-100 p-4 text-body text-ink">
+          <WifiOff aria-hidden className="mt-0.5 size-5 shrink-0 text-warning" strokeWidth={1.75} />
+          {t.offline}
+        </p>
+      )}
+
       {options.google ? (
         <>
-          <form action={signInWithGoogle}>
+          <form action={signInWithGoogle} className="mt-6 lg:mt-8">
             <input type="hidden" name="next" value={next} />
             <button
               type="submit"
-              className="inline-flex h-14 w-full items-center justify-center gap-3 rounded-button border border-line-strong bg-surface text-body-lg font-semibold text-ink transition-colors motion-instant hover:bg-green-50 active:scale-press"
+              className="inline-flex h-14 w-full items-center justify-center gap-3 rounded-button border border-line-strong bg-surface text-control font-semibold text-ink transition-colors motion-instant hover:bg-green-50 active:scale-press"
             >
               <GoogleMark />
               {t.google}
             </button>
           </form>
-          <div className="flex items-center gap-4 text-caption text-ink-2">
+          <div className="mt-6 flex items-center gap-4 text-caption text-ink-2">
             <span aria-hidden className="h-px flex-1 bg-line" />
             {t.or}
             <span aria-hidden className="h-px flex-1 bg-line" />
@@ -103,14 +113,7 @@ export function SignInForm({ t, options, next, googleFailed, turnstileSiteKey, p
         </>
       ) : null}
 
-      {online ? null : (
-        <p role="status" className="flex items-start gap-2 rounded-inner bg-warning-100 p-4 text-body text-ink">
-          <WifiOff aria-hidden className="mt-0.5 size-5 shrink-0 text-warning" strokeWidth={1.75} />
-          {t.offline}
-        </p>
-      )}
-
-      <form action={action} onSubmit={turnstile.onSubmit} noValidate className="flex flex-col gap-5">
+      <form action={action} onSubmit={turnstile.onSubmit} noValidate className="mt-6 flex flex-col lg:mt-8">
         <input type="hidden" name="channel" value={channel} />
         <input type="hidden" name="next" value={next} />
         {channel === "whatsapp" ? (
@@ -124,45 +127,84 @@ export function SignInForm({ t, options, next, googleFailed, turnstileSiteKey, p
             required
           />
         ) : (
-          <TextField
+          <EmailField
             key={`email-${current.attempt}`}
-            id="auth-email"
-            name="email"
-            type="email"
-            inputMode="email"
-            autoComplete="email"
-            autoCapitalize="none"
-            spellCheck={false}
             label={t.emailLabel}
             placeholder={t.emailPlaceholder}
             defaultValue={current.value}
             error={current.status === "invalid" ? t.errors.email : undefined}
-            required
           />
         )}
         {turnstile.field}
-        <Button type="submit" className="w-full" disabled={!online} loading={pending || turnstile.holding || preview?.sending} loadingLabel={t.sending}>
+        <Button
+          type="submit"
+          className="mt-4 w-full text-control font-bold"
+          disabled={!online}
+          loading={pending || turnstile.holding || preview?.sending}
+          loadingLabel={t.sending}
+        >
           {channel === "whatsapp" ? t.sendWhatsApp : t.sendEmail}
+          <ArrowRight aria-hidden className="size-4.5" strokeWidth={1.75} />
         </Button>
       </form>
 
+      <p className="mt-5 flex items-center gap-2 text-label leading-4 font-medium text-wrap text-ink-2">
+        <ShieldCheck aria-hidden className="size-4 shrink-0 text-green-700" strokeWidth={1.75} />
+        {t.codeNote}
+      </p>
+
       {options.whatsapp ? (
-        <Button variant="tertiary" size="text" className="self-center" onClick={() => setChannel(channel === "whatsapp" ? "email" : "whatsapp")}>
+        <Button variant="tertiary" size="text" className="mt-2 self-start" onClick={() => setChannel(channel === "whatsapp" ? "email" : "whatsapp")}>
           {channel === "whatsapp" ? t.useEmail : t.usePhone}
         </Button>
       ) : null}
 
-      <p className="text-center text-caption text-ink-2">
+      <p className="mt-8 border-t border-line pt-5 text-caption leading-4.5 text-wrap text-ink-3">
         {before}
-        <Link href="/legal/terms" className="font-semibold text-green-700 underline">
+        <Link href="/legal/terms" className="font-semibold text-ink-2 underline underline-offset-2">
           {t.termsLink}
         </Link>
         {between}
-        <Link href="/legal/privacy" className="font-semibold text-green-700 underline">
+        <Link href="/legal/privacy" className="font-semibold text-ink-2 underline underline-offset-2">
           {t.privacyLink}
         </Link>
         {after}
       </p>
+    </div>
+  );
+}
+
+/** The 56 px email field with a mail icon (Gate 1 target). */
+function EmailField({ label, placeholder, defaultValue, error }: { label: string; placeholder: string; defaultValue: string; error?: string }) {
+  return (
+    <div className="flex flex-col">
+      <label htmlFor="auth-email" className="mb-2 text-label text-ink">
+        {label}
+      </label>
+      <div className="relative">
+        <Mail aria-hidden className="pointer-events-none absolute top-4 left-4 size-5 text-ink-3" strokeWidth={1.75} />
+        <input
+          id="auth-email"
+          name="email"
+          type="email"
+          inputMode="email"
+          autoComplete="email"
+          autoCapitalize="none"
+          spellCheck={false}
+          required
+          placeholder={placeholder}
+          defaultValue={defaultValue}
+          aria-invalid={error ? true : undefined}
+          aria-describedby={error ? "auth-email-error" : undefined}
+          className="h-14 w-full rounded-input border border-line-strong bg-surface pr-4 pl-12 text-control text-ink transition outline-none motion-instant placeholder:text-ink-3 focus:border-green-700 focus:ring-4 focus:ring-green-500/16 aria-invalid:border-danger aria-invalid:focus:ring-danger-100"
+        />
+      </div>
+      {error ? (
+        <p id="auth-email-error" className="mt-helper flex items-center gap-1 text-caption text-danger">
+          <CircleAlert aria-hidden className="size-4 shrink-0" strokeWidth={1.75} />
+          {error}
+        </p>
+      ) : null}
     </div>
   );
 }

@@ -77,6 +77,16 @@
   --text-label--line-height: 1.125rem;
   --text-label--font-weight: 600;
   --text-label--letter-spacing: 0.005em;
+  /* Gate 1 sign-in (docs/design/targets/gate-1): 16 px inputs and buttons, 14 px card text, 11 px step labels. */
+  --text-control: 1rem;
+  --text-control--line-height: 1.5rem;
+  --text-control--font-weight: 400;
+  --text-body-sm: 0.875rem;
+  --text-body-sm--line-height: 1.125rem;
+  --text-body-sm--font-weight: 600;
+  --text-micro: 0.6875rem;
+  --text-micro--line-height: 0.875rem;
+  --text-micro--font-weight: 600;
   --text-caption: 0.75rem;
   --text-caption--line-height: 1rem;
   --text-caption--font-weight: 500;
@@ -97,6 +107,8 @@
   --shadow-raised: 0 1px 2px rgba(15, 26, 20, 0.06), 0 8px 24px -12px rgba(12, 80, 52, 0.18);
   --shadow-floating: 0 12px 40px -8px rgba(15, 26, 20, 0.22);
   /* The floating pill header (section 13.2): one quiet shadow, a little deeper after scrolling. */
+  /* Cards floating on the deep-green sign-in panel. */
+  --shadow-panel-card: 0 1px 2px rgba(8, 56, 38, 0.08), 0 24px 48px -16px rgba(8, 56, 38, 0.45);
   --shadow-pill: 0 1px 2px rgb(8 56 38 / 0.06), 0 8px 24px -12px rgb(8 56 38 / 0.18);
   --shadow-pill-scrolled: 0 1px 2px rgb(8 56 38 / 0.06), 0 12px 32px -12px rgb(8 56 38 / 0.22);
 
@@ -108,6 +120,7 @@
   --breakpoint-xl: 90rem;
 
   --tracking-caps: 0.06em;
+  --tracking-plate: 0.04em;
 
   --container-text: 42.5rem;
   --container-site: 75rem;
@@ -280,13 +293,41 @@
   }
 }
 /* Section 13.3: green over the photo, darkest on the text side, so white text stays at 4.5:1 or more. */
-/* Sign-in photo (A-01): a neutral fade only where white text sits, so the photograph keeps its colour. */
-@utility photo-fade {
-  background-image: linear-gradient(180deg, rgb(0 0 0 / 0.32) 0%, rgb(0 0 0 / 0) 28%, rgb(0 0 0 / 0) 52%, rgb(0 0 0 / 0.6) 100%);
+/* Sign-in panel (Gate 1 target): deep green with a soft light from the top right. */
+@utility panel-glow {
+  background-image:
+    radial-gradient(120% 80% at 85% 0%, rgb(47 122 87 / 0.55) 0%, rgb(47 122 87 / 0) 60%),
+    radial-gradient(90% 60% at 0% 100%, rgb(10 69 48 / 0.9) 0%, rgb(10 69 48 / 0) 70%);
 }
-/* Focal point of the Okene photo: the truck, not the sky. */
-@utility object-focus-okene {
-  object-position: 40% 62%;
+/* Sign-in title: 28/34 on phones, 36/42 from 1024 px. */
+@utility type-signin {
+  font-size: 1.75rem;
+  line-height: 2.125rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  @media (width >= 64rem) {
+    font-size: 2.25rem;
+    line-height: 2.625rem;
+  }
+}
+/* Code boxes: 24 px digits on phones, 28 px from 1024 px. */
+@utility type-code-digit {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 700;
+  @media (width >= 64rem) {
+    font-size: 1.75rem;
+    line-height: 2.25rem;
+  }
+}
+/* Sign-in lead: 15/22 on phones, 16/24 from 1024 px. */
+@utility type-signin-lead {
+  font-size: 0.9375rem;
+  line-height: 1.375rem;
+  @media (width >= 64rem) {
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
 }
 @utility hero-scrim {
   background-image: linear-gradient(180deg, rgb(8 56 38 / 0.8) 0%, rgb(8 56 38 / 0.72) 55%, rgb(8 56 38 / 0.5) 100%);

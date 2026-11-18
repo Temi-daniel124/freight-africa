@@ -240,6 +240,11 @@ def main(source, target):
         deltas = [(0, 0), (x800 - x400, y800 - y400), (0, 0), (adv800 - adv400, 0), (0, 0), (0, 0)]
         variable["gvar"].variations[name] = [TupleVariation(region, deltas)]
 
+    # The non-breaking hyphen (U+2011, as in "6‑digit") draws the font's own hyphen; the original has no
+    # glyph for it, so browsers would fall back to another font for that one character.
+    for table in variable["cmap"].tables:
+        if table.isUnicode() and 0x2011 not in table.cmap:
+            table.cmap[0x2011] = table.cmap[ord("-")]
     variable["maxp"].numGlyphs = len(variable.getGlyphOrder())
     # The subsetter expects an entry for every glyph, including ones that don't vary (spaces).
     for glyph_name in variable.getGlyphOrder():

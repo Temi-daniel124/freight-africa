@@ -21,4 +21,9 @@ describe("cn", () => {
   it("merges two font-size tokens", () => {
     expect(cn("text-label", "text-body")).toBe("text-body");
   });
+
+  it("knows the sign-in sizes added for Gate 1", () => {
+    expect(cn("h-14 px-8 text-body-lg", "text-control")).toBe("h-14 px-8 text-control");
+    expect(cn("text-control", "text-white")).toBe("text-control text-white");
+  });
 });

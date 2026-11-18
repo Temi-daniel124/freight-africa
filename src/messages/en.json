@@ -533,8 +533,8 @@
     "codeLabel": "6-digit code"
   },
   "auth": {
-    "title": "Welcome to Freight Africa",
-    "lead": "Sign in or create your account. We send you a code, so there's no password to remember.",
+    "title": "Sign in or create your account",
+    "lead": "Enter your email and we’ll send you a 6‑digit code.",
     "photoLine": "Pay once. We hold your money and release it only as your goods move.",
     "google": "Continue with Google",
     "or": "or",
@@ -544,9 +544,9 @@
     "usePhone": "Use WhatsApp instead",
     "emailLabel": "Email address",
     "emailPlaceholder": "ngozi@example.com",
-    "sendEmail": "Send code by email",
+    "sendEmail": "Send code",
     "sending": "Sending your code",
-    "agree": "By continuing you agree to the {terms} and {privacy}.",
+    "agree": "By continuing you agree to the {terms} and the {privacy}.",
     "termsLink": "Terms",
     "privacyLink": "Privacy notice",
     "errors": {
@@ -559,14 +559,14 @@
     },
     "code": {
       "title": "Enter your code",
-      "sentEmail": "Sent to {to} by email.",
-      "sentWhatsApp": "Sent to {to} on WhatsApp.",
+      "sentEmail": "We sent a 6‑digit code to {to}.",
+      "sentWhatsApp": "We sent a 6‑digit code to {to} on WhatsApp.",
       "change": "Change",
-      "label": "{count}-digit code",
+      "label": "{count}‑digit code",
       "submit": "Continue",
       "checking": "Checking your code",
       "resend": "Resend code",
-      "resendIn": "Resend code in {seconds} s",
+      "resendIn": "Resend in {time}",
       "resent": "New code sent",
       "wrong": "That code isn't right. Check the latest message.",
       "locked": "Too many tries. Get a new code.",
@@ -574,7 +574,10 @@
       "failed": "Something went wrong. Check your connection and try again.",
       "done": "Code accepted",
       "expired": "That code has expired. Get a new code.",
-      "sent": "Code sent"
+      "sent": "Code sent",
+      "eyebrow": "Code sent",
+      "resendHint": "Didn’t get it? Check spam, or",
+      "note": "We’ll sign you in as soon as the last digit goes in."
     },
     "email": {
       "subject": "{code} is your Freight Africa code",
@@ -596,7 +599,31 @@
     },
     "offline": "You’re offline. Connect to the internet to continue.",
     "backToSite": "Back to the website",
-    "help": "Need help? Email"
+    "help": "Need help?",
+    "eyebrow": "No password needed",
+    "codeNote": "The code works once and expires in 10 minutes.",
+    "photoSub": "Full truckloads across Nigeria, with verified owners and live tracking.",
+    "copyright": "© 2026 Freight Africa",
+    "panel": {
+      "status": "Passing Lokoja",
+      "plate": "KJA 482 XA",
+      "from": "Apapa",
+      "fromCity": "Lagos",
+      "to": "Sabon Gari",
+      "toCity": "Kano",
+      "owner": "Musa Ibrahim",
+      "initials": "MI",
+      "verified": "Verified owner",
+      "expected": "Expected",
+      "eta": "Tomorrow, 18:30",
+      "held": "Your payment is held",
+      "released": "Released as your goods move",
+      "steps": [
+        "Paid",
+        "On the road",
+        "Delivered"
+      ]
+    }
   },
   "fonts": {
     "title": "Font comparison",

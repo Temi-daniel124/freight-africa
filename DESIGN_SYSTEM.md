@@ -558,14 +558,27 @@ Not shown again after sign-in, or when the app is opened from a deep link.
 
 ### 14.3 Sign-in and sign-up
 
-- Phone: `--paper` background, the stacked logo at the top, a white level-1 card holding the options:
-  **Continue with Google** (white pill with border), the phone field and the primary pill **Send code on
-  WhatsApp**, and the tertiary "Use email instead".
-- Desktop: a two-column page. Left half: a full-height photograph (a truck at dawn) with the green
-  gradient and one line of white text ("Pay once. Money held until delivery."). Right half: the same card,
-  centred.
-- The code screen uses the six-box code input; on success the boxes turn green in sequence and the screen
-  moves on.
+Built to the approved Gate 1 target, `docs/design/targets/gate-1/` (founder, 18 Nov 2026); the target wins
+over this summary.
+
+- **Desktop (from 1024 px):** two columns inside a 16 px frame. Left: an inset deep-green panel
+  (`--color-green-900`, radius `--radius-sheet`, the `panel-glow` soft light and a faint road line), with
+  the white logo top-left, a live trip card and the "Your payment is held" card offset below it
+  (decorative, `aria-hidden`, no real data), and the approved line at the bottom. No photo. Right: a
+  "Back to the website" pill top-right, the form centred at 400 px, a footer with the help email on the
+  left and © on the right.
+- **Form:** "No password needed" pill, the title (`type-signin`, 36/42, 28/34 on phones), the lead
+  (`type-signin-lead`), a 56 px email field with a mail icon (`text-control`, 16 px), **Send code →**, the
+  10-minute line, and the terms below a divider.
+- **Phone and tablet:** the green band (296 px) with the logo and the trip card only; the form rises over
+  it as a white sheet with 28 px top corners.
+- **Code screen:** six boxes (56 px, 64 px from 1024 px, digits `type-code-digit`); a filled box is
+  green-tinted, the current box has the focus ring; "Change" beside the address; "Didn't get it? Check
+  spam, or" with the resend countdown; the code is checked as soon as the last digit goes in. Every
+  state is on `/dev/sign-in`.
+- **Tokens added for it:** `--text-control` (16/24), `--text-body-sm` (14/18), `--text-micro` (11/14),
+  `--shadow-panel-card`, `--tracking-plate`, and the utilities `panel-glow`, `type-signin`,
+  `type-signin-lead`, `type-code-digit`.
 
 ### 14.4 Onboarding
 
