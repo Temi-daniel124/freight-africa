@@ -218,8 +218,8 @@ consistent and the app smaller. Icons always sit beside a text label on buttons 
   but time, and looks real. Get written permission from everyone recognisable, and blur number plates
   and company names on trucks that aren't ours. Free libraries (Unsplash, Pexels) only for filler, and
   only images actually taken in Nigeria or West Africa.
-- **Formats:** AVIF with WebP fallback via `next/image`; hero images 1920 px wide at most 250 KB; card
-  images 800 px at most 80 KB.
+- **Formats:** AVIF with WebP fallback via `next/image`; hero images 1920 px wide at most 250 KB (tablet portraits 1200 px at most
+  180 KB, phone portraits 828 px at most 120 KB); card images 800 px at most 80 KB.
 
 ### 6.3 Illustration
 

@@ -40,7 +40,7 @@ The phases are defined in `BUILD.md` §3. Update this table as work progresses.
 
 ## 3. Current task
 
-**Next task:** the redesign gates (founder brief, 17 Nov 2026): each gate is built to a design target the founder approves first (docs/design/targets/gate-N), compared side by side at 320/375/768/1280/1440, then stopped for approval. **Gate 1 (sign-in, A-01 and A-02) approved 18 Nov 2026** on PR #24 (branch feat/gate-1-sign-in, includes short-screen spacing for 1366x768 and 1280x600). Gate 2 (header and landing hero) next, then Gate 3 (rest of the landing page) and Gate 4 (signed-in app look); after all four are approved and CI passes again (issue #22, picomatch), merge and continue with Phase 1 slice 4 (organisations and members).
+**Next task:** the redesign gates (founder brief, 17 Nov 2026): each gate is built to a design target the founder approves first (docs/design/targets/gate-N), compared side by side at 320/375/768/1280/1440, then stopped for approval. **Gate 1 (sign-in, A-01 and A-02) approved 18 Nov 2026** on PR #24 (branch feat/gate-1-sign-in, includes short-screen spacing for 1366x768 and 1280x600). **Gate 2 (header and landing hero) approved 18 Nov 2026** on PR #25 (branch feat/gate-2-hero: adaptive desktop hero height so the waitlist bar is above the fold at 1366x600, 1200 px tablet portraits; the bar keeps handing the sign-up to /waitlist, no name field, founder 18 Nov). Gate 3 (rest of the landing page) and Gate 4 (signed-in app look); after all four are approved and CI passes again (issue #22, picomatch), merge and continue with Phase 1 slice 4 (organisations and members).
 
 ## 4. Things only the founder can do
 
@@ -79,6 +79,7 @@ for these at the moment they're needed, with exact steps.
 
 Add one line per session, newest first: date · what was done · what's next.
 
+- 18 Nov 2026 · Gate 2 header and hero built to the approved target (solid pill header, inset photo, waitlist bar handing off to /waitlist with role, route and number, proof row; bar states on /dev/landing-states), text within 1 px, CLS 0; then adaptive hero height and 1200 px tablet portraits (scripts/photos/export-portrait.py, same blurs); approved 18 Nov · Gate 3.
 - 18 Nov 2026 · Gate 1 sign-in rebuilt to the founder's approved target (green panel with trip and payment cards, 36 px title, 56 px email field, code boxes with focus ring; every state on /dev/sign-in), side-by-side comparisons in docs/design/targets/gate-1/compare, text positions within 1 px; fixed: autofocused code box showed no ring, text-input colour clash, pretty-wrapping; short-screen spacing; approved 18 Nov · Gate 2.
 
 - 17 Nov 2026 · Subdomain certificates issued, live sign-in on app.freight-africa.com verified, admin holding page; Supabase Auth settings script (Site URL app., redirect list, 10-minute codes); Turnstile paused (D035); Plus Jakarta Sans (D034); sign-in redesign and landing polish on PR #19 awaiting approval; slice 3: profiles and consents migration (trigger that cannot block sign-up, backfill, RLS, 28 pgTAP) applied by the migrate workflow, A-03 role step with consents, /app routes new people to it · Slice 4, organisations.

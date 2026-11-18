@@ -22,13 +22,14 @@ const proofIcons = { verified: ShieldCheck, held: Lock, tracking: MapPin } as co
 export function Hero() {
   return (
     <>
-      <section className="relative isolate mx-2 mt-2 h-140 overflow-hidden rounded-card bg-green-900 text-white lg:mx-4 lg:mt-4 lg:h-170 lg:rounded-hero">
+      <section className="relative isolate mx-2 mt-2 h-140 overflow-hidden rounded-card bg-green-900 text-white lg:mx-4 lg:mt-4 lg:rounded-hero lg:hero-h">
         {/* Photo 1 is the largest content on the page; React moves these links into <head>. */}
-        <link rel="preload" as="image" type="image/avif" href="/photos/hero-truck-park-828.avif" media="(width < 64rem)" fetchPriority="high" />
+        <link rel="preload" as="image" type="image/avif" href="/photos/hero-truck-park-828.avif" media="(width < 37.5rem)" fetchPriority="high" />
+        <link rel="preload" as="image" type="image/avif" href="/photos/hero-truck-park-1200.avif" media="(37.5rem <= width < 64rem)" fetchPriority="high" />
         <link rel="preload" as="image" type="image/avif" href="/photos/hero-truck-park-1920.avif" media="(width >= 64rem)" fetchPriority="high" />
         <HeroSlideshow photos={photos} pauseLabel={t.pause} playLabel={t.play} photosLabel={t.photosLabel} />
 
-        <div className="absolute inset-x-0 bottom-28 mx-auto max-w-300 px-5 lg:top-49 lg:bottom-auto lg:px-6">
+        <div className="absolute inset-x-0 bottom-28 mx-auto max-w-300 px-5 lg:top-49 lg:bottom-auto lg:px-6 lg:short:top-36">
           <p className="inline-flex h-7 items-center gap-2 rounded-pill border border-white/22 bg-white/14 pr-3.5 pl-3 text-caption font-semibold tracking-normal backdrop-blur-sm lg:h-8 lg:text-label">
             <span aria-hidden className="size-2 rounded-pill bg-road-yellow ring-3 ring-road-yellow/25" />
             {t.badge}

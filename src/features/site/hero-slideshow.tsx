@@ -11,8 +11,10 @@ export type HeroPhoto = { name: string; position: string; phone?: string };
 type HeroSlideshowProps = { photos: HeroPhoto[]; pauseLabel: string; playLabel: string; photosLabel: string };
 
 const SLIDE_MS = 6000;
-// Below 1024 px the hero uses the phone layout, and the portrait crop (Gate 2 target).
-const PHONE = "(width < 64rem)";
+// Below 1024 px the hero uses the phone layout and the portrait crop (Gate 2 target): 828 px wide on phones,
+// 1200 px on tablets (600-1023 px), so both look sharp.
+const PHONE = "(width < 37.5rem)";
+const TABLET = "(width < 64rem)";
 
 function Photo({ photo, eager }: { photo: HeroPhoto; eager: boolean }) {
   const base = `/photos/${photo.name}`;
@@ -20,6 +22,8 @@ function Photo({ photo, eager }: { photo: HeroPhoto; eager: boolean }) {
     <picture>
       <source media={PHONE} type="image/avif" srcSet={`${base}-828.avif`} />
       <source media={PHONE} type="image/webp" srcSet={`${base}-828.webp`} />
+      <source media={TABLET} type="image/avif" srcSet={`${base}-1200.avif`} />
+      <source media={TABLET} type="image/webp" srcSet={`${base}-1200.webp`} />
       <source type="image/avif" srcSet={`${base}-1920.avif`} />
       <img
         src={`${base}-1920.webp`}
