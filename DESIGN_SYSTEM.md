@@ -313,27 +313,38 @@ No coloured stripes along card edges, no rainbow card colours, no shadows on eve
 
 ## 10. Navigation
 
-### 10.1 Phone bottom tabs
+### 10.1 Phone bottom tabs (Gate 4, 19 Nov 2026)
 
-Built from the **continuous tabs** component (§17), adapted:
+One shell for every role, driven by a per-role config (`src/features/shell/config.ts`): only the tabs,
+the sidebar items and the main action change.
 
-- A white bar, 72 px tall plus the safe area, 1 px `--line` top border, level 2 shadow.
-- Each tab: icon (24 px) above label (13 px, 600). Active tab: Freight Green icon and label, and a
-  `--green-100` pill behind the icon that **slides** between tabs with the continuous-tabs spring.
-  Inactive: `--ink-2`.
-- **Raised centre action** where a role has one (Book for shippers, Invite for agents, Drive for
-  owner-drivers): a 60 px Freight Green circle with a white icon, raised 16 px above the bar with a level
-  2 shadow, label under it. It doesn't slide; it's always a button.
-- Badges: a red dot or count at the icon's top right, with a 2 px white ring.
+- **A floating white pill**, not a bar: 68 px tall, 45 px radius, 12 px from the sides and 12 px above
+  the bottom plus the safe area, 1 px `--line` border, `--shadow-tabs`. Page content keeps 120 px plus
+  the safe area clear below it (`pb-tabs`), so nothing hides behind the pill.
+- Each tab: 22 px icon above a 12 px, 600 label. Current tab: Freight Green icon and label with a
+  56 × 30 px `--green-100` pill behind the icon. Others: `--ink-2`.
+- **Raised centre action** where a role has one (Book for shippers, Drive for owner-drivers, Invite for
+  agents): a 60 px Freight Green circle with a 26 px white icon, 20 px above the pill, `--shadow-fab`,
+  label under it. It is always a link, never a toggle.
+- **Drivers:** 72 px pill, 28 px icons, 13 px labels, four tabs (Trip · Next load · History · Me).
+- Badges: a 9 px red dot (or count) at the icon's top right with a 2 px white ring.
+- Tabs per role: shipper Home · Trips · **Book** · Payments · More; owner Home · Loads · Trips ·
+  Earnings · More; owner-driver Home · Loads · **Drive** · Earnings · More; driver Trip · Next load ·
+  History · Me; agent Home · People · **Invite** · Earnings · Me.
 - Tabs hide during booking, full-screen maps and the photo viewer, and slide back in on exit.
 
-### 10.2 Desktop sidebar and top bar
+### 10.2 Desktop sidebar and top bar (Gate 4)
 
-- Sidebar `--surface`, 1 px right border. Items 44 tall, 12 px radius, icon + label; active item
-  `--green-100` background with a Freight Green label. The role's main action sits at the top as a
-  primary pill button.
-- Top bar `--surface`, 64 tall, 1 px bottom border; search as a 44 px pill input with "⌘K" hint
-  (command search, §17).
+- Sidebar `--surface`, 240 px (staff console 260 px, grouped), 1 px right border. The role's main action
+  sits at the top as a 48 px primary button; then the items (44 px, 12 px radius, 20 px icon, 14 px 600;
+  current item `--green-100` with a Freight Green label); Settings and the signed-in person at the
+  bottom.
+- Top bar `--surface`, 64 px (60 px on phones), 1 px bottom border, sticky. Desktop: page title (20 px,
+  800), the search pill (44 px, `--paper`, "⌘K" hint), the bell (44 px circle) and the account switcher
+  (initials and account name). Phone: account initials, page title (18 px, 800), bell.
+- **Home has no title.** On every role's first tab the top bar shows the greeting instead: "Good
+  morning, **Adaeze**" on desktop, "Good morning" above **Adaeze** on phones (morning, afternoon or
+  evening by Lagos time). Every other page shows its title.
 
 ### 10.3 In-page tabs and segmented controls
 

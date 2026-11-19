@@ -48,9 +48,14 @@ test("the code screen needs a code on its way", async ({ page }) => {
   await expect(page).toHaveURL(/\/auth$/);
 });
 
-test("the account page needs a session and returns there after sign-in", async ({ page }) => {
+test("every app shell needs a session and returns there after sign-in", async ({ page }) => {
+  // /app opens the shipper shell until slice 4 chooses the shell by active role.
   await page.goto("/app");
-  await expect(page).toHaveURL(/\/auth\?next=(%2F|\/)app$/);
+  await expect(page).toHaveURL(/\/auth\?next=(%2F|\/)app(%2F|\/)ship$/);
+  for (const base of ["haul", "drive", "agent"]) {
+    await page.goto(`/app/${base}/help`);
+    await expect(page).toHaveURL((url) => url.pathname === "/auth" && url.searchParams.get("next") === `/app/${base}`);
+  }
 });
 
 test("a link that tries to leave the site after sign-in is ignored", async ({ page }) => {

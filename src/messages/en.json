@@ -13,7 +13,6 @@
     "signInTitle": "Sign in",
     "signInDescription": "Sign in to Freight Africa or create your account with a code. No password needed.",
     "codeTitle": "Enter your code",
-    "accountTitle": "Your account",
     "staffTitle": "Staff console",
     "onboardingTitle": "Get started",
     "signInStatesTitle": "Sign-in states",
@@ -463,8 +462,8 @@
     "action": "Go to the home page"
   },
   "gallery": {
-    "title": "Components",
-    "intro": "Every part of the interface, in every state, with real content.",
+    "title": "App components",
+    "intro": "Every building block of the signed-in app, in each state (Gate 4 component sheet). Every screen uses only these.",
     "buttons": "Buttons",
     "primary": "Pay ₦1,030,000",
     "secondary": "Save and pay later",
@@ -472,17 +471,10 @@
     "destructive": "Cancel trip",
     "inverse": "Join the waitlist",
     "disabled": "Pay ₦1,030,000",
-    "disabledReason": "Add the vet certificate to continue",
     "loading": "Sending",
     "share": "Copy link",
     "inputs": "Inputs",
-    "nameLabel": "Full name",
     "namePlaceholder": "Ngozi Okafor",
-    "nameValue": "Aminu Dawanau International Grains Market, Kano",
-    "helper": "As it appears on your ID",
-    "errorLabel": "Email (optional)",
-    "errorValue": "ngozi.okafor@",
-    "errorMessage": "Enter a full email address, like ngozi@example.com",
     "disabledLabel": "Corridor",
     "disabledValue": "Lagos to Kano",
     "phoneLabel": "WhatsApp number",
@@ -495,56 +487,89 @@
       "Port Harcourt ⇄ Aba ⇄ Onitsha ⇄ Enugu"
     ],
     "status": "Status",
-    "statusInfo": "In transit",
-    "statusWarning": "Tracking paused",
-    "statusDanger": "Problem reported",
-    "statusSuccess": "Delivered",
-    "statusNeutral": "Waiting for a truck",
     "segmented": "Segmented control",
     "segmentedLabel": "I am",
     "segmentedSend": "I send goods",
     "segmentedOwn": "I own trucks",
-    "cards": "Cards",
     "moneyHeld": "₦630,000 held safely. Released when delivered.",
     "moneyTitle": "Your price",
-    "moneyFreight": "Freight",
-    "moneyFreightValue": "₦1,000,000",
-    "moneyFee": "Service charge",
-    "moneyFeeValue": "₦30,000",
-    "moneyTotal": "You pay",
-    "moneyTotalValue": "₦1,030,000",
-    "tripRoute": "Ojota, Lagos to Dawanau, Kano",
-    "tripNext": "Next: arrives at Lokoja by 4:30 pm",
-    "tripMoney": "₦550,000 balance on delivery",
-    "rows": "List rows",
     "rowTitle": "Upload the truck's roadworthiness papers",
     "rowDetail": "KJA 482 XA · Expires in 12 days",
     "rowAction": "Upload",
     "rowLongTitle": "Tell Chukwuemeka Nwachukwu-Eze where to collect the Onitsha Main Market load",
     "rowLongDetail": "Dawanau International Grains Market, Kano, to Onitsha Main Market, Anambra",
     "nav": "Bottom navigation",
-    "navLabel": "Main",
-    "navHome": "Home",
-    "navTrips": "Trips",
-    "navBook": "Book",
-    "navMoney": "Money",
-    "navMe": "Me",
-    "sheets": "Sheet and toast",
     "openSheet": "Open sheet",
     "sheetTitle": "Cancel this trip?",
-    "sheetBody": "Your ₦1,030,000 goes back to your account within a day.",
-    "sheetKeep": "Keep this trip",
     "showToast": "Show toast",
     "toast": "Link copied",
     "empty": "Empty state",
-    "emptyMessage": "No trips yet. Book your first truck.",
-    "emptyAction": "Book a truck",
-    "emptyIllustration": "An empty road",
-    "skeletons": "Loading skeletons",
     "road": "Road line",
     "roadLabel": "Trip 60% complete",
     "code": "Code input",
-    "codeLabel": "6-digit code"
+    "codeLabel": "6-digit code",
+    "sheet": {
+      "buttons": "Buttons",
+      "fields": "Fields",
+      "status": "Status chips",
+      "segmented": "Segmented control",
+      "feedback": "Feedback",
+      "empty": "Empty state (first visit to Home)",
+      "bottomSheet": "Bottom sheet",
+      "tabs": "Phone tabs for each role (floating pill, 45 px radius, 12 px from the edges)",
+      "website": "Website and sign-in pieces",
+      "book": "Book a truck",
+      "review": "Review",
+      "seeAll": "See all trips",
+      "cancelBooking": "Cancel booking",
+      "continue": "Continue",
+      "sending": "Sending…",
+      "pay": "Pay",
+      "rate": "Rate",
+      "pickup": "Pickup address",
+      "pickupPlaceholder": "e.g. 12 Ojota Road, Lagos",
+      "pickupHelp": "Where the truck should come.",
+      "goods": "Goods",
+      "goodsValue": "600 bags of rice",
+      "goodsHelp": "What you are sending.",
+      "weight": "Weight (tonnes)",
+      "weightValue": "45",
+      "weightError": "A 30 t truck carries up to 30 tonnes. Split the load or choose a bigger truck.",
+      "chips": {
+        "unpaid": "Unpaid",
+        "finding": "Finding truck",
+        "accepted": "Truck accepted",
+        "road": "On the road",
+        "delivered": "Delivered",
+        "problem": "Problem reported",
+        "cancelled": "Cancelled"
+      },
+      "filterLabel": "Show trips",
+      "filters": [
+        "Active",
+        "Finding truck",
+        "Unpaid",
+        "Done"
+      ],
+      "offline": "You're offline. We'll send your changes when you're back.",
+      "bannerTitle": "Musa is 20 minutes from pickup",
+      "bannerText": "Have the goods ready at Ojota, Lagos. Your loading code is in Trips.",
+      "toast": "Receiver saved",
+      "undo": "Undo",
+      "showToast": "Show a live toast",
+      "loading": "Loading",
+      "sheetTitle": "Cancel FA-2M8R1?",
+      "sheetText": "No truck has accepted yet, so your full payment comes back to you.",
+      "keep": "Keep booking",
+      "openSheet": "Open the bottom sheet",
+      "tabLabels": {
+        "shipper": "Shipper",
+        "owner": "Truck owner",
+        "ownerDriver": "Owner who also drives",
+        "driver": "Driver (bigger: 28 px icons, 13 px labels, for use in a moving cab)",
+        "agent": "Agent"
+      }
+    }
   },
   "auth": {
     "title": "Sign in or create your account",
@@ -598,12 +623,6 @@
       "intro": "Here is your code to sign in to Freight Africa:",
       "note": "It works for 10 minutes, so use it now. If you didn't ask for a code, you can ignore this email.",
       "signoff": "Freight Africa"
-    },
-    "account": {
-      "title": "You're signed in",
-      "text": "Your account is ready. Choosing what you're joining as comes next.",
-      "signedInAs": "Signed in as {who}",
-      "signOut": "Sign out"
     },
     "staff": {
       "title": "Staff console",
@@ -745,5 +764,360 @@
     "invalid": "Not a Nigerian mobile number",
     "sending": "Sending",
     "offline": "Offline"
+  },
+  "shell": {
+    "mainNav": "Main",
+    "greeting": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening"
+    },
+    "search": "Search trips, places, receivers or plates",
+    "searchShortcut": "K",
+    "notifications": "Notifications",
+    "unread": "{count} unread",
+    "account": {
+      "open": "Switch account",
+      "signedInAs": "Signed in as {who}",
+      "settings": "Settings",
+      "signOut": "Sign out"
+    },
+    "roles": {
+      "shipper": "Sender",
+      "owner": "Truck owner",
+      "ownerDriver": "Truck owner who drives",
+      "driver": "Driver",
+      "agent": "Agent",
+      "staff": "Freight Africa staff"
+    },
+    "pages": {
+      "home": {
+        "title": "Home",
+        "empty": "Your trips will show here.",
+        "text": "This part of the app is being built. It will show here as soon as it's ready."
+      },
+      "trips": {
+        "title": "Trips",
+        "empty": "No trips yet",
+        "text": "Trips you book will show here, with their status and the money held for each."
+      },
+      "book": {
+        "title": "Book a truck",
+        "nav": "Book",
+        "empty": "Booking opens soon",
+        "text": "You'll book a full truckload on our four routes here."
+      },
+      "payments": {
+        "title": "Payments",
+        "empty": "No payments yet",
+        "text": "What you've paid, what's held safely and what's been released will show here."
+      },
+      "more": {
+        "title": "More",
+        "empty": "More",
+        "text": "Your account, settings and help."
+      },
+      "places": {
+        "title": "Saved places and receivers",
+        "empty": "No saved places yet",
+        "text": "Save pickup places and the people who receive your goods, to book faster next time."
+      },
+      "team": {
+        "title": "Team",
+        "empty": "Just you for now",
+        "text": "Invite the people who book or pay with you."
+      },
+      "help": {
+        "title": "Help",
+        "empty": "Help is on the way",
+        "text": "Answers to common questions and a way to reach us will show here."
+      },
+      "settings": {
+        "title": "Settings",
+        "empty": "Settings",
+        "text": "Your details, notifications and sign-in options will show here."
+      },
+      "notifications": {
+        "title": "Notifications",
+        "empty": "No notifications yet",
+        "text": "Updates about your trips and payments will show here."
+      },
+      "search": {
+        "title": "Search",
+        "empty": "Search is coming",
+        "text": "Find a trip, place, receiver or plate number from here."
+      },
+      "loads": {
+        "title": "Loads",
+        "empty": "No loads yet",
+        "text": "Paid loads on your routes will show here for you to accept."
+      },
+      "findLoads": {
+        "title": "Find loads",
+        "empty": "No loads yet",
+        "text": "Paid loads on your routes will show here for you to accept."
+      },
+      "earnings": {
+        "title": "Earnings",
+        "empty": "No earnings yet",
+        "text": "What you've earned, what's on the way and your payouts will show here."
+      },
+      "drive": {
+        "title": "Drive",
+        "empty": "No trip to drive",
+        "text": "When you take a trip yourself, it shows here step by step."
+      },
+      "trucks": {
+        "title": "Trucks",
+        "empty": "No trucks yet",
+        "text": "Add your trucks so we can check them and send you loads."
+      },
+      "drivers": {
+        "title": "Drivers",
+        "empty": "No drivers yet",
+        "text": "Add the people who drive your trucks."
+      },
+      "documents": {
+        "title": "Documents",
+        "empty": "No documents yet",
+        "text": "Your papers and their expiry dates will show here."
+      },
+      "record": {
+        "title": "Track record",
+        "empty": "No trips yet",
+        "text": "Your ratings and on-time record will build up here."
+      },
+      "trip": {
+        "title": "Trip",
+        "empty": "No trip right now",
+        "text": "When your truck owner gives you a trip, it shows here."
+      },
+      "next": {
+        "title": "Next load",
+        "empty": "Nothing next yet",
+        "text": "Trips after this one, and return loads near where you're going, will show here."
+      },
+      "history": {
+        "title": "History",
+        "empty": "No trips yet",
+        "text": "Trips you've finished will show here, with their photos and ratings."
+      },
+      "me": {
+        "title": "Me",
+        "empty": "Me",
+        "text": "Your profile, licence, emergency contact and help."
+      },
+      "people": {
+        "title": "People",
+        "empty": "No one yet",
+        "text": "The owners and senders you bring will show here, with how they're getting on."
+      },
+      "invite": {
+        "title": "Invite someone",
+        "nav": "Invite",
+        "empty": "Invites open soon",
+        "text": "Share a link, a QR code or a phone invite here."
+      },
+      "bookings": {
+        "title": "Bookings for senders",
+        "empty": "No bookings yet",
+        "text": "Bookings you make for senders will show here."
+      }
+    },
+    "staff": {
+      "groups": {
+        "operations": "Operations",
+        "trust": "Trust",
+        "people": "People",
+        "money": "Money",
+        "setup": "Setup",
+        "insights": "Insights",
+        "admin": "Admin"
+      },
+      "pages": {
+        "work": "My work",
+        "overview": "Overview",
+        "map": "Live map",
+        "sos": "SOS",
+        "trips": "Trips",
+        "loads": "Loads and matching",
+        "verification": "Verification",
+        "disputes": "Disputes",
+        "fraud": "Fraud and risk",
+        "users": "Users and companies",
+        "agents": "Agents",
+        "support": "Support inbox",
+        "escrow": "Escrow",
+        "payouts": "Payouts",
+        "refunds": "Refunds and charges",
+        "reconciliation": "Reconciliation",
+        "approvals": "Approvals",
+        "catalogue": "Catalogue",
+        "corridors": "Corridors and prices",
+        "fees": "Fees and offers",
+        "messages": "Messages",
+        "website": "Website content",
+        "settings": "Settings",
+        "reports": "Reports",
+        "staff": "Staff and on-call",
+        "audit": "Audit log",
+        "playbooks": "Playbooks",
+        "help": "Help"
+      },
+      "search": "Search references, plates, phones or names",
+      "empty": "This part of the console is being built."
+    },
+    "home": {
+      "needsAction": "Needs your action",
+      "liveTrips": "Live trips",
+      "seeAllTrips": "See all trips",
+      "bookTitle": "Book a truck",
+      "bookText": "Full truckloads on our four routes.",
+      "from": "From",
+      "to": "To",
+      "chooseCity": "Choose a city",
+      "continue": "Continue",
+      "bookAgain": "Book again",
+      "bookAgainAction": "Book",
+      "lastTime": "Last time {amount}",
+      "last": "last {amount}",
+      "thisMonth": "This month",
+      "columns": {
+        "reference": "Reference",
+        "route": "Route",
+        "status": "Status",
+        "next": "Next step",
+        "held": "Money held"
+      },
+      "firstOffer": "Your first trip has no service fee",
+      "firstAction": "Book your first truck",
+      "firstPoints": [
+        "Pay once. Money held until delivery.",
+        "Only verified truck owners.",
+        "Track your goods all the way."
+      ],
+      "howItWorks": "How it works"
+    },
+    "homeEmpty": {
+      "owner": {
+        "title": "Your loads and trips will show here.",
+        "text": "Paid loads on your routes, and the trips your trucks are running."
+      },
+      "ownerDriver": {
+        "title": "Your loads and trips will show here.",
+        "text": "Paid loads on your routes, and the trips you drive or send your trucks on."
+      },
+      "agent": {
+        "title": "The people you bring will show here.",
+        "text": "Owners and senders you invite, and what they've earned you."
+      }
+    }
+  },
+  "devHome": {
+    "viewer": {
+      "firstName": "Adaeze",
+      "fullName": "Adaeze Okafor",
+      "account": "Okafor Foods Ltd",
+      "role": "Owner · Okafor Foods Ltd"
+    },
+    "actions": [
+      {
+        "tone": "warning",
+        "icon": "money",
+        "ref": "FA-7K3Q9",
+        "text": "{ref} is waiting for payment",
+        "detail": "Lagos → Kano · Pay by 6:00 pm today to keep your date",
+        "action": "Pay",
+        "primary": true
+      },
+      {
+        "tone": "info",
+        "icon": "truck",
+        "ref": "FA-2M8R1",
+        "text": "An owner offered ₦1,050,000 for {ref}",
+        "detail": "Lagos → Abuja · 30 t flatbed",
+        "action": "Review",
+        "primary": false
+      },
+      {
+        "tone": "success",
+        "icon": "star",
+        "ref": "",
+        "text": "Rate your trip to Kano",
+        "detail": "Delivered yesterday by Musa Ibrahim",
+        "action": "Rate",
+        "primary": false
+      }
+    ],
+    "trips": [
+      {
+        "ref": "FA-4H2N7",
+        "route": "Lagos → Kano",
+        "sub": "KJA 482 XA · Musa Ibrahim",
+        "status": "On the road",
+        "tone": "info",
+        "next": "Arrives Thu about 2:30 pm",
+        "nextSub": "Passing Lokoja",
+        "phoneNext": "Arrives Thu about 2:30 pm · Passing Lokoja",
+        "held": "₦630,000",
+        "heldSub": "held safely",
+        "locked": true,
+        "phone": true
+      },
+      {
+        "ref": "FA-2M8R1",
+        "route": "Lagos → Abuja",
+        "sub": "30 t flatbed · Fri 22 Nov",
+        "status": "Finding truck",
+        "tone": "finding",
+        "next": "1 offer to review",
+        "nextSub": "Posted 3 hours ago",
+        "phoneNext": "1 offer to review · Fri 22 Nov",
+        "held": "₦980,000",
+        "heldSub": "held safely",
+        "locked": true,
+        "phone": true
+      },
+      {
+        "ref": "FA-7K3Q9",
+        "route": "Lagos → Kano",
+        "sub": "20 t covered · Mon 25 Nov",
+        "status": "Unpaid",
+        "tone": "warning",
+        "next": "Pay to find a truck",
+        "nextSub": "Account number ready",
+        "phoneNext": "Pay to find a truck",
+        "held": "₦0",
+        "heldSub": "not paid yet",
+        "locked": false,
+        "phone": false
+      }
+    ],
+    "again": [
+      {
+        "route": "Lagos → Kano",
+        "detail": "30 t flatbed · Bags of rice",
+        "amount": "₦1,850,000"
+      },
+      {
+        "route": "Lagos → Abuja",
+        "detail": "20 t covered · Cartons",
+        "amount": "₦1,120,000"
+      },
+      {
+        "route": "Lagos → Onitsha",
+        "detail": "30 t flatbed · Cement",
+        "amount": "₦1,400,000"
+      }
+    ],
+    "fromCity": "Lagos",
+    "month": {
+      "count": "4",
+      "text": "trips booked in November.",
+      "detail": "2 delivered, 2 on the way."
+    },
+    "unread": 3,
+    "otherShells": "Preview another shell",
+    "newShipper": "New sender (first visit)"
   }
 }

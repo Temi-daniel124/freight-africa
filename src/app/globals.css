@@ -16,8 +16,12 @@
   --color-green-200: #cfe3d7;
   --color-green-100: #dcebe2;
   --color-green-50: #eef5f0;
+  /* Gate 4: the action link on the dark toast (9.9:1 on ink). */
+  --color-green-300: #9fd5b6;
   --color-road-yellow: #f2c230;
   --color-road-yellow-100: #fdf3d0;
+  /* Gate 4: text on the yellow "Finding truck" chip (6.3:1 on road-yellow-100). */
+  --color-road-yellow-800: #7a5a00;
   --color-ink: #0f1a14;
   --color-ink-2: #4a5a51;
   --color-ink-3: #64716a;
@@ -92,6 +96,11 @@
   --text-lead: 1.125rem;
   --text-lead--line-height: 1.75rem;
   --text-lead--font-weight: 400;
+  /* Gate 4: a big count in a small card ("4 trips booked in November"). */
+  --text-stat: 1.75rem;
+  --text-stat--line-height: 1;
+  --text-stat--font-weight: 800;
+  --text-stat--letter-spacing: -0.02em;
   /* Gate 3: the plate number in the small "Truck accepted" card. */
   --text-plate: 1.125rem;
   --text-plate--line-height: 1.4375rem;
@@ -130,6 +139,10 @@
   /* Cards floating on the deep-green sign-in panel. */
   --shadow-panel-card: 0 1px 2px rgba(8, 56, 38, 0.08), 0 24px 48px -16px rgba(8, 56, 38, 0.45);
   --shadow-pill: 0 1px 2px rgb(8 56 38 / 0.06), 0 8px 24px -12px rgb(8 56 38 / 0.18);
+  /* Gate 4: the floating phone tabs, the raised centre action, and toasts. */
+  --shadow-tabs: 0 2px 4px rgba(15, 26, 20, 0.06), 0 16px 40px -12px rgba(15, 26, 20, 0.28);
+  --shadow-fab: 0 10px 24px -8px rgba(8, 56, 38, 0.55);
+  --shadow-toast: 0 1px 2px rgba(15, 26, 20, 0.06), 0 12px 32px -12px rgba(15, 26, 20, 0.22);
   --shadow-pill-scrolled: 0 1px 2px rgb(8 56 38 / 0.06), 0 12px 32px -12px rgb(8 56 38 / 0.22);
 
   --spacing-helper: 6px;
@@ -473,6 +486,29 @@
 }
 @utility tabular {
   font-variant-numeric: tabular-nums;
+}
+/* Gate 4 (DESIGN_SYSTEM 10.1): the floating tabs sit 12 px above the bottom plus the safe area, and page
+   content keeps 120 px plus the safe area clear below it so nothing hides behind the pill. */
+@utility bottom-tabs {
+  bottom: calc(0.75rem + env(safe-area-inset-bottom));
+}
+@utility pb-tabs {
+  padding-bottom: calc(7.5rem + env(safe-area-inset-bottom));
+}
+@utility grid-cols-shell {
+  grid-template-columns: 15rem minmax(0, 1fr);
+}
+@utility grid-cols-staff {
+  grid-template-columns: 16.25rem minmax(0, 1fr);
+}
+@utility grid-cols-home {
+  grid-template-columns: minmax(0, 1fr) 22.5rem;
+}
+@utility grid-cols-row {
+  grid-template-columns: 2.25rem minmax(0, 1fr) auto;
+  @media (width >= 64rem) {
+    grid-template-columns: 2.5rem minmax(0, 1fr) auto;
+  }
 }
 @utility pb-safe {
   padding-bottom: env(safe-area-inset-bottom);

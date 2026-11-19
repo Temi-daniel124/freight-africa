@@ -18,7 +18,7 @@ export function PhoneField({ id, label, helper, error, defaultValue = "", onChan
   return (
     <FieldShell id={id} label={label} helper={helper} error={error}>
       <div className="relative">
-        <span aria-hidden className="tabular absolute top-4 left-4 text-body-lg font-medium text-ink-2">
+        <span aria-hidden className="tabular absolute top-4 left-4 text-control font-medium text-ink-2">
           +234
         </span>
         <input
