@@ -74,7 +74,7 @@ general dark theme. (Recorded as D022; the founders may remove the exception.)
 | `--road-yellow-100` | #FDF3D0 | Background for offer badges |
 | `--ink` | #0F1A14 | Main text |
 | `--ink-2` | #4A5A51 | Secondary text, labels |
-| `--ink-3` | #7A887F | Placeholder and disabled text (only for non-essential text) |
+| `--ink-3` | #64716A | Quiet text: placeholders, small labels, disabled text. 5.1:1 on white, 4.7:1 on paper (was #7A887F, 3.7:1, darkened 19 Nov 2026 for accessibility 100) |
 | `--line` | #E2E8E3 | Borders, dividers |
 | `--line-strong` | #C9D3CC | Input borders, focus base |
 | `--paper` | #F6F8F5 | App background behind cards |
