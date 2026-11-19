@@ -13,11 +13,41 @@ type SegmentedControlProps<T extends string> = {
   className?: string;
   /** Below 600 px, stack the options vertically (for labels too long to share a phone's width). */
   stackOnPhone?: boolean;
+  /**
+   * "brand": the green sliding pill of the website and sign-up. "app": the Gate 4 component sheet's quiet
+   * version for in-app filters (Active / Finding truck / Unpaid / Done): white selected pill on green-50,
+   * each option as wide as its words.
+   */
+  appearance?: "brand" | "app";
 };
 
 // Pill segmented control (DESIGN_SYSTEM.md 10.3). The green pill slides with a CSS transform, so this
 // needs no animation library; options share the width (or, stacked, the height) equally.
-export function SegmentedControl<T extends string>({ options, value, onChange, label, className, stackOnPhone = false }: SegmentedControlProps<T>) {
+export function SegmentedControl<T extends string>({ options, value, onChange, label, className, stackOnPhone = false, appearance = "brand" }: SegmentedControlProps<T>) {
+  if (appearance === "app") {
+    return (
+      <div role="radiogroup" aria-label={label} className={cn("inline-flex max-w-full overflow-x-auto rounded-pill bg-green-50 p-1", className)}>
+        {options.map((option) => {
+          const active = option.value === value;
+          return (
+            <button
+              key={option.value}
+              type="button"
+              role="radio"
+              aria-checked={active}
+              onClick={() => onChange(option.value)}
+              className={cn(
+                "h-10 shrink-0 rounded-pill px-4 text-body-sm whitespace-nowrap transition motion-quick",
+                active ? "bg-surface text-ink shadow-raised" : "text-ink-2 hover:text-ink",
+              )}
+            >
+              {option.label}
+            </button>
+          );
+        })}
+      </div>
+    );
+  }
   const index = Math.max(0, options.findIndex((option) => option.value === value));
   const position = { "--count": options.length, "--index": index } as CSSProperties;
   return (

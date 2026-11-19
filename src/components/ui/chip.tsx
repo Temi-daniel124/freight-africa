@@ -22,20 +22,24 @@ export function Chip({ selected, className, children, type = "button", ...props 
   );
 }
 
+// Gate 4 component sheet: one colour per trip state, always with words (never colour alone).
 const statusTones = {
-  info: "bg-info-100 text-info",
   warning: "bg-warning-100 text-warning",
-  danger: "bg-danger-100 text-danger",
+  finding: "bg-road-yellow-100 text-road-yellow-800",
   success: "bg-success-100 text-success",
-  neutral: "bg-green-50 text-ink-2",
+  info: "bg-info-100 text-info",
+  danger: "bg-danger-100 text-danger",
+  neutral: "border border-line bg-paper text-ink-2",
 } as const;
 
-type StatusChipProps = { tone: keyof typeof statusTones; icon?: LucideIcon; children: ReactNode; className?: string };
+export type StatusTone = keyof typeof statusTones;
+
+type StatusChipProps = { tone: StatusTone; icon?: LucideIcon; children: ReactNode; className?: string };
 
 export function StatusChip({ tone, icon: Icon, children, className }: StatusChipProps) {
   return (
-    <span className={cn("inline-flex h-8 items-center gap-1 rounded-pill px-3 text-label whitespace-nowrap", statusTones[tone], className)}>
-      {Icon ? <Icon aria-hidden className="size-4" strokeWidth={1.75} /> : null}
+    <span className={cn("inline-flex h-6.5 items-center gap-1.5 rounded-pill px-2.5 text-caption font-semibold tracking-normal whitespace-nowrap", statusTones[tone], className)}>
+      {Icon ? <Icon aria-hidden className="size-3.5 shrink-0" strokeWidth={1.75} /> : null}
       {children}
     </span>
   );

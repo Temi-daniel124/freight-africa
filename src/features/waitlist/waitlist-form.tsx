@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleAlert, CircleCheck, Copy, MessageCircle } from "lucide-react";
+import { TriangleAlert, CircleCheck, Copy, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import { use, useActionState, useEffect, useRef, useState } from "react";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -75,7 +75,7 @@ function Fields({ state, action, pending, t, corridors }: FieldsProps) {
     <form ref={formRef} action={action} noValidate className="flex flex-col gap-5">
       {banner ? (
         <p role="alert" className="flex items-start gap-3 rounded-inner bg-danger-100 p-4 text-body text-danger">
-          <CircleAlert aria-hidden className="mt-px size-5 shrink-0" strokeWidth={1.75} />
+          <TriangleAlert aria-hidden className="mt-px size-5 shrink-0" strokeWidth={1.75} />
           {banner}
         </p>
       ) : null}
@@ -176,7 +176,7 @@ function Fields({ state, action, pending, t, corridors }: FieldsProps) {
         </label>
         {errors.consent ? (
           <p id="waitlist-consent-error" className="flex items-center gap-1 text-caption text-danger">
-            <CircleAlert aria-hidden className="size-4 shrink-0" strokeWidth={1.75} />
+            <TriangleAlert aria-hidden className="size-4 shrink-0" strokeWidth={1.75} />
             {t.errors.consent}
           </p>
         ) : null}
