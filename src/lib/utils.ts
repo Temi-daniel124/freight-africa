@@ -5,9 +5,9 @@ import { extendTailwindMerge } from "tailwind-merge";
 const twMerge = extendTailwindMerge({
   extend: {
     theme: {
-      text: ["display", "title-1", "title-2", "body-lg", "body", "body-sm", "control", "label", "caption", "micro", "plate", "lead"],
+      text: ["display", "title-1", "title-2", "body-lg", "body", "body-sm", "control", "label", "caption", "micro", "plate", "lead", "stat"],
       radius: ["button", "pill", "input", "inner", "nav", "map", "tile", "card", "sheet", "field", "tray", "hero", "digit"],
-      shadow: ["raised", "floating", "pill", "pill-scrolled", "panel-card", "bar"],
+      shadow: ["raised", "floating", "pill", "pill-scrolled", "panel-card", "bar", "tabs", "fab", "toast"],
       tracking: ["caps", "plate", "kv", "close"],
     },
     classGroups: {

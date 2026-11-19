@@ -1,0 +1,124 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Components · Freight Africa app (Gate 4 design target)</title><link rel="stylesheet" href="app.css">
+<style>
+body{background:var(--paper)}
+.g{max-width:1120px;margin:0 auto;padding:40px 24px 80px}
+.g h1{font-size:30px;font-weight:800;letter-spacing:-.02em}
+.g > p{color:var(--ink2);margin-top:8px;max-width:720px;line-height:1.5}
+.blk{margin-top:36px}
+.blk h2{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);margin-bottom:12px}
+.panel{background:#fff;border-radius:24px;box-shadow:var(--shadow-raised);padding:24px;display:flex;flex-wrap:wrap;gap:16px;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.f{display:flex;flex-direction:column;gap:8px;min-width:260px;flex:1}
+.f label{font-size:13px;font-weight:600}
+.inp{height:56px;border-radius:16px;border:1px solid var(--line2);background:#fff;display:flex;align-items:center;padding:0 16px;font-size:16px;color:var(--ink3)}
+.inp.fo{border-color:var(--g700);box-shadow:0 0 0 4px rgba(47,122,87,.16);color:var(--ink)}
+.inp.er{border-color:var(--danger);color:var(--ink)}
+.err{display:flex;gap:6px;align-items:center;font-size:13px;color:var(--danger);font-weight:500}
+.err .i{width:16px;height:16px}
+.help{font-size:13px;color:var(--ink3)}
+.empty{display:flex;flex-direction:column;align-items:center;text-align:center;padding:40px 24px;gap:10px;width:100%}
+.empty .art{width:120px;height:80px}
+.empty h3{font-size:20px;font-weight:800;letter-spacing:-.01em}
+.empty .offer{display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 12px;border-radius:999px;background:var(--ok100);color:var(--ok);font-size:13px;font-weight:700}
+.empty ul{list-style:none;margin-top:12px;display:flex;flex-direction:column;gap:8px;font-size:14px;color:var(--ink2)}
+.empty ul li{display:flex;gap:8px;align-items:center;justify-content:center}
+.empty ul .i{width:16px;height:16px;color:var(--g700)}
+.sk{background:linear-gradient(90deg,var(--line),var(--paper),var(--line));background-size:200% 100%;border-radius:12px}
+.skc{width:100%;display:flex;flex-direction:column;gap:12px}
+.toast{display:inline-flex;align-items:center;gap:16px;background:var(--ink);color:#fff;border-radius:999px;padding:12px 12px 12px 20px;font-size:14px;font-weight:600;box-shadow:var(--shadow-2)}
+.toast a{color:#9fd5b6;font-weight:700;padding:6px 10px}
+.strip{width:100%;display:flex;align-items:center;gap:10px;background:var(--warn100);color:var(--warn);border-radius:12px;padding:12px 16px;font-size:14px;font-weight:600}
+.banner{width:100%;display:flex;gap:14px;align-items:flex-start;border-radius:16px;padding:16px;background:var(--info100)}
+.banner .ic{width:36px;height:36px;border-radius:10px;background:#fff;color:var(--info);display:grid;place-items:center;flex:none}
+.banner b{display:block;font-size:15px}
+.banner p{font-size:14px;color:var(--ink2);margin-top:2px}
+.sheetwrap{width:100%;height:320px;border-radius:20px;background:rgba(15,26,20,.32);position:relative;overflow:hidden}
+.sheet{position:absolute;left:0;right:0;bottom:0;background:#fff;border-radius:28px 28px 0 0;padding:12px 20px 24px}
+.sheet .grab{width:40px;height:5px;border-radius:5px;background:var(--line2);margin:0 auto 16px}
+.sheet h3{font-size:18px;font-weight:800}
+.sheet p{font-size:14px;color:var(--ink2);margin:6px 0 16px}
+.seg2{display:inline-grid;grid-template-columns:repeat(4,auto);padding:4px;border-radius:999px;background:var(--g50)}
+.seg2 span{height:40px;padding:0 16px;border-radius:999px;display:grid;place-items:center;font-size:14px;font-weight:600;color:var(--ink2)}
+.seg2 span.on{background:#fff;color:var(--ink);box-shadow:var(--shadow-raised)}
+.gtabs{display:grid;grid-template-columns:repeat(var(--n,5),1fr);width:390px;max-width:100%;height:68px;background:#fff;border:1px solid var(--line);border-radius:45px;box-shadow:0 2px 4px rgba(15,26,20,.06),0 16px 40px -12px rgba(15,26,20,.28);position:relative;margin-top:26px;padding:0 6px}
+.gtabs a{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:12px;font-weight:600;color:var(--ink2);position:relative}
+.gtabs .pill{width:56px;height:30px;border-radius:999px;display:grid;place-items:center}
+.gtabs a.on{color:var(--g700)}.gtabs a.on .pill{background:var(--g100)}
+.gtabs .i{width:22px;height:22px}
+.gtabs a.mid{justify-content:flex-end;padding-bottom:12px}
+.gtabs .fab{position:absolute;top:-18px;width:60px;height:60px;border-radius:50%;background:var(--g700);color:#fff;display:grid;place-items:center;box-shadow:0 10px 24px -8px rgba(8,56,38,.55)}
+.gtabs .fab .i{width:26px;height:26px;stroke-width:2.25}
+.tl{font-size:12px;font-weight:600;color:var(--ink3);margin-top:8px}
+@media (max-width:760px){.grid2{grid-template-columns:1fr}}
+</style></head><body><svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<symbol id="home" viewBox="0 0 24 24"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+<symbol id="route" viewBox="0 0 24 24"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></symbol>
+<symbol id="plus" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
+<symbol id="wallet" viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></symbol>
+<symbol id="menu" viewBox="0 0 24 24"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/></symbol>
+<symbol id="bell" viewBox="0 0 24 24"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></symbol>
+<symbol id="search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+<symbol id="chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+<symbol id="lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+<symbol id="truck" viewBox="0 0 24 24"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></symbol>
+<symbol id="alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+<symbol id="star" viewBox="0 0 24 24"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></symbol>
+<symbol id="cog" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></symbol>
+<symbol id="pin" viewBox="0 0 24 24"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></symbol>
+<symbol id="users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+<symbol id="arrow" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+<symbol id="box" viewBox="0 0 24 24"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><path d="m3.3 7 8.7 5 8.7-5"/></symbol>
+<symbol id="check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+<symbol id="wheel" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="2"/><path d="M12 14v8"/><path d="M10 12H2"/><path d="M14 12h8"/></symbol>
+<symbol id="naira" viewBox="0 0 24 24"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></symbol>
+<symbol id="wifioff" viewBox="0 0 24 24"><path d="M12 20h.01"/><path d="M8.5 16.429a5 5 0 0 1 7 0"/><path d="M5 12.859a10 10 0 0 1 5.17-2.69"/><path d="M19 12.859a10 10 0 0 0-2.007-1.523"/><path d="M2 8.82a15 15 0 0 1 4.177-2.643"/><path d="M22 8.82a15 15 0 0 0-11.288-3.764"/><path d="m2 2 20 20"/></symbol>
+<symbol id="x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+</svg>
+
+<div class="g">
+<h1>App components</h1>
+<p>Every building block of the signed-in app, in each state. Claude Code builds these as shared components, shows them on /dev/components, and uses only these on every screen.</p>
+
+<div class="blk"><h2>Buttons</h2><div class="panel">
+<a class="btn"><svg class="i "><use href="#plus"/></svg>Book a truck</a><a class="btn sec">Review</a><a class="btn ter">See all trips</a><a class="btn dan">Cancel booking</a><a class="btn dis">Continue</a><a class="btn">Sending…</a><a class="btn sm">Pay</a><a class="btn sm sec">Rate</a>
+</div></div>
+
+<div class="blk"><h2>Fields</h2><div class="panel">
+<div class="f"><label>Pickup address</label><div class="inp">e.g. 12 Ojota Road, Lagos</div><span class="help">Where the truck should come.</span></div>
+<div class="f"><label>Goods</label><div class="inp fo">600 bags of rice<i class="caret" style="display:inline-block;width:1.5px;height:20px;background:var(--g700);margin-left:2px"></i></div><span class="help">What you are sending.</span></div>
+<div class="f"><label>Weight (tonnes)</label><div class="inp er">45</div><span class="err"><svg class="i "><use href="#alert"/></svg>A 30 t truck carries up to 30 tonnes. Split the load or choose a bigger truck.</span></div>
+</div></div>
+
+<div class="blk"><h2>Status chips</h2><div class="panel">
+<span class="chip warn">Unpaid</span><span class="chip find">Finding truck</span><span class="chip ok"><svg class="i "><use href="#check"/></svg>Truck accepted</span><span class="chip info"><svg class="i "><use href="#truck"/></svg>On the road</span><span class="chip ok"><svg class="i "><use href="#check"/></svg>Delivered</span><span class="chip dan">Problem reported</span><span class="chip neu">Cancelled</span>
+</div></div>
+
+<div class="blk"><h2>Segmented control</h2><div class="panel"><div class="seg2"><span class="on">Active</span><span>Finding truck</span><span>Unpaid</span><span>Done</span></div></div></div>
+
+<div class="blk"><h2>Feedback</h2><div class="grid2">
+<div class="panel"><div class="strip"><svg class="i "><use href="#wifioff"/></svg>You're offline. We'll send your changes when you're back.</div>
+<div class="banner"><span class="ic"><svg class="i "><use href="#truck"/></svg></span><div><b>Musa is 20 minutes from pickup</b><p>Have the goods ready at Ojota, Lagos. Your loading code is in Trips.</p></div></div>
+<span class="toast">Receiver saved<a>Undo</a></span></div>
+<div class="panel"><div class="skc"><div class="sk" style="height:20px;width:40%"></div><div class="sk" style="height:88px"></div><div class="sk" style="height:88px"></div><div class="sk" style="height:88px;width:80%"></div></div></div>
+</div></div>
+
+<div class="blk"><h2>Empty state (first visit to Home)</h2><div class="panel"><div class="empty">
+<svg class="art" viewBox="0 0 120 80" fill="none" stroke="#0c5034" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 70h100" stroke="#cfe3d7" stroke-dasharray="6 5"/><rect x="22" y="28" width="46" height="30" rx="4"/><path d="M68 38h16l10 10v10H68z"/><circle cx="36" cy="60" r="6" fill="#fff"/><circle cx="84" cy="60" r="6" fill="#fff"/></svg>
+<h3>Your trips will show here.</h3>
+<span class="offer"><svg class="i "><use href="#check"/></svg>Your first trip has no service fee</span>
+<a class="btn" style="margin-top:8px"><svg class="i "><use href="#plus"/></svg>Book your first truck</a>
+<ul><li><svg class="i "><use href="#lock"/></svg>Pay once. Money held until delivery.</li><li><svg class="i "><use href="#check"/></svg>Only verified truck owners.</li><li><svg class="i "><use href="#pin"/></svg>Track your goods all the way.</li></ul>
+<a class="btn ter">How it works</a>
+</div></div></div>
+
+<div class="blk"><h2>Bottom sheet</h2><div class="panel"><div class="sheetwrap"><div class="sheet"><div class="grab"></div><h3>Cancel FA-2M8R1?</h3><p>No truck has accepted yet, so your full payment comes back to you.</p><a class="btn dan full">Cancel booking</a><a class="btn ter full" style="margin-top:4px">Keep booking</a></div></div></div></div>
+
+<div class="blk"><h2>Phone tabs for each role (floating pill, 45 px radius, 12 px from the edges)</h2><div class="panel" style="flex-direction:column;align-items:flex-start">
+<div class="tl">Shipper</div><nav class="gtabs"><a class="on"><span class="pill"><svg class="i "><use href="#home"/></svg></span>Home</a><a class=""><span class="pill"><svg class="i "><use href="#route"/></svg></span>Trips</a><a class="mid"><span class="fab"><svg class="i "><use href="#plus"/></svg></span>Book</a><a class=""><span class="pill"><svg class="i "><use href="#wallet"/></svg></span>Payments</a><a class=""><span class="pill"><svg class="i "><use href="#menu"/></svg></span>More</a></nav>
+<div class="tl">Truck owner</div><nav class="gtabs"><a class="on"><span class="pill"><svg class="i "><use href="#home"/></svg></span>Home</a><a class=""><span class="pill"><svg class="i "><use href="#box"/></svg></span>Loads</a><a class=""><span class="pill"><svg class="i "><use href="#route"/></svg></span>Trips</a><a class=""><span class="pill"><svg class="i "><use href="#naira"/></svg></span>Earnings</a><a class=""><span class="pill"><svg class="i "><use href="#menu"/></svg></span>More</a></nav>
+<div class="tl">Owner who also drives</div><nav class="gtabs"><a class="on"><span class="pill"><svg class="i "><use href="#home"/></svg></span>Home</a><a class=""><span class="pill"><svg class="i "><use href="#box"/></svg></span>Loads</a><a class="mid"><span class="fab"><svg class="i "><use href="#wheel"/></svg></span>Drive</a><a class=""><span class="pill"><svg class="i "><use href="#naira"/></svg></span>Earnings</a><a class=""><span class="pill"><svg class="i "><use href="#menu"/></svg></span>More</a></nav>
+<div class="tl">Driver (bigger in the build: 28 px icons, 13 px labels, for use in a moving cab)</div><div style="--n:4;width:100%"><nav class="gtabs"><a class="on"><span class="pill"><svg class="i "><use href="#wheel"/></svg></span>Trip</a><a class=""><span class="pill"><svg class="i "><use href="#box"/></svg></span>Next load</a><a class=""><span class="pill"><svg class="i "><use href="#route"/></svg></span>History</a><a class=""><span class="pill"><svg class="i "><use href="#users"/></svg></span>Me</a></nav></div>
+</div></div>
+</div></body></html>

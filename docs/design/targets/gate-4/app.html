@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shipper Home · Freight Africa app (Gate 4 design target)</title>
+<link rel="stylesheet" href="app.css"></head>
+<body><svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<symbol id="home" viewBox="0 0 24 24"><path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></symbol>
+<symbol id="route" viewBox="0 0 24 24"><circle cx="6" cy="19" r="3"/><path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/><circle cx="18" cy="5" r="3"/></symbol>
+<symbol id="plus" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="M12 5v14"/></symbol>
+<symbol id="wallet" viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></symbol>
+<symbol id="menu" viewBox="0 0 24 24"><path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/></symbol>
+<symbol id="bell" viewBox="0 0 24 24"><path d="M10.268 21a2 2 0 0 0 3.464 0"/><path d="M3.262 15.326A1 1 0 0 0 4 17h16a1 1 0 0 0 .74-1.673C19.41 13.956 18 12.499 18 8A6 6 0 0 0 6 8c0 4.499-1.411 5.956-2.738 7.326"/></symbol>
+<symbol id="search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+<symbol id="chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+<symbol id="lock" viewBox="0 0 24 24"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+<symbol id="truck" viewBox="0 0 24 24"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></symbol>
+<symbol id="alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+<symbol id="star" viewBox="0 0 24 24"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></symbol>
+<symbol id="cog" viewBox="0 0 24 24"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></symbol>
+<symbol id="help" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></symbol>
+<symbol id="pin" viewBox="0 0 24 24"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></symbol>
+<symbol id="users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+<symbol id="arrow" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+<symbol id="box" viewBox="0 0 24 24"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><path d="m3.3 7 8.7 5 8.7-5"/></symbol>
+<symbol id="check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+<symbol id="wheel" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="2"/><path d="M12 14v8"/><path d="M10 12H2"/><path d="M14 12h8"/></symbol>
+<symbol id="naira" viewBox="0 0 24 24"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></symbol>
+<symbol id="wifioff" viewBox="0 0 24 24"><path d="M12 20h.01"/><path d="M8.5 16.429a5 5 0 0 1 7 0"/><path d="M5 12.859a10 10 0 0 1 5.17-2.69"/><path d="M19 12.859a10 10 0 0 0-2.007-1.523"/><path d="M2 8.82a15 15 0 0 1 4.177-2.643"/><path d="M22 8.82a15 15 0 0 0-11.288-3.764"/><path d="m2 2 20 20"/></symbol>
+<symbol id="x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+</svg>
+
+<div class="shell">
+  <aside class="side">
+    <img class="logo" src="primary-green.svg" alt="Freight Africa">
+    <a class="btn full" href="#"><svg class="i "><use href="#plus"/></svg>Book a truck</a>
+    <nav class="nav">
+      <a class="on" href="#"><svg class="i "><use href="#home"/></svg>Home</a>
+      <a href="#"><svg class="i "><use href="#route"/></svg>Trips</a>
+      <a href="#"><svg class="i "><use href="#wallet"/></svg>Payments</a>
+      <a href="#"><svg class="i "><use href="#pin"/></svg>Saved places and receivers</a>
+      <a href="#"><svg class="i "><use href="#users"/></svg>Team</a>
+      <a href="#"><svg class="i "><use href="#help"/></svg>Help</a>
+    </nav>
+    <div class="me">
+      <nav class="nav"><a href="#"><svg class="i "><use href="#cog"/></svg>Settings</a></nav>
+      <div class="person"><span class="av">AO</span><span>Adaeze Okafor<small>Owner · Okafor Foods Ltd</small></span></div>
+    </div>
+  </aside>
+  <div>
+    <header class="top">
+      <p class="hello">Good morning, <b>Adaeze</b></p>
+      <div class="search"><svg class="i "><use href="#search"/></svg>Search trips, places, receivers or plates<kbd>⌘K</kbd></div>
+      <button class="iconbtn" aria-label="Notifications"><svg class="i "><use href="#bell"/></svg><span class="badge">3</span></button>
+      <button class="org"><span class="av">OF</span>Okafor Foods Ltd<svg class="i "><use href="#chev"/></svg></button>
+    </header>
+    <header class="ptop">
+      <span class="av">OF</span><p class="hello">Good morning<b>Adaeze</b></p>
+      <button class="iconbtn" aria-label="Notifications"><svg class="i "><use href="#bell"/></svg><span class="badge">3</span></button>
+    </header>
+
+    <main class="content">
+            <div class="cols">
+        <div class="stack">
+          <section class="o1">
+            <div class="sec-h"><h2>Needs your action</h2></div>
+            <ul class="rows card">
+              <li class="row"><span class="ic warn"><svg class="i "><use href="#wallet"/></svg></span><p><span class="ref">FA-7K3Q9</span> is waiting for payment<small>Lagos → Kano · Pay by 6:00 pm today to keep your date</small></p><a class="btn sm" href="#">Pay</a></li>
+              <li class="row"><span class="ic info"><svg class="i "><use href="#truck"/></svg></span><p>An owner offered <span class="tnum">₦1,050,000</span> for <span class="ref">FA-2M8R1</span><small>Lagos → Abuja · 30 t flatbed</small></p><a class="btn sm sec" href="#">Review</a></li>
+              <li class="row"><span class="ic ok"><svg class="i "><use href="#star"/></svg></span><p>Rate your trip to Kano<small>Delivered yesterday by Musa Ibrahim</small></p><a class="btn sm sec" href="#">Rate</a></li>
+            </ul>
+          </section>
+          <section class="o4">
+            <div class="sec-h"><h2>Live trips</h2><a href="#">See all trips</a></div>
+            <div class="card desk-only" style="overflow:hidden">
+              <table>
+                <thead><tr><th>Reference</th><th>Route</th><th>Status</th><th>Next step</th><th style="text-align:right">Money held</th></tr></thead>
+                <tbody>
+                  <tr><td class="ref tnum">FA-4H2N7</td><td><span class="route">Lagos → Kano</span><span class="sub">KJA 482 XA · Musa Ibrahim</span></td><td><span class="chip info"><svg class="i "><use href="#truck"/></svg>On the road</span></td><td>Arrives Thu about 2:30 pm<span class="sub">Passing Lokoja</span></td><td class="money tnum"><span class="held"><svg class="i "><use href="#lock"/></svg>₦630,000</span><span class="sub">held safely</span></td></tr>
+                  <tr><td class="ref tnum">FA-2M8R1</td><td><span class="route">Lagos → Abuja</span><span class="sub">30 t flatbed · Fri 22 Nov</span></td><td><span class="chip find">Finding truck</span></td><td>1 offer to review<span class="sub">Posted 3 hours ago</span></td><td class="money tnum"><span class="held"><svg class="i "><use href="#lock"/></svg>₦980,000</span><span class="sub">held safely</span></td></tr>
+                  <tr><td class="ref tnum">FA-7K3Q9</td><td><span class="route">Lagos → Kano</span><span class="sub">20 t covered · Mon 25 Nov</span></td><td><span class="chip warn">Unpaid</span></td><td>Pay to find a truck<span class="sub">Account number ready</span></td><td class="money tnum">₦0<span class="sub">not paid yet</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="tripcards ph-only">
+              <a class="tcard" href="#"><div class="t1"><span class="ref tnum">FA-4H2N7</span><span class="chip info"><svg class="i "><use href="#truck"/></svg>On the road</span></div><div class="rt">Lagos → Kano</div><div class="nx">Arrives Thu about 2:30 pm · Passing Lokoja</div><div class="mh tnum"><svg class="i "><use href="#lock"/></svg>₦630,000 held safely</div></a>
+              <a class="tcard" href="#"><div class="t1"><span class="ref tnum">FA-2M8R1</span><span class="chip find">Finding truck</span></div><div class="rt">Lagos → Abuja</div><div class="nx">1 offer to review · Fri 22 Nov</div><div class="mh tnum"><svg class="i "><use href="#lock"/></svg>₦980,000 held safely</div></a>
+            </div>
+          </section>
+        </div>
+
+        <div class="stack rail">
+          <section class="card pad book o2">
+            <h3>Book a truck</h3><p>Full truckloads on our four routes.</p>
+            <div class="ft">
+              <div class="fld"><i class="dot f"></i><div><small>From</small><span>Lagos</span></div></div>
+              <div class="fld"><i class="dot"></i><div><small>To</small><span class="ph">Choose a city</span></div></div>
+            </div>
+            <a class="btn full" href="#">Continue<svg class="i "><use href="#arrow"/></svg></a>
+          </section>
+          <section class="ph-only o3">
+            <div class="sec-h"><h2>Book again</h2></div>
+            <div class="hscroll">
+              <a class="hcard" href="#"><b>Lagos → Kano</b><small>30 t flatbed · Bags of rice</small><div class="p tnum">Last time ₦1,850,000</div></a>
+              <a class="hcard" href="#"><b>Lagos → Abuja</b><small>20 t covered · Cartons</small><div class="p tnum">Last time ₦1,120,000</div></a>
+              <a class="hcard" href="#"><b>Lagos → Onitsha</b><small>30 t flatbed · Cement</small><div class="p tnum">Last time ₦1,400,000</div></a>
+            </div>
+          </section>
+          <section class="card pad desk-only">
+            <div class="sec-h"><h2>Book again</h2></div>
+            <ul class="again">
+              <li><span class="rt">Lagos → Kano<small>30 t flatbed · Bags of rice · last ₦1,850,000</small></span><a class="btn sm sec go" href="#">Book</a></li>
+              <li><span class="rt">Lagos → Abuja<small>20 t covered · Cartons · last ₦1,120,000</small></span><a class="btn sm sec go" href="#">Book</a></li>
+              <li><span class="rt">Lagos → Onitsha<small>30 t flatbed · Cement · last ₦1,400,000</small></span><a class="btn sm sec go" href="#">Book</a></li>
+            </ul>
+          </section>
+          <section class="card pad desk-only">
+            <div class="sec-h"><h2>This month</h2></div>
+            <div class="month"><b class="tnum">4</b><p>trips booked in November.<br>2 delivered, 2 on the way.</p></div>
+          </section>
+        </div>
+      </div>
+    </main>
+  </div>
+  <nav class="tabs" aria-label="Main">
+    <a class="on" href="#"><span class="pill"><svg class="i "><use href="#home"/></svg></span>Home<i class="dotb"></i></a>
+    <a href="#"><span class="pill"><svg class="i "><use href="#route"/></svg></span>Trips</a>
+    <a class="mid" href="#"><span class="fab"><svg class="i "><use href="#plus"/></svg></span>Book</a>
+    <a href="#"><span class="pill"><svg class="i "><use href="#wallet"/></svg></span>Payments</a>
+    <a href="#"><span class="pill"><svg class="i "><use href="#menu"/></svg></span>More</a>
+  </nav>
+</div>
+</body></html>
