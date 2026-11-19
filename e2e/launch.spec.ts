@@ -118,3 +118,17 @@ test("content shows at once, pricing switches instantly, and questions open from
   await page.keyboard.press("Space");
   await expect(second).not.toHaveAttribute("open", "");
 });
+
+// D036: until full launch the public website offers only the waitlist, on every page and in the phone menu.
+test("the public site never offers Sign in or Sign up while the waitlist is the only way in", async ({ page }) => {
+  for (const width of [375, 1280]) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const path of ["/", "/waitlist", "/legal/privacy", "/legal/terms", "/no-such-page"]) {
+      await page.goto(path, { waitUntil: "networkidle" });
+      if (width === 375) await page.getByRole("button", { name: "Menu" }).click();
+      const offered = page.getByRole("link", { name: /sign in|sign up|get started|create.*account/i });
+      await expect(offered, `${path} at ${width}px`).toHaveCount(0);
+      expect(await page.locator('a[href*="/auth"]').count(), `${path} links to /auth`).toBe(0);
+    }
+  }
+});

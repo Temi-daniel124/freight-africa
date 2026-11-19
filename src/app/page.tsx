@@ -10,7 +10,7 @@ import { Pricing } from "@/features/site/pricing";
 import { Routes } from "@/features/site/routes";
 import { SiteFooter } from "@/features/site/site-footer";
 import { SiteHeader } from "@/features/site/site-header";
-import { appHref } from "@/lib/hosts";
+import { publicSignInHref } from "@/lib/hosts";
 import messages from "@/messages/en.json";
 
 export const metadata: Metadata = { alternates: { canonical: "/" } };
@@ -46,7 +46,7 @@ const website = {
 export default function HomePage() {
   return (
     <>
-      <SiteHeader nav={messages.site.nav} homeLabel={messages.site.homeLabel} signInHref={appHref()} />
+      <SiteHeader nav={messages.site.nav} homeLabel={messages.site.homeLabel} signInHref={publicSignInHref()} />
       {/* Built to the approved Gate 2 and Gate 3 targets (docs/design/targets): white page, inset hero and bands. */}
       <main className="bg-surface">
         <Hero />

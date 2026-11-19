@@ -15,11 +15,13 @@ type NavLabels = {
   questions: string;
   join: string;
   signIn: string;
+  getStarted: string;
   menu: string;
   closeMenu: string;
 };
 
-type SiteHeaderProps = { nav: NavLabels; homeLabel: string; showJoin?: boolean; signInHref: string };
+// signInHref is null while the public site is waitlist-only (D036): then the only action is Join the waitlist.
+type SiteHeaderProps = { nav: NavLabels; homeLabel: string; showJoin?: boolean; signInHref: string | null };
 
 // The floating pill (DESIGN_SYSTEM.md 13.2, D031), built to the Gate 2 target: solid white, so nothing
 // shows through it over the photo or the page; only the shadow deepens after 80 px.
@@ -67,9 +69,11 @@ export function SiteHeader({ nav, homeLabel, showJoin = true, signInHref }: Site
             ))}
           </ul>
         </nav>
-        <a href={signInHref} className="hidden h-12 items-center rounded-pill px-4 text-body font-semibold text-ink transition-colors hover:bg-green-50 lg:inline-flex">
-          {nav.signIn}
-        </a>
+        {signInHref ? (
+          <a href={signInHref} className="hidden h-12 items-center rounded-pill px-4 text-body font-semibold text-ink transition-colors hover:bg-green-50 lg:inline-flex">
+            {nav.signIn}
+          </a>
+        ) : null}
         <button
           type="button"
           aria-label={nav.menu}
@@ -81,10 +85,10 @@ export function SiteHeader({ nav, homeLabel, showJoin = true, signInHref }: Site
         </button>
         {showJoin ? (
           <Link
-            href="/waitlist"
+            href={signInHref ?? "/waitlist"}
             className="inline-flex h-11 shrink-0 items-center rounded-pill bg-green-700 px-4 text-body-sm font-bold text-white transition-colors hover:bg-green-800 max-[22.5rem]:px-3.5 lg:h-12 lg:px-5.5 lg:text-body lg:font-bold"
           >
-            {nav.join}
+            {signInHref ? nav.getStarted : nav.join}
           </Link>
         ) : null}
       </div>
@@ -113,12 +117,14 @@ export function SiteHeader({ nav, homeLabel, showJoin = true, signInHref }: Site
               ))}
             </ul>
           </nav>
-          <a href={signInHref} onClick={close} className={cn(buttonVariants({ variant: "secondary" }), "w-full")}>
-            {nav.signIn}
-          </a>
+          {signInHref ? (
+            <a href={signInHref} onClick={close} className={cn(buttonVariants({ variant: "secondary" }), "w-full")}>
+              {nav.signIn}
+            </a>
+          ) : null}
           {showJoin ? (
-            <Link href="/waitlist" onClick={close} className={cn(buttonVariants(), "w-full")}>
-              {nav.join}
+            <Link href={signInHref ?? "/waitlist"} onClick={close} className={cn(buttonVariants(), "w-full")}>
+              {signInHref ? nav.getStarted : nav.join}
             </Link>
           ) : null}
         </div>

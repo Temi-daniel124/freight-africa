@@ -66,6 +66,15 @@ export function siteHref(path: string = "/") {
   return process.env.VERCEL_ENV === "production" ? `${SITE_ORIGIN}${path}` : path;
 }
 
+/**
+ * The website's Sign in / Get started link, or null while the public site is waitlist-only (D036). Off
+ * unless PUBLIC_SIGNIN is "on"; app.freight-africa.com/auth keeps working when opened directly. Read at
+ * build time, so switching it on needs a redeploy.
+ */
+export function publicSignInHref(): string | null {
+  return process.env.PUBLIC_SIGNIN === "on" ? appHref() : null;
+}
+
 /** A link into the app (sign-in) from the public website: another host in production, a path elsewhere. */
 export function appHref(path: string = "/auth") {
   return process.env.VERCEL_ENV === "production" ? `${APP_ORIGIN}${path}` : path;

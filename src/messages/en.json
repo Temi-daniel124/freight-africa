@@ -31,7 +31,8 @@
       "join": "Join the waitlist",
       "menu": "Menu",
       "closeMenu": "Close menu",
-      "signIn": "Sign in"
+      "signIn": "Sign in",
+      "getStarted": "Get started"
     },
     "corridors": [
       {
