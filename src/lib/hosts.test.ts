@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
-import { homePath, hostRoute } from "./hosts";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { homePath, hostRoute, publicSignInHref } from "./hosts";
 
 const pass = { kind: "pass" };
 const redirect = (to: string) => ({ kind: "redirect", to });
@@ -72,5 +72,20 @@ describe("hostRoute (D033)", () => {
     expect(homePath("admin.freight-africa.com")).toBe("/admin");
     expect(homePath("app.freight-africa.com")).toBe("/app");
     expect(homePath("localhost:3100")).toBe("/app");
+  });
+});
+
+describe("publicSignInHref (D036)", () => {
+  afterEach(() => vi.unstubAllEnvs());
+
+  it("is off by default, so the website only offers the waitlist", () => {
+    vi.stubEnv("PUBLIC_SIGNIN", "");
+    expect(publicSignInHref()).toBeNull();
+  });
+
+  it("links to the app's sign-in once switched on", () => {
+    vi.stubEnv("PUBLIC_SIGNIN", "on");
+    vi.stubEnv("VERCEL_ENV", "production");
+    expect(publicSignInHref()).toBe("https://app.freight-africa.com/auth");
   });
 });

@@ -496,3 +496,15 @@ two WhatsApp items in `docs/PROJECT-STATE.md` §3.
 
 **Why.** There is no abuse yet, and every extra account and third-party script is something to
 maintain and something that can fail for a real visitor on a poor connection.
+
+## D036. The public website is waitlist-only until full launch
+
+**Decision (founder, 19 Nov 2026).** Until full launch, freight-africa.com shows no Sign in, Sign up or
+Get started anywhere (header, phone menu, footer, 404 and legal pages): the only action is **Join the
+waitlist**. A switch, `PUBLIC_SIGNIN`, off by default (`src/lib/hosts.ts`, `publicSignInHref()`), brings
+back **Sign in** and **Get started** in the header when it is set to `on` in Vercel and the site is
+redeployed. `app.freight-africa.com/auth` keeps working when opened directly, for testing, and stays out
+of search (robots and `noindex`).
+
+**Why.** Nobody can use the app before launch, so a Sign in link only leads people to a dead end; the
+waitlist is the one thing a visitor can do today.

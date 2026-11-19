@@ -62,6 +62,20 @@ A slice is accepted when all of these are true:
 
 ---
 
+## 1A. How we work from 19 Nov 2026 (founder)
+
+- **Design:** the design gates end with Gate 4. After that, each phase starts with **one design target
+  covering all its screens**; the founder approves it once, then it is built.
+- **Backend slices** (database, RLS, functions, jobs) don't wait for the founder: merge them when CI is
+  green. For **money, auth and RLS** changes, run the independent review agent first and fix what it
+  finds before merging.
+- **Keep going:** carry on from one slice to the next. Stop only when blocked, when something is needed
+  from the founder, or when there are screens to review. Screens built inside a backend slice are
+  listed for review at the end, not stopped for.
+- **Screen comparisons:** 375 and 1440 px only. Ignore differences of 2 px or less; no pixel-hunting
+  beyond that.
+- **Browser suites:** run one file at a time (the laptop is low on memory).
+
 ## 2. Session ritual (summary)
 
 Every Claude Code session starts and ends the same way. The full version is in `CLAUDE.md` §2.
