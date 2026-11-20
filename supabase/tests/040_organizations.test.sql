@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(57);
+select plan(61);
 
 -- The one-owner rule is checked at the end of each statement here (it is deferred to commit in the app),
 -- so the tests can see it refuse.
@@ -97,8 +97,8 @@ select is(public.can_in_org('bbbbbbbb-0000-4000-8000-000000000002', 'see_money')
 
 select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000014", "role": "authenticated"}', true);
 select is(public.org_permissions('bbbbbbbb-0000-4000-8000-000000000003'),
-  array['assign', 'bank_account', 'edit_business', 'load_board', 'manage_drivers', 'manage_managers', 'manage_trucks', 'own_licence', 'rate_sender', 'respond_disputes', 'run_trip', 'see_money', 'view_business', 'view_trips'],
-  '§3 owner-driver: owner rights plus the driver screens');
+  array['assign', 'bank_account', 'confirm_trip', 'edit_business', 'load_board', 'manage_drivers', 'manage_managers', 'manage_trucks', 'own_licence', 'rate_sender', 'respond_disputes', 'run_trip', 'see_money', 'view_business', 'view_trips'],
+  '§3 owner-driver: owner rights plus the driver screens (runs and confirms own trips)');
 select is(public.can_in_org('bbbbbbbb-0000-4000-8000-000000000003', 'see_codes'), false, '§3 nobody on the transporter side sees loading or delivery codes');
 
 select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000021", "role": "authenticated"}', true);
@@ -107,6 +107,7 @@ select is(public.member_role('bbbbbbbb-0000-4000-8000-000000000001'), null, 'and
 
 -- RLS: members read their own organisation and its members; nobody else does; nobody writes directly.
 select is((select count(*)::int from public.organizations), 0, 'an outsider sees no organisations');
+select throws_ok($$select public.create_invite('bbbbbbbb-0000-4000-8000-000000000002', 'booker', null, 'x@example.com')$$, '42501', null, 'an outsider cannot invite, and learns nothing about the organisation');
 select is((select count(*)::int from public.organization_members), 0, 'and no members');
 
 select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000001", "role": "authenticated"}', true);
@@ -117,6 +118,7 @@ select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000
 select is((select count(*)::int from public.organization_members), 3, 'a driver sees the people in his own transporter');
 
 select throws_ok($$insert into public.organizations (kind, name) values ('shipper', 'Fake Ltd')$$, '42501', null, 'organisations cannot be inserted directly');
+select throws_ok($$select blocked_reason from public.organizations$$, '42501', null, 'the internal blocked reason is not readable by members');
 select throws_ok($$update public.organization_members set transporter_role = 'owner'$$, '42501', null, 'a driver cannot make himself owner');
 select throws_ok($$update public.profiles set last_active_org_id = 'bbbbbbbb-0000-4000-8000-000000000001'$$, '42501', null, 'the active account changes only through set_active_org');
 
@@ -149,12 +151,21 @@ select is((select org_name || ' · ' || role || ' · ' || invited_by_first_name 
 select is((select count(*)::int from public.invite_details('not-a-real-token')), 0, 'a made-up token shows nothing');
 reset role;
 
--- Accepting: only the person it was sent to, only once, only before it expires.
+-- Accepting: only the person it was sent to, at an address Supabase Auth has confirmed, only once, only
+-- before it expires.
+update auth.users set email_confirmed_at = now() where id in ('aaaaaaaa-0000-4000-8000-000000000021', 'aaaaaaaa-0000-4000-8000-000000000022');
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000021", "role": "authenticated"}', true);
 select throws_ok(format('select public.accept_invite(%L)', current_setting('test.token')), '42501', null, 'a forwarded link does not work for someone else');
 
 select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000022", "role": "authenticated"}', true);
+reset role;
+update auth.users set email_confirmed_at = null where id = 'aaaaaaaa-0000-4000-8000-000000000022';
+set local role authenticated;
+select throws_ok(format('select public.accept_invite(%L)', current_setting('test.token')), '42501', null, 'an address Supabase Auth has not confirmed does not count');
+reset role;
+update auth.users set email_confirmed_at = now() where id = 'aaaaaaaa-0000-4000-8000-000000000022';
+set local role authenticated;
 select is(public.accept_invite(current_setting('test.token')), 'bbbbbbbb-0000-4000-8000-000000000001'::uuid, 'the invited person accepts');
 select is(public.member_role('bbbbbbbb-0000-4000-8000-000000000001'), 'booker', 'and is now a booker');
 select is((select count(*)::int from public.my_accounts() where is_active and name = 'Okafor Foods Ltd'), 1, 'the new organisation becomes the active account');
@@ -171,6 +182,11 @@ select throws_ok($$select public.accept_invite('expired-invite-token-00000000000
 select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000012", "role": "authenticated"}', true);
 select is(char_length(public.create_invite('bbbbbbbb-0000-4000-8000-000000000002', 'driver', '+2348031110010', null)), 32, 'a manager invites a driver');
 select throws_ok($$select public.create_invite('bbbbbbbb-0000-4000-8000-000000000002', 'manager', '+2348031110011', null)$$, '42501', null, 'a manager cannot add another manager');
+reset role;
+insert into public.invites (kind, org_id, phone, role_payload, token_hash)
+values ('team_member', 'bbbbbbbb-0000-4000-8000-000000000002', '+2348031110013', '{"transporter_role": "manager"}', encode(extensions.digest('manager-invite-token-00000000000', 'sha256'), 'hex'));
+set local role authenticated;
+select is((select count(*)::int from public.invites where org_id = 'bbbbbbbb-0000-4000-8000-000000000002'), 1, 'a manager sees the driver invite but not an invite for a new manager');
 select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000013", "role": "authenticated"}', true);
 select throws_ok($$select public.create_invite('bbbbbbbb-0000-4000-8000-000000000002', 'driver', '+2348031110012', null)$$, '42501', null, 'a driver cannot add drivers');
 
