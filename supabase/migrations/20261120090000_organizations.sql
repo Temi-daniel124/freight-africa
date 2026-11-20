@@ -71,7 +71,10 @@ create trigger organization_members_kind before insert or update on public.organ
 -- be added and another changed in one go; deleting the whole organisation is not blocked.
 create function private.keep_an_owner() returns trigger language plpgsql security definer set search_path = '' as $$
 begin
-  if exists (select 1 from public.organizations where id = old.org_id)
+  -- Lock the organisation first: two owners leaving at the same moment then check one after the other,
+  -- and the second sees the first's change (otherwise both could pass and leave no owner).
+  perform 1 from public.organizations where id = old.org_id for update;
+  if found
     and not exists (
       select 1 from public.organization_members m
       where m.org_id = old.org_id and m.status = 'active' and (m.shipper_role = 'owner' or m.transporter_role = 'owner')
@@ -175,7 +178,8 @@ create function public.can_in_org(p_org uuid, p_action text) returns boolean lan
           when 'respond_disputes' then m.transporter_role in ('owner', 'manager')
           when 'rate_sender' then m.transporter_role in ('owner', 'manager')
           when 'run_trip' then m.is_driver
-          when 'confirm_trip' then m.transporter_role = 'driver'
+          -- Drivers, and owner-drivers, who get "the owner rights plus the driver screens" (§3).
+          when 'confirm_trip' then m.is_driver
           -- Loading and delivery codes come from the other side in person: never shown to the transporter.
           when 'see_codes' then false
           when 'view_trips' then true
@@ -223,6 +227,13 @@ language sql stable security definer set search_path = '' as $$
 $$;
 revoke all on function private.can_grant(uuid, public.shipper_role, public.transporter_role) from public;
 
+-- The same rule for a stored role payload, callable from RLS policies (authenticated can't use private).
+create function public.can_grant_role(p_org uuid, p_payload jsonb) returns boolean language sql stable security definer set search_path = '' as $$
+  select private.can_grant(p_org, (p_payload ->> 'shipper_role')::public.shipper_role, (p_payload ->> 'transporter_role')::public.transporter_role);
+$$;
+revoke all on function public.can_grant_role(uuid, jsonb) from public;
+grant execute on function public.can_grant_role(uuid, jsonb) to authenticated;
+
 -- ---------------------------------------------------------------------------------------------------
 -- Row level security: members read their own organisation; every write goes through the functions below
 -- ---------------------------------------------------------------------------------------------------
@@ -234,11 +245,13 @@ alter table public.invites enable row level security;
 create policy "organizations: members read" on public.organizations for select to authenticated using (public.is_member(id));
 create policy "organization_members: members read their organisation" on public.organization_members for select to authenticated
   using (public.is_member(org_id));
--- Open and past invites, for the people who manage the team (S-20). The token hash is never readable.
-create policy "invites: team managers read" on public.invites for select to authenticated
-  using (public.can_in_org(org_id, 'manage_team') or public.can_in_org(org_id, 'manage_drivers') or public.can_in_org(org_id, 'manage_managers'));
+-- Open and past invites, each visible only to people who could send that invite themselves (a manager
+-- sees driver invites, not invites for other managers). The token hash is never readable.
+create policy "invites: people who could send them read" on public.invites for select to authenticated
+  using (public.can_grant_role(org_id, role_payload));
 
-grant select on public.organizations to authenticated;
+-- blocked_reason is internal (staff explain it); members read everything else.
+grant select (id, kind, name, cac_number, logo_path, status, tier, insured_until, created_by, created_at, updated_at) on public.organizations to authenticated;
 grant select on public.organization_members to authenticated;
 grant select (id, kind, org_id, phone, email, role_payload, invited_by, expires_at, accepted_by, accepted_at, revoked_at, created_at) on public.invites to authenticated;
 grant select, insert, update, delete on public.organizations, public.organization_members, public.invites to service_role;
@@ -330,6 +343,9 @@ declare
   v_email text := lower(nullif(btrim(p_email), ''));
   v_token text;
 begin
+  if not public.is_member(p_org) then
+    raise exception 'not allowed' using errcode = '42501';
+  end if;
   select * into v_role from private.parse_role(p_org, p_role);
   if not private.can_grant(p_org, v_role.o_shipper, v_role.o_transporter) then
     raise exception 'not allowed' using errcode = '42501';
@@ -408,7 +424,7 @@ create function public.accept_invite(p_token text) returns uuid language plpgsql
 declare
   v_user uuid := private.require_user();
   v_invite public.invites;
-  v_me public.profiles;
+  v_me auth.users;
 begin
   select * into v_invite from public.invites
   where token_hash = encode(extensions.digest(coalesce(p_token, ''), 'sha256'), 'hex')
@@ -416,8 +432,12 @@ begin
   if v_invite.id is null or v_invite.accepted_at is not null or v_invite.revoked_at is not null or v_invite.expires_at <= now() then
     raise exception 'this invite can no longer be used' using errcode = 'P0002';
   end if;
-  select * into v_me from public.profiles where id = v_user;
-  if not ((v_invite.phone is not null and v_invite.phone = v_me.phone) or (v_invite.email is not null and v_invite.email = v_me.email)) then
+  -- Matched against Supabase Auth's own confirmed address, not a copy.
+  select * into v_me from auth.users where id = v_user;
+  if not (
+    (v_invite.phone is not null and v_me.phone_confirmed_at is not null and v_invite.phone = '+' || ltrim(v_me.phone, '+'))
+    or (v_invite.email is not null and v_me.email_confirmed_at is not null and v_invite.email = lower(v_me.email))
+  ) then
     raise exception 'this invite was sent to someone else' using errcode = '42501';
   end if;
   if exists (select 1 from public.organization_members where org_id = v_invite.org_id and user_id = v_user) then
@@ -428,7 +448,7 @@ begin
     v_invite.org_id, v_user,
     (v_invite.role_payload ->> 'shipper_role')::public.shipper_role,
     (v_invite.role_payload ->> 'transporter_role')::public.transporter_role,
-    v_invite.role_payload ->> 'transporter_role' = 'driver',
+    coalesce(v_invite.role_payload ->> 'transporter_role' = 'driver', false),
     v_invite.invited_by
   );
   update public.invites set accepted_by = v_user, accepted_at = now() where id = v_invite.id;
@@ -446,6 +466,11 @@ declare
   v_role record;
 begin
   perform private.require_user();
+  -- Outsiders learn nothing about the organisation, not even its kind.
+  if not public.is_member(p_org) then
+    raise exception 'not allowed' using errcode = '42501';
+  end if;
+  perform 1 from public.organizations where id = p_org for no key update;
   select * into v_member from public.organization_members where org_id = p_org and user_id = p_user for update;
   if v_member.user_id is null then
     raise exception 'not allowed' using errcode = '42501';
@@ -471,6 +496,10 @@ declare
   v_me uuid := private.require_user();
   v_member public.organization_members;
 begin
+  if not public.is_member(p_org) then
+    raise exception 'not allowed' using errcode = '42501';
+  end if;
+  perform 1 from public.organizations where id = p_org for no key update;
   select * into v_member from public.organization_members where org_id = p_org and user_id = p_user for update;
   if v_member.user_id is null then
     raise exception 'not allowed' using errcode = '42501';
