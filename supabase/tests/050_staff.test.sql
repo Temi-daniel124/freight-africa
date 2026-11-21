@@ -80,7 +80,7 @@ select is(public.is_staff(), false, 'and is still not staff until two-step sign-
 select set_config('request.jwt.claims', '{"sub": "cccccccc-0000-4000-8000-000000000004", "role": "authenticated", "aal": "aal2"}', true);
 select set_config('test.codes', array_to_string(public.new_staff_backup_codes(), ','), true);
 select is(array_length(string_to_array(current_setting('test.codes'), ','), 1), 10, 'ten codes are made after two-step sign-in');
-select ok(current_setting('test.codes') ~ '^([2-9A-HJKMNP-Z]{5}-[2-9A-HJKMNP-Z]{5},){9}[2-9A-HJKMNP-Z]{5}-[2-9A-HJKMNP-Z]{5}$', 'shown as XXXXX-XXXXX without look-alike letters');
+select ok(current_setting('test.codes') ~ '^(([2-9A-HJKMNP-Z]{4}-){3}[2-9A-HJKMNP-Z]{4},){9}([2-9A-HJKMNP-Z]{4}-){3}[2-9A-HJKMNP-Z]{4}$', 'sixteen characters, shown as XXXX-XXXX-XXXX-XXXX, without look-alike letters');
 select is(public.staff_backup_codes_left(), 10, 'ten are left');
 select throws_ok($$select * from private.staff_backup_codes$$, '42501', null, 'the stored codes are not readable');
 
@@ -89,7 +89,7 @@ select is(public.use_staff_backup_code(lower(split_part(current_setting('test.co
 select is(public.use_staff_backup_code(split_part(current_setting('test.codes'), ',', 3)), false, 'but only once');
 
 select set_config('request.jwt.claims', '{"sub": "cccccccc-0000-4000-8000-000000000003", "role": "authenticated", "aal": "aal1"}', true);
-select throws_ok($$select public.use_staff_backup_code('AAAAA-BBBBB')$$, '42501', null, 'backup codes are only for staff');
+select throws_ok($$select public.use_staff_backup_code('AAAA-BBBB-CCCC-DDDD')$$, '42501', null, 'backup codes are only for staff');
 
 select * from finish();
 rollback;
