@@ -40,6 +40,7 @@ export const config = {
     "/admin/:path*",
     "/auth/:path*",
     "/onboarding/:path*",
+    "/invite/:path*",
     { source: "/((?!_next/|api/)[^.]*)", has: [{ type: "query", key: "ref" }] },
     { source: "/((?!_next/|api/)[^.]*)", has: [{ type: "query", key: "utm_source" }] },
     // Every path on the two signed-in hosts, so pages that belong elsewhere are redirected.

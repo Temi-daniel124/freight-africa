@@ -5,6 +5,7 @@ import { Logo } from "@/components/brand/Logo";
 import { buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { signOut } from "@/features/auth/actions";
+import { switchAccount } from "@/features/org/actions";
 import { cn } from "@/lib/utils";
 import messages from "@/messages/en.json";
 import { pageHref, type PageKey, type ShellConfig } from "./config";
@@ -186,7 +187,31 @@ async function AccountMenu({ viewer, settingsHref, id, phone }: { viewer: Promis
             {v.contact ? <p className="truncate text-caption font-medium tracking-normal text-ink-3">{t.account.signedInAs.replace("{who}", v.contact)}</p> : null}
           </div>
         </div>
+        {/* A-09: the other accounts; choosing one saves it and opens its shell. */}
+        {v.accounts.filter((account) => !account.active).length ? (
+          <ul className="mt-1 flex flex-col border-t border-line pt-1">
+            {v.accounts
+              .filter((account) => !account.active)
+              .map((account) => (
+                <li key={account.orgId}>
+                  <form action={switchAccount}>
+                    <input type="hidden" name="org" value={account.orgId} />
+                    <button type="submit" className="flex w-full items-center gap-3 rounded-nav px-3 py-2 text-left hover:bg-paper">
+                      <Avatar text={initials(account.name)} className="size-8 text-caption font-bold tracking-normal" />
+                      <span className="min-w-0">
+                        <span className="block truncate text-body-sm">{account.name}</span>
+                        <span className="block truncate text-caption font-medium tracking-normal text-ink-3">{account.label}</span>
+                      </span>
+                    </button>
+                  </form>
+                </li>
+              ))}
+          </ul>
+        ) : null}
         <div className="mt-1 flex flex-col border-t border-line pt-1">
+          <Link href="/onboarding/role" className="flex h-11 items-center rounded-nav px-3 text-body-sm text-green-700 hover:bg-paper">
+            {messages.org.switcher.add}
+          </Link>
           <Link href={settingsHref} className="flex h-11 items-center rounded-nav px-3 text-body-sm text-ink-2 hover:bg-paper hover:text-ink">
             {t.account.settings}
           </Link>
