@@ -31,6 +31,9 @@ const wanted = {
   ].join(","),
   mailer_otp_length: 6,
   mailer_otp_exp: 600, // seconds: codes last 10 minutes
+  // Staff two-step sign-in with an authenticator app (SECURITY.md 3, slice 5). Users don't need it.
+  mfa_totp_enroll_enabled: true,
+  mfa_totp_verify_enabled: true,
 };
 
 // Settings that are safe to show. Nothing secret (SMTP password, provider secrets) is ever printed.
