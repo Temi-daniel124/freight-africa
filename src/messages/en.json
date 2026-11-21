@@ -1119,5 +1119,94 @@
     "unread": 3,
     "otherShells": "Preview another shell",
     "newShipper": "New sender (first visit)"
+  },
+  "org": {
+    "kinds": {
+      "shipper": "Sender",
+      "transporter": "Truck owner"
+    },
+    "roles": {
+      "owner": "Owner",
+      "admin": "Admin",
+      "booker": "Booker",
+      "finance": "Finance",
+      "viewer": "Viewer",
+      "manager": "Manager",
+      "driver": "Driver"
+    },
+    "roleHelp": {
+      "owner": "Everything, including the team and the business details.",
+      "admin": "Everything except removing the owner.",
+      "booker": "Books and follows trips.",
+      "finance": "Pays and downloads statements.",
+      "viewer": "Sees trips only.",
+      "manager": "Runs loads, trucks and drivers. No bank account.",
+      "driver": "Drives the trips you give them. Never sees money."
+    },
+    "switcher": {
+      "title": "Your accounts",
+      "add": "Add a business",
+      "current": "Current account"
+    },
+    "team": {
+      "title": "Team",
+      "invite": "Invite someone",
+      "inviteTitle": "Invite someone",
+      "inviteText": "They'll get a link to join. It works for 7 days, only for the phone number or email you enter here.",
+      "contactLabel": "Phone number or email",
+      "contactPlaceholder": "0803 123 4567 or ada@example.com",
+      "contactError": "Enter a Nigerian mobile number or an email address.",
+      "roleLabel": "Their role",
+      "send": "Create invite",
+      "sending": "Creating…",
+      "created": "Invite ready",
+      "createdText": "Send this link to {who}. Only they can use it.",
+      "copy": "Copy link",
+      "copied": "Link copied",
+      "shareWhatsApp": "Send on WhatsApp",
+      "shareMessage": "{org} invited you to join them on Freight Africa as {role}: {link}",
+      "done": "Done",
+      "you": "You",
+      "invited": "Invited",
+      "active": "Active",
+      "pending": "Waiting to join",
+      "expires": "Link works until {date}",
+      "revoke": "Cancel invite",
+      "manage": "Change role or remove",
+      "manageShort": "Manage",
+      "leaveShort": "Leave",
+      "changeRole": "Change role",
+      "save": "Save",
+      "remove": "Remove from team",
+      "removeConfirm": "Remove {name}? They lose access to {org} straight away.",
+      "leave": "Leave this team",
+      "noOrg": "Set up your business to add a team.",
+      "emptyTitle": "Just you for now",
+      "emptyText": "Invite the people who book, pay or drive with you."
+    },
+    "errors": {
+      "42501": "You can't do that in this account.",
+      "23505": "They're already in the team.",
+      "23514": "Every business needs an owner. Make someone else the owner first.",
+      "54000": "That's a lot of invites at once. Try again in an hour.",
+      "22023": "That role isn't available here.",
+      "P0002": "This invite can no longer be used. Ask for a new one.",
+      "default": "Something went wrong. Try again."
+    },
+    "invite": {
+      "title": "You're invited",
+      "text": "{inviter} invited you to join {org} on Freight Africa as {role}.",
+      "textNoInviter": "You've been invited to join {org} on Freight Africa as {role}.",
+      "accept": "Accept and continue",
+      "signIn": "Sign in to accept",
+      "signInText": "Sign in with the phone number or email this invite was sent to.",
+      "closedTitle": "This invite has expired",
+      "closedText": "Ask for a new one.",
+      "usedTitle": "This invite has already been used",
+      "notFoundTitle": "We can't find this invite",
+      "notFoundText": "Check the link, or ask for a new one.",
+      "wrongPerson": "This invite was sent to a different phone number or email. Sign in with that one, or ask for a new invite.",
+      "home": "Go to home"
+    }
   }
 }

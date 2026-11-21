@@ -5,6 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import messages from "@/messages/en.json";
 import { AppShell, ShellContent, ShellTopBar } from "./app-shell";
 import { shellPages, shells, type PageKey, type ShellRole } from "./config";
+import { TeamPage } from "@/features/org/team-page";
 import { PlaceholderPage } from "./placeholder-page";
 import { ShipperHomeFirstVisit } from "./shipper-home";
 import { getViewer, greetingFor } from "./viewer";
@@ -61,12 +62,11 @@ async function SectionPage({ role, params }: { role: ShellRole; params: Promise<
   const { page } = await params;
   if (!isPage(role, page)) notFound();
   const config = shells[role];
+  const viewer = getViewer(config);
   return (
     <>
-      <ShellTopBar config={config} viewer={getViewer(config)} title={messages.shell.pages[page].title} />
-      <ShellContent>
-        <PlaceholderPage config={config} page={page} />
-      </ShellContent>
+      <ShellTopBar config={config} viewer={viewer} title={messages.shell.pages[page].title} />
+      <ShellContent>{page === "team" ? <TeamPage viewer={viewer} /> : <PlaceholderPage config={config} page={page} />}</ShellContent>
     </>
   );
 }
