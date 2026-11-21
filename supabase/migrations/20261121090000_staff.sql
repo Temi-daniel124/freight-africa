@@ -28,6 +28,7 @@ create trigger staff_members_touch before update on public.staff_members for eac
 create function public.is_staff(p_role public.staff_role default null) returns boolean language sql stable security definer set search_path = '' as $$
   select coalesce((select auth.jwt() ->> 'aal'), '') = 'aal2' and exists (
     select 1 from public.staff_members s
+    join public.profiles p on p.id = s.user_id and p.status = 'active' and p.deleted_at is null
     where s.user_id = (select auth.uid()) and s.active and (p_role is null or s.role = p_role)
   );
 $$;
@@ -36,6 +37,7 @@ $$;
 create function public.is_staff_in(p_roles public.staff_role[]) returns boolean language sql stable security definer set search_path = '' as $$
   select coalesce((select auth.jwt() ->> 'aal'), '') = 'aal2' and exists (
     select 1 from public.staff_members s
+    join public.profiles p on p.id = s.user_id and p.status = 'active' and p.deleted_at is null
     where s.user_id = (select auth.uid()) and s.active and s.role = any (p_roles)
   );
 $$;
@@ -57,15 +59,15 @@ alter table public.staff_members enable row level security;
 -- Staff see who their colleagues are (names come from profiles through staff functions later); super
 -- admins manage them. Everyone sees their own row, even before two-step sign-in, to know what to set up.
 create policy "staff_members: own row" on public.staff_members for select to authenticated using (user_id = (select auth.uid()));
-create policy "staff_members: staff read" on public.staff_members for select to authenticated using (public.is_staff());
+create policy "staff_members: staff read" on public.staff_members for select to authenticated using ((select public.is_staff()));
 grant select on public.staff_members to authenticated;
 grant select, insert, update, delete on public.staff_members to service_role;
 
 -- Staff read people's own data (ROLES-AND-PERMISSIONS §6 "Staff: everyone"; §7 users and companies).
-create policy "profiles: staff read" on public.profiles for select to authenticated using (public.is_staff());
-create policy "organizations: staff read" on public.organizations for select to authenticated using (public.is_staff());
-create policy "organization_members: staff read" on public.organization_members for select to authenticated using (public.is_staff());
-create policy "consents: staff read" on public.consents for select to authenticated using (public.is_staff());
+create policy "profiles: staff read" on public.profiles for select to authenticated using ((select public.is_staff()));
+create policy "organizations: staff read" on public.organizations for select to authenticated using ((select public.is_staff()));
+create policy "organization_members: staff read" on public.organization_members for select to authenticated using ((select public.is_staff()));
+create policy "consents: staff read" on public.consents for select to authenticated using ((select public.is_staff()));
 
 -- ---------------------------------------------------------------------------------------------------
 -- Staff invites (X-24 → X-00): kind 'staff', no organisation, sent to an email, valid 48 hours.
@@ -79,7 +81,7 @@ alter table public.invites add constraint invites_staff_shape check (
 );
 create unique index invites_open_staff on public.invites (email) where kind = 'staff' and accepted_at is null and revoked_at is null;
 create policy "invites: super admins read staff invites" on public.invites for select to authenticated
-  using (kind = 'staff' and public.is_staff('super_admin'));
+  using (kind = 'staff' and (select public.is_staff('super_admin')));
 
 -- X-24: a super admin adds a staff member. Returns the link token once; only its hash is stored.
 create function public.create_staff_invite(p_email text, p_role public.staff_role, p_corridor_ids uuid[] default null) returns text
@@ -128,7 +130,7 @@ begin
     raise exception 'this invite can no longer be used' using errcode = 'P0002';
   end if;
   select * into v_me from auth.users where id = v_user;
-  if v_me.email_confirmed_at is null or lower(v_me.email) <> v_invite.email then
+  if v_me.email_confirmed_at is null or lower(v_me.email) is distinct from v_invite.email then
     raise exception 'this invite was sent to someone else' using errcode = '42501';
   end if;
   v_role := (v_invite.role_payload ->> 'staff_role')::public.staff_role;
@@ -174,7 +176,8 @@ end;
 $$;
 
 -- ---------------------------------------------------------------------------------------------------
--- Backup codes (X-00 step 3): ten one-time codes for a lost authenticator. Only hashes are kept; a new
+-- Backup codes (X-00 step 3): ten one-time codes for a lost authenticator, 16 characters each (about 79
+-- bits, so even a leaked table can't be worked back by guessing). Only hashes are kept; a new
 -- set replaces the old. Using one doesn't sign anyone in by itself: the server then removes the lost
 -- authenticator so the person sets up a new one (and gets aal2 that way).
 -- ---------------------------------------------------------------------------------------------------
@@ -201,13 +204,13 @@ begin
   end if;
   delete from private.staff_backup_codes where user_id = v_user;
   for i in 1..10 loop
-    -- 10 characters from an alphabet without look-alikes (no 0/O, 1/I/L), shown as XXXXX-XXXXX.
+    -- 16 characters from an alphabet without look-alikes (no 0/O, 1/I/L), shown as XXXX-XXXX-XXXX-XXXX.
     v_code := (
       select string_agg(substr('23456789ABCDEFGHJKMNPQRSTUVWXYZ', 1 + (get_byte(b, n) % 31), 1), '' order by n)
-      from (select extensions.gen_random_bytes(10) as b) r, generate_series(0, 9) as n
+      from (select extensions.gen_random_bytes(16) as b) r, generate_series(0, 15) as n
     );
     insert into private.staff_backup_codes (user_id, code_hash) values (v_user, encode(extensions.digest(v_code, 'sha256'), 'hex'));
-    v_codes := v_codes || (substr(v_code, 1, 5) || '-' || substr(v_code, 6, 5));
+    v_codes := v_codes || (substr(v_code, 1, 4) || '-' || substr(v_code, 5, 4) || '-' || substr(v_code, 9, 4) || '-' || substr(v_code, 13, 4));
   end loop;
   return v_codes;
 end;
@@ -269,6 +272,10 @@ grant execute on function public.staff_invite_details(text) to anon, authenticat
 
 -- The first super admin: the founder (CLAUDE.md §1), if that account exists. Every later staff member is
 -- invited from the console. A no-op on a fresh database (CI) and when run again.
+-- Only if Supabase Auth has confirmed that email, so an unconfirmed sign-up with it gets nothing.
 insert into public.staff_members (user_id, role)
-select p.id, 'super_admin' from public.profiles p where p.email = 'temmydaniel124@gmail.com'
+select p.id, 'super_admin'
+from public.profiles p
+join auth.users u on u.id = p.id
+where p.email = 'temmydaniel124@gmail.com' and lower(u.email) = p.email and u.email_confirmed_at is not null
 on conflict (user_id) do nothing;
