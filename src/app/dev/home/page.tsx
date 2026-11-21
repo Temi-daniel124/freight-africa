@@ -25,6 +25,11 @@ function sampleViewer(role: ShellRole): Viewer {
     role: role === "shipper" ? d.viewer.role : messages.shell.roles[role],
     contact: "adaeze@okaforfoods.ng",
     unread: d.unread,
+    orgId: null,
+    accounts: [
+      { orgId: "preview-1", name: d.viewer.account, label: "Sender", href: "/dev/home", active: true },
+      { orgId: "preview-2", name: "Okafor Haulage", label: "Truck owner", href: "/dev/home?role=owner", active: false },
+    ],
   };
 }
 

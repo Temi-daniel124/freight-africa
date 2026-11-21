@@ -62,6 +62,12 @@ describe("hostRoute (D033)", () => {
     expect(hostRoute("app.freight-africa.com", "/admin/trips", "/admin/trips?tab=open")).toEqual(redirect("https://admin.freight-africa.com/admin/trips?tab=open"));
   });
 
+  it("serves invite links on the app host only (A-07)", () => {
+    expect(hostRoute("app.freight-africa.com", "/invite/abc")).toEqual(pass);
+    expect(hostRoute("freight-africa.com", "/invite/abc")).toEqual(redirect("https://app.freight-africa.com/invite/abc"));
+    expect(hostRoute("admin.freight-africa.com", "/invite/abc")).toEqual(redirect("https://app.freight-africa.com/invite/abc"));
+  });
+
   it("serves onboarding on the app host only", () => {
     expect(hostRoute("app.freight-africa.com", "/onboarding/role")).toEqual(pass);
     expect(hostRoute("freight-africa.com", "/onboarding/role", "/onboarding/role?role=owner")).toEqual(redirect("https://app.freight-africa.com/onboarding/role?role=owner"));
