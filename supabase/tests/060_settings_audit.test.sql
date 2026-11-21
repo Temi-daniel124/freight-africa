@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(24);
+select plan(27);
 
 -- Two super admins (two-person approval needs both), finance staff, and an ordinary user.
 insert into auth.users (id, instance_id, aud, role, email, email_confirmed_at, raw_user_meta_data, created_at, updated_at)
@@ -43,11 +43,14 @@ select ok(public.change_setting('max_dropoffs', '5', 'Trial with five drops') is
 select is((select value from public.settings where key = 'max_dropoffs'), '5'::jsonb, 'and it is saved');
 select throws_ok($$select public.change_setting('max_dropoffs', '"five"')$$, '22023', null, 'a value of the wrong kind is refused');
 select throws_ok($$select public.change_setting('advance_bps', '{"new": 3500}')$$, '22023', null, 'an object must keep all its keys');
+select throws_ok($$select public.change_setting('cancellation_fee_kobo', '-1')$$, '22023', null, 'kobo cannot be negative');
+select throws_ok($$select public.change_setting('advance_bps', '{"new": 3000, "established": 4000, "gold": 12000}')$$, '22023', null, 'a rate cannot be above 100%');
 
 -- Money settings need a second super admin (ROLES §8).
 select set_config('test.approval', public.change_setting('cancellation_fee_kobo', '3000000', 'Raise to ₦30,000')::text, true);
 select is((select value from public.settings where key = 'cancellation_fee_kobo'), '2500000'::jsonb, 'a money setting does not change on request');
 select throws_ok(format('select public.decide_approval(%L, true)', current_setting('test.approval')), '42501', null, 'the person who asked cannot approve it');
+select throws_ok($$select public.change_setting('cancellation_fee_kobo', '3500000')$$, '23505', null, 'a second change cannot be queued while one is waiting');
 select set_config('request.jwt.claims', '{"sub": "eeeeeeee-0000-4000-8000-000000000002", "role": "authenticated", "aal": "aal2"}', true);
 select lives_ok(format('select public.decide_approval(%L, true)', current_setting('test.approval')), 'a second super admin approves');
 select is((select value from public.settings where key = 'cancellation_fee_kobo'), '3000000'::jsonb, 'and only then the fee changes');
@@ -63,7 +66,7 @@ select set_config('request.jwt.claims', '{"sub": "eeeeeeee-0000-4000-8000-000000
 select is((select count(*)::int from public.audit_log), 0, 'finance cannot read the audit log');
 
 reset role;
-select throws_ok($$update public.audit_log set action = 'nothing'$$, '42501', null, 'the audit log cannot be edited, even by the database owner');
+select throws_ok($$update public.audit_log set action = 'nothing'$$, '42501', null, 'the audit log refuses edits');
 
 select * from finish();
 rollback;
