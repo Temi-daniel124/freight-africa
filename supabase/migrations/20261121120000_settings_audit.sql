@@ -199,6 +199,19 @@ create policy "approvals: super admins and finance read" on public.approvals for
 grant select on public.approvals to authenticated;
 grant select, insert, update on public.approvals to service_role;
 
+-- Money values are whole, non-negative kobo; rates are 0 to 10,000 basis points (also inside objects,
+-- like advance_bps by tier).
+create function private.money_value_ok(p_key text, p_value jsonb) returns boolean language sql immutable set search_path = '' as $$
+  with v as (
+    select x from jsonb_path_query(p_value, 'strict $.**') as x where jsonb_typeof(x) = 'number'
+  )
+  select case
+    when p_key like '%\_kobo' escape '' then not exists (select 1 from v where (x::text)::numeric < 0 or (x::text)::numeric <> trunc((x::text)::numeric))
+    when p_key like '%\_bps' escape '' then not exists (select 1 from v where (x::text)::numeric < 0 or (x::text)::numeric > 10000 or (x::text)::numeric <> trunc((x::text)::numeric))
+    else true
+  end;
+$$;
+
 -- A settings value must keep the shape of its default: same JSON type, and for objects the same keys.
 create function private.same_shape(p_old jsonb, p_new jsonb) returns boolean language sql immutable set search_path = '' as $$
   select jsonb_typeof(p_old) = jsonb_typeof(p_new)
@@ -221,10 +234,13 @@ begin
   if v_setting.key is null then
     raise exception 'unknown setting' using errcode = 'P0002';
   end if;
-  if p_value is null or not private.same_shape(v_setting.value, p_value) then
+  if p_value is null or not private.same_shape(v_setting.value, p_value) or not private.money_value_ok(p_key, p_value) then
     raise exception 'that value does not fit this setting' using errcode = '22023';
   end if;
   if v_setting.is_money then
+    if exists (select 1 from public.approvals where kind = 'setting_change' and subject_id = p_key and status = 'pending') then
+      raise exception 'a change to this setting is already waiting for approval' using errcode = '23505';
+    end if;
     insert into public.approvals (kind, subject_id, payload, requested_by, note)
     values ('setting_change', p_key, jsonb_build_object('from', v_setting.value, 'to', p_value), v_user, nullif(btrim(p_note), ''))
     returning id into v_approval;
@@ -242,11 +258,19 @@ declare
   v_user uuid := private.require_user();
   v_approval public.approvals;
 begin
+  if not public.is_staff('super_admin') then
+    raise exception 'not allowed' using errcode = '42501';
+  end if;
+  -- Lock the setting before the approval, the same order as change_setting, so the two never deadlock.
+  select * into v_approval from public.approvals where id = p_approval;
+  if v_approval.kind = 'setting_change' then
+    perform 1 from public.settings where key = v_approval.subject_id for update;
+  end if;
   select * into v_approval from public.approvals where id = p_approval for update;
   if v_approval.id is null or v_approval.status <> 'pending' then
     raise exception 'this approval is not waiting' using errcode = 'P0002';
   end if;
-  if v_approval.kind <> 'setting_change' or not public.is_staff('super_admin') then
+  if v_approval.kind <> 'setting_change' then
     raise exception 'not allowed' using errcode = '42501';
   end if;
   if v_approval.requested_by = v_user then
@@ -258,6 +282,9 @@ begin
   where id = p_approval;
   if p_approve then
     update public.settings set value = v_approval.payload -> 'to', updated_by = v_user, updated_at = now() where key = v_approval.subject_id;
+    if not found then
+      raise exception 'unknown setting' using errcode = 'P0002';
+    end if;
   end if;
 end;
 $$;
