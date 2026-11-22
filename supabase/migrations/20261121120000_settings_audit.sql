@@ -206,8 +206,8 @@ create function private.money_value_ok(p_key text, p_value jsonb) returns boolea
     select x from jsonb_path_query(p_value, 'strict $.**') as x where jsonb_typeof(x) = 'number'
   )
   select case
-    when p_key like '%\_kobo' escape '' then not exists (select 1 from v where (x::text)::numeric < 0 or (x::text)::numeric <> trunc((x::text)::numeric))
-    when p_key like '%\_bps' escape '' then not exists (select 1 from v where (x::text)::numeric < 0 or (x::text)::numeric > 10000 or (x::text)::numeric <> trunc((x::text)::numeric))
+    when right(p_key, 5) = '_kobo' then not exists (select 1 from v where (x::text)::numeric < 0 or (x::text)::numeric <> trunc((x::text)::numeric))
+    when right(p_key, 4) = '_bps' then not exists (select 1 from v where (x::text)::numeric < 0 or (x::text)::numeric > 10000 or (x::text)::numeric <> trunc((x::text)::numeric))
     else true
   end;
 $$;
