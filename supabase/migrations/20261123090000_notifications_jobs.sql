@@ -173,10 +173,14 @@ declare
   v_email text := lower(p_to_email);
   v_language public.language_code := 'en';
   v_count int := 0;
+  v_profile public.profiles;
 begin
   if p_user is not null then
-    select coalesce(v_phone, phone), coalesce(v_email, email), language into v_phone, v_email, v_language
-    from public.profiles where id = p_user and deleted_at is null;
+    -- A number or address passed in wins; a missing profile doesn't wipe it out.
+    select * into v_profile from public.profiles where id = p_user and deleted_at is null;
+    v_phone := coalesce(v_phone, v_profile.phone);
+    v_email := coalesce(v_email, v_profile.email);
+    v_language := coalesce(v_profile.language, 'en');
   end if;
   foreach v_channel in array p_channels loop
     continue when not private.is_locked_event(p_event) and p_user is not null and exists (
@@ -220,7 +224,10 @@ language sql security definer set search_path = '' as $$
   set claimed_at = now(), attempts = n.attempts + 1
   where n.id in (
     select q.id from public.notifications q
-    where q.status = 'queued' and q.next_attempt_at <= now() and (q.claimed_at is null or q.claimed_at < now() - interval '5 minutes')
+    -- A row whose run died is taken again after 5 minutes, but never past five attempts: if the result
+    -- couldn't be reported, the message may already have gone, so it is not sent again and again.
+    where q.status = 'queued' and q.next_attempt_at <= now()
+      and (q.claimed_at is null or (q.claimed_at < now() - interval '5 minutes' and q.attempts < 5))
     order by q.next_attempt_at, q.created_at
     limit least(greatest(coalesce(p_limit, 25), 1), 100)
     for update skip locked
