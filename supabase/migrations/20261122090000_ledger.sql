@@ -178,7 +178,9 @@ begin
     raise exception 'a posting needs at least two lines' using errcode = '22023';
   end if;
   for v_line in select * from jsonb_array_elements(p_lines) loop
-    if jsonb_typeof(v_line -> 'account') <> 'string'
+    if jsonb_typeof(v_line) <> 'object'
+      or coalesce(jsonb_typeof(v_line -> 'account'), '') <> 'string'
+      or (v_line ->> 'account') !~* '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'
       or ((v_line ? 'debit') = (v_line ? 'credit'))
       or jsonb_typeof(coalesce(v_line -> 'debit', v_line -> 'credit')) <> 'number'
       or coalesce(v_line ->> 'debit', v_line ->> 'credit') !~ '^[1-9][0-9]{0,17}$' then
@@ -191,8 +193,14 @@ begin
     raise exception 'unbalanced ledger posting' using errcode = '23514';
   end if;
 
-  -- The lines in a comparable order, for the idempotency check.
-  select jsonb_agg(l order by l::text) into v_wanted from jsonb_array_elements(p_lines) l;
+  -- The lines in a comparable form and order (account ids in lower case, amounts as numbers), for the
+  -- idempotency check.
+  select jsonb_agg(l order by l::text) into v_wanted
+  from (
+    select case when x ? 'debit' then jsonb_build_object('account', lower(x ->> 'account'), 'debit', (x ->> 'debit')::bigint)
+                else jsonb_build_object('account', lower(x ->> 'account'), 'credit', (x ->> 'credit')::bigint) end as l
+    from jsonb_array_elements(p_lines) x
+  ) y;
 
   -- Two attempts with the same key queue here; the second sees the first.
   perform pg_advisory_xact_lock(hashtextextended(p_idempotency_key, 0));
@@ -200,8 +208,8 @@ begin
   if v_existing is not null then
     select jsonb_agg(l order by l::text) into v_had
     from (
-      select case when e.debit_kobo > 0 then jsonb_build_object('account', e.account_id, 'debit', e.debit_kobo)
-                  else jsonb_build_object('account', e.account_id, 'credit', e.credit_kobo) end as l
+      select case when e.debit_kobo > 0 then jsonb_build_object('account', e.account_id::text, 'debit', e.debit_kobo)
+                  else jsonb_build_object('account', e.account_id::text, 'credit', e.credit_kobo) end as l
       from public.ledger_entries e where e.transaction_id = v_existing
     ) x;
     if v_had is distinct from v_wanted then
@@ -209,6 +217,14 @@ begin
     end if;
     return v_existing;
   end if;
+
+  -- Two different events on one load (an advance and a refund, say) don't share an idempotency key, so
+  -- lock every escrow account in this posting, in id order (no deadlocks), until commit. The escrow check
+  -- below then sees the other posting's committed lines and can't be raced below zero.
+  perform 1 from public.ledger_accounts a
+  where a.kind = 'escrow' and a.id in (select (l ->> 'account')::uuid from jsonb_array_elements(p_lines) l)
+  order by a.id
+  for no key update;
 
   insert into public.ledger_transactions (kind, load_id, trip_id, idempotency_key, memo, created_by, approved_by)
   values (p_kind, p_load, p_trip, p_idempotency_key, p_memo, (select auth.uid()), p_approved_by)
@@ -219,7 +235,8 @@ begin
     insert into public.ledger_entries (transaction_id, account_id, debit_kobo, credit_kobo)
     values (v_tx, (v_line ->> 'account')::uuid, v_debit, v_credit);
   end loop;
-  -- Check the money rules now rather than at commit, so the caller gets the error from this call.
+  -- Check the money rules now rather than at commit, so the caller gets the error from this call (and
+  -- return them to deferred, their normal state).
   set constraints public.ledger_entries_balanced, public.ledger_entries_escrow_not_negative immediate;
   set constraints public.ledger_entries_balanced, public.ledger_entries_escrow_not_negative deferred;
   return v_tx;
