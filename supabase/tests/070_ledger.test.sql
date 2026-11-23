@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(28);
+select plan(30);
 
 -- A truck owner's business, finance and operations staff, an ordinary user, and a load id (the loads
 -- table arrives in Phase 3).
@@ -42,6 +42,8 @@ select is(private.post_ledger(
   jsonb_build_array(jsonb_build_object('account', current_setting('test.escrow'), 'credit', 105000000), jsonb_build_object('account', current_setting('test.cash'), 'debit', 105000000))
 )::text, current_setting('test.fund'), 'repeating the same posting returns the first one');
 select is((select count(*)::int from public.ledger_entries where transaction_id = current_setting('test.fund')::uuid), 2, 'and adds nothing');
+select is(private.post_ledger('fund_load', 'payment:p1:fund', jsonb_build_array(jsonb_build_object('account', upper(current_setting('test.cash')), 'debit', 105000000), jsonb_build_object('account', upper(current_setting('test.escrow')), 'credit', 105000000)))::text, current_setting('test.fund'), 'a retry with the ids in capitals is still the same posting');
+select throws_ok($$select private.post_ledger('adjustment', 'test:no-account', '[{"debit": 5}, {"credit": 5}]'::jsonb)$$, '22023', null, 'a line without an account is refused');
 select throws_ok(format($$select private.post_ledger('fund_load', 'payment:p1:fund', jsonb_build_array(jsonb_build_object('account', %L, 'debit', 1), jsonb_build_object('account', %L, 'credit', 1)))$$, current_setting('test.cash'), current_setting('test.escrow')),
   '23505', null, 'the same key for a different posting is refused');
 
@@ -65,7 +67,7 @@ select throws_ok(format($$select private.post_ledger('adjustment', 'test:both', 
 select throws_ok(format($$select private.post_ledger('advance', 'payout:t1:advance-too-big', jsonb_build_array(jsonb_build_object('account', %L, 'debit', 105000001), jsonb_build_object('account', %L, 'credit', 105000001)))$$, current_setting('test.escrow'), current_setting('test.payable')),
   '23514', null, 'more than escrow holds cannot be released');
 select lives_ok(format($$select private.post_ledger('advance', 'payout:t1:advance', jsonb_build_array(jsonb_build_object('account', %L, 'debit', 31500000), jsonb_build_object('account', %L, 'credit', 31500000)))$$, current_setting('test.escrow'), current_setting('test.payable')),
-  'a 30%% advance is released');
+  'a 30% advance is released');
 select is(private.ledger_balance(current_setting('test.escrow')::uuid), 73500000::bigint, 'escrow keeps the rest');
 select is(private.ledger_balance(current_setting('test.payable')::uuid), 31500000::bigint, 'and the owner is owed the advance');
 
