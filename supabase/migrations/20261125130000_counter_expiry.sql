@@ -13,7 +13,7 @@ begin
   select * into v_offer from public.offers where id = p_offer for update;
   select * into v_load from public.loads where id = v_offer.load_id for update;
   -- A counter accepted after it expired is refused; confirm_payment then refunds the top-up (review).
-  if v_offer.kind = 'counter' and v_offer.expires_at < now() then
+  if v_offer.status not in ('pending', 'awaiting_top_up') or (v_offer.kind = 'counter' and coalesce(v_offer.expires_at, '-infinity'::timestamptz) <= now()) then
     update public.offers set status = 'expired' where id = p_offer;
     raise exception 'this offer has expired' using errcode = '22023';
   end if;
