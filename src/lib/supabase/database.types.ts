@@ -582,6 +582,77 @@ export type Database = {
           },
         ]
       }
+      lane_prices: {
+        Row: {
+          base_kobo: number
+          corridor_id: string
+          from_city_id: string
+          id: string
+          min_kobo: number
+          multiplier_bps: number
+          per_km_kobo: number
+          to_city_id: string
+          truck_type_id: string
+          valid_from: string
+          valid_until: string | null
+        }
+        Insert: {
+          base_kobo: number
+          corridor_id: string
+          from_city_id: string
+          id?: string
+          min_kobo: number
+          multiplier_bps?: number
+          per_km_kobo?: number
+          to_city_id: string
+          truck_type_id: string
+          valid_from?: string
+          valid_until?: string | null
+        }
+        Update: {
+          base_kobo?: number
+          corridor_id?: string
+          from_city_id?: string
+          id?: string
+          min_kobo?: number
+          multiplier_bps?: number
+          per_km_kobo?: number
+          to_city_id?: string
+          truck_type_id?: string
+          valid_from?: string
+          valid_until?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lane_prices_corridor_id_fkey"
+            columns: ["corridor_id"]
+            isOneToOne: false
+            referencedRelation: "corridors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lane_prices_from_city_id_fkey"
+            columns: ["from_city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lane_prices_to_city_id_fkey"
+            columns: ["to_city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lane_prices_truck_type_id_fkey"
+            columns: ["truck_type_id"]
+            isOneToOne: false
+            referencedRelation: "truck_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ledger_accounts: {
         Row: {
           created_at: string
@@ -703,6 +774,206 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      load_stops: {
+        Row: {
+          address_text: string
+          city_id: string
+          contact_name: string | null
+          contact_phone: string | null
+          id: string
+          kind: string
+          load_id: string
+          location: unknown
+          seq: number
+          status: string
+        }
+        Insert: {
+          address_text: string
+          city_id: string
+          contact_name?: string | null
+          contact_phone?: string | null
+          id?: string
+          kind: string
+          load_id: string
+          location?: unknown
+          seq: number
+          status?: string
+        }
+        Update: {
+          address_text?: string
+          city_id?: string
+          contact_name?: string | null
+          contact_phone?: string | null
+          id?: string
+          kind?: string
+          load_id?: string
+          location?: unknown
+          seq?: number
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "load_stops_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "load_stops_load_id_fkey"
+            columns: ["load_id"]
+            isOneToOne: false
+            referencedRelation: "loads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      loads: {
+        Row: {
+          cancelled_reason: string | null
+          corridor_id: string | null
+          created_at: string
+          created_by: string | null
+          declared_value_kobo: number
+          fee_bps: number
+          fee_kobo: number
+          freight_kobo: number
+          from_city_id: string
+          funded_at: string | null
+          goods_category_id: string
+          goods_description: string | null
+          id: string
+          is_demo: boolean
+          matched_at: string | null
+          no_truck_decision_due_at: string | null
+          notes_for_driver: string | null
+          pickup_from: string
+          pickup_until: string
+          quantity: number | null
+          quantity_unit: string | null
+          ref: string
+          shipper_org_id: string
+          status: Database["public"]["Enums"]["load_status"]
+          to_city_id: string
+          total_kobo: number
+          truck_type_id: string
+          updated_at: string
+          weight_kg: number | null
+        }
+        Insert: {
+          cancelled_reason?: string | null
+          corridor_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          declared_value_kobo?: number
+          fee_bps: number
+          fee_kobo: number
+          freight_kobo: number
+          from_city_id: string
+          funded_at?: string | null
+          goods_category_id: string
+          goods_description?: string | null
+          id?: string
+          is_demo?: boolean
+          matched_at?: string | null
+          no_truck_decision_due_at?: string | null
+          notes_for_driver?: string | null
+          pickup_from: string
+          pickup_until: string
+          quantity?: number | null
+          quantity_unit?: string | null
+          ref: string
+          shipper_org_id: string
+          status?: Database["public"]["Enums"]["load_status"]
+          to_city_id: string
+          total_kobo: number
+          truck_type_id: string
+          updated_at?: string
+          weight_kg?: number | null
+        }
+        Update: {
+          cancelled_reason?: string | null
+          corridor_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          declared_value_kobo?: number
+          fee_bps?: number
+          fee_kobo?: number
+          freight_kobo?: number
+          from_city_id?: string
+          funded_at?: string | null
+          goods_category_id?: string
+          goods_description?: string | null
+          id?: string
+          is_demo?: boolean
+          matched_at?: string | null
+          no_truck_decision_due_at?: string | null
+          notes_for_driver?: string | null
+          pickup_from?: string
+          pickup_until?: string
+          quantity?: number | null
+          quantity_unit?: string | null
+          ref?: string
+          shipper_org_id?: string
+          status?: Database["public"]["Enums"]["load_status"]
+          to_city_id?: string
+          total_kobo?: number
+          truck_type_id?: string
+          updated_at?: string
+          weight_kg?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "loads_corridor_id_fkey"
+            columns: ["corridor_id"]
+            isOneToOne: false
+            referencedRelation: "corridors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "loads_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "loads_from_city_id_fkey"
+            columns: ["from_city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "loads_goods_category_id_fkey"
+            columns: ["goods_category_id"]
+            isOneToOne: false
+            referencedRelation: "goods_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "loads_shipper_org_id_fkey"
+            columns: ["shipper_org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "loads_to_city_id_fkey"
+            columns: ["to_city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "loads_truck_type_id_fkey"
+            columns: ["truck_type_id"]
+            isOneToOne: false
+            referencedRelation: "truck_types"
             referencedColumns: ["id"]
           },
         ]
@@ -865,6 +1136,94 @@ export type Database = {
           },
         ]
       }
+      offers: {
+        Row: {
+          amount_kobo: number
+          created_at: string
+          created_by: string | null
+          driver_id: string | null
+          expires_at: string | null
+          id: string
+          kind: Database["public"]["Enums"]["offer_kind"]
+          load_id: string
+          status: Database["public"]["Enums"]["offer_status"]
+          top_up_payment_id: string | null
+          transporter_org_id: string
+          truck_id: string | null
+        }
+        Insert: {
+          amount_kobo: number
+          created_at?: string
+          created_by?: string | null
+          driver_id?: string | null
+          expires_at?: string | null
+          id?: string
+          kind: Database["public"]["Enums"]["offer_kind"]
+          load_id: string
+          status?: Database["public"]["Enums"]["offer_status"]
+          top_up_payment_id?: string | null
+          transporter_org_id: string
+          truck_id?: string | null
+        }
+        Update: {
+          amount_kobo?: number
+          created_at?: string
+          created_by?: string | null
+          driver_id?: string | null
+          expires_at?: string | null
+          id?: string
+          kind?: Database["public"]["Enums"]["offer_kind"]
+          load_id?: string
+          status?: Database["public"]["Enums"]["offer_status"]
+          top_up_payment_id?: string | null
+          transporter_org_id?: string
+          truck_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offers_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offers_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offers_load_id_fkey"
+            columns: ["load_id"]
+            isOneToOne: false
+            referencedRelation: "loads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offers_top_up_payment_id_fkey"
+            columns: ["top_up_payment_id"]
+            isOneToOne: false
+            referencedRelation: "payments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offers_transporter_org_id_fkey"
+            columns: ["transporter_org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offers_truck_id_fkey"
+            columns: ["truck_id"]
+            isOneToOne: false
+            referencedRelation: "trucks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organization_members: {
         Row: {
           created_at: string
@@ -1008,6 +1367,182 @@ export type Database = {
           },
         ]
       }
+      payments: {
+        Row: {
+          amount_kobo: number
+          created_at: string
+          created_by: string | null
+          expires_at: string
+          id: string
+          load_id: string
+          offer_id: string | null
+          provider: string | null
+          provider_ref: string | null
+          purpose: Database["public"]["Enums"]["payment_purpose"]
+          received_at: string | null
+          received_kobo: number
+          shipper_org_id: string
+          status: Database["public"]["Enums"]["payment_status"]
+          virtual_account_bank: string | null
+          virtual_account_number: string | null
+        }
+        Insert: {
+          amount_kobo: number
+          created_at?: string
+          created_by?: string | null
+          expires_at: string
+          id?: string
+          load_id: string
+          offer_id?: string | null
+          provider?: string | null
+          provider_ref?: string | null
+          purpose: Database["public"]["Enums"]["payment_purpose"]
+          received_at?: string | null
+          received_kobo?: number
+          shipper_org_id: string
+          status?: Database["public"]["Enums"]["payment_status"]
+          virtual_account_bank?: string | null
+          virtual_account_number?: string | null
+        }
+        Update: {
+          amount_kobo?: number
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string
+          id?: string
+          load_id?: string
+          offer_id?: string | null
+          provider?: string | null
+          provider_ref?: string | null
+          purpose?: Database["public"]["Enums"]["payment_purpose"]
+          received_at?: string | null
+          received_kobo?: number
+          shipper_org_id?: string
+          status?: Database["public"]["Enums"]["payment_status"]
+          virtual_account_bank?: string | null
+          virtual_account_number?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_load_id_fkey"
+            columns: ["load_id"]
+            isOneToOne: false
+            referencedRelation: "loads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_offer_fk"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "offers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_shipper_org_id_fkey"
+            columns: ["shipper_org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payouts: {
+        Row: {
+          amount_kobo: number
+          approved_by: string | null
+          attempts: number
+          bank_account_id: string | null
+          created_at: string
+          id: string
+          idempotency_key: string
+          kind: Database["public"]["Enums"]["payout_kind"]
+          last_error: string | null
+          ledger_transaction_id: string
+          org_id: string
+          paid_at: string | null
+          provider_ref: string | null
+          status: Database["public"]["Enums"]["payout_status"]
+          trip_id: string | null
+        }
+        Insert: {
+          amount_kobo: number
+          approved_by?: string | null
+          attempts?: number
+          bank_account_id?: string | null
+          created_at?: string
+          id?: string
+          idempotency_key: string
+          kind: Database["public"]["Enums"]["payout_kind"]
+          last_error?: string | null
+          ledger_transaction_id: string
+          org_id: string
+          paid_at?: string | null
+          provider_ref?: string | null
+          status?: Database["public"]["Enums"]["payout_status"]
+          trip_id?: string | null
+        }
+        Update: {
+          amount_kobo?: number
+          approved_by?: string | null
+          attempts?: number
+          bank_account_id?: string | null
+          created_at?: string
+          id?: string
+          idempotency_key?: string
+          kind?: Database["public"]["Enums"]["payout_kind"]
+          last_error?: string | null
+          ledger_transaction_id?: string
+          org_id?: string
+          paid_at?: string | null
+          provider_ref?: string | null
+          status?: Database["public"]["Enums"]["payout_status"]
+          trip_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payouts_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payouts_bank_account_id_fkey"
+            columns: ["bank_account_id"]
+            isOneToOne: false
+            referencedRelation: "bank_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payouts_ledger_transaction_id_fkey"
+            columns: ["ledger_transaction_id"]
+            isOneToOne: false
+            referencedRelation: "ledger_transactions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payouts_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payouts_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_key: string | null
@@ -1129,6 +1664,90 @@ export type Database = {
           },
         ]
       }
+      refunds: {
+        Row: {
+          amount_kobo: number
+          approved_by: string | null
+          created_at: string
+          id: string
+          idempotency_key: string
+          ledger_transaction_id: string
+          load_id: string
+          paid_at: string | null
+          provider_ref: string | null
+          reason: string
+          requested_by: string | null
+          shipper_org_id: string
+          status: Database["public"]["Enums"]["refund_status"]
+        }
+        Insert: {
+          amount_kobo: number
+          approved_by?: string | null
+          created_at?: string
+          id?: string
+          idempotency_key: string
+          ledger_transaction_id: string
+          load_id: string
+          paid_at?: string | null
+          provider_ref?: string | null
+          reason: string
+          requested_by?: string | null
+          shipper_org_id: string
+          status?: Database["public"]["Enums"]["refund_status"]
+        }
+        Update: {
+          amount_kobo?: number
+          approved_by?: string | null
+          created_at?: string
+          id?: string
+          idempotency_key?: string
+          ledger_transaction_id?: string
+          load_id?: string
+          paid_at?: string | null
+          provider_ref?: string | null
+          reason?: string
+          requested_by?: string | null
+          shipper_org_id?: string
+          status?: Database["public"]["Enums"]["refund_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "refunds_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "refunds_ledger_transaction_id_fkey"
+            columns: ["ledger_transaction_id"]
+            isOneToOne: false
+            referencedRelation: "ledger_transactions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "refunds_load_id_fkey"
+            columns: ["load_id"]
+            isOneToOne: false
+            referencedRelation: "loads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "refunds_requested_by_fkey"
+            columns: ["requested_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "refunds_shipper_org_id_fkey"
+            columns: ["shipper_org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       settings: {
         Row: {
           description: string
@@ -1211,6 +1830,158 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: true
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trip_events: {
+        Row: {
+          actor_kind: string
+          actor_user_id: string | null
+          created_at: string
+          id: number
+          payload: Json
+          trip_id: string
+          type: string
+        }
+        Insert: {
+          actor_kind: string
+          actor_user_id?: string | null
+          created_at?: string
+          id?: never
+          payload?: Json
+          trip_id: string
+          type: string
+        }
+        Update: {
+          actor_kind?: string
+          actor_user_id?: string | null
+          created_at?: string
+          id?: never
+          payload?: Json
+          trip_id?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trip_events_actor_user_id_fkey"
+            columns: ["actor_user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trip_events_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trips: {
+        Row: {
+          advance_bps: number
+          advance_kobo: number
+          auto_release_at: string | null
+          closed_at: string | null
+          commission_bps: number
+          commission_kobo: number
+          created_at: string
+          delivered_at: string | null
+          driver_id: string | null
+          eta_at: string | null
+          freight_kobo: number
+          id: string
+          last_location: unknown
+          last_ping_at: string | null
+          load_id: string
+          loaded_at: string | null
+          loaded_quantity: number | null
+          loaded_weight_kg: number | null
+          ref: string
+          status: Database["public"]["Enums"]["trip_status"]
+          status_changed_at: string
+          transporter_org_id: string
+          truck_id: string
+        }
+        Insert: {
+          advance_bps: number
+          advance_kobo: number
+          auto_release_at?: string | null
+          closed_at?: string | null
+          commission_bps: number
+          commission_kobo: number
+          created_at?: string
+          delivered_at?: string | null
+          driver_id?: string | null
+          eta_at?: string | null
+          freight_kobo: number
+          id?: string
+          last_location?: unknown
+          last_ping_at?: string | null
+          load_id: string
+          loaded_at?: string | null
+          loaded_quantity?: number | null
+          loaded_weight_kg?: number | null
+          ref: string
+          status?: Database["public"]["Enums"]["trip_status"]
+          status_changed_at?: string
+          transporter_org_id: string
+          truck_id: string
+        }
+        Update: {
+          advance_bps?: number
+          advance_kobo?: number
+          auto_release_at?: string | null
+          closed_at?: string | null
+          commission_bps?: number
+          commission_kobo?: number
+          created_at?: string
+          delivered_at?: string | null
+          driver_id?: string | null
+          eta_at?: string | null
+          freight_kobo?: number
+          id?: string
+          last_location?: unknown
+          last_ping_at?: string | null
+          load_id?: string
+          loaded_at?: string | null
+          loaded_quantity?: number | null
+          loaded_weight_kg?: number | null
+          ref?: string
+          status?: Database["public"]["Enums"]["trip_status"]
+          status_changed_at?: string
+          transporter_org_id?: string
+          truck_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trips_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trips_load_id_fkey"
+            columns: ["load_id"]
+            isOneToOne: false
+            referencedRelation: "loads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trips_transporter_org_id_fkey"
+            columns: ["transporter_org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trips_truck_id_fkey"
+            columns: ["truck_id"]
+            isOneToOne: false
+            referencedRelation: "trucks"
             referencedColumns: ["id"]
           },
         ]
@@ -1537,13 +2308,17 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accept_counter: { Args: { p_offer: string }; Returns: string }
       accept_invite: { Args: { p_token: string }; Returns: string }
+      accept_load: {
+        Args: { p_driver?: string; p_load: string; p_truck: string }
+        Returns: string
+      }
       accept_staff_code: { Args: never; Returns: undefined }
       accept_staff_invite: {
         Args: { p_token: string }
         Returns: Database["public"]["Enums"]["staff_role"]
       }
-      decide_bank_account: { Args: { p_account: string; p_approve: boolean; p_note?: string }; Returns: undefined }
       add_bank_account: {
         Args: {
           p_account_number: string
@@ -1582,6 +2357,20 @@ export type Database = {
         Returns: string
       }
       am_i_demo: { Args: never; Returns: boolean }
+      approve_money_out: {
+        Args: { p_id: string; p_kind: string }
+        Returns: undefined
+      }
+      attach_collection: {
+        Args: {
+          p_account: string
+          p_bank: string
+          p_payment: string
+          p_provider: string
+          p_ref: string
+        }
+        Returns: undefined
+      }
       auth_code_failed: { Args: { p_key: string }; Returns: number }
       auth_code_open: { Args: { p_key: string }; Returns: boolean }
       auth_code_passed: { Args: { p_key: string }; Returns: undefined }
@@ -1599,7 +2388,19 @@ export type Database = {
         Args: { p_action: string; p_org: string }
         Returns: boolean
       }
+      can_see_trip: {
+        Args: { p_trip: Database["public"]["Tables"]["trips"]["Row"] }
+        Returns: boolean
+      }
       can_self_approve: { Args: never; Returns: boolean }
+      cancel_load: {
+        Args: { p_load: string; p_reason?: string }
+        Returns: string
+      }
+      change_app_pin: {
+        Args: { p_new: string; p_old: string }
+        Returns: string
+      }
       change_member_role: {
         Args: { p_org: string; p_role: string; p_user: string }
         Returns: undefined
@@ -1623,12 +2424,46 @@ export type Database = {
           to_phone: string
         }[]
       }
+      confirm_payment: {
+        Args: {
+          p_amount_kobo: number
+          p_event_id: string
+          p_provider_ref: string
+        }
+        Returns: string
+      }
+      counter_load: {
+        Args: {
+          p_amount_kobo: number
+          p_driver?: string
+          p_load: string
+          p_truck: string
+        }
+        Returns: string
+      }
       create_invite: {
         Args: {
           p_email?: string
           p_org: string
           p_phone?: string
           p_role: string
+        }
+        Returns: string
+      }
+      create_load: {
+        Args: {
+          p_declared_value_kobo: number
+          p_description: string
+          p_goods: string
+          p_notes?: string
+          p_org: string
+          p_pickup_from: string
+          p_pickup_until: string
+          p_quantity: number
+          p_quantity_unit: string
+          p_stops: Json
+          p_truck_type: string
+          p_weight_kg: number
         }
         Returns: string
       }
@@ -1641,6 +2476,10 @@ export type Database = {
         }
         Returns: string
       }
+      create_pin_reset_link: {
+        Args: { p_member: string; p_org: string; p_token_hash: string }
+        Returns: undefined
+      }
       create_staff_invite: {
         Args: {
           p_corridor_ids?: string[]
@@ -1651,6 +2490,10 @@ export type Database = {
       }
       decide_approval: {
         Args: { p_approval: string; p_approve: boolean; p_note?: string }
+        Returns: undefined
+      }
+      decide_bank_account: {
+        Args: { p_account: string; p_approve: boolean; p_note?: string }
         Returns: undefined
       }
       decide_document: {
@@ -1665,6 +2508,7 @@ export type Database = {
         Args: { p_approve: boolean; p_note?: string; p_truck: string }
         Returns: undefined
       }
+      decline_counter: { Args: { p_offer: string }; Returns: undefined }
       finish_notification: {
         Args: {
           p_error?: string
@@ -1732,6 +2576,29 @@ export type Database = {
           org_id: string
         }[]
       }
+      load_board: {
+        Args: { p_org: string }
+        Returns: {
+          freight_kobo: number
+          from_city: string
+          goods: string
+          load_id: string
+          payout_kobo: number
+          pickup_from: string
+          pickup_until: string
+          quantity: number
+          quantity_unit: string
+          ref: string
+          to_city: string
+          truck_type: string
+          truck_type_id: string
+          value_band: string
+          weight_kg: number
+        }[]
+      }
+      load_carrier_sees: { Args: { p_load: string }; Returns: boolean }
+      load_sender_sees: { Args: { p_load: string }; Returns: boolean }
+      lock_account: { Args: { p_user: string }; Returns: undefined }
       log_identity_photo_view: {
         Args: { p_reason: string; p_session: string }
         Returns: undefined
@@ -1749,22 +2616,80 @@ export type Database = {
           role: string
         }[]
       }
+      my_pin_locked: { Args: never; Returns: boolean }
+      my_pin_tries_left: { Args: never; Returns: number }
       my_staff_role: {
         Args: never
         Returns: Database["public"]["Enums"]["staff_role"]
       }
+      new_backup_codes: { Args: never; Returns: string[] }
       new_staff_backup_codes: { Args: never; Returns: string[] }
       note_bank_lookup: { Args: never; Returns: boolean }
       org_permissions: { Args: { p_org: string }; Returns: string[] }
+      payout_paid: {
+        Args: { p_payout: string; p_provider_ref: string }
+        Returns: undefined
+      }
+      peek_phone_invite: {
+        Args: { p_token: string }
+        Returns: {
+          org_name: string
+          phone: string
+          role: string
+        }[]
+      }
+      peek_pin_reset_account: {
+        Args: { p_token_hash: string }
+        Returns: {
+          email: string
+          user_id: string
+        }[]
+      }
+      peek_pin_reset_link: { Args: { p_token_hash: string }; Returns: string }
+      pin_ip_failures: { Args: { p_ip_key: string }; Returns: number }
+      pin_sign_in: {
+        Args: { p_ip_key: string; p_login: string; p_pin: string }
+        Returns: Json
+      }
+      pin_sign_in_phone_taken: { Args: { p_phone: string }; Returns: boolean }
       public_setting: { Args: { p_key: string }; Returns: Json }
       queue_test_notification: {
         Args: { p_reference: string; p_to_email: string }
         Returns: number
       }
+      quote_load: {
+        Args: {
+          p_dropoffs?: number
+          p_from: string
+          p_org: string
+          p_to: string
+          p_truck_type: string
+        }
+        Returns: {
+          fee_bps: number
+          fee_kobo: number
+          freight_kobo: number
+          total_kobo: number
+        }[]
+      }
+      record_device: {
+        Args: {
+          p_city: string
+          p_device_hash: string
+          p_label: string
+          p_user: string
+        }
+        Returns: boolean
+      }
+      refund_paid: {
+        Args: { p_provider_ref: string; p_refund: string }
+        Returns: undefined
+      }
       remove_member: {
         Args: { p_org: string; p_user: string }
         Returns: undefined
       }
+      request_load_payment: { Args: { p_load: string }; Returns: string }
       revoke_invite: { Args: { p_invite: string }; Returns: undefined }
       save_transporter_profile: {
         Args: {
@@ -1775,41 +2700,18 @@ export type Database = {
         }
         Returns: undefined
       }
+      seed_demo_pin: {
+        Args: { p_pin: string; p_user: string }
+        Returns: undefined
+      }
       set_active_org: { Args: { p_org: string }; Returns: undefined }
       set_app_pin: { Args: { p_pin: string }; Returns: undefined }
-      set_i_drive: {
-        Args: { p_drives: boolean; p_org: string }
-        Returns: undefined
-      }
-      change_app_pin: { Args: { p_new: string; p_old: string }; Returns: string }
-      create_pin_reset_link: {
-        Args: { p_member: string; p_org: string; p_token_hash: string }
-        Returns: undefined
-      }
-      lock_account: { Args: { p_user: string }; Returns: undefined }
-      my_pin_locked: { Args: never; Returns: boolean }
-      my_pin_tries_left: { Args: never; Returns: number }
-      new_backup_codes: { Args: never; Returns: string[] }
-      peek_phone_invite: {
-        Args: { p_token: string }
-        Returns: { org_name: string; phone: string; role: string }[]
-      }
-      peek_pin_reset_link: { Args: { p_token_hash: string }; Returns: string }
-      pin_ip_failures: { Args: { p_ip_key: string }; Returns: number }
-      pin_sign_in_phone_taken: { Args: { p_phone: string }; Returns: boolean }
-      pin_sign_in: {
-        Args: { p_ip_key: string; p_login: string; p_pin: string }
-        Returns: Json
-      }
-      record_device: {
-        Args: { p_city: string; p_device_hash: string; p_label: string; p_user: string }
-        Returns: boolean
-      }
-      use_backup_code: { Args: { p_code: string }; Returns: boolean }
-      use_pin_reset_link: { Args: { p_keep_session: string; p_token_hash: string }; Returns: boolean }
-      peek_pin_reset_account: { Args: { p_token_hash: string }; Returns: { email: string; user_id: string }[] }
       set_driver_paused: {
         Args: { p_driver: string; p_paused: boolean }
+        Returns: undefined
+      }
+      set_i_drive: {
+        Args: { p_drives: boolean; p_org: string }
         Returns: undefined
       }
       set_notification_preference: {
@@ -1827,6 +2729,19 @@ export type Database = {
           role: Database["public"]["Enums"]["staff_role"]
           state: string
         }[]
+      }
+      staff_refund: {
+        Args: { p_amount_kobo: number; p_load: string; p_reason: string }
+        Returns: string
+      }
+      staff_trip_step: {
+        Args: {
+          p_quantity?: number
+          p_step: string
+          p_trip: string
+          p_weight_kg?: number
+        }
+        Returns: undefined
       }
       submit_identity_check: {
         Args: {
@@ -1850,9 +2765,23 @@ export type Database = {
           user_id: string
         }[]
       }
+      trip_money: {
+        Args: { p_trip: string }
+        Returns: {
+          advance_kobo: number
+          balance_kobo: number
+          commission_kobo: number
+          freight_kobo: number
+        }[]
+      }
       update_organization: {
         Args: { p_cac_number?: string; p_name: string; p_org: string }
         Returns: undefined
+      }
+      use_backup_code: { Args: { p_code: string }; Returns: boolean }
+      use_pin_reset_link: {
+        Args: { p_keep_session: string; p_token_hash: string }
+        Returns: boolean
       }
       use_staff_backup_code: { Args: { p_code: string }; Returns: boolean }
     }
@@ -1893,6 +2822,14 @@ export type Database = {
         | "promo"
         | "processing"
         | "adjustment"
+      load_status:
+        | "draft"
+        | "awaiting_payment"
+        | "funded"
+        | "matched"
+        | "cancelled"
+        | "expired"
+        | "refunded"
       notify_channel: "whatsapp" | "sms" | "email" | "push" | "in_app"
       notify_status:
         | "queued"
@@ -1901,8 +2838,45 @@ export type Database = {
         | "read"
         | "failed"
         | "skipped"
+      offer_kind: "accept" | "counter"
+      offer_status:
+        | "pending"
+        | "awaiting_top_up"
+        | "accepted"
+        | "declined"
+        | "expired"
+        | "withdrawn"
       org_kind: "shipper" | "transporter"
       owner_tier: "new" | "established" | "gold"
+      payment_purpose: "load" | "top_up" | "waiting_charge" | "cancellation_fee"
+      payment_status:
+        | "pending"
+        | "received"
+        | "partially_refunded"
+        | "refunded"
+        | "expired"
+        | "failed"
+      payout_kind:
+        | "advance"
+        | "balance"
+        | "cancellation_fee"
+        | "waiting_charge"
+        | "agent_share"
+        | "transload_share"
+      payout_status:
+        | "queued"
+        | "awaiting_approval"
+        | "processing"
+        | "paid"
+        | "failed"
+        | "held"
+        | "reversed"
+      refund_status:
+        | "queued"
+        | "awaiting_approval"
+        | "processing"
+        | "paid"
+        | "failed"
       shipper_role: "owner" | "admin" | "booker" | "finance" | "viewer"
       staff_role:
         | "super_admin"
@@ -1912,6 +2886,19 @@ export type Database = {
         | "support"
         | "field_agent"
       transporter_role: "owner" | "manager" | "driver"
+      trip_status:
+        | "assigned"
+        | "to_pickup"
+        | "at_pickup"
+        | "loading"
+        | "loaded"
+        | "in_transit"
+        | "arrived"
+        | "delivered"
+        | "delivered_with_exception"
+        | "closed"
+        | "cancelled"
+        | "transloading"
       truck_status:
         | "draft"
         | "pending_review"
@@ -2085,6 +3072,15 @@ export const Constants = {
         "processing",
         "adjustment",
       ],
+      load_status: [
+        "draft",
+        "awaiting_payment",
+        "funded",
+        "matched",
+        "cancelled",
+        "expired",
+        "refunded",
+      ],
       notify_channel: ["whatsapp", "sms", "email", "push", "in_app"],
       notify_status: [
         "queued",
@@ -2094,8 +3090,50 @@ export const Constants = {
         "failed",
         "skipped",
       ],
+      offer_kind: ["accept", "counter"],
+      offer_status: [
+        "pending",
+        "awaiting_top_up",
+        "accepted",
+        "declined",
+        "expired",
+        "withdrawn",
+      ],
       org_kind: ["shipper", "transporter"],
       owner_tier: ["new", "established", "gold"],
+      payment_purpose: ["load", "top_up", "waiting_charge", "cancellation_fee"],
+      payment_status: [
+        "pending",
+        "received",
+        "partially_refunded",
+        "refunded",
+        "expired",
+        "failed",
+      ],
+      payout_kind: [
+        "advance",
+        "balance",
+        "cancellation_fee",
+        "waiting_charge",
+        "agent_share",
+        "transload_share",
+      ],
+      payout_status: [
+        "queued",
+        "awaiting_approval",
+        "processing",
+        "paid",
+        "failed",
+        "held",
+        "reversed",
+      ],
+      refund_status: [
+        "queued",
+        "awaiting_approval",
+        "processing",
+        "paid",
+        "failed",
+      ],
       shipper_role: ["owner", "admin", "booker", "finance", "viewer"],
       staff_role: [
         "super_admin",
@@ -2106,6 +3144,20 @@ export const Constants = {
         "field_agent",
       ],
       transporter_role: ["owner", "manager", "driver"],
+      trip_status: [
+        "assigned",
+        "to_pickup",
+        "at_pickup",
+        "loading",
+        "loaded",
+        "in_transit",
+        "arrived",
+        "delivered",
+        "delivered_with_exception",
+        "closed",
+        "cancelled",
+        "transloading",
+      ],
       truck_status: [
         "draft",
         "pending_review",
