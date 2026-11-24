@@ -79,7 +79,8 @@ export async function saveAbout(_previous: AboutState, formData: FormData): Prom
 // business name.
 // ---------------------------------------------------------------------------------------------------
 
-export type Lookup = { status: "found"; name: string; matches: boolean } | { status: "notFound" | "error" | "unavailable" };
+/** matches is null when the person has no checked ID yet: nothing to compare with, so staff look. */
+export type Lookup = { status: "found"; name: string; matches: boolean | null } | { status: "notFound" | "error" | "unavailable" };
 
 async function lookupContext() {
   const supabase = await supabaseServer();
@@ -118,7 +119,7 @@ export async function lookUpAccount(bankCode: string, number: string): Promise<L
   if (allowed !== true) return { status: "error" };
   try {
     const found = await resolve(ctx, bankCode, number);
-    return found.status === "found" ? { status: "found", name: found.name, matches: found.score >= 80 } : { status: found.status };
+    return found.status === "found" ? { status: "found", name: found.name, matches: ctx.references.length ? found.score >= 80 : null } : { status: found.status };
   } catch (error) {
     console.error("account lookup failed", error instanceof Error ? error.message : "unknown");
     return { status: "error" };

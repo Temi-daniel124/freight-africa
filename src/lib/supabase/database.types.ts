@@ -115,51 +115,66 @@ export type Database = {
       }
       bank_accounts: {
         Row: {
-          id: string
-          org_id: string
+          account_last4: string
+          account_number_enc: string
+          added_by: string | null
           bank_code: string
           bank_name: string
-          account_number_enc: string
-          account_last4: string
-          resolved_name: string
-          name_match_score: number
-          status: string
-          usable_from: string
-          added_by: string | null
           created_at: string
+          id: string
+          name_match_score: number
+          org_id: string
+          resolved_name: string
+          status: string
           updated_at: string
+          usable_from: string
         }
         Insert: {
-          id?: string
-          org_id: string
+          account_last4: string
+          account_number_enc: string
+          added_by?: string | null
           bank_code: string
           bank_name: string
-          account_number_enc: string
-          account_last4: string
-          resolved_name: string
-          name_match_score: number
-          status?: string
-          usable_from?: string
-          added_by?: string | null
           created_at?: string
+          id?: string
+          name_match_score: number
+          org_id: string
+          resolved_name: string
+          status?: string
           updated_at?: string
+          usable_from?: string
         }
         Update: {
-          id?: string
-          org_id?: string
+          account_last4?: string
+          account_number_enc?: string
+          added_by?: string | null
           bank_code?: string
           bank_name?: string
-          account_number_enc?: string
-          account_last4?: string
-          resolved_name?: string
-          name_match_score?: number
-          status?: string
-          usable_from?: string
-          added_by?: string | null
           created_at?: string
+          id?: string
+          name_match_score?: number
+          org_id?: string
+          resolved_name?: string
+          status?: string
           updated_at?: string
+          usable_from?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "bank_accounts_added_by_fkey"
+            columns: ["added_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bank_accounts_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       cities: {
         Row: {
@@ -788,10 +803,10 @@ export type Database = {
           blocked_reason: string | null
           cac_number: string | null
           corridor_ids: string[]
-          default_bank_account_id: string | null
-          home_city_id: string | null
           created_at: string
           created_by: string | null
+          default_bank_account_id: string | null
+          home_city_id: string | null
           id: string
           insured_until: string | null
           is_demo: boolean
@@ -806,10 +821,10 @@ export type Database = {
           blocked_reason?: string | null
           cac_number?: string | null
           corridor_ids?: string[]
-          default_bank_account_id?: string | null
-          home_city_id?: string | null
           created_at?: string
           created_by?: string | null
+          default_bank_account_id?: string | null
+          home_city_id?: string | null
           id?: string
           insured_until?: string | null
           is_demo?: boolean
@@ -824,10 +839,10 @@ export type Database = {
           blocked_reason?: string | null
           cac_number?: string | null
           corridor_ids?: string[]
-          default_bank_account_id?: string | null
-          home_city_id?: string | null
           created_at?: string
           created_by?: string | null
+          default_bank_account_id?: string | null
+          home_city_id?: string | null
           id?: string
           insured_until?: string | null
           is_demo?: boolean
@@ -844,6 +859,20 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organizations_default_bank_account_id_fkey"
+            columns: ["default_bank_account_id"]
+            isOneToOne: false
+            referencedRelation: "bank_accounts"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "organizations_home_city_id_fkey"
+            columns: ["home_city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
             referencedColumns: ["id"]
           },
         ]
@@ -1241,14 +1270,22 @@ export type Database = {
     }
     Functions: {
       accept_invite: { Args: { p_token: string }; Returns: string }
-      add_bank_account: { Args: { p_account_number: string; p_bank_code: string; p_bank_name: string; p_org: string; p_resolved_name: string; p_score: number; p_user: string }; Returns: string }
-      note_bank_lookup: { Args: never; Returns: boolean }
-      log_identity_photo_view: { Args: { p_reason: string; p_session: string }; Returns: undefined }
-      save_transporter_profile: { Args: { p_corridors: string[]; p_drives: boolean; p_home_city: string; p_org: string }; Returns: undefined }
       accept_staff_code: { Args: never; Returns: undefined }
       accept_staff_invite: {
         Args: { p_token: string }
         Returns: Database["public"]["Enums"]["staff_role"]
+      }
+      add_bank_account: {
+        Args: {
+          p_account_number: string
+          p_bank_code: string
+          p_bank_name: string
+          p_org: string
+          p_resolved_name: string
+          p_score: number
+          p_user: string
+        }
+        Returns: string
       }
       am_i_demo: { Args: never; Returns: boolean }
       auth_code_failed: { Args: { p_key: string }; Returns: number }
@@ -1387,6 +1424,10 @@ export type Database = {
           org_id: string
         }[]
       }
+      log_identity_photo_view: {
+        Args: { p_reason: string; p_session: string }
+        Returns: undefined
+      }
       mark_notifications_read: { Args: { p_ids: string[] }; Returns: undefined }
       member_role: { Args: { p_org: string }; Returns: string }
       my_accounts: {
@@ -1405,6 +1446,7 @@ export type Database = {
         Returns: Database["public"]["Enums"]["staff_role"]
       }
       new_staff_backup_codes: { Args: never; Returns: string[] }
+      note_bank_lookup: { Args: never; Returns: boolean }
       org_permissions: { Args: { p_org: string }; Returns: string[] }
       public_setting: { Args: { p_key: string }; Returns: Json }
       queue_test_notification: {
@@ -1416,6 +1458,15 @@ export type Database = {
         Returns: undefined
       }
       revoke_invite: { Args: { p_invite: string }; Returns: undefined }
+      save_transporter_profile: {
+        Args: {
+          p_corridors: string[]
+          p_drives: boolean
+          p_home_city: string
+          p_org: string
+        }
+        Returns: undefined
+      }
       set_active_org: { Args: { p_org: string }; Returns: undefined }
       set_notification_preference: {
         Args: {
