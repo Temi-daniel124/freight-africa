@@ -669,6 +669,11 @@ another phone is ever stored.
 - No public endpoint accepts a 6-digit secret: email codes keep their per-code and per-hour limits,
   and PINs are checked only by our server.
 - A device is "known" by a random, signed, httpOnly device cookie recorded in `private.known_devices`.
+- Known trade-off (independent review, 24 Nov 2026): anyone who knows an email or phone number can
+  lock PIN sign-in for it with five wrong PINs (the rule asked for). It is a nuisance, never a takeover:
+  email accounts recover with an email code; phone accounts with a PIN link from their owner. PIN reset
+  links work only for someone whose one business is the owner's, are spent only after the new PIN is
+  set, and sign out every other device.
 - `requireUnlocked()` (`src/features/auth/unlock.ts`) applies to every role: every shell page and every
   server action that reads private data calls it.
 

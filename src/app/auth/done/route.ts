@@ -16,16 +16,19 @@ export async function GET(request: NextRequest) {
 
   const next = (await readPendingCode())?.next ?? (await requestHome());
   await clearPendingCode();
-  if (typeof claims.session_id === "string") await finishSignIn(claims.sub, claims.session_id, typeof claims.email === "string" ? claims.email : null);
+  const email = typeof claims.email === "string" ? claims.email : null;
+
+  // Two-step on: the authenticator code first; the device is recorded and the app opened only after it.
+  const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+  if (aal && aal.nextLevel === "aal2" && aal.currentLevel !== "aal2") {
+    return NextResponse.redirect(new URL(`/auth/two-step?next=${encodeURIComponent(next)}`, request.nextUrl.origin));
+  }
+  if (typeof claims.session_id === "string") await finishSignIn(claims.sub, claims.session_id, email);
 
   const [{ data: has }, { data: locked }] = await Promise.all([supabase.rpc("has_app_pin"), supabase.rpc("my_pin_locked")]);
   const wantsNew = request.cookies.get(NEW_PIN_COOKIE)?.value === "1";
   if (has !== true || locked === true || wantsNew) {
     return NextResponse.redirect(new URL(`/auth/pin/new?next=${encodeURIComponent(next)}`, request.nextUrl.origin));
-  }
-  const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
-  if (aal && aal.nextLevel === "aal2" && aal.currentLevel !== "aal2") {
-    return NextResponse.redirect(new URL(`/auth/two-step?next=${encodeURIComponent(next)}`, request.nextUrl.origin));
   }
   return NextResponse.redirect(new URL(next, request.nextUrl.origin));
 }

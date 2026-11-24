@@ -1803,10 +1803,8 @@ export type Database = {
         Returns: boolean
       }
       use_backup_code: { Args: { p_code: string }; Returns: boolean }
-      use_pin_reset_link: {
-        Args: { p_token_hash: string }
-        Returns: { email: string; full_name: string; user_id: string }[]
-      }
+      use_pin_reset_link: { Args: { p_keep_session: string; p_token_hash: string }; Returns: boolean }
+      peek_pin_reset_account: { Args: { p_token_hash: string }; Returns: { email: string; user_id: string }[] }
       set_driver_paused: {
         Args: { p_driver: string; p_paused: boolean }
         Returns: undefined

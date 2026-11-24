@@ -11,7 +11,7 @@ import { safeNext } from "./next-path";
 import { NEW_PIN_COOKIE, TWO_STEP_OFFERED_COOKIE } from "./pin-cookies";
 import { clearPinLogin, parseLogin, readPinLogin, setPinLogin } from "./pin-login";
 import { finishSignIn, needsSecondStep, openSessionFor, sendSecurityEmail } from "./pin-session";
-import { markUnlocked } from "./unlock";
+import { markUnlocked, secondStepDone } from "./unlock";
 
 // D044 sign-in and app lock. The PIN is checked only here, on our server, with the service key; the
 // browser never reaches a function that accepts a PIN for sign-in.
@@ -87,6 +87,12 @@ export async function chooseNewPin(pin: string, next: string): Promise<SetPinRes
   const { data } = await supabase.auth.getClaims();
   const claims = data?.claims;
   if (!claims || typeof claims.session_id !== "string") return { status: "error" };
+  // Replacing a PIN needs a reason from this sign-in: "Forgot PIN?" (the email code just given) or a
+  // lockout. Otherwise Settings' Change PIN asks for the current one (review).
+  const [{ data: has }, { data: locked }] = await Promise.all([supabase.rpc("has_app_pin"), supabase.rpc("my_pin_locked")]);
+  const forgot = (await cookies()).get(NEW_PIN_COOKIE)?.value === "1";
+  if (has === true && locked !== true && !forgot) return { status: "fresh" };
+  if (!(await secondStepDone())) return { status: "error" };
   const { error } = await supabase.rpc("set_app_pin", { p_pin: pin });
   if (error) return { status: error.code === "22023" ? "weak" : error.code === "28000" ? "fresh" : "error" };
   await markUnlocked(claims.sub, claims.session_id);
@@ -114,6 +120,7 @@ export async function unlockApp(pin: string, next: string): Promise<UnlockResult
   const { data: answer, error } = await supabase.rpc("check_app_pin", { p_pin: pin });
   if (error) return { status: "error" };
   if (answer === "ok") {
+    if (!(await secondStepDone())) return { status: "error" };
     await markUnlocked(claims.sub, claims.session_id);
     return { status: "ok", next: safeNext(next, await requestHome()) };
   }

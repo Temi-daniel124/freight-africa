@@ -227,28 +227,41 @@ begin
   if not exists (select 1 from auth.users where id = p_member and email like 'p-%@phone.freight-africa.com') then
     raise exception 'only for people invited by phone' using errcode = '42501';
   end if;
+  -- Only the person's one business may reset their PIN: a link from one owner must never open an
+  -- account that also works for another business (review).
+  if exists (select 1 from public.organization_members where user_id = p_member and org_id <> p_org and status = 'active') then
+    raise exception 'they belong to another business too' using errcode = '42501';
+  end if;
   update private.pin_reset_links set used_at = now() where user_id = p_member and used_at is null;
   insert into private.pin_reset_links (token_hash, user_id, org_id, created_by) values (p_token_hash, p_member, p_org, v_user);
   perform private.audit('pin.reset_link', 'profiles', p_member::text, null, jsonb_build_object('org', p_org));
 end;
 $$;
 
--- Server only: spends a reset link once; returns the account's id and internal address, or nothing.
-create function public.use_pin_reset_link(p_token_hash text) returns table (user_id uuid, email text, full_name text)
+-- Server only: who an open reset link is for (the server opens their session and sets the PIN first).
+create function public.peek_pin_reset_account(p_token_hash text) returns table (user_id uuid, email text)
+language sql stable security definer set search_path = '' as $$
+  select u.id, u.email::text from private.pin_reset_links l join auth.users u on u.id = l.user_id
+  where l.token_hash = p_token_hash and l.used_at is null and l.expires_at > now()
+    and exists (select 1 from public.organization_members m where m.org_id = l.org_id and m.user_id = l.user_id and m.status = 'active')
+    and not exists (select 1 from public.organization_members m where m.user_id = l.user_id and m.org_id <> l.org_id and m.status = 'active');
+$$;
+
+-- Server only: spends the link once the new PIN is set, and signs out every other device (review).
+create function public.use_pin_reset_link(p_token_hash text, p_keep_session uuid) returns boolean
 language plpgsql security definer set search_path = '' as $$
 declare
   v_user uuid;
 begin
   update private.pin_reset_links l set used_at = now()
   where l.token_hash = p_token_hash and l.used_at is null and l.expires_at > now()
-    and exists (select 1 from public.organization_members m where m.org_id = l.org_id and m.user_id = l.user_id and m.status = 'active')
   returning l.user_id into v_user;
   if v_user is null then
-    return;
+    return false;
   end if;
-  -- The old PIN goes; set_app_pin then needs no fresh check, and the lockout is cleared.
-  delete from private.app_pins where app_pins.user_id = v_user;
-  return query select u.id, u.email::text, p.full_name from auth.users u join public.profiles p on p.id = u.id where u.id = v_user;
+  delete from auth.sessions where user_id = v_user and id <> p_keep_session;
+  perform private.audit('pin.reset', 'profiles', v_user::text, null, null);
+  return true;
 end;
 $$;
 
@@ -372,7 +385,8 @@ begin
     'public.pin_sign_in(text, text, text)',
     'public.record_device(uuid, text, text, text)',
     'public.lock_account(uuid)',
-    'public.use_pin_reset_link(text)',
+    'public.use_pin_reset_link(text, uuid)',
+    'public.peek_pin_reset_account(text)',
     'public.peek_pin_reset_link(text)',
     'public.peek_phone_invite(text)',
     'public.pin_sign_in_phone_taken(text)'
