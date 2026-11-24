@@ -14,8 +14,7 @@ export async function pauseTruck(
   const { error } = await (
     await supabaseServer()
   ).rpc(
-    "set_truck_paused" as never,
-    { p_truck: truckId, p_paused: paused } as never,
+    "set_truck_paused", { p_truck: truckId, p_paused: paused },
   );
   revalidatePath("/app/haul", "layout");
   return !error;
@@ -29,8 +28,7 @@ export async function assignDriver(
   const { error } = await (
     await supabaseServer()
   ).rpc(
-    "assign_truck_driver" as never,
-    { p_truck: truckId, p_driver: driverId } as never,
+    "assign_truck_driver", { p_truck: truckId, p_driver: driverId },
   );
   revalidatePath("/app/haul", "layout");
   return !error;

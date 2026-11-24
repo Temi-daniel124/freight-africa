@@ -2361,6 +2361,10 @@ export type Database = {
         Args: { p_id: string; p_kind: string }
         Returns: undefined
       }
+      assign_truck_driver: {
+        Args: { p_driver: string; p_truck: string }
+        Returns: undefined
+      }
       attach_collection: {
         Args: {
           p_account: string
@@ -2509,6 +2513,7 @@ export type Database = {
         Returns: undefined
       }
       decline_counter: { Args: { p_offer: string }; Returns: undefined }
+      find_trip: { Args: { p_org: string; p_ref: string }; Returns: string }
       finish_notification: {
         Args: {
           p_error?: string
@@ -2517,6 +2522,32 @@ export type Database = {
           p_result: string
         }
         Returns: undefined
+      }
+      fleet: {
+        Args: { p_org: string }
+        Returns: {
+          availability: string
+          capacity_kg: number
+          driver_avatar: string
+          driver_name: string
+          from_city: string
+          goods: string
+          lat: number
+          lng: number
+          pickup_from: string
+          plate: string
+          quantity: number
+          quantity_unit: string
+          status: string
+          to_city: string
+          trip_id: string
+          trip_ref: string
+          trip_status: string
+          truck_id: string
+          truck_type: string
+          truck_type_code: string
+          weight_kg: number
+        }[]
       }
       give_onboarding_consents: {
         Args: {
@@ -2722,6 +2753,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      set_truck_paused: {
+        Args: { p_paused: boolean; p_truck: string }
+        Returns: undefined
+      }
       staff_backup_codes_left: { Args: never; Returns: number }
       staff_invite_details: {
         Args: { p_token: string }
@@ -2763,6 +2798,39 @@ export type Database = {
           role: string
           status: Database["public"]["Enums"]["account_status"]
           user_id: string
+        }[]
+      }
+      trip_map: {
+        Args: { p_trip: string }
+        Returns: {
+          capacity_kg: number
+          delivered_at: string
+          driver_avatar: string
+          driver_first_name: string
+          driver_phone: string
+          from_city: string
+          from_lat: number
+          from_lng: number
+          goods: string
+          held_kobo: number
+          last_ping_at: string
+          load_status: string
+          next_contact_name: string
+          next_contact_phone: string
+          pickup_from: string
+          plate: string
+          quantity: number
+          quantity_unit: string
+          ref: string
+          status: string
+          to_city: string
+          to_lat: number
+          to_lng: number
+          truck_lat: number
+          truck_lng: number
+          truck_type: string
+          truck_type_code: string
+          weight_kg: number
         }[]
       }
       trip_money: {
