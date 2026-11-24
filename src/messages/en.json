@@ -795,7 +795,7 @@
       "title": "Welcome back",
       "lead": "Enter your email, or the phone number your truck owner invited.",
       "loginLabel": "Email or phone number",
-      "loginPlaceholder": "ada@okaforfoods.ng or 0803 123 4567",
+      "loginPlaceholder": "Email or 0803 123 4567",
       "continue": "Continue",
       "continuing": "Checking",
       "invalid": "Enter your email address, or a Nigerian mobile number like 0803 123 4567.",

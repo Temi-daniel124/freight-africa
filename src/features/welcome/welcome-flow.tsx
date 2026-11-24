@@ -94,17 +94,10 @@ export function WelcomeFlow() {
           </AnimatePresence>
         </m.div>
         <footer className="flex items-center justify-between pb-[max(env(safe-area-inset-bottom),20px)] pl-6">
-          <div className="flex gap-1.5" role="tablist" aria-label={t.progress}>
+          {/* Progress pills: they show where you are; swiping or Next moves on (tap targets stay large). */}
+          <div className="flex gap-1.5" aria-hidden>
             {slides.map((s, i) => (
-              <button
-                key={s.title}
-                type="button"
-                role="tab"
-                aria-selected={i === index}
-                aria-label={t.slideLabel.replace("{n}", String(i + 1))}
-                onClick={() => go(i)}
-                className={cn("h-2 rounded-pill transition-all duration-200", i === index ? "w-6 bg-green-900" : "w-2 bg-line-strong")}
-              />
+              <span key={s.title} className={cn("h-2 rounded-pill transition-all duration-200", i === index ? "w-6 bg-green-900" : "w-2 bg-line-strong")} />
             ))}
           </div>
           {/* The shaped Next button: a deep green quarter-round block holding the number. */}

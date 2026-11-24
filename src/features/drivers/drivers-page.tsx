@@ -52,7 +52,7 @@ export async function DriversPage({ orgId }: { orgId: string | null }) {
           return (
             <li key={member.user_id} className="flex flex-wrap items-center gap-3 border-t border-line px-4 py-3.5 first:border-t-0 lg:px-6">
               <span className="min-w-0 flex-1">
-                <span className="block text-body font-bold text-ink">{member.full_name}</span>
+                <span className="block truncate text-body font-bold text-ink">{member.full_name}</span>
                 {driver?.licence_expires_on ? <span className="block text-body-sm text-ink-2">{t.licence.replace("{date}", date.format(new Date(driver.licence_expires_on)))}</span> : null}
               </span>
               <StatusChip tone={tone}>{t.status[key]}</StatusChip>
