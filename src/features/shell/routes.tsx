@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { BadgeCheck } from "lucide-react";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { connection } from "next/server";
 import { cache, Suspense, type ReactNode } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -10,6 +10,8 @@ import { AppShell, ShellContent, ShellTopBar } from "./app-shell";
 import { shellPages, shells, type PageKey, type ShellRole } from "./config";
 import { TeamPage } from "@/features/org/team-page";
 import { TrucksPage } from "@/features/trucks/trucks-page";
+import { DriversPage } from "@/features/drivers/drivers-page";
+import { isUnlocked } from "@/features/drivers/pin";
 import { getMyJoining, type SetupRole } from "@/features/onboarding/setup";
 import { SetupChecklist } from "@/features/onboarding/setup-checklist";
 import { PlaceholderPage } from "./placeholder-page";
@@ -41,8 +43,33 @@ async function ResolvedShell({ role, children }: { role: ShellRole; children: Re
   );
 }
 
+/** D042: a driver with a PIN opens the app with it; until then the driver screens stay closed. */
+async function PinGate({ children }: { children: ReactNode }) {
+  await connection();
+  const supabase = await supabaseServer();
+  const { data } = await supabase.auth.getClaims();
+  const claims = data?.claims;
+  if (claims && typeof claims.session_id === "string") {
+    const { data: has } = await supabase.rpc("has_app_pin");
+    if (has === true && !(await isUnlocked(claims.sub, claims.session_id))) redirect("/onboarding/pin?unlock=1");
+  }
+  return <>{children}</>;
+}
+
 export function shellLayout(role: ShellRole) {
   return function ShellLayout({ children }: { children: ReactNode }) {
+    if (role === "driver") {
+      const config = shells.driver;
+      return (
+        <Suspense fallback={<Skeleton className="h-dvh w-full rounded-none" />}>
+          <PinGate>
+            <AppShell config={config} viewer={getViewer(config)}>
+              {children}
+            </AppShell>
+          </PinGate>
+        </Suspense>
+      );
+    }
     if (role !== "owner") {
       const config = shells[role];
       return (
@@ -59,7 +86,7 @@ export function shellLayout(role: ShellRole) {
   };
 }
 
-const SETUP_ROLES: Partial<Record<ShellRole, SetupRole>> = { shipper: "shipper", owner: "owner", ownerDriver: "ownerDriver", agent: "agent" };
+const SETUP_ROLES: Partial<Record<ShellRole, SetupRole>> = { shipper: "shipper", owner: "owner", ownerDriver: "ownerDriver", agent: "agent", driver: "driver" };
 
 /** D041: once an owner of the sending business is verified, Home says so (owners see the same badge). */
 async function VerifiedSender() {
@@ -145,7 +172,7 @@ async function SectionPage({ role, params }: { role: ShellRole; params: Promise<
   return (
     <>
       <ShellTopBar config={config} viewer={viewer} title={messages.shell.pages[page].title} />
-      <ShellContent>{page === "team" ? <TeamPage viewer={viewer} /> : page === "trucks" ? <TrucksPage /> : <PlaceholderPage config={config} page={page} />}</ShellContent>
+      <ShellContent>{page === "team" ? <TeamPage viewer={viewer} /> : page === "trucks" ? <TrucksPage /> : page === "drivers" ? <DriversPage orgId={(await viewer).orgId} /> : <PlaceholderPage config={config} page={page} />}</ShellContent>
     </>
   );
 }

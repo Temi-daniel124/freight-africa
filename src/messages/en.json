@@ -840,7 +840,8 @@
         "shipper": "Book whenever you’re ready. Verifying your identity is optional and earns a badge owners can see.",
         "owner": "A few steps before you can take paid loads. You can stop and come back any time.",
         "ownerDriver": "A few steps before you can take paid loads and drive them. You can stop and come back any time.",
-        "agent": "A few steps before you can start earning. You can stop and come back any time."
+        "agent": "A few steps before you can start earning. You can stop and come back any time.",
+        "driver": "Three short steps before your first trip."
       },
       "steps": {
         "details": "Your details",
@@ -850,7 +851,8 @@
         "truck": "Add your first truck",
         "drivers": "Add your drivers",
         "licence": "Your driver’s licence",
-        "agreement": "How you earn"
+        "agreement": "How you earn",
+        "pin": "Choose your PIN"
       },
       "done": "Done",
       "start": "Start",
@@ -1566,6 +1568,58 @@
         "upload": "That photo didn’t upload. Try again.",
         "failed": "We couldn’t send that. Check your connection and try again."
       }
+    }
+  },
+  "drivers": {
+    "licence": {
+      "title": "Your driver’s licence",
+      "lead": "So the truck owner and senders know you may drive.",
+      "photo": "Photo of your licence",
+      "photoHelp": "The front, flat, in good light. Every word must be readable.",
+      "expires": "Expires on",
+      "number": "Licence number (optional)",
+      "submit": "Send for checking",
+      "saving": "Sending",
+      "sent": "Received. We’ll tell you when it has been checked.",
+      "home": "Back to your trips",
+      "errors": {
+        "photo": "Take a photo of your licence",
+        "expires": "Enter the expiry date",
+        "expired": "This licence has expired. Add your new one.",
+        "number": "Check the licence number",
+        "failed": "We couldn’t send that. Check your connection and try again."
+      }
+    },
+    "pin": {
+      "setTitle": "Choose a 6-number PIN",
+      "setLead": "You’ll use it to open the app on this phone.",
+      "confirmTitle": "Type the PIN again",
+      "unlockTitle": "Enter your PIN",
+      "unlockLead": "To open Freight Africa.",
+      "wrong": "That PIN isn’t right. {left} tries left.",
+      "mismatch": "The two PINs are different. Start again.",
+      "weak": "Choose a PIN that is harder to guess.",
+      "locked": "Too many tries. Sign in again with a code, then choose a new PIN.",
+      "fresh": "Sign in again with a code to change your PIN.",
+      "forgot": "Forgot your PIN? Sign in again",
+      "failed": "Something went wrong. Check your connection and try again.",
+      "delete": "Delete",
+      "done": "PIN saved"
+    },
+    "list": {
+      "add": "Add a driver",
+      "empty": "No drivers yet",
+      "emptyText": "Invite your drivers. They check their own ID and licence on their phone.",
+      "status": {
+        "pending": "Checking ID and licence",
+        "active": "Can drive",
+        "paused": "Paused by you",
+        "suspended": "Suspended",
+        "invited": "Invited"
+      },
+      "licence": "Licence until {date}",
+      "pause": "Pause",
+      "resume": "Let drive"
     }
   }
 }
