@@ -679,7 +679,7 @@ begin
   if v_load.status <> 'funded' then
     raise exception 'this load was just taken' using errcode = '40001';
   end if;
-  if p_amount_kobo <= v_load.freight_kobo or p_amount_kobo > v_load.freight_kobo + v_load.freight_kobo * (private.setting('counter_max_bps'))::bigint / 10000 then
+  if p_amount_kobo is null or p_amount_kobo <= v_load.freight_kobo or p_amount_kobo > v_load.freight_kobo + v_load.freight_kobo * (private.setting('counter_max_bps'))::bigint / 10000 then
     raise exception 'a counter is above the price and at most 20 percent more' using errcode = '22023';
   end if;
   insert into public.offers (load_id, transporter_org_id, truck_id, driver_id, kind, amount_kobo, expires_at, created_by)
