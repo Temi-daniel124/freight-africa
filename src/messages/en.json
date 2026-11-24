@@ -2001,5 +2001,50 @@
     "held": "{amount} held safely",
     "lastSeen": "Last seen {time}",
     "back": "Back"
+  },
+  "home2": {
+    "book": "Book a truck",
+    "track": "Track a trip",
+    "current": "Current trip",
+    "needsYou": "Needs you",
+    "yourMove": "Your move:",
+    "payFor": "pay {amount} for {ref}.",
+    "answerOffer": "answer an offer on {ref}.",
+    "recent": "Recent trips",
+    "seeAll": "See all",
+    "yourTrucks": "Your trucks",
+    "yourTruck": "Your truck",
+    "loadsForTrucks": "Loads for your trucks",
+    "noDriver": "No driver yet",
+    "assignDriver": "Assign a driver to {plate}.",
+    "paperExpiring": "A paper expires on {date}.",
+    "openMap": "Open the map of your trucks",
+    "truckState": {
+      "onTrip": "On a trip",
+      "ready": "Ready",
+      "paused": "Paused",
+      "review": "Being checked"
+    },
+    "chips": {
+      "label": "Show trucks",
+      "all": "{n} trucks",
+      "onTrip": "{n} on a trip",
+      "ready": "{n} ready",
+      "paused": "{n} paused"
+    }
+  },
+  "driverTrip": {
+    "emptyTitle": "No trip right now",
+    "emptyText": "When your truck owner gives you a trip, it shows here.",
+    "call": "Call {name}",
+    "next": {
+      "goToPickup": "Go to pickup",
+      "arrivedPickup": "I’ve arrived at pickup",
+      "startLoading": "Start loading",
+      "loaded": "Loading is done",
+      "startTrip": "Start the trip",
+      "arrivedDropoff": "I’ve arrived",
+      "delivered": "Hand over the goods"
+    }
   }
 }
