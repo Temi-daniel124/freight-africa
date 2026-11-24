@@ -1,3 +1,4 @@
+import { formatPlate } from "@/lib/plate";
 import { supabaseServer } from "@/lib/supabase/server";
 import messages from "@/messages/en.json";
 import { DecideForm } from "./decide-form";
@@ -46,7 +47,7 @@ export async function FleetQueue() {
           <div className="flex flex-col gap-4">
             <div>
               <p className="text-caption font-bold tracking-caps text-ink-3 uppercase">{orgName.get(truck.org_id)}</p>
-              <h2 className="text-title-2 tracking-kv text-ink tabular">{truck.plate_number}</h2>
+              <h2 className="text-title-2 tracking-kv text-ink tabular">{formatPlate(truck.plate_number)}</h2>
               <p className="text-body-sm text-ink-2">
                 {typeName.get(truck.truck_type_id)} · {messages.trucks.list.capacity.replace("{tonnes}", String(truck.capacity_kg / 1000))}
               </p>
@@ -64,7 +65,7 @@ export async function FleetQueue() {
               <p className="text-caption font-bold tracking-caps text-ink-3 uppercase">{t.paper}</p>
               <h2 className="text-title-2 text-ink">{docName.get(doc.doc_type_id)}</h2>
               <p className="text-body-sm text-ink-2">
-                {t.truckOf.replace("{plate}", plateOf.get(doc.subject_id) ?? "").replace("{org}", orgName.get(doc.org_id) ?? "")}
+                {t.truckOf.replace("{plate}", formatPlate(plateOf.get(doc.subject_id) ?? "")).replace("{org}", orgName.get(doc.org_id) ?? "")}
               </p>
               {doc.expires_on ? <p className="text-body-sm font-semibold text-ink">{t.expires.replace("{date}", date.format(new Date(doc.expires_on)))}</p> : null}
             </div>

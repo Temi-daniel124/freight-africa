@@ -3,17 +3,12 @@ import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { StatusChip, type StatusTone } from "@/components/ui/chip";
 import { EmptyState } from "@/components/ui/empty-state";
+import { formatPlate } from "@/lib/plate";
 import { supabaseServer } from "@/lib/supabase/server";
 import messages from "@/messages/en.json";
 
 const t = messages.trucks.list;
 const TONES: Record<string, StatusTone> = { draft: "danger", pending_review: "warning", active: "success", paused: "warning", suspended: "danger", retired: "info" };
-
-/** LSR123XY → LSR 123 XY (the usual Nigerian plate shape), anything else as it is. */
-function plate(value: string) {
-  const match = /^([A-Z]{3})(\d{2,3})([A-Z]{2})$/.exec(value);
-  return match ? `${match[1]} ${match[2]} ${match[3]}` : value;
-}
 
 /** T-08 Trucks: every truck with its status, and Add a truck. */
 export async function TrucksPage() {
@@ -48,7 +43,7 @@ export async function TrucksPage() {
               <Truck className="size-5" strokeWidth={1.75} />
             </span>
             <span className="min-w-0 flex-1">
-              <span className="block text-body font-bold tracking-kv text-ink tabular">{plate(truck.plate_number)}</span>
+              <span className="block text-body font-bold tracking-kv text-ink tabular">{formatPlate(truck.plate_number)}</span>
               <span className="block truncate text-body-sm text-ink-2">
                 {typeName.get(truck.truck_type_id)} · {t.capacity.replace("{tonnes}", String(truck.capacity_kg / 1000))}
               </span>
