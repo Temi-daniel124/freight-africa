@@ -444,6 +444,13 @@ launch (D017); the `language` column is kept for later.
 | `driving_lock_passenger_minutes` | 30 |
 | `hold_push_until_still_minutes` | 2 |
 | `driver_confirm_reminder_hours` | 2 |
+| `dispute_window_hours` | 48 (D037) |
+| `dispute_hold_bps` | 1000 (10% of the unpaid balance when no count is given; D037) |
+| `dispute_two_person_kobo` | 100,000,000 (₦1m; D037) |
+
+Settings that change who gets paid, how much or when are money settings and need a second super admin
+(D037): every `_kobo` and `_bps` key, `card_payments_enabled`, `auto_release_hours`, `free_waiting_hours`,
+the three tier values, `agent_share_months` and the dispute settings.
 
 ## 12. Background jobs
 
