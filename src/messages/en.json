@@ -1002,7 +1002,8 @@
           "bank": "Choose your bank",
           "number": "Enter the 10-digit account number",
           "failed": "We couldn’t save that. Check your connection and try again."
-        }
+        },
+        "unchecked": "We’ll check this name against your ID before paying you."
       }
     }
   },
