@@ -12,7 +12,15 @@ export type PaymentProvider = {
   banks: () => Promise<Bank[]>;
   /** The account holder's name as the bank has it (NIBSS name enquiry), or null if the account doesn't exist. */
   resolveAccount: (input: { bankCode: string; accountNumber: string; demoName: string }) => Promise<string | null>;
+  /** A one-time account number the sender pays into (SYSTEM-LOGIC §4.1); the provider confirms the money by webhook. */
+  createCollection: (input: { paymentId: string; amountKobo: number; expiresAt: string }) => Promise<Collection>;
+  /** Money out to an owner's bank account; resolves with the provider's reference once it has left. */
+  sendPayout: (input: { payoutId: string; amountKobo: number; bankAccountId: string | null }) => Promise<string>;
+  /** Money back to the sender (one refund per payment, §7.5). */
+  sendRefund: (input: { refundId: string; amountKobo: number }) => Promise<string>;
 };
+
+export type Collection = { ref: string; accountNumber: string; bank: string };
 
 // Common Nigerian banks and their CBN codes, for the demo. Bachs's own bank list replaces it.
 const DEMO_BANKS: Bank[] = [
@@ -50,6 +58,15 @@ const demo: PaymentProvider = {
     if (accountNumber.startsWith("99")) return "CHUKWUDI OBI";
     return demoName.toUpperCase();
   },
+  // D039: the demo bank transfer. The account number is made from the payment id, so it is the same
+  // every time the sender opens the page; the demo payer confirms it with "I've paid" (no real money).
+  createCollection: async ({ paymentId }) => ({
+    ref: `demo-${paymentId}`,
+    accountNumber: `99${BigInt(`0x${paymentId.replace(/-/g, "").slice(0, 12)}`).toString().slice(-8).padStart(8, "0")}`,
+    bank: "Demo Bank (no real money)",
+  }),
+  sendPayout: async ({ payoutId }) => `demo-payout-${payoutId}`,
+  sendRefund: async ({ refundId }) => `demo-refund-${refundId}`,
 };
 
 /** The provider serving this person, or null when none is ready (production, a real account, no Bachs keys). */

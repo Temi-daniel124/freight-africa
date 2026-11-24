@@ -7,9 +7,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { supabaseServer } from "@/lib/supabase/server";
 import messages from "@/messages/en.json";
 import { AppShell, ShellContent, ShellTopBar } from "./app-shell";
-import { shellPages, shells, type PageKey, type ShellRole } from "./config";
+import { shellPages, shells, type PageKey, type ShellConfig, type ShellRole } from "./config";
 import { TeamPage } from "@/features/org/team-page";
 import { TrucksPage } from "@/features/trucks/trucks-page";
+import { BookPage, EarningsPage, LoadsPage, PaymentsPage, TripsPage } from "@/features/booking/sections";
+import { OwnerTripsPage } from "@/features/booking/owner-trips";
 import { SettingsPage } from "@/features/settings/settings-page";
 import { DriversPage } from "@/features/drivers/drivers-page";
 import { requireUnlocked } from "@/features/auth/unlock";
@@ -17,7 +19,7 @@ import { getMyJoining, type SetupRole } from "@/features/onboarding/setup";
 import { SetupChecklist } from "@/features/onboarding/setup-checklist";
 import { PlaceholderPage } from "./placeholder-page";
 import { ShipperHomeFirstVisit } from "./shipper-home";
-import { getViewer, greetingFor } from "./viewer";
+import { getViewer, greetingFor, type Viewer } from "./viewer";
 
 // Each role's routes (src/app/app/<base>/...) are one line each, built here from the shell config.
 
@@ -149,6 +151,35 @@ export function shellPageMetadata(role: ShellRole) {
   };
 }
 
+/** The page body for a shell tab; pages not built yet show their placeholder. */
+async function sectionBody(page: PageKey, config: ShellConfig, viewer: Promise<Viewer>) {
+  const shipper = config.role === "shipper";
+  switch (page) {
+    case "team":
+      return <TeamPage viewer={viewer} />;
+    case "trucks":
+      return <TrucksPage />;
+    case "drivers":
+      return <DriversPage orgId={(await viewer).orgId} />;
+    case "settings":
+    case "me":
+      return <SettingsPage viewer={viewer} base={config.base} />;
+    case "book":
+      return <BookPage viewer={viewer} />;
+    case "trips":
+      return shipper ? <TripsPage viewer={viewer} /> : <OwnerTripsPage viewer={viewer} />;
+    case "payments":
+      return <PaymentsPage viewer={viewer} />;
+    case "loads":
+    case "findLoads":
+      return <LoadsPage viewer={viewer} />;
+    case "earnings":
+      return config.role === "agent" ? <PlaceholderPage config={config} page={page} /> : <EarningsPage viewer={viewer} />;
+    default:
+      return <PlaceholderPage config={config} page={page} />;
+  }
+}
+
 async function SectionPage({ role, params }: { role: ShellRole; params: Promise<{ page: string }> }) {
   const { page } = await params;
   const resolved = await resolveRole(role);
@@ -160,7 +191,7 @@ async function SectionPage({ role, params }: { role: ShellRole; params: Promise<
   return (
     <>
       <ShellTopBar config={config} viewer={viewer} title={messages.shell.pages[page].title} />
-      <ShellContent>{page === "team" ? <TeamPage viewer={viewer} /> : page === "trucks" ? <TrucksPage /> : page === "drivers" ? <DriversPage orgId={(await viewer).orgId} /> : page === "settings" || page === "me" ? <SettingsPage viewer={viewer} base={config.base} /> : <PlaceholderPage config={config} page={page} />}</ShellContent>
+      <ShellContent>{await sectionBody(page, config, viewer)}</ShellContent>
     </>
   );
 }

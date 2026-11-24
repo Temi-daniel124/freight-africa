@@ -2,6 +2,7 @@ import { timingSafeEqual } from "node:crypto";
 import { resendEmailSender } from "@/lib/email/sender";
 import { serverEnv } from "@/lib/env.server";
 import { dispatchNotifications, type Claimed } from "@/lib/jobs/dispatch";
+import { processMoneyOut } from "@/features/money/money-out";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
 // POST /api/jobs/dispatch: called every minute by pg_cron through pg_net with JOBS_SECRET
@@ -55,5 +56,7 @@ export async function POST(request: Request) {
     },
     email,
   });
-  return Response.json(counts);
+  // SYSTEM-LOGIC §7.5: queued payouts and refunds go out on the same minute tick.
+  const money = await processMoneyOut().catch(() => null);
+  return Response.json({ ...counts, money });
 }

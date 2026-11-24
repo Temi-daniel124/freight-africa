@@ -16,6 +16,14 @@ export type TruckLoad =
 // The cargo area in the 320 × 140 drawing, as % of the frame (the label box sits here).
 const CARGO = { left: 3.5, top: 14, width: 64, height: 52 };
 
+/** Which drawing a truck type uses (catalogue code → kind). */
+export function truckKind(code: string): TruckKind {
+  if (code.startsWith("flatbed") || code.startsWith("container")) return code.startsWith("container") ? "covered" : "flatbed";
+  if (code === "tipper" || code === "tanker" || code === "livestock") return code;
+  return "covered";
+}
+
+
 /** Whole-number % rounded to 5, for "80% full" (D046). */
 export function fillPercent(weightKg: number, capacityKg: number) {
   if (!(capacityKg > 0) || !(weightKg >= 0)) return 0;
