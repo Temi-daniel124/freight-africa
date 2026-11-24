@@ -16,7 +16,8 @@ export function signedInCsp(): string {
     "default-src 'self'",
     `script-src 'self' 'unsafe-inline' ${TURNSTILE}${dev ? " 'unsafe-eval'" : ""}`,
     "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data: blob:",
+    // Signed links to private photos (ID checks, papers) come from Supabase Storage.
+    `img-src 'self' data: blob: ${supabase.origin}`,
     "font-src 'self'",
     `connect-src 'self' ${supabase.origin} wss://${supabase.host}${dev ? " ws:" : ""}`,
     "worker-src 'self' blob:",
