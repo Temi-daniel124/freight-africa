@@ -12,6 +12,9 @@ import { TeamPage } from "@/features/org/team-page";
 import { TrucksPage } from "@/features/trucks/trucks-page";
 import { BookPage, EarningsPage, LoadsPage, PaymentsPage, TripsPage } from "@/features/booking/sections";
 import { OwnerTripsPage } from "@/features/booking/owner-trips";
+import { DriverTrip } from "@/features/home/driver-trip";
+import { OwnerHome } from "@/features/home/owner-home";
+import { SenderHome } from "@/features/home/sender-home";
 import { SettingsPage } from "@/features/settings/settings-page";
 import { DriversPage } from "@/features/drivers/drivers-page";
 import { requireUnlocked } from "@/features/auth/unlock";
@@ -98,7 +101,15 @@ async function HomeContent({ role }: { role: ShellRole }) {
     <div className="flex flex-col gap-5">
       {resolved === "shipper" ? <VerifiedSender /> : null}
       {setupRole ? <SetupChecklist role={setupRole} /> : null}
-      {resolved === "shipper" ? <ShipperHomeFirstVisit config={config} /> : <PlaceholderPage config={config} page={config.home} />}
+      {resolved === "shipper" ? (
+        (await getViewer(config)).orgId ? <SenderHome viewer={getViewer(config)} /> : <ShipperHomeFirstVisit config={config} />
+      ) : resolved === "owner" || resolved === "ownerDriver" ? (
+        <OwnerHome viewer={getViewer(config)} drives={resolved === "ownerDriver"} />
+      ) : resolved === "driver" ? (
+        <DriverTrip />
+      ) : (
+        <PlaceholderPage config={config} page={config.home} />
+      )}
     </div>
   );
 }
@@ -206,10 +217,21 @@ export function shellSection(role: ShellRole) {
   };
 }
 
-async function SubpageBody({ role, title, children }: { role: ShellRole; title: string; children: ReactNode }) {
+async function SubpageBody({ role, title, flush, children }: { role: ShellRole; title: string; flush?: boolean; children: ReactNode }) {
   const config = shells[await resolveRole(role)];
   await requireUnlocked(config.base);
   const viewer = getViewer(config);
+  if (flush) {
+    // Full-screen pages (the trip map): no top bar on phones, no padding.
+    return (
+      <>
+        <div className="max-lg:hidden">
+          <ShellTopBar config={config} viewer={viewer} title={title} />
+        </div>
+        <main>{children}</main>
+      </>
+    );
+  }
   return (
     <>
       <ShellTopBar config={config} viewer={viewer} title={title} />
@@ -219,10 +241,10 @@ async function SubpageBody({ role, title, children }: { role: ShellRole; title: 
 }
 
 /** A page deeper than a tab (Add a truck), inside the role's shell with its own title. */
-export function ShellSubpage({ role, title, children }: { role: ShellRole; title: string; children: ReactNode }) {
+export function ShellSubpage({ role, title, flush, children }: { role: ShellRole; title: string; flush?: boolean; children: ReactNode }) {
   return (
     <Suspense fallback={<Skeleton className="m-4 h-40 lg:m-8" />}>
-      <SubpageBody role={role} title={title}>
+      <SubpageBody role={role} title={title} flush={flush}>
         {children}
       </SubpageBody>
     </Suspense>

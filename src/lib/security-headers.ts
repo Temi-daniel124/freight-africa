@@ -17,9 +17,9 @@ export function signedInCsp(): string {
     `script-src 'self' 'unsafe-inline' ${TURNSTILE}${dev ? " 'unsafe-eval'" : ""}`,
     "style-src 'self' 'unsafe-inline'",
     // Signed links to private photos (ID checks, papers) come from Supabase Storage.
-    `img-src 'self' data: blob: ${supabase.origin}`,
+    `img-src 'self' data: blob: ${supabase.origin} https://tiles.openfreemap.org`,
     "font-src 'self'",
-    `connect-src 'self' ${supabase.origin} wss://${supabase.host}${dev ? " ws:" : ""}`,
+    `connect-src 'self' ${supabase.origin} wss://${supabase.host} https://tiles.openfreemap.org${dev ? " ws:" : ""}`,
     "worker-src 'self' blob:",
     `frame-src ${TURNSTILE}`,
     "frame-ancestors 'none'",
