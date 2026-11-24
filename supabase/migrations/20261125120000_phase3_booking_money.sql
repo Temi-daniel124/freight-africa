@@ -1011,28 +1011,28 @@ alter table public.payouts enable row level security;
 alter table public.refunds enable row level security;
 
 -- Loads and trips refer to each other; these definer helpers keep their policies from looping.
-create function private.load_sender_sees(p_load uuid) returns boolean language sql stable security definer set search_path = '' as $$
+create function public.load_sender_sees(p_load uuid) returns boolean language sql stable security definer set search_path = '' as $$
   select coalesce((select public.can_in_org(l.shipper_org_id, 'view_trips') from public.loads l where l.id = p_load), false);
 $$;
-create function private.load_carrier_sees(p_load uuid) returns boolean language sql stable security definer set search_path = '' as $$
+create function public.load_carrier_sees(p_load uuid) returns boolean language sql stable security definer set search_path = '' as $$
   select exists (select 1 from public.trips t where t.load_id = p_load and public.can_in_org(t.transporter_org_id, 'load_board'));
 $$;
 
-create function private.can_see_trip(p_trip public.trips) returns boolean language sql stable security definer set search_path = '' as $$
+create function public.can_see_trip(p_trip public.trips) returns boolean language sql stable security definer set search_path = '' as $$
   select public.can_in_org(p_trip.transporter_org_id, 'view_trips') and (public.can_in_org(p_trip.transporter_org_id, 'load_board') or p_trip.driver_id = (select auth.uid()));
 $$;
 
 create policy "loads: sender reads" on public.loads for select to authenticated using ((select public.can_in_org(shipper_org_id, 'view_trips')));
-create policy "loads: carrier of the trip reads" on public.loads for select to authenticated using ((select private.load_carrier_sees(id)));
+create policy "loads: carrier of the trip reads" on public.loads for select to authenticated using ((select public.load_carrier_sees(id)));
 create policy "loads: staff read" on public.loads for select to authenticated using ((select public.is_staff()));
-create policy "stops: as the load" on public.load_stops for select to authenticated using ((select private.load_sender_sees(load_id)) or (select private.load_carrier_sees(load_id)) or (select public.is_staff()));
+create policy "stops: as the load" on public.load_stops for select to authenticated using ((select public.load_sender_sees(load_id)) or (select public.load_carrier_sees(load_id)) or (select public.is_staff()));
 create policy "payments: sender money" on public.payments for select to authenticated using ((select public.can_in_org(shipper_org_id, 'pay')) or (select public.can_in_org(shipper_org_id, 'see_money')));
 create policy "payments: staff read" on public.payments for select to authenticated using ((select public.is_staff()));
-create policy "offers: sender" on public.offers for select to authenticated using ((select private.load_sender_sees(load_id)));
+create policy "offers: sender" on public.offers for select to authenticated using ((select public.load_sender_sees(load_id)));
 create policy "offers: owner" on public.offers for select to authenticated using ((select public.can_in_org(transporter_org_id, 'load_board')));
 create policy "offers: staff" on public.offers for select to authenticated using ((select public.is_staff()));
-create policy "trips: sender" on public.trips for select to authenticated using ((select private.load_sender_sees(load_id)));
-create policy "trips: carrier" on public.trips for select to authenticated using ((select private.can_see_trip(trips)));
+create policy "trips: sender" on public.trips for select to authenticated using ((select public.load_sender_sees(load_id)));
+create policy "trips: carrier" on public.trips for select to authenticated using ((select public.can_see_trip(trips)));
 create policy "trips: staff" on public.trips for select to authenticated using ((select public.is_staff()));
 create policy "trip events: as the trip" on public.trip_events for select to authenticated using (exists (select 1 from public.trips t where t.id = trip_events.trip_id));
 create policy "payouts: owner money" on public.payouts for select to authenticated using ((select public.can_in_org(org_id, 'see_money')));
@@ -1092,7 +1092,10 @@ begin
     'public.approve_money_out(text, uuid)',
     'public.staff_trip_step(uuid, text, int, int)',
     'public.trip_money(uuid)',
-    'public.load_board(uuid)'
+    'public.load_board(uuid)',
+    'public.can_see_trip(public.trips)',
+    'public.load_sender_sees(uuid)',
+    'public.load_carrier_sees(uuid)'
   ] loop
     execute format('revoke all on function %s from public, anon', f);
     execute format('grant execute on function %s to authenticated', f);
@@ -1110,8 +1113,7 @@ begin
     'private.price(uuid, uuid, uuid, uuid, int)', 'private.shipper_fee_bps(uuid)', 'private.queue_refund(uuid, bigint, text, text, uuid)',
     'private.accept_offer(uuid, uuid)', 'private.owner_tier(uuid)', 'private.queue_payout(uuid, public.payout_kind, bigint, uuid)',
     'private.trip_loaded(uuid, uuid, int, int)', 'private.trip_delivered(uuid, uuid)', 'private.release_balance(uuid, boolean)',
-    'private.round_to(numeric, bigint)', 'private.new_ref()', 'private.can_see_trip(public.trips)',
-    'private.load_sender_sees(uuid)', 'private.load_carrier_sees(uuid)'
+    'private.round_to(numeric, bigint)', 'private.new_ref()'
   ] loop
     execute format('revoke all on function %s from public', f);
   end loop;
