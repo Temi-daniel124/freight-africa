@@ -89,7 +89,7 @@ async function lookupContext() {
   const [{ data: isDemo }, { data: profile }, { data: check }, org] = await Promise.all([
     supabase.rpc("am_i_demo"),
     supabase.from("profiles").select("full_name").eq("id", userId).maybeSingle(),
-    supabase.from("verification_sessions").select("name_on_id").eq("status", "approved").order("created_at", { ascending: false }).limit(1).maybeSingle(),
+    supabase.from("verification_sessions").select("name_on_id").eq("user_id", userId).eq("status", "approved").order("created_at", { ascending: false }).limit(1).maybeSingle(),
     myTransporter(supabase),
   ]);
   // Only a name our identity check verified counts (review fix): names people type could be anyone's.
