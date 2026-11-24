@@ -3,7 +3,9 @@
 -- business no longer sees it.
 
 create function public.is_current_driver(p_org uuid, p_user uuid) returns boolean language sql stable security definer set search_path = '' as $$
-  select exists (select 1 from public.organization_members m where m.org_id = p_org and m.user_id = p_user and m.is_driver and m.status = 'active');
+  -- Answers only for someone who manages that business's drivers, or about oneself (no membership oracle).
+  select (public.can_in_org(p_org, 'manage_drivers') or p_user = (select auth.uid()))
+    and exists (select 1 from public.organization_members m where m.org_id = p_org and m.user_id = p_user and m.is_driver and m.status = 'active');
 $$;
 revoke all on function public.is_current_driver(uuid, uuid) from public;
 grant execute on function public.is_current_driver(uuid, uuid) to authenticated;
