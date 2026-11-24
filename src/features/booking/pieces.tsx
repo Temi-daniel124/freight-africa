@@ -4,7 +4,8 @@ import { StatusChip, type StatusTone } from "@/components/ui/chip";
 import { formatNaira } from "@/lib/money";
 import { cn } from "@/lib/utils";
 import messages from "@/messages/en.json";
-import { loadLine, progressStep, type LoadRow } from "./data";
+import type { LoadRow } from "./data";
+import { loadLine, progressStep } from "./format";
 
 const t = messages.trips;
 

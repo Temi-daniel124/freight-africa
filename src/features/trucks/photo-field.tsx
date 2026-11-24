@@ -10,7 +10,8 @@ import messages from "@/messages/en.json";
 
 const t = messages.trucks.add;
 
-type Ticket = { status: "ok"; path: string; token: string } | { status: "error" };
+type Ticket =
+  { status: "ok"; path: string; token: string } | { status: "error" };
 
 /**
  * One photo: the camera (or a file), a preview, Retake. The photo goes straight to private storage with a
@@ -40,7 +41,10 @@ export function PhotoField({
   const [busy, setBusy] = useState(false);
   const [failed, setFailed] = useState(false);
   const input = useRef<HTMLInputElement>(null);
-  useEffect(() => () => (preview ? URL.revokeObjectURL(preview) : undefined), [preview]);
+  useEffect(
+    () => () => (preview ? URL.revokeObjectURL(preview) : undefined),
+    [preview],
+  );
 
   async function choose(file: File | undefined) {
     if (!file) return;
@@ -52,7 +56,11 @@ export function PhotoField({
       setPreview(URL.createObjectURL(blob));
       const t1 = await ticket();
       if (t1.status !== "ok") throw new Error("ticket");
-      const { error: uploadError } = await supabaseBrowser().storage.from(bucket).uploadToSignedUrl(t1.path, t1.token, blob, { contentType: "image/jpeg" });
+      const { error: uploadError } = await supabaseBrowser()
+        .storage.from(bucket)
+        .uploadToSignedUrl(t1.path, t1.token, blob, {
+          contentType: "image/jpeg",
+        });
       if (uploadError) throw uploadError;
       setPath(t1.path);
       onUploaded?.(t1.path);
@@ -71,10 +79,26 @@ export function PhotoField({
         {label}
       </span>
       <input type="hidden" name={name} value={path} />
-      <input ref={input} type="file" accept="image/*" capture="environment" className="sr-only" tabIndex={-1} aria-labelledby={`${id}-label`} onChange={(event) => void choose(event.target.files?.[0])} />
+      <input
+        ref={input}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        className="sr-only"
+        tabIndex={-1}
+        aria-labelledby={`${id}-label`}
+        onChange={(event) => void choose(event.target.files?.[0])}
+      />
       {preview ? (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={preview} alt="" className={cn("w-full rounded-inner border border-line bg-paper object-cover", compact ? "aspect-[4/3]" : "aspect-[3/2]")} />
+        <img
+          src={preview}
+          alt=""
+          className={cn(
+            "w-full rounded-inner border border-line bg-paper object-cover",
+            compact ? "aspect-[4/3]" : "aspect-[3/2]",
+          )}
+        />
       ) : (
         <button
           type="button"
@@ -90,15 +114,31 @@ export function PhotoField({
           {busy ? t.uploading : t.takePhoto}
         </button>
       )}
-      {help ? <p className="text-label font-normal text-ink-3">{help}</p> : null}
+      {help ? (
+        <p className="text-label font-normal text-ink-3">{help}</p>
+      ) : null}
       {preview ? (
-        <Button variant="secondary" size="md" onClick={() => input.current?.click()} disabled={busy} className="self-start">
+        <Button
+          variant="secondary"
+          size="md"
+          onClick={() => input.current?.click()}
+          disabled={busy}
+          className="self-start"
+        >
           {busy ? t.uploading : t.retake}
         </Button>
       ) : null}
       {failed || error ? (
-        <p id={`${id}-error`} role="alert" className="flex items-start gap-1.5 text-label font-medium text-danger">
-          <TriangleAlert aria-hidden className="mt-px size-4 shrink-0" strokeWidth={1.75} />
+        <p
+          id={`${id}-error`}
+          role="alert"
+          className="flex items-start gap-1.5 text-label font-medium text-danger"
+        >
+          <TriangleAlert
+            aria-hidden
+            className="mt-px size-4 shrink-0"
+            strokeWidth={1.75}
+          />
           {failed ? t.errors.upload : error}
         </p>
       ) : null}

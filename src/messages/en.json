@@ -2046,5 +2046,19 @@
       "arrivedDropoff": "I’ve arrived",
       "delivered": "Hand over the goods"
     }
+  },
+  "truckDetail": {
+    "title": "Truck",
+    "currentTrip": "Current trip",
+    "pays": "This trip pays you",
+    "history": "Trip history",
+    "noTrips": "No trips yet.",
+    "driver": "Driver",
+    "papers": "Papers",
+    "noPapers": "No papers yet.",
+    "assign": "Assign driver",
+    "assignSave": "Save",
+    "pause": "Pause truck",
+    "resume": "Let it take loads again"
   }
 }
