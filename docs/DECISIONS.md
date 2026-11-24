@@ -557,6 +557,10 @@ account (`is_demo`). Demo accounts and their data (`scripts/seed-demo.mjs`) are 
 the cleanup before launch removes them in one go.
 Demo data is seen only by demo accounts: demo loads never reach a real owner's load board, and real
 loads never reach a demo account, so a review can't touch real users or real money.
+The exception is the four demo staff accounts (verification, operations, finance, support): they are
+real staff rows, so after two-step sign-in they read what any staff member of that role reads. Before
+launch that is almost nothing; their inboxes are the founder's; and `--remove` deletes them with the
+rest before launch.
 
 **Why.** The founder reviews whole phases with demo accounts; the real keys switch on without
 rewriting business code.
