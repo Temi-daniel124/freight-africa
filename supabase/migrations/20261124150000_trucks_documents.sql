@@ -28,6 +28,8 @@ create table public.trucks (
   default_driver_id uuid references public.profiles (id) on delete set null,
   review_note text check (review_note is null or char_length(review_note) <= 300),
   reviewed_by uuid references public.profiles (id) on delete set null,
+  -- Set only when staff approve the truck itself (cleared if they reject it); papers can't stand in for it.
+  approved_at timestamptz,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -98,7 +100,7 @@ $$;
 -- The truck's live position is for trips (Phase 4); the business sees it there, not here.
 revoke select on public.trucks from authenticated;
 grant select (id, org_id, plate_number, truck_type_id, capacity_kg, make, model, year, photo_paths, status, availability, unavailable_until,
-  tracker_device_id, corridor_ids, default_driver_id, review_note, created_at, updated_at) on public.trucks to authenticated;
+  tracker_device_id, corridor_ids, default_driver_id, review_note, approved_at, created_at, updated_at) on public.trucks to authenticated;
 
 -- Photos of trucks and papers: <org id>/<file>. Owners and managers add to their business's folder;
 -- they and staff read. Nothing is changed or deleted (a new paper is a new photo).
@@ -115,7 +117,7 @@ create policy "fleet photos: business uploads" on storage.objects for insert to 
 create policy "fleet photos: business reads" on storage.objects for select to authenticated
   using (bucket_id = 'fleet' and (select public.can_in_org(private.folder_org(name), 'view_business')));
 create policy "fleet photos: staff read" on storage.objects for select to authenticated
-  using (bucket_id = 'fleet' and (select public.is_staff()));
+  using (bucket_id = 'fleet' and (select public.is_staff_in(array['super_admin', 'verification', 'operations', 'support']::public.staff_role[])));
 
 -- ---------------------------------------------------------------------------------------------------
 -- Adding (T-09). Photos must already be in the business's folder.
@@ -254,7 +256,7 @@ begin
     where subject_kind = v_doc.subject_kind and subject_id = v_doc.subject_id and doc_type_id = v_doc.doc_type_id and id <> p_document and status = 'approved';
     if v_doc.subject_kind = 'truck' then
       update public.trucks set status = 'active'
-      where id = v_doc.subject_id and status in ('pending_review', 'paused') and reviewed_by is not null and private.truck_papers_ok(id);
+      where id = v_doc.subject_id and status in ('pending_review', 'paused') and approved_at is not null and private.truck_papers_ok(id);
     end if;
   else
     select m.user_id into v_owner from public.organization_members m where m.org_id = v_doc.org_id and m.transporter_role = 'owner' and m.status = 'active' limit 1;
@@ -282,6 +284,7 @@ begin
   end if;
   update public.trucks
   set reviewed_by = v_user, review_note = v_note,
+      approved_at = case when p_approve then now() end,
       status = case when not p_approve then 'draft'::public.truck_status
                     when private.truck_papers_ok(p_truck) then 'active'::public.truck_status
                     else 'pending_review'::public.truck_status end
