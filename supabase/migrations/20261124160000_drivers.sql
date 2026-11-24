@@ -9,8 +9,10 @@ create table public.drivers (
   licence_number text check (licence_number is null or licence_number ~ '^[A-Z0-9-]{5,20}$'),
   licence_expires_on date,
   default_truck_id uuid references public.trucks (id) on delete set null,
-  -- pending until identity and licence are approved; suspended by the owner ("Pause driver") or staff.
+  -- pending until identity and licence are approved; suspended only by staff.
   status public.account_status not null default 'pending',
+  -- The owner's "Pause driver" (T-13): no new trips. Separate from a staff suspension, which only staff lift.
+  paused boolean not null default false,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
@@ -31,7 +33,11 @@ create function private.ensure_driver() returns trigger language plpgsql securit
 begin
   if new.is_driver and new.status = 'active' then
     insert into public.drivers (user_id, org_id) values (new.user_id, new.org_id)
-    on conflict (user_id) do update set org_id = excluded.org_id;
+    on conflict (user_id) do update
+      set org_id = excluded.org_id,
+          paused = case when public.drivers.org_id <> excluded.org_id then false else public.drivers.paused end,
+          status = case when public.drivers.org_id <> excluded.org_id and public.drivers.status <> 'suspended' then 'pending'::public.account_status else public.drivers.status end;
+    perform private.refresh_driver(new.user_id);
   end if;
   return null;
 end;
@@ -40,9 +46,19 @@ revoke all on function private.ensure_driver() from public;
 create trigger organization_members_driver after insert or update of is_driver, status on public.organization_members
   for each row execute function private.ensure_driver();
 
-insert into public.drivers (user_id, org_id)
-select user_id, org_id from public.organization_members where is_driver and status = 'active'
-on conflict (user_id) do nothing;
+-- Someone who leaves the business, stops driving there or is deactivated stops being its driver (review).
+create function private.drop_driver() returns trigger language plpgsql security definer set search_path = '' as $$
+begin
+  if old.is_driver and (tg_op = 'DELETE' or not new.is_driver or new.status <> 'active') then
+    delete from public.drivers where user_id = old.user_id and org_id = old.org_id;
+  end if;
+  return null;
+end;
+$$;
+revoke all on function private.drop_driver() from public;
+create trigger organization_members_drop_driver after delete or update of is_driver, status on public.organization_members
+  for each row execute function private.drop_driver();
+
 
 -- May this person drive? Identity approved, and an approved licence in date. Suspended stays suspended.
 create function private.refresh_driver(p_user uuid) returns void language plpgsql security definer set search_path = '' as $$
@@ -51,9 +67,11 @@ declare
 begin
   select d.* into v_licence from public.documents d join public.document_types dt on dt.id = d.doc_type_id
   where d.subject_kind = 'driver' and d.subject_id = p_user and dt.code = 'drivers_licence' and d.status = 'approved'
+    and d.org_id = (select org_id from public.drivers where user_id = p_user)
   order by d.created_at desc limit 1;
   update public.drivers dr
   set licence_expires_on = v_licence.expires_on,
+      licence_number = coalesce(v_licence.ocr ->> 'licence_number', dr.licence_number),
       status = case
         when dr.status = 'suspended' then 'suspended'::public.account_status
         when (select kyc_status from public.profiles where id = p_user) = 'approved'
@@ -65,6 +83,14 @@ begin
 end;
 $$;
 revoke all on function private.refresh_driver(uuid) from public;
+
+-- Drivers who joined before this migration: the business they joined first, then their status.
+insert into public.drivers (user_id, org_id)
+select distinct on (user_id) user_id, org_id from public.organization_members
+where is_driver and status = 'active'
+order by user_id, created_at
+on conflict (user_id) do nothing;
+select private.refresh_driver(user_id) from public.drivers;
 
 create function private.refresh_driver_from_profile() returns trigger language plpgsql security definer set search_path = '' as $$
 begin
@@ -120,9 +146,9 @@ begin
      or p_photo like '%..%' or not exists (select 1 from storage.objects where bucket_id = 'fleet' and name = p_photo) then
     raise exception 'that photo is not yours' using errcode = '42501';
   end if;
-  update public.drivers set licence_number = coalesce(v_number, licence_number) where user_id = v_user;
-  insert into public.documents (doc_type_id, subject_kind, subject_id, org_id, file_path, expires_on)
-  values ((select id from public.document_types where code = 'drivers_licence'), 'driver', v_user, v_driver.org_id, p_photo, p_expires_on)
+  insert into public.documents (doc_type_id, subject_kind, subject_id, org_id, file_path, expires_on, ocr)
+  values ((select id from public.document_types where code = 'drivers_licence'), 'driver', v_user, v_driver.org_id, p_photo, p_expires_on,
+    case when v_number is not null then jsonb_build_object('licence_number', v_number) end)
   returning id into v_id;
   return v_id;
 end;
@@ -138,12 +164,7 @@ begin
   if v_driver.user_id is null or not public.can_in_org(v_driver.org_id, 'manage_drivers') then
     raise exception 'not allowed' using errcode = '42501';
   end if;
-  if p_paused then
-    update public.drivers set status = 'suspended' where user_id = p_driver;
-  else
-    update public.drivers set status = 'pending' where user_id = p_driver and status = 'suspended';
-    perform private.refresh_driver(p_driver);
-  end if;
+  update public.drivers set paused = p_paused where user_id = p_driver;
 end;
 $$;
 
