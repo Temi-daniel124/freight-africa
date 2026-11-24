@@ -6,35 +6,6 @@ import { supabaseServer } from "@/lib/supabase/server";
 import messages from "@/messages/en.json";
 import type { TrackData } from "./tracking-view";
 
-type MapRow = {
-  ref: string;
-  status: string;
-  load_status: string;
-  goods: string;
-  weight_kg: number | null;
-  quantity: number | null;
-  quantity_unit: string | null;
-  from_city: string;
-  to_city: string;
-  from_lat: number;
-  from_lng: number;
-  to_lat: number;
-  to_lng: number;
-  truck_lat: number | null;
-  truck_lng: number | null;
-  last_ping_at: string | null;
-  pickup_from: string;
-  delivered_at: string | null;
-  plate: string;
-  truck_type: string;
-  truck_type_code: string;
-  capacity_kg: number;
-  driver_first_name: string | null;
-  driver_avatar: string | null;
-  driver_phone: string | null;
-  held_kobo: number | null;
-};
-
 /** One trip for the map (trip_map checks who may see it, and hides the phone and money as D018/D003 say). */
 export async function trackData(tripId: string): Promise<TrackData | null> {
   const supabase = await supabaseServer();
