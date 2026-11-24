@@ -10,6 +10,7 @@ import { AppShell, ShellContent, ShellTopBar } from "./app-shell";
 import { shellPages, shells, type PageKey, type ShellRole } from "./config";
 import { TeamPage } from "@/features/org/team-page";
 import { TrucksPage } from "@/features/trucks/trucks-page";
+import { SettingsPage } from "@/features/settings/settings-page";
 import { DriversPage } from "@/features/drivers/drivers-page";
 import { requireUnlocked } from "@/features/drivers/pin";
 import { getMyJoining, type SetupRole } from "@/features/onboarding/setup";
@@ -23,15 +24,15 @@ import { getViewer, greetingFor } from "./viewer";
 export const shellMetadata: Metadata = { robots: { index: false, follow: false }, manifest: "/app.webmanifest" };
 
 /**
- * /app/haul serves owners and owner-drivers: an owner-driver (an owner who drives, D003) gets the Drive
- * tab. Before the transporter organisation exists, the A-03/T-ON choice (profiles.joining_as) decides.
+ * /app/haul serves truck owners; an owner or admin with "I drive my own truck" on (is_driver, D043) gets
+ * the raised Drive tab.
  */
 const resolveRole = cache(async (role: ShellRole): Promise<ShellRole> => {
   // Home and the shells depend on who is signed in, so they render per request (no prerendered clock).
   await connection();
   if (role !== "owner") return role;
-  const { joined, kinds } = await getMyJoining();
-  return kinds.drives || (!kinds.transporter && joined === "owner_driver") ? "ownerDriver" : "owner";
+  const { kinds } = await getMyJoining();
+  return kinds.drives ? "ownerDriver" : "owner";
 });
 
 async function ResolvedShell({ role, children }: { role: ShellRole; children: ReactNode }) {
@@ -169,7 +170,7 @@ async function SectionPage({ role, params }: { role: ShellRole; params: Promise<
   return (
     <>
       <ShellTopBar config={config} viewer={viewer} title={messages.shell.pages[page].title} />
-      <ShellContent>{page === "team" ? <TeamPage viewer={viewer} /> : page === "trucks" ? <TrucksPage /> : page === "drivers" ? <DriversPage orgId={(await viewer).orgId} /> : <PlaceholderPage config={config} page={page} />}</ShellContent>
+      <ShellContent>{page === "team" ? <TeamPage viewer={viewer} /> : page === "trucks" ? <TrucksPage /> : page === "drivers" ? <DriversPage orgId={(await viewer).orgId} /> : page === "settings" ? <SettingsPage viewer={viewer} /> : <PlaceholderPage config={config} page={page} />}</ShellContent>
     </>
   );
 }

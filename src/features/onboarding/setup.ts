@@ -22,9 +22,9 @@ const STEPS: Record<SetupRole, SetupStepKey[]> = {
   driver: ["identity", "licence", "pin"],
 };
 
-/** Which shell role a joining choice maps to. */
-export function setupRoleFor(joined: Joined): SetupRole {
-  return joined === "owner_driver" ? "ownerDriver" : joined;
+/** Which setup a joining choice maps to; an owner who drives gets the licence step (D043). */
+export function setupRoleFor(joined: Joined, drives = false): SetupRole {
+  return joined === "owner" && drives ? "ownerDriver" : joined;
 }
 
 type MyJoining = {

@@ -3,7 +3,6 @@
 import {
   CircleAlert,
   CircleCheck,
-  Handshake,
   Package,
   Truck,
   type LucideIcon,
@@ -52,7 +51,6 @@ type RoleFormProps = {
 const icons: Record<JoiningAs, LucideIcon> = {
   shipper: Package,
   owner: Truck,
-  agent: Handshake,
 };
 
 function FieldError({ id, children }: { id: string; children: ReactNode }) {

@@ -18,11 +18,11 @@ describe("parseContact", () => {
 });
 
 describe("account labels and shells (A-09)", () => {
-  it("names each account the way the switcher shows it", () => {
-    expect(accountLabel({ kind: "shipper", role: "owner", is_driver: false })).toBe("Sender");
+  it("names each account by type and role, never owner-driver (D043)", () => {
+    expect(accountLabel({ kind: "shipper", role: "owner", is_driver: false })).toBe("Sender · Owner");
     expect(accountLabel({ kind: "shipper", role: "admin", is_driver: false })).toBe("Sender · Admin");
-    expect(accountLabel({ kind: "transporter", role: "owner", is_driver: true })).toBe("Truck owner who drives");
-    expect(accountLabel({ kind: "transporter", role: "manager", is_driver: false })).toBe("Truck owner · Manager");
+    expect(accountLabel({ kind: "transporter", role: "owner", is_driver: true })).toBe("Truck owner · Owner");
+    expect(accountLabel({ kind: "transporter", role: "manager", is_driver: false })).toBe("Truck owner · Admin");
     expect(accountLabel({ kind: "transporter", role: "driver", is_driver: true })).toBe("Driver");
   });
   it("opens the right shell", () => {

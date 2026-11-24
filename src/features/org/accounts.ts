@@ -8,15 +8,14 @@ export type Account = { orgId: string; name: string; label: string; href: string
 
 const roles = messages.org.roles;
 
-/** "Sender · Admin", "Truck owner · Manager", "Driver" (A-09). */
+/** "Sender · Owner", "Truck owner · Admin", "Driver" (A-09, D043). */
 export function accountLabel(row: Pick<AccountRow, "kind" | "role" | "is_driver">) {
   if (row.kind === "transporter" && row.role === "driver") return roles.driver;
   const kind = messages.org.kinds[row.kind];
-  if (row.role === "owner") return row.kind === "transporter" && row.is_driver ? messages.shell.roles.ownerDriver : kind;
   return `${kind} · ${roles[row.role as keyof typeof roles] ?? row.role}`;
 }
 
-/** The shell an account opens: senders /app/ship, drivers /app/drive, owners and managers /app/haul. */
+/** The shell an account opens: senders /app/ship, drivers /app/drive, owners and admins /app/haul. */
 export function accountHref(row: Pick<AccountRow, "kind" | "role">) {
   if (row.kind === "shipper") return "/app/ship";
   return row.role === "driver" ? "/app/drive" : "/app/haul";
