@@ -17,7 +17,7 @@ insert into public.staff_members (user_id, role) values
   ('eeeeeeee-0000-4000-8000-000000000003', 'finance');
 
 -- SYSTEM-LOGIC §11: every value is there with its default.
-select is((select count(*)::int from public.settings), 55, 'all 55 settings are seeded (D037 dispute settings, D039 demo_identity_checks)');
+select is((select count(*)::int from public.settings), 56, 'all 56 settings are seeded (D037 dispute settings, D039 demo_identity_checks, D044 app_lock_minutes)');
 select is((select value from public.settings where key = 'advance_bps'), '{"new": 3000, "established": 4000, "gold": 5000}'::jsonb, 'advance rates by tier');
 select is((select value from public.settings where key = 'payout_two_person_kobo'), '500000000'::jsonb, 'payouts above ₦5m need two people');
 select is((select value from public.settings where key = 'agents_enabled'), 'true'::jsonb, 'agents are on');
@@ -33,7 +33,7 @@ set local role authenticated;
 select set_config('request.jwt.claims', '{"sub": "eeeeeeee-0000-4000-8000-000000000004", "role": "authenticated", "aal": "aal1"}', true);
 select is((select count(*)::int from public.settings), 0, 'an ordinary user reads no settings');
 select set_config('request.jwt.claims', '{"sub": "eeeeeeee-0000-4000-8000-000000000003", "role": "authenticated", "aal": "aal2"}', true);
-select is((select count(*)::int from public.settings), 55, 'staff read them all');
+select is((select count(*)::int from public.settings), 56, 'staff read them all');
 
 -- Changing (X-21): super admins only, never directly.
 select throws_ok($$select public.change_setting('max_dropoffs', '5')$$, '42501', null, 'finance cannot change settings');
