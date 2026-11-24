@@ -1,5 +1,6 @@
 "use server";
 
+import { assertUnlocked } from "@/features/auth/unlock";
 import { randomUUID } from "node:crypto";
 import { supabaseServer } from "@/lib/supabase/server";
 import { verificationProvider, type CheckPurpose } from "@/lib/verification/provider";
@@ -23,6 +24,7 @@ async function demoUser() {
 
 /** A one-time address to upload this person's ID photo to their own folder. */
 export async function identityUploadTicket(): Promise<UploadTicket> {
+  await assertUnlocked();
   const { supabase, userId, provider } = await demoUser();
   if (!userId || provider?.kind !== "demo") return { status: "error" };
   const path = `${userId}/${randomUUID()}.jpg`;
@@ -35,6 +37,7 @@ export async function identityUploadTicket(): Promise<UploadTicket> {
 }
 
 export async function submitIdentity(_previous: IdentityState, formData: FormData): Promise<IdentityState> {
+  await assertUnlocked();
   const purpose = String(formData.get("purpose") ?? "") as CheckPurpose;
   const idType = String(formData.get("idType") ?? "");
   const name = String(formData.get("name") ?? "").trim();

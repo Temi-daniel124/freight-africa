@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { readUnlockToken, UNLOCK_COOKIE, unlockCookieOptions, unlockToken } from "@/features/auth/unlock-token";
 import { publicEnv } from "@/lib/env";
 import type { Database } from "./database.types";
 
@@ -26,6 +27,12 @@ export async function refreshSession(request: NextRequest) {
     },
   });
   // getClaims verifies the token's signature and refreshes it when it has expired.
-  await supabase.auth.getClaims();
+  const { data } = await supabase.auth.getClaims();
+  // D044: while the app is in use its lock period slides forward; unused for that long, it locks.
+  const claims = data?.claims;
+  if (claims && typeof claims.session_id === "string") {
+    const minutes = readUnlockToken(request.cookies.get(UNLOCK_COOKIE)?.value, claims.sub, claims.session_id);
+    if (minutes !== null) response.cookies.set(UNLOCK_COOKIE, unlockToken(claims.sub, claims.session_id, minutes), unlockCookieOptions);
+  }
   return response;
 }

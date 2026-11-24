@@ -17,9 +17,9 @@ const TERMS_VERSION = "2026-11-15"; // src/features/onboarding/roles.ts
 const INBOX = { user: "temmydaniel124", domain: "gmail.com" };
 const email = (tag) => `${INBOX.user}+fa-${tag}@${INBOX.domain}`;
 
-function fromEnvFile(name) {
-  if (!existsSync(".env.local")) return undefined;
-  const line = readFileSync(".env.local", "utf8").split(/\r?\n/).find((entry) => entry.startsWith(`${name}=`));
+function fromEnvFile(name, file = ".env.local") {
+  if (!existsSync(file)) return undefined;
+  const line = readFileSync(file, "utf8").split(/\r?\n/).find((entry) => entry.startsWith(`${name}=`));
   return line?.slice(name.length + 1).trim().replace(/^["']|["']$/g, "") || undefined;
 }
 
@@ -47,6 +47,8 @@ export const PEOPLE = [
   { tag: "owner", name: "Ibrahim Musa", joining: "owner", role: "Truck owner (transporter owner)", tryIt: "Home, Loads, Trucks, Drivers, Earnings, Team" },
   { tag: "owner-driver", name: "Emeka Nwosu", joining: "owner", role: "Truck owner who switched on I drive my own truck", tryIt: "The owner screens plus the Drive tab" },
   { tag: "driver", name: "Sani Abubakar", joining: null, role: "Driver (works for Musa Haulage)", tryIt: "Trip, Next, History, Me: no money anywhere" },
+  // D044: a driver invited by phone only (no email). Signs in with 0803 000 0101 and the demo PIN.
+  { tag: "phone-driver", name: "Musa Bello", joining: null, phone: "2348030000101", role: "Driver invited by phone (no email)", tryIt: "Sign in with 0803 000 0101 and the PIN" },
   { tag: "agent", name: "Funke Adeyemi", joining: null, role: "Agent", tryIt: "People, Invite, Earnings" },
   { tag: "verification", name: "Kemi Balogun", staff: "verification", role: "Staff: verification", tryIt: "admin.freight-africa.com: two-step setup, then the verification queue" },
   { tag: "operations", name: "Yusuf Danjuma", staff: "operations", role: "Staff: operations", tryIt: "admin.freight-africa.com: live map, trips, loads" },
@@ -74,6 +76,7 @@ export const ORGS = [
     members: [
       { tag: "owner", transporter_role: "owner" },
       { tag: "driver", transporter_role: "driver", is_driver: true },
+      { tag: "phone-driver", transporter_role: "driver", is_driver: true },
     ],
   },
   {
@@ -103,14 +106,21 @@ function must(result, what) {
 }
 
 async function apply() {
-  const existing = new Map((await allUsers()).map((user) => [user.email?.toLowerCase(), user]));
+  const everyone = await allUsers();
+  const existing = new Map(everyone.map((user) => [user.email?.toLowerCase(), user]));
+  const byPhone = new Map(everyone.filter((user) => user.phone).map((user) => [user.phone, user]));
   const ids = {};
+  // The demo PIN lives only in the founder's git-ignored .env.founder.local (D044).
+  const pin = process.env.DEMO_PIN || fromEnvFile("DEMO_PIN", ".env.founder.local");
+  if (!pin) console.warn("  DEMO_PIN is not set in .env.founder.local: demo accounts get no PIN (they choose one at sign-in).");
 
   for (const person of PEOPLE) {
-    const address = email(person.tag);
-    let user = existing.get(address);
+    // Phone-only people get an internal address that is never shown or mailed (D044).
+    const address = person.phone ? `p-demo-${person.tag}@phone.freight-africa.com` : email(person.tag);
+    let user = person.phone ? byPhone.get(person.phone) : existing.get(address);
     if (!user) {
-      user = must(await db.auth.admin.createUser({ email: address, email_confirm: true, user_metadata: { full_name: person.name } }), `creating ${address}`).user;
+      const fields = person.phone ? { phone: person.phone, phone_confirm: true } : {};
+      user = must(await db.auth.admin.createUser({ email: address, email_confirm: true, ...fields, user_metadata: { full_name: person.name } }), `creating ${address}`).user;
     }
     ids[person.tag] = user.id;
     must(await db.from("profiles").update({ full_name: person.name, is_demo: true, joining_as: person.joining ?? null }).eq("id", user.id), `marking ${address}`);
@@ -127,7 +137,8 @@ async function apply() {
     if (person.staff) {
       must(await db.from("staff_members").upsert({ user_id: user.id, role: person.staff }, { onConflict: "user_id" }), `staff role for ${address}`);
     }
-    console.log(`  ${person.role.padEnd(32)} ${address}`);
+    if (pin) must(await db.rpc("seed_demo_pin", { p_user: user.id, p_pin: pin }), `PIN for ${address}`);
+    console.log(`  ${person.role.padEnd(32)} ${person.phone ? `0${person.phone.slice(3)}` : address}`);
   }
 
   for (const org of ORGS) {

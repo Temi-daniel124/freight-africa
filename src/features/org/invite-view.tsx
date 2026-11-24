@@ -4,14 +4,16 @@ import { buttonVariants } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { cn } from "@/lib/utils";
 import messages from "@/messages/en.json";
+import { PhoneInviteFlow } from "@/features/auth/phone-invite-flow";
 import { AcceptInviteForm } from "./accept-invite-form";
+import { roleWithArticle } from "./role-words";
 
 const t = messages.org.invite;
 
 export type InviteInfo = { orgName: string; role: string; inviter: string | null; state: string } | null;
 
 /** A-07's card: open (signed in or out), used, expired, or not found. */
-export function InviteView({ invite, token, signedIn }: { invite: InviteInfo; token: string; signedIn: boolean }) {
+export function InviteView({ invite, token, signedIn, byPhone = false }: { invite: InviteInfo; token: string; signedIn: boolean; byPhone?: boolean }) {
   const home = (
     <Link href="/app" className={cn(buttonVariants({ size: "md", variant: "secondary" }), "w-full")}>
       {t.home}
@@ -31,8 +33,10 @@ export function InviteView({ invite, token, signedIn }: { invite: InviteInfo; to
       </EmptyState>
     );
   }
-  const role = (messages.org.roles[invite.role as keyof typeof messages.org.roles] ?? invite.role).toLowerCase();
+  const role = roleWithArticle(invite.role);
   const line = (invite.inviter ? t.text.replace("{inviter}", invite.inviter) : t.textNoInviter).replace("{org}", invite.orgName).replace("{role}", role);
+  // D044: a phone invite is accepted by opening the link the owner shared: name, PIN, done.
+  if (byPhone && !signedIn) return <PhoneInviteFlow token={token} line={line} />;
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2 text-center">
@@ -44,7 +48,7 @@ export function InviteView({ invite, token, signedIn }: { invite: InviteInfo; to
       ) : (
         <div className="flex flex-col gap-3">
           <p className="text-center text-label font-normal text-ink-2">{t.signInText}</p>
-          <Link href={`/auth?next=${encodeURIComponent(`/invite/${token}`)}`} className={cn(buttonVariants({ size: "md" }), "w-full")}>
+          <Link href={`/auth?mode=start&next=${encodeURIComponent(`/invite/${token}`)}`} className={cn(buttonVariants({ size: "md" }), "w-full")}>
             {t.signIn}
           </Link>
         </div>

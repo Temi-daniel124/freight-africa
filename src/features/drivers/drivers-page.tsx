@@ -5,6 +5,7 @@ import { StatusChip, type StatusTone } from "@/components/ui/chip";
 import { EmptyState } from "@/components/ui/empty-state";
 import { supabaseServer } from "@/lib/supabase/server";
 import messages from "@/messages/en.json";
+import { PinLinkButton } from "@/features/auth/pin-link-button";
 import { PauseDriverButton } from "./pause-button";
 
 const t = messages.drivers.list;
@@ -56,6 +57,8 @@ export async function DriversPage({ orgId }: { orgId: string | null }) {
               </span>
               <StatusChip tone={tone}>{t.status[key]}</StatusChip>
               {driver && driver.status !== "suspended" ? <PauseDriverButton driver={member.user_id} paused={driver.paused} /> : null}
+              {/* D044: invited by phone (no email of their own) and forgot their PIN. */}
+              {orgId && member.status === "active" && member.phone && !member.email && !member.is_me ? <PinLinkButton orgId={orgId} memberId={member.user_id} name={member.full_name ?? ""} /> : null}
             </li>
           );
         })}

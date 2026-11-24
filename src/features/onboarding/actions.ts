@@ -1,5 +1,6 @@
 "use server";
 
+import { assertUnlocked } from "@/features/auth/unlock";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { ipKey } from "@/lib/ip-key";
@@ -8,6 +9,7 @@ import { parseJoiningAs, shellFor, TERMS_VERSION, type RoleState } from "./roles
 
 /** A-03: saves the agreements (F-10) and the choice, then opens that role's app, where Home shows what's left to set up. */
 export async function chooseRole(previous: RoleState, formData: FormData): Promise<RoleState> {
+  await assertUnlocked();
   const attempt = previous.attempt + 1;
   const role = parseJoiningAs(formData.get("role"));
   const values = {

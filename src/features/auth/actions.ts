@@ -1,12 +1,11 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { resendEmailSender } from "@/lib/email/sender";
-import { ipKey, requestHome, requestIp, requestOrigin } from "@/lib/ip-key";
+import { requestHome, requestIp, requestOrigin } from "@/lib/ip-key";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { supabaseServer } from "@/lib/supabase/server";
 import { passesTurnstile, turnstileSiteKey } from "@/lib/turnstile";
-import { signInCodeEmail } from "./code-email";
+import { issueCode } from "./code-issue";
 import { safeNext } from "./next-path";
 import { signInOptions } from "./options";
 import { clearPendingCode, codeKey, readPendingCode, setPendingCode } from "./pending";
@@ -18,52 +17,6 @@ const text = (formData: FormData, key: string) => {
   const value = formData.get(key);
   return typeof value === "string" ? value : "";
 };
-
-// WhatsApp codes are six digits (Supabase phone codes); email codes follow the project's setting.
-const WHATSAPP_CODE_LENGTH = 6;
-
-type Issued = { ok: true; length: number } | { ok: false; reason: "rate_limited" | "error" };
-
-/** Counts the request, then issues a code and delivers it. No personal data is logged (AGENT.md 6). */
-async function issueCode(channel: CodeChannel, to: string, captchaToken?: string): Promise<Issued> {
-  // The secret-key client is needed here: the counting functions are service_role only, and
-  // auth.admin.generateLink creates the code without Supabase sending its own email.
-  const admin = supabaseAdmin();
-  const { data: allowed, error: limitError } = await admin.rpc("auth_code_sending", {
-    p_key: codeKey(channel, to),
-    p_ip_key: await ipKey(),
-  });
-  if (limitError) {
-    console.error("auth_code_sending failed", limitError.code);
-    return { ok: false, reason: "error" };
-  }
-  if (!allowed) return { ok: false, reason: "rate_limited" };
-
-  if (channel === "whatsapp") {
-    // Supabase creates the code and calls /api/auth/sms-hook, which delivers it on WhatsApp.
-    const { error } = await (await supabaseServer()).auth.signInWithOtp({ phone: to, options: { captchaToken } });
-    if (error) {
-      console.error("whatsapp code failed", error.code ?? error.status);
-      return { ok: false, reason: "error" };
-    }
-    return { ok: true, length: WHATSAPP_CODE_LENGTH };
-  }
-
-  // "magiclink" also creates the account when the email is new, so one screen signs in and signs up.
-  const { data, error } = await admin.auth.admin.generateLink({ type: "magiclink", email: to });
-  const code = data?.properties?.email_otp;
-  if (error || !code) {
-    console.error("email code failed", error?.code ?? error?.status ?? "no code");
-    return { ok: false, reason: "error" };
-  }
-  try {
-    await resendEmailSender().send(signInCodeEmail(to, code));
-  } catch (sendError) {
-    console.error("sign-in code email failed", sendError instanceof Error ? sendError.message : "unknown");
-    return { ok: false, reason: "error" };
-  }
-  return { ok: true, length: code.length };
-}
 
 export async function sendCode(previous: SendState, formData: FormData): Promise<SendState> {
   const requested = text(formData, "channel") === "whatsapp" ? "whatsapp" : "email";

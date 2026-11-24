@@ -751,6 +751,100 @@
         "On the road",
         "Delivered"
       ]
+    },
+    "security": {
+      "where": "{device}, {city}",
+      "newDeviceSubject": "New sign-in on {where}",
+      "newDeviceIntro": "Someone just signed in to your Freight Africa account on {where}.",
+      "lockedSubject": "PIN sign-in is locked on your account",
+      "lockedIntro": "Someone entered the wrong PIN five times, so PIN sign-in is locked. To get back in, sign in with an email code and choose a new PIN.",
+      "notYou": "Not you? Lock your account. Every device is signed out, and you’ll sign in again with an email code.",
+      "lockButton": "Lock your account",
+      "lockNote": "If it was you, you don’t need to do anything."
+    },
+    "pin": {
+      "setTitle": "Choose a 6-number PIN",
+      "confirmTitle": "Enter it again",
+      "setLead": "You’ll use it to sign in and to open the app.",
+      "unlockTitle": "Enter your PIN",
+      "unlockLead": "The app locked to keep your account safe.",
+      "signInTitle": "Enter your PIN",
+      "signInLead": "Signing in as {login}",
+      "wrong": "That PIN isn’t right. {left} tries left.",
+      "wrongOne": "That PIN isn’t right. 1 try left.",
+      "locked": "PIN sign-in is locked. We’ve emailed you.",
+      "lockedPhone": "PIN sign-in is locked. Ask your truck owner or an admin for a new PIN link.",
+      "lockedAction": "Sign in with an email code",
+      "weak": "Choose a PIN that’s harder to guess.",
+      "mismatch": "Those PINs didn’t match. Choose one again.",
+      "fresh": "Sign in again to change your PIN.",
+      "failed": "Something went wrong. Check your connection and try again.",
+      "forgot": "Forgot PIN?",
+      "delete": "Delete",
+      "none": "That account has no PIN yet. Sign in with an email code first.",
+      "noneAction": "Send me a code",
+      "phoneForgot": "Ask your truck owner or an admin for a new PIN link.",
+      "limited": "Too many wrong PINs from this connection. Try again in 15 minutes.",
+      "captcha": "Confirm you’re a person, then enter your PIN again.",
+      "expired": "That took a while. Enter your email or phone number again.",
+      "otherAccount": "Use a different account",
+      "entered": "{n} of 6 entered",
+      "rateLimited": "Too many codes for now. Try again in an hour."
+    },
+    "signin": {
+      "title": "Welcome back",
+      "lead": "Enter your email, or the phone number your truck owner invited.",
+      "loginLabel": "Email or phone number",
+      "loginPlaceholder": "ada@okaforfoods.ng or 0803 123 4567",
+      "continue": "Continue",
+      "continuing": "Checking",
+      "invalid": "Enter your email address, or a Nigerian mobile number like 0803 123 4567.",
+      "getStarted": "New to Freight Africa?",
+      "getStartedLink": "Get started",
+      "haveAccount": "Already have an account?",
+      "signInLink": "Sign in",
+      "noCode": "No code needed on a phone you’ve used before."
+    },
+    "twoStep": {
+      "addTitle": "Add two-step sign-in",
+      "addLead": "When you sign in on a new phone, we’ll also ask for a code from an authenticator app, like Google Authenticator.",
+      "recommended": "Recommended for truck owners and anyone who handles payments.",
+      "start": "Add it now",
+      "notNow": "Not now",
+      "scan": "Scan this with your authenticator app",
+      "keyLabel": "Or type this key",
+      "copy": "Copy key",
+      "copied": "Key copied",
+      "codeLabel": "6-digit code from the app",
+      "confirm": "Turn on two-step sign-in",
+      "confirming": "Checking",
+      "backupTitle": "Save your backup codes",
+      "backupLead": "Each code works once, if you lose your phone. Keep them somewhere safe, not on this phone.",
+      "done": "I’ve saved them",
+      "verifyTitle": "Enter the code from your authenticator app",
+      "verifyLead": "Two-step sign-in is on for this account.",
+      "verify": "Continue",
+      "wrongCode": "That code isn’t right. Use the newest one in the app.",
+      "useBackup": "Lost your phone? Use a backup code",
+      "backupLabel": "Backup code",
+      "backupWrong": "That backup code isn’t right, or it was used before.",
+      "tooMany": "Too many tries. Try again in an hour.",
+      "failed": "Something went wrong. Check your connection and try again."
+    },
+    "lock": {
+      "title": "Lock your account?",
+      "lead": "Every device will be signed out and your PIN removed. To sign in again, you’ll use an email code and choose a new PIN.",
+      "button": "Lock my account",
+      "locking": "Locking",
+      "doneTitle": "Your account is locked",
+      "doneLead": "Every device is signed out. Sign in with an email code to choose a new PIN.",
+      "signIn": "Sign in",
+      "invalid": "This link has expired or isn’t right. Sign in and change your PIN in Settings if you’re worried."
+    },
+    "reset": {
+      "lead": "Hi {name}. Choose a new PIN for signing in with your phone number.",
+      "usedTitle": "This PIN link has expired",
+      "used": "This link has expired or was used. Ask your truck owner or an admin for a new one."
     }
   },
   "fonts": {
@@ -1499,14 +1593,20 @@
       "textNoInviter": "You've been invited to join {org} on Freight Africa as {role}.",
       "accept": "Accept and continue",
       "signIn": "Sign in to accept",
-      "signInText": "Sign in with the phone number or email this invite was sent to.",
+      "signInText": "Sign in, or get started with the email this invite was sent to.",
       "closedTitle": "This invite has expired",
       "closedText": "Ask for a new one.",
       "usedTitle": "This invite has already been used",
       "notFoundTitle": "We can't find this invite",
       "notFoundText": "Check the link, or ask for a new one.",
-      "wrongPerson": "This invite was sent to a different phone number or email. Sign in with that one, or ask for a new invite.",
-      "home": "Go to home"
+      "wrongPerson": "This invite was sent to someone else. Sign in with the email it went to, or ask for a new invite.",
+      "home": "Go to home",
+      "phoneExists": "This phone number already has an account. Sign in with your phone number and PIN, then open this link again.",
+      "nameLabel": "Your full name",
+      "nameHelp": "As your truck owner knows you, like Musa Bello.",
+      "nameError": "Enter your name",
+      "choosePin": "Next: choose a PIN",
+      "pinLead": "You’ll sign in with your phone number and this PIN."
     }
   },
   "trucks": {
@@ -1619,6 +1719,16 @@
       "licence": "Licence until {date}",
       "pause": "Pause",
       "resume": "Let drive"
+    },
+    "pinLink": {
+      "button": "Send a new PIN link",
+      "title": "New PIN link",
+      "text": "Share this link with {name} on WhatsApp. It works once, for 24 hours.",
+      "share": "Share on WhatsApp",
+      "copy": "Copy link",
+      "copied": "Link copied",
+      "message": "Open this link to choose a new Freight Africa PIN: {link}",
+      "failed": "We couldn’t make a link. Try again."
     }
   },
   "settings": {
@@ -1627,6 +1737,21 @@
       "label": "I drive my own truck",
       "help": "Adds the Drive tab for your trips.",
       "failed": "We couldn’t change that. Check your connection and try again."
+    },
+    "security": {
+      "title": "Sign-in and security",
+      "changePin": "Change PIN",
+      "lockAfter": "Locks after {n} min",
+      "pinChanged": "Your PIN is changed.",
+      "addTwoStep": "Add two-step sign-in",
+      "recommended": "Recommended",
+      "twoStepOn": "Two-step sign-in is on",
+      "turnOff": "Turn off",
+      "turnOffFailed": "Sign in with your authenticator code first, then try again.",
+      "signOutEverywhere": "Sign out everywhere",
+      "oldTitle": "Enter your current PIN",
+      "oldLead": "Then choose a new one.",
+      "oldWrong": "That isn’t your current PIN."
     }
   }
 }

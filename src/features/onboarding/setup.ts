@@ -74,7 +74,7 @@ const PURPOSE: Record<SetupRole, string> = { shipper: "sender", owner: "owner", 
 function hrefFor(role: SetupRole, key: SetupStepKey) {
   if (key === "identity") return `/onboarding/identity/${PURPOSE[role]}`;
   if (key === "licence") return "/onboarding/licence";
-  if (key === "pin") return "/onboarding/pin";
+  if (key === "pin") return "/auth/pin/new?next=/app/drive";
   if (role === "shipper") return "/onboarding/shipper";
   if (role === "agent") return "/onboarding/agent";
   if (key === "business") return "/onboarding/owner?step=about";

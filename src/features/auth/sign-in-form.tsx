@@ -1,7 +1,9 @@
 "use client";
 
 import { ArrowRight, CircleAlert, Mail, ShieldCheck, WifiOff } from "lucide-react";
+import Link from "next/link";
 import { useActionState, useState } from "react";
+import messages from "@/messages/en.json";
 import { Button } from "@/components/ui/button";
 import { PhoneField } from "@/components/ui/phone-field";
 import { useOnline } from "@/lib/use-online";
@@ -157,6 +159,13 @@ export function SignInForm({ t, options, next, googleFailed, turnstileSiteKey, p
           {channel === "whatsapp" ? t.useEmail : t.usePhone}
         </Button>
       ) : null}
+
+      <p className="mt-6 text-body-sm text-ink-2">
+        {messages.auth.signin.haveAccount}{" "}
+        <Link href={`/auth?mode=signin&next=${encodeURIComponent(next)}`} className="font-semibold text-green-700">
+          {messages.auth.signin.signInLink}
+        </Link>
+      </p>
 
       <p className="mt-8 border-t border-line pt-5 text-caption leading-4.5 text-wrap text-ink-3">
         {before}

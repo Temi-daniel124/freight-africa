@@ -1,10 +1,12 @@
 "use server";
 
+import { assertUnlocked } from "@/features/auth/unlock";
 import { revalidatePath } from "next/cache";
 import { supabaseServer } from "@/lib/supabase/server";
 
 /** Verification staff approve or reject a truck or one of its papers (the database checks role, aal2, reason). */
 export async function decideFleet(previous: DecideState, formData: FormData): Promise<DecideState> {
+  await assertUnlocked();
   const attempt = previous.attempt + 1;
   const id = String(formData.get("session") ?? "");
   const raw = formData.get("kind");
@@ -31,6 +33,7 @@ export type DecideState = { status: "idle" | "done" | "needReason" | "error"; at
 
 /** Verification staff approve or decline an identity check (the database checks role, aal2 and reason). */
 export async function decideIdentity(previous: DecideState, formData: FormData): Promise<DecideState> {
+  await assertUnlocked();
   const attempt = previous.attempt + 1;
   const session = String(formData.get("session") ?? "");
   const approve = formData.get("decision") === "approve";

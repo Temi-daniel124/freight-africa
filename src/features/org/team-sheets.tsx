@@ -7,6 +7,7 @@ import { TextField } from "@/components/ui/field";
 import { Sheet } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import messages from "@/messages/en.json";
+import { roleWithArticle } from "./role-words";
 import { changeMemberRole, createInvite, removeMember, type ActionState, type InviteState } from "./actions";
 
 const t = messages.org.team;
@@ -52,7 +53,7 @@ export function InviteSheet({ orgId, orgName, roles }: { orgId: string; orgName:
   const [state, action, pending] = useActionState<InviteState, FormData>(createInvite, { status: "idle" });
   const [role, setRole] = useState<Role>(roles.includes("booker") ? "booker" : roles[0]);
   const [copied, setCopied] = useState(false);
-  const share = state.link ? t.shareMessage.replace("{org}", orgName).replace("{role}", state.role ?? "").replace("{link}", state.link) : "";
+  const share = state.link ? t.shareMessage.replace("{org}", orgName).replace("{role}", state.role ? roleWithArticle(state.role) : "").replace("{link}", state.link) : "";
   return (
     <Sheet
       title={state.link ? t.created : t.inviteTitle}

@@ -1,6 +1,7 @@
 import "server-only";
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
+import { requireUnlocked } from "@/features/auth/unlock";
 import { supabaseServer } from "@/lib/supabase/server";
 import { TERMS_VERSION } from "./roles";
 
@@ -12,6 +13,7 @@ export async function onboardingSession(next: string) {
   const { data } = await supabase.auth.getClaims();
   const claims = data?.claims;
   if (!claims) redirect(`/auth?next=${encodeURIComponent(next)}`);
+  await requireUnlocked(next);
   const [{ data: agreed }, { data: profile }] = await Promise.all([
     supabase.rpc("has_accepted_terms", { p_version: TERMS_VERSION }),
     supabase.from("profiles").select("full_name").eq("id", claims.sub).maybeSingle(),
