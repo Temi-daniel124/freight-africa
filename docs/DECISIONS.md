@@ -590,7 +590,7 @@ a private bucket only the person and verification staff can open. This replaces 
 **Why.** Prepayment already protects owners; a required ID check would make every new sender wait.
 The badge still rewards senders who verify, and owners can prefer them.
 
-## D042. The driver's PIN unlocks the app; it never signs anyone in
+## D042. The driver's PIN unlocks the app; it never signs anyone in (superseded by D044)
 
 **Decision (founder, 24 Nov 2026).** Drivers sign in like everyone else, with a one-time code. On
 their phone they then set a 6-number PIN that opens the app each time (the founder's mockup "Driver
@@ -602,3 +602,132 @@ Changing a PIN needs a sign-in within the last 15 minutes. "Forgot PIN?" means s
 **Why.** A shared or lost phone can't be opened without the PIN, and nothing that can sign in from
 another phone is ever stored.
 
+
+## D043. Three account types people see: Sender, Truck owner, Driver
+
+**Decision (founder, 24 Nov 2026).** People see three account types; staff are internal.
+- **Sender:** anyone who books trucks. Team roles stay Owner, Admin, Booker, Finance, Viewer.
+- **Truck owner:** anyone who owns one truck or a hundred; "fleet owner" is not a separate type. Team
+  roles are Owner, Admin and Driver. The stored role `manager` is shown as **Admin** everywhere, the
+  same word senders use (the database value stays).
+- **"I drive my own truck"** is a switch, not a role: in the owner setup and in Settings. It sets
+  `profiles.is_driver` and only adds the Drive tab. "Owner-driver", "Truck owner who drives" and
+  similar labels are removed from everything a person sees. In code `joining_as` is `shipper` or
+  `owner` only (an old `owner_driver` row is read as `owner` with `is_driver` on).
+- **Driver:** never signs up alone; joins only through a truck owner's invite, and never sees money
+  (D003).
+- **Agents** are no longer offered at sign-up. Their data and rules stay; an agent joins through a
+  link staff send them, and `agents_enabled` stays the master switch. Phase 6 builds their screens.
+- The role step ("What brings you here?") shows two choices, **I send goods** and **I own trucks**,
+  with one line under them: "Driving for a truck owner? Ask them to invite you."
+
+**Why.** Fewer, plainer choices; an owner with one truck and an owner with a hundred use the same app.
+
+## D044. Sign-in: an email code once per device, then a 6-digit PIN; two-step optional
+
+**Decision (founder, 24 Nov 2026). Supersedes D042.**
+- **First sign-in on a device:** email and a 6-digit email code, as before. Straight after it,
+  everyone sets a 6-digit PIN (one screen, entered twice). Obvious PINs are refused (repeated digits,
+  runs such as 123456 or 654321, 123123, 121212 and similar).
+- Then one optional screen, **Add two-step sign-in**: an authenticator app (TOTP) and backup codes,
+  with **Not now**. The copy recommends it for truck owners and anyone who handles payments. Staff
+  keep it required.
+- **Same device afterwards:** the person stays signed in. The app locks after it has been closed or
+  unused for `app_lock_minutes` (setting, default 15); the PIN opens it. No email.
+- **New device, or after Sign out:** email address (or phone number, for people invited by phone) and
+  PIN. No email code. With two-step on, the authenticator code too. Staff: email, PIN and
+  authenticator code.
+- **Five wrong PINs** lock PIN sign-in for that account; the person then signs in with an email code
+  and sets a new PIN. Every lock and every sign-in on a new device sends an email: "New sign-in on
+  [device], [city]. Not you? Lock your account". The link locks the account and signs out every
+  device; the person then signs in with an email code and sets a new PIN.
+- **Forgot your PIN?** Email code, then a new PIN.
+- **People invited by phone** (drivers and team members with no email): the invite link the owner
+  shares from their own WhatsApp is the first-time proof. Opening it, they confirm their name and set a
+  PIN, and their account is created with that phone number. Afterwards they sign in with phone number
+  and PIN. If they forget it, their owner or an admin taps **Send a new PIN link** on Drivers or Team
+  and shares it the same way. This removes the dead end where phone invites could never be accepted
+  while WhatsApp codes were off.
+- **Sensitive actions** still need a fresh check (SECURITY §3: bank account change, team roles,
+  payouts): the authenticator code if two-step is on, otherwise an email code. A new bank account still
+  waits 24 hours.
+- WhatsApp codes and Google sign-in stay switched off (`AUTH_WHATSAPP`, `AUTH_GOOGLE` unset), are not
+  shown, and no wording promises a code by phone or WhatsApp.
+
+**How it is built (chosen 24 Nov 2026, tested against our project).**
+- The PIN is **never** a Supabase password: the password endpoint is public and would let anyone try
+  PINs without our lockout. PINs are bcrypt hashes in `private.app_pins` (now for every person),
+  checked only inside a server action, with the per-account lockout (5) and a per-internet-address
+  limit; after 2 wrong tries from an address the Turnstile check is asked for (when Turnstile is on).
+- After a correct PIN on a new device the server creates the session itself, sending no email:
+  `auth.admin.generateLink({ type: "magiclink" })` with the service key, then `verifyOtp({ token_hash })`
+  on the server, which sets the session cookies. The token hash never reaches the browser.
+- Phone-only accounts are created with that phone (confirmed by the invite) and an internal,
+  undeliverable address `p-<id>@phone.freight-africa.com` (no mail records exist for that host), so
+  the same server-side link works without switching on Supabase's phone sign-in. The interface never
+  shows that address and no email is ever sent to it.
+- No public endpoint accepts a 6-digit secret: email codes keep their per-code and per-hour limits,
+  and PINs are checked only by our server.
+- A device is "known" by a random, signed, httpOnly device cookie recorded in `private.known_devices`.
+- `requireUnlocked()` (`src/features/auth/unlock.ts`) applies to every role: every shell page and every
+  server action that reads private data calls it.
+
+**Why.** An email code on every sign-in is slow on Nigerian networks and spends email quota; a PIN is
+fast, and our server keeps control of guessing.
+
+## D045. The app looks and behaves like a native phone app, on every screen size
+
+**Decision (founder, 24 Nov 2026).**
+- The references in `docs/design/reference/inspiration/` set the look. We build our own version, not a
+  copy: our colours, Plus Jakarta Sans, tokens, 45 px buttons, light theme. Where a reference uses black
+  or orange we use the deep green (`#083826` family) and the brand green; a dark panel is deep green.
+- The web app is the future store app: phone layouts come first. Desktop uses the same cards and
+  components, arranged in columns inside the current shell (sidebar, top bar); it never gets a separate
+  design.
+- **Illustrations** in one soft 3D style: brown boxes, green map pins, a green shield with a tick, white
+  clouds, a pale grey city, green dashed routes. The box, pin, shield, clouds and city are our own SVGs
+  drawn from `design-assets/source/`. The person and the van are placeholders, listed in
+  `docs/design/ASSET-CREDITS.md` as "replace before launch", with their painted check backgrounds cut
+  out. Every truck we draw is a full-truckload truck (flatbed, covered, tipper, tanker, livestock) in our
+  livery. Any outside graphic must allow commercial use (Unsplash licence, CC0, MIT) and is recorded in
+  ASSET-CREDITS.md.
+- **Avatars:** a person picks one in setup and in Settings ("Choose your picture") from 3D faces (men
+  and women, Nigerian skin tones): Microsoft Fluent Emoji 3D (MIT) people faces in the darker skin
+  tones. Only the avatar key is stored; we never ask for or store gender. Until they pick, initials.
+- **Panels:** from 768 px up, forms and details slide in from the right: full height, 440 to 480 px
+  wide, a header with title and close button, actions pinned at the bottom, Esc closes, focus trapped,
+  a scrim dims the page. Short yes/no confirmations are a small centred dialog. Bottom sheets are for
+  phones only. One component, `src/components/ui/sheet.tsx`: a vaul bottom sheet below 768 px, a right
+  panel from 768 px.
+- **Motion** with `motion` (LazyMotion), always honouring `prefers-reduced-motion`; short and calm,
+  nothing bounces more than once. Taps: 150 ms scale to 0.98. Sheets and panels: a 320 ms spring.
+  Onboarding slides follow the finger; the picture moves a little slower than the text; the numbered
+  button's number changes with a quick vertical slide. Cards fade up 8 px on first show, 40 ms apart.
+- **Chat** with the driver or owner moves to Launch 2; the trip screen has Call only.
+- **Install prompt:** on a phone's first visit, after the onboarding slides (never on top of them), a
+  small card slides up: app icon, "Install Freight Africa", "Opens faster and works with a weak
+  signal", a primary Install and a quiet Not now. On iPhone, Install shows the three Add to Home Screen
+  pictures. Not now hides it for 7 days; it appears 3 times at most. On desktop a small "Install app"
+  item sits in the sidebar footer. Drivers, and truck owners who drive, keep install as a required
+  setup step.
+
+**Why.** People judge a service by how it feels in the hand; a store app later must feel the same.
+
+## D046. What a truck card shows about its load
+
+**Decision (founder, 24 Nov 2026).**
+- Post a load asks for the weight in tonnes, with a **Not sure** choice. With Not sure, one optional
+  field asks roughly how much: a number and a unit (bags, cartons, pieces, drums or tonnes). Livestock
+  asks "How many animals?" instead of weight. Loads gain `quantity` and `quantity_unit`; `weight_kg`
+  may be empty.
+- With the weight known, the cargo area of the truck graphic fills to `weight_kg / capacity_kg`,
+  rounded to 5 %, and shows "80% full" with "24 t of 30 t" under it. A load heavier than a truck's
+  capacity is never matched to that truck.
+- With the weight unknown, the cargo area shows the goods and the rough amount ("Bags of rice",
+  "about 600 bags"), with no percentage. Livestock shows the animal and the head count ("Cattle · 40
+  head").
+- At loading, the driver confirms or corrects the weight or amount (a weighbridge ticket photo is
+  optional), and the card updates.
+
+**Why.** Owners see at a glance how full each truck is; senders who don't know the weight can still
+book.

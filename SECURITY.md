@@ -78,12 +78,28 @@ The Resend key used as Supabase's SMTP password is stored only inside Supabase A
 
 ## 3. Authentication
 
-- Supabase Auth: email one-time codes (through Resend SMTP), WhatsApp codes (through our own
-  function, rate-limited), Google sign-in. No passwords stored by us.
+- Supabase Auth with an **email code once per device, then a 6-digit PIN** (D044). WhatsApp codes and
+  Google sign-in are built and switched off. No passwords: the PIN is never a Supabase password.
+- **PINs:** bcrypt hashes in `private.app_pins`, checked only in a server action. Five wrong PINs lock
+  PIN sign-in for the account (email code and a new PIN to recover); a per-internet-address limit, with
+  the bot check after 2 wrong tries. After a correct PIN on a new device the server creates the session
+  itself (admin `generateLink` then `verifyOtp` with the token hash, on the server); the token hash never
+  reaches the browser, and no public endpoint accepts a 6-digit secret.
+- **Devices:** a random, signed, httpOnly device cookie marks a known device. Every new-device sign-in
+  and every PIN lock emails "New sign-in on [device], [city]. Not you? Lock your account"; the signed
+  link locks the account and signs out every device.
+- **App lock:** the app locks after `app_lock_minutes` (default 15) closed or unused; `requireUnlocked()`
+  guards every shell page and every server action that reads private data.
+- **Phone-invited people** (no email): the invite link the owner shares is the first proof; they set a
+  PIN and sign in with phone number and PIN. Their account carries an internal, undeliverable address
+  that is never shown or mailed. A lost PIN is reset only by a new PIN link from their owner or an admin.
 - Staff: two-step sign-in (TOTP) required; 12-hour sessions; the admin console refuses a session
   without a verified second factor (`aal2`).
-- Users: long-lived refresh on their own phone, with "Sign out of all devices" in settings; sensitive
-  actions (bank account change, team role change) need a fresh code.
+- Users: long-lived refresh on their own phone, with "Sign out of all devices" in settings. Two-step
+  sign-in (authenticator app and backup codes) is optional and recommended for truck owners and anyone
+  who handles payments. Sensitive actions (bank account change, team role change, payouts) need a fresh
+  check: the authenticator code if two-step is on, otherwise an email code. A new bank account still
+  waits 24 hours.
 - Sign-in and code endpoints are rate-limited per phone, email and IP (§10).
 - Redirect URLs restricted to the domain, `localhost:3000` and the project's Vercel previews.
 

@@ -28,13 +28,14 @@ small fee from each side and never lends its own money.
 
 | User | What they want | Pays |
 | --- | --- | --- |
-| **Shipper** (traders, distributors, aggregators, manufacturers) | A trustworthy truck today at a fair price; goods arriving intact; proof if something goes wrong; repeat booking in seconds | 3% service fee per trip, less with volume |
-| **Truck owner** (1 to 50 trucks) | Loads both ways; fast, certain payment; drivers and papers under control | 5% commission per completed trip (4% Gold) |
-| **Owner-driver** | The same, while driving their own truck | Same as owner |
-| **Driver** (employed) | Clear steps, proof of what was loaded, help on the road | Nothing; sees no money |
+| **Sender** (traders, distributors, aggregators, manufacturers) | A trustworthy truck today at a fair price; goods arriving intact; proof if something goes wrong; repeat booking in seconds | 3% service fee per trip, less with volume |
+| **Truck owner** (one truck or a hundred; may drive their own truck, D043) | Loads both ways; fast, certain payment; drivers and papers under control | 5% commission per completed trip (4% Gold) |
+| **Driver** (joins only through a truck owner's invite, D043) | Clear steps, proof of what was loaded, help on the road | Nothing; sees no money |
 | **Receiver and pickup contact** | Know when the truck comes; confirm with a code; no account | Nothing |
-| **Agent** (park brokers) | Earn from the people they already know | Earns 1% of freight on referred trips for 6 months, paid by Freight Africa |
+| **Agent** (park brokers; join through a link staff send, not at sign-up, D043) | Earn from the people they already know | Earns 1% of freight on referred trips for 6 months, paid by Freight Africa |
 | **Freight Africa staff** | Keep every trip, person and naira under control | Internal |
+
+People see three account types: **Sender**, **Truck owner** and **Driver** (D043); staff are internal.
 
 Out of scope: vans, parcels, single items, cross-border trips at launch.
 
@@ -59,7 +60,7 @@ Out of scope: vans, parcels, single items, cross-border trips at launch.
 | Cancellation fee | ₦25,000 to the owner if the shipper cancels after the truck reaches pickup (D019) |
 | Waiting charge | First 4 hours free, then ₦5,000 per hour, paid to the owner |
 | Agent share | 1% of freight, from Freight Africa's revenue |
-| Always free | Tracking, chat, support, payouts, sign-up |
+| Always free | Tracking, support, payouts, sign-up (trip chat comes in Launch 2, D045) |
 | No | Subscriptions, credit terms, insurance sales, wallets |
 
 All rates are settings, never hard-coded. At ₦1,000,000 average freight, break-even is about 46 trips
@@ -78,7 +79,7 @@ web app on phones and desktops (D004).
 2. **Pay:** bank transfer to a one-time account number; the full amount is held in escrow (D001).
 3. **Match:** fitting, verified owners see the paid load (Gold owners 10 minutes early), accept at the
    price or counter once (up to +20%).
-4. **Confirm the driver:** an employed driver confirms the trip; owner-drivers drive it themselves.
+4. **Confirm the driver:** an employed driver confirms the trip; an owner who drives their own truck drives it themselves.
 5. **Load:** the driver photographs the goods and records the seal; the pickup contact gives a
    **loading code**; the owner receives the **advance** (30%, 40% or 50% by tier).
 6. **Travel:** trip mode tracks the truck; gaps are detected and followed up; the receiver gets a
