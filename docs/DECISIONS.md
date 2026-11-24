@@ -564,3 +564,14 @@ rest before launch.
 
 **Why.** The founder reviews whole phases with demo accounts; the real keys switch on without
 rewriting business code.
+
+## D040. The repository is public until production is complete
+
+**Decision (founder, 24 Nov 2026).** `Temi-daniel124/freight-africa` is public while the platform is
+built, because GitHub Actions stopped starting jobs on the private repository (billing) and CI and the
+`migrate` workflow depend on it. When the full platform is developed and production is complete
+(Phase 8, go live), the repository goes back to private. Until then everything in it is
+world-readable: no secrets, no personal data, no waitlist or user exports, ever (SECURITY.md). Git
+history was checked for keys and secret files before the switch and was clean.
+
+**Why.** Public repositories get Actions minutes free, and there are no paid tools before revenue.

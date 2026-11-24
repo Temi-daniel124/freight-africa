@@ -13,7 +13,7 @@ never overrides a higher document.
 | Area | Status |
 | --- | --- |
 | Planning and specifications | **Done** (all documents in this repository) |
-| Repository | Private `Temi-daniel124/freight-africa`; CI green (`author-check`, `app`, `database`, `drift`) |
+| Repository | **Public** `Temi-daniel124/freight-africa` until production is complete, then private again (D040); CI green (`author-check`, `app`, `database`, `drift`) |
 | Code | Next.js 16 app: design foundation, `/dev/components` gallery, launch page (home, waitlist, privacy, terms) |
 | Supabase project | Created by the founder: **Freight Africa**, ref `czlowhaycaivpgimcefk`, `https://czlowhaycaivpgimcefk.supabase.co`. Linked; migrations applied through `migrate.yml`; nightly backup running |
 | Vercel project | `freight-africa` on Hobby, linked to GitHub; env vars set; production and previews Ready |
@@ -40,7 +40,7 @@ The phases are defined in `BUILD.md` §3. Update this table as work progresses.
 
 ## 3. Current task
 
-**Blocked (24 Nov 2026, 07:00):** GitHub Actions stopped starting jobs: "The job was not started because recent account payments have failed or your spending limit needs to be increased." CI (author check, app, pgTAP) and the `migrate` workflow can't run, so nothing more can be verified or merged. Waiting: #46 (this acceptance record) and #47 (Phase 2 slice 1, catalogue). The founder decides how to unblock (billing page, or repository visibility).
+**Unblocked (24 Nov 2026):** GitHub Actions had stopped starting jobs on the private repository (billing); the founder had the repository made public (D040). It goes back to private when production is complete.
 
 **Next task:** Phase 2, Supply, in order: (1) shipper onboarding A-04 (L0 → L1: profile, ID upload, demo verification); (2) the VerificationProvider interface with the demo provider (staff approve or decline) and the Didit stub; (3) transporter five-step setup T-ON-01 to T-ON-08 and owner-driver; (4) trucks and papers, documents with expiry reminders; (5) driver invite and PIN; (6) the staff verification queue with evidence and decisions. Extend `scripts/seed-demo.mjs` with each slice's demo rows. Phase 1 acceptance: `docs/acceptance/phase-1.md`.
 
@@ -74,6 +74,7 @@ for these at the moment they're needed, with exact steps.
 
 | Risk | Note |
 | --- | --- |
+| Repository public until go-live (D040) | Nothing secret or personal may ever be committed; switch back to private in Phase 8 |
 | Vercel Hobby is for personal, non-commercial use under Vercel's terms | Plan to move to Vercel Pro before taking paid trips |
 | Supabase free plan limits and pausing after inactivity | Nightly backup workflow keeps it active; watch database and storage size in the admin console |
 | No staging database (D029) | Every migration tested in CI first; destructive changes gated |
