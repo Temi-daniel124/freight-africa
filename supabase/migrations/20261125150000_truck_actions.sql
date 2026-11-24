@@ -19,6 +19,10 @@ begin
       update public.trucks set status = 'paused', availability = 'unavailable' where id = p_truck;
     end if;
   elsif v_truck.status = 'paused' then
+    -- Resuming never lifts a pause for expired papers or a truck staff haven't approved (security review).
+    if v_truck.approved_at is null or not private.truck_papers_ok(p_truck) then
+      raise exception 'renew this truck''s papers first' using errcode = '22023';
+    end if;
     update public.trucks set status = 'active', availability = 'available' where id = p_truck;
   end if;
 end;
