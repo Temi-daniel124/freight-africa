@@ -178,6 +178,8 @@ begin
   ) then
     return false;
   end if;
+  -- One count at a time per person, so two lookups at once can't both slip under the limit.
+  perform pg_advisory_xact_lock(hashtext('bank_lookup:' || v_user::text));
   if (select count(*) from private.bank_lookups where user_id = v_user and at > now() - interval '1 hour') >= 20 then
     return false;
   end if;
