@@ -1,7 +1,7 @@
 "use client";
 
 import { Delete, TriangleAlert } from "lucide-react";
-import { useCallback, useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { cn } from "@/lib/utils";
 import messages from "@/messages/en.json";
 
@@ -39,6 +39,11 @@ export function PinKeypad({ title, lead, avatar, onComplete, forgot, blocked, ex
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [shakes, setShakes] = useState(0);
+  // The digits so far, read by key handlers: fast typing must never lose a key between renders.
+  const typed = useRef("");
+  useEffect(() => {
+    typed.current = "";
+  }, [stepKey]);
 
   // A new step on the same screen starts with empty dots.
   const [seenStep, setSeenStep] = useState(stepKey);
@@ -57,9 +62,13 @@ export function PinKeypad({ title, lead, avatar, onComplete, forgot, blocked, ex
           setShakes((n) => n + 1);
           if (typeof navigator !== "undefined" && "vibrate" in navigator) navigator.vibrate?.(120);
         }
-        if (answer?.clear !== false) setPin("");
+        if (answer?.clear !== false) {
+          typed.current = "";
+          setPin("");
+        }
       } catch {
         setError(t.failed);
+        typed.current = "";
         setPin("");
       } finally {
         setBusy(false);
@@ -72,16 +81,17 @@ export function PinKeypad({ title, lead, avatar, onComplete, forgot, blocked, ex
     (key: string) => {
       if (busy || blocked) return;
       if (key === "del") {
-        setPin(pin.slice(0, -1));
+        typed.current = typed.current.slice(0, -1);
+        setPin(typed.current);
         return;
       }
-      if (pin.length >= 6) return;
+      if (typed.current.length >= 6) return;
       setError(null);
-      const value = pin + key;
-      setPin(value);
-      if (value.length === 6) void submit(value);
+      typed.current += key;
+      setPin(typed.current);
+      if (typed.current.length === 6) void submit(typed.current);
     },
-    [busy, blocked, pin, submit],
+    [busy, blocked, submit],
   );
 
   useEffect(() => {
@@ -101,7 +111,7 @@ export function PinKeypad({ title, lead, avatar, onComplete, forgot, blocked, ex
 
   return (
     <div className="flex min-h-dvh flex-col bg-paper md:min-h-0 md:items-center md:justify-center md:bg-transparent md:py-8">
-      <div className="flex w-full flex-col md:max-w-100 md:rounded-card md:border md:border-line md:bg-surface md:px-8 md:pt-8 md:pb-6 md:shadow-card">
+      <div className="flex min-h-dvh w-full flex-col md:min-h-0 md:max-w-100 md:rounded-card md:border md:border-line md:bg-surface md:px-8 md:pt-8 md:pb-6 md:shadow-card">
         {/* Title, lead and the six dots, centred in the space above the keypad. */}
         <div className="flex flex-1 flex-col items-center justify-center gap-5 px-6 pt-12 pb-8 text-center md:flex-none md:px-0 md:pt-0 md:pb-6">
           {avatar}
