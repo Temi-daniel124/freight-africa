@@ -49,6 +49,17 @@ async function Person({ viewer }: { viewer: Promise<Viewer> }) {
   );
 }
 
+/** D039: every page of a demo account says so, so nobody mistakes demo trips or money for real ones. */
+async function DemoStrip({ viewer }: { viewer: Promise<Viewer> }) {
+  const v = await viewer;
+  if (!v.isDemo) return null;
+  return (
+    <p role="note" className="bg-warning-100 px-4 py-2 text-center text-label font-semibold text-warning lg:px-8">
+      {t.demo}
+    </p>
+  );
+}
+
 type AppShellProps = {
   config: ShellConfig;
   viewer: Promise<Viewer>;
@@ -87,7 +98,12 @@ export function AppShell({ config, viewer, children, homeBadge = false, current 
           </Suspense>
         </div>
       </aside>
-      <div className="pb-tabs min-w-0 lg:pb-0">{children}</div>
+      <div className="pb-tabs min-w-0 lg:pb-0">
+        <Suspense>
+          <DemoStrip viewer={viewer} />
+        </Suspense>
+        {children}
+      </div>
       <BottomTabs items={links(config, config.tabs, homeBadge)} base={config.base} label={t.mainNav} large={config.largeTabs} current={current} />
     </div>
   );

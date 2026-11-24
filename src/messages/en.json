@@ -1035,7 +1035,8 @@
         "title": "The people you bring will show here.",
         "text": "Owners and senders you invite, and what they've earned you."
       }
-    }
+    },
+    "demo": "Demo account. Nothing here is real: no money moves and nobody is contacted."
   },
   "devHome": {
     "viewer": {
