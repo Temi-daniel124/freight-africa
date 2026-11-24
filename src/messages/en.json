@@ -847,7 +847,7 @@
         "business": "About you and your business",
         "identity": "Verify your identity",
         "bank": "Add your bank account",
-        "truck": "Add your truck",
+        "truck": "Add your first truck",
         "drivers": "Add your drivers",
         "licence": "Your driver’s licence",
         "agreement": "How you earn"
@@ -929,6 +929,80 @@
         "tooBig": "That photo is too big. Try again with the camera.",
         "waiting": "A check is already waiting.",
         "failed": "We couldn’t send that. Check your connection and try again."
+      }
+    },
+    "owner": {
+      "start": {
+        "title": "Let’s get your trucks working",
+        "items": [
+          {
+            "text": "Your ID card or driver’s licence",
+            "time": "2 min"
+          },
+          {
+            "text": "Your bank account number",
+            "time": "1 min"
+          },
+          {
+            "text": "Photos of each truck and its papers",
+            "time": "about 5 min a truck"
+          }
+        ],
+        "parts": "Don’t have everything now? Do it in parts. We save as you go.",
+        "paid": "How you get paid: part of your pay when the goods are loaded, the rest as soon as they’re delivered.",
+        "start": "Start"
+      },
+      "step": "Step {n} of 5",
+      "about": {
+        "title": "About you and your business",
+        "name": "Your name",
+        "runAs": "I run trucks as",
+        "myself": "Myself",
+        "company": "A company",
+        "companyName": "Company name",
+        "cac": "Registration number (optional)",
+        "cacHelp": "Your CAC number, like RC1234567.",
+        "drives": "Do you drive your own truck?",
+        "yes": "Yes",
+        "no": "No",
+        "drivesHelp": "If yes, you’ll also get the driver’s trip screen.",
+        "base": "Where are your trucks based?",
+        "baseChoose": "Choose a city",
+        "routes": "Which routes do you run?",
+        "routesHelp": "Choose all that apply.",
+        "submit": "Next: check your ID",
+        "saving": "Saving",
+        "errors": {
+          "name": "Enter your name",
+          "companyName": "Enter the company name",
+          "cac": "That doesn’t look like a CAC number. Check it, or leave it empty.",
+          "base": "Choose where your trucks are based",
+          "routes": "Choose at least one route",
+          "failed": "We couldn’t save that. Check your connection and try again."
+        }
+      },
+      "bank": {
+        "title": "Bank account",
+        "lead": "Where we send your pay. Only owners see this.",
+        "bank": "Bank",
+        "bankChoose": "Choose your bank",
+        "number": "Account number",
+        "numberHelp": "10 digits",
+        "checking": "Checking the account",
+        "match": "This name matches you.",
+        "noMatch": "This name doesn’t match your ID. We’ll check it before paying you.",
+        "notFound": "We couldn’t find that account. Check the bank and the number.",
+        "hold": "For your safety, a new bank account can receive pay 24 hours after it’s added. We’ll tell you if it ever changes.",
+        "submit": "Save bank account",
+        "saving": "Saving",
+        "saved": "Saved. Payouts can go to this account from {when}.",
+        "current": "Pay goes to {bank} ending {last4}.",
+        "unavailable": "Adding a bank account opens soon. You can carry on with the other steps.",
+        "errors": {
+          "bank": "Choose your bank",
+          "number": "Enter the 10-digit account number",
+          "failed": "We couldn’t save that. Check your connection and try again."
+        }
       }
     }
   },
