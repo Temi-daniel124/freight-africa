@@ -1141,7 +1141,8 @@
       "open": "Switch account",
       "signedInAs": "Signed in as {who}",
       "settings": "Settings",
-      "signOut": "Sign out"
+      "signOut": "Sign out",
+      "signedInAsLabel": "Signed in as"
     },
     "roles": {
       "shipper": "Sender",
@@ -1181,7 +1182,8 @@
       "places": {
         "title": "Saved places and receivers",
         "empty": "No saved places yet",
-        "text": "Save pickup places and the people who receive your goods, to book faster next time."
+        "text": "Save pickup places and the people who receive your goods, to book faster next time.",
+        "nav": "Places"
       },
       "team": {
         "title": "Team",
@@ -1405,7 +1407,8 @@
       }
     },
     "demo": "Demo account. Nothing here is real: no money moves and nobody is contacted.",
-    "verifiedSender": "Verified sender"
+    "verifiedSender": "Verified sender",
+    "close": "Close"
   },
   "devHome": {
     "viewer": {
@@ -1576,7 +1579,10 @@
       "leave": "Leave this team",
       "noOrg": "Set up your business to add a team.",
       "emptyTitle": "Just you for now",
-      "emptyText": "Invite the people who book, pay or drive with you."
+      "emptyText": "Invite the people who book, pay or drive with you.",
+      "people": "{n} people",
+      "onePerson": "1 person",
+      "soleOwner": "You’re the only owner. Make someone else the owner first, then you can leave."
     },
     "errors": {
       "22023": "That role isn't available here.",
@@ -1752,6 +1758,51 @@
       "oldTitle": "Enter your current PIN",
       "oldLead": "Then choose a new one.",
       "oldWrong": "That isn’t your current PIN."
+    },
+    "picture": {
+      "title": "Choose your picture",
+      "lead": "People you work with see it on trips and in your team.",
+      "face": "Picture {n}",
+      "useInitials": "Use my initials instead",
+      "failed": "We couldn’t save that. Check your connection and try again."
+    }
+  },
+  "welcome": {
+    "skip": "Skip",
+    "next": "Next",
+    "start": "Get started",
+    "progress": "Slides",
+    "slideLabel": "Slide {n} of 3",
+    "slides": [
+      {
+        "title": "Full truckloads, across Nigeria",
+        "text": "Book verified trucks on the busiest routes."
+      },
+      {
+        "title": "Your payment is held safely",
+        "text": "The truck owner is paid as the trip happens, not before."
+      },
+      {
+        "title": "Follow every trip live",
+        "text": "See your goods from loading to delivery."
+      }
+    ],
+    "title": "Move full truckloads across Nigeria",
+    "easyBooking": "Easy booking",
+    "paymentHeld": "Payment held safely",
+    "getStarted": "Get started",
+    "signIn": "Sign in",
+    "install": {
+      "title": "Install Freight Africa",
+      "text": "Opens faster and works with a weak signal",
+      "install": "Install",
+      "notNow": "Not now",
+      "iphoneTitle": "Add Freight Africa to your Home Screen",
+      "iphone1": "Tap Share",
+      "iphone2": "Add to Home Screen",
+      "iphone3": "Tap Add",
+      "done": "Done",
+      "sidebar": "Install app"
     }
   }
 }

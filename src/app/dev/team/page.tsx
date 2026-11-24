@@ -18,6 +18,8 @@ export default function DevTeamPage() {
     isDemo: false,
     fullName: "Adaeze Okafor",
     account: "Okafor Foods Ltd",
+    roleName: "Owner",
+    avatar: null,
     accountInitials: initials("Okafor Foods Ltd"),
     role: "Sender · Okafor Foods Ltd",
     contact: "adaeze@okaforfoods.ng",

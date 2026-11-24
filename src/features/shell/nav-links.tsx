@@ -81,12 +81,12 @@ export function BottomTabs({ items, base, label, large = false, inline = false, 
                 className={cn(
                   "relative flex w-full flex-col items-center gap-1 font-semibold whitespace-nowrap",
                   large ? "text-label" : "text-caption tracking-normal",
-                  raised ? "justify-end pb-3" : "justify-center",
+                  raised ? "justify-end pb-2" : "justify-center",
                   current ? "text-green-700" : "text-ink-2",
                 )}
               >
                 {raised ? (
-                  <span aria-hidden className="absolute -top-5 grid size-15 place-items-center rounded-pill bg-green-700 text-white shadow-fab">
+                  <span aria-hidden className="absolute -top-6 grid size-15 place-items-center rounded-pill bg-green-700 text-white shadow-fab">
                     <Icon className="size-6.5" strokeWidth={2.25} />
                   </span>
                 ) : (

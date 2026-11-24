@@ -1010,6 +1010,7 @@ export type Database = {
       }
       profiles: {
         Row: {
+          avatar_key: string | null
           avatar_path: string | null
           created_at: string
           date_of_birth: string | null
@@ -1032,6 +1033,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          avatar_key?: string | null
           avatar_path?: string | null
           created_at?: string
           date_of_birth?: string | null
@@ -1054,6 +1056,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          avatar_key?: string | null
           avatar_path?: string | null
           created_at?: string
           date_of_birth?: string | null

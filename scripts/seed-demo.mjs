@@ -47,6 +47,8 @@ export const PEOPLE = [
   { tag: "owner", name: "Ibrahim Musa", joining: "owner", role: "Truck owner (transporter owner)", tryIt: "Home, Loads, Trucks, Drivers, Earnings, Team" },
   { tag: "owner-driver", name: "Emeka Nwosu", joining: "owner", role: "Truck owner who switched on I drive my own truck", tryIt: "The owner screens plus the Drive tab" },
   { tag: "driver", name: "Sani Abubakar", joining: null, role: "Driver (works for Musa Haulage)", tryIt: "Trip, Next, History, Me: no money anywhere" },
+  // check:layout: the longest names we expect, so nothing overflows (founder fix 2i).
+  { tag: "very-long-email-address-for-layout-checks", name: "Oluwaseyifunmi Chukwuemekaobi Adebanjo-Okonkwo", joining: "owner", role: "Truck owner, long names (layout checks)", tryIt: "npm run check:layout" },
   // D044: a driver invited by phone only (no email). Signs in with 0803 000 0101 and the demo PIN.
   { tag: "phone-driver", name: "Musa Bello", joining: null, phone: "2348030000101", role: "Driver invited by phone (no email)", tryIt: "Sign in with 0803 000 0101 and the PIN" },
   { tag: "agent", name: "Funke Adeyemi", joining: null, role: "Agent", tryIt: "People, Invite, Earnings" },
@@ -85,6 +87,13 @@ export const ORGS = [
     name: "Emeka Nwosu Transport",
     tier: "new",
     members: [{ tag: "owner-driver", transporter_role: "owner", is_driver: true }],
+  },
+  {
+    key: "long-name-haulage",
+    kind: "transporter",
+    name: "Chukwuemekaobi Okonkwo-Adeyemi Haulage and Logistics Nigeria Ltd",
+    tier: "new",
+    members: [{ tag: "very-long-email-address-for-layout-checks", transporter_role: "owner" }],
   },
 ];
 

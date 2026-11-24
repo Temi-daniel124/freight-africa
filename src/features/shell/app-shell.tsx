@@ -1,4 +1,4 @@
-import { Bell, ChevronDown, Command, Search } from "lucide-react";
+import { Bell, Check, ChevronDown, Command, Download, Search } from "lucide-react";
 import Link from "next/link";
 import { Suspense, type ReactNode } from "react";
 import { Logo } from "@/components/brand/Logo";
@@ -31,8 +31,13 @@ function links(config: ShellConfig, items: ShellConfig["tabs"], badgeHome = fals
   }));
 }
 
-function Avatar({ text, className }: { text: string; className?: string }) {
-  return <span className={cn("grid size-9 shrink-0 place-items-center rounded-pill bg-green-100 text-label font-bold text-green-700", className)}>{text}</span>;
+function Avatar({ text, src, className }: { text: string; src?: string | null; className?: string }) {
+  return (
+    <span className={cn("grid size-9 shrink-0 place-items-center overflow-hidden rounded-pill bg-green-100 text-label font-bold text-green-700", className)}>
+      {/* eslint-disable-next-line @next/next/no-img-element -- small local 3D faces (D045) */}
+      {src ? <img src={src} alt="" className="size-full object-cover" /> : text}
+    </span>
+  );
 }
 
 /** The signed-in person at the bottom of the sidebar. */
@@ -40,10 +45,10 @@ async function Person({ viewer }: { viewer: Promise<Viewer> }) {
   const v = await viewer;
   return (
     <div className="flex items-center gap-2.5 px-3 py-2 text-body-sm">
-      <Avatar text={initials(v.fullName)} />
+      <Avatar text={initials(v.fullName)} src={v.avatar} />
       <span className="min-w-0">
-        <span className="block">{v.fullName}</span>
-        <small className="block text-caption font-medium tracking-normal text-ink-3">{v.role}</small>
+        <span className="block truncate">{v.fullName}</span>
+        <small className="block truncate text-caption font-medium tracking-normal text-ink-3">{v.roleName}</small>
       </span>
     </div>
   );
@@ -93,6 +98,7 @@ export function AppShell({ config, viewer, children, homeBadge = false, current 
         </nav>
         <div className="mt-auto flex flex-col gap-0.5 border-t border-line pt-3">
           <SidebarLinks items={links(config, config.footer)} base={config.base} current={current} />
+          <InstallAppLink />
           <Suspense fallback={<Skeleton className="mx-3 my-2 h-9" />}>
             <Person viewer={viewer} />
           </Suspense>
@@ -126,7 +132,7 @@ async function Greeting({ viewer, greeting, phone }: { viewer: Promise<Viewer>; 
     );
   }
   return (
-    <p className="text-control font-medium whitespace-nowrap text-ink-2">
+    <p className="min-w-0 shrink truncate text-control font-medium whitespace-nowrap text-ink-2">
       {hello}
       {v.firstName ? (
         <>
@@ -144,13 +150,13 @@ function Bell_({ href, unread, size }: { href: string; unread: number; size: "md
       href={href}
       aria-label={label}
       className={cn(
-        "relative grid shrink-0 place-items-center rounded-pill border border-line bg-surface text-ink-2 transition-colors hover:bg-paper",
-        size === "md" ? "size-11" : "size-10",
+        "relative grid size-11 shrink-0 place-items-center rounded-pill border border-line bg-surface text-ink-2 transition-colors hover:bg-paper",
+        size === "md" ? "" : "",
       )}
     >
       <Bell aria-hidden className="size-5" strokeWidth={1.75} />
       {unread ? (
-        <span aria-hidden className="tabular absolute top-1.5 right-1.5 grid h-4.5 min-w-4.5 place-items-center rounded-pill bg-danger px-1.25 text-micro font-bold text-white ring-2 ring-surface">
+        <span aria-hidden className="tabular absolute -top-1 -right-1 grid h-4.5 min-w-4.5 place-items-center rounded-pill bg-danger px-1.25 text-micro font-bold text-white ring-2 ring-surface">
           {unread}
         </span>
       ) : null}
@@ -177,13 +183,13 @@ async function AccountMenu({ viewer, settingsHref, id, phone }: { viewer: Promis
         aria-label={phone ? t.account.open : undefined}
         className={cn(
           "flex shrink-0 items-center rounded-pill bg-surface text-body-sm transition-colors hover:bg-paper",
-          phone ? "" : "h-11 gap-2.5 border border-line pr-3 pl-1.5",
+          phone ? "size-11 justify-center" : "h-11 min-w-0 gap-2.5 border border-line pr-3 pl-1.5",
         )}
       >
-        <Avatar text={v.accountInitials} className={phone ? undefined : "size-8 text-caption font-bold tracking-normal"} />
+        <Avatar text={initials(v.fullName)} src={v.avatar} className={phone ? undefined : "size-8 text-caption font-bold tracking-normal"} />
         {phone ? null : (
           <>
-            <span className="max-w-50 truncate">{v.account}</span>
+            <span className="max-w-40 min-w-0 truncate">{v.account}</span>
             <ChevronDown aria-hidden className="size-4 text-ink-3" strokeWidth={1.75} />
           </>
         )}
@@ -197,31 +203,35 @@ async function AccountMenu({ viewer, settingsHref, id, phone }: { viewer: Promis
         )}
       >
         <div className="flex items-center gap-3 px-3 py-2.5">
-          <Avatar text={v.accountInitials} />
+          <Avatar text={initials(v.fullName)} src={v.avatar} />
           <div className="min-w-0">
-            <p className="truncate text-body-sm">{v.account}</p>
-            {v.contact ? <p className="truncate text-caption font-medium tracking-normal text-ink-3">{t.account.signedInAs.replace("{who}", v.contact)}</p> : null}
+            <p className="truncate text-body-sm">{v.fullName}</p>
+            {v.contact ? (
+              <>
+                <p className="text-caption font-medium tracking-normal text-ink-3">{t.account.signedInAsLabel}</p>
+                <p className="truncate text-caption font-medium tracking-normal text-ink-2">{v.contact}</p>
+              </>
+            ) : null}
           </div>
         </div>
-        {/* A-09: the other accounts; choosing one saves it and opens its shell. */}
-        {v.accounts.filter((account) => !account.active).length ? (
+        {/* A-09: every business with its type and role, a tick on the active one; choosing one opens its shell. */}
+        {v.accounts.length ? (
           <ul className="mt-1 flex flex-col border-t border-line pt-1">
-            {v.accounts
-              .filter((account) => !account.active)
-              .map((account) => (
-                <li key={account.orgId}>
-                  <form action={switchAccount}>
-                    <input type="hidden" name="org" value={account.orgId} />
-                    <button type="submit" className="flex w-full items-center gap-3 rounded-nav px-3 py-2 text-left hover:bg-paper">
-                      <Avatar text={initials(account.name)} className="size-8 text-caption font-bold tracking-normal" />
-                      <span className="min-w-0">
-                        <span className="block truncate text-body-sm">{account.name}</span>
-                        <span className="block truncate text-caption font-medium tracking-normal text-ink-3">{account.label}</span>
-                      </span>
-                    </button>
-                  </form>
-                </li>
-              ))}
+            {v.accounts.map((account) => (
+              <li key={account.orgId}>
+                <form action={switchAccount}>
+                  <input type="hidden" name="org" value={account.orgId} />
+                  <button type="submit" aria-current={account.active ? "true" : undefined} className="flex min-h-11 w-full items-center gap-3 rounded-nav px-3 py-2 text-left hover:bg-paper">
+                    <Avatar text={initials(account.name)} className="size-8 text-caption font-bold tracking-normal" />
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate text-body-sm">{account.name}</span>
+                      <span className="block truncate text-caption font-medium tracking-normal text-ink-3">{account.label}</span>
+                    </span>
+                    {account.active ? <Check aria-label={messages.org.switcher.current} className="size-4.5 shrink-0 text-green-700" strokeWidth={2.25} /> : null}
+                  </button>
+                </form>
+              </li>
+            ))}
           </ul>
         ) : null}
         <div className="mt-1 flex flex-col border-t border-line pt-1">
@@ -261,11 +271,15 @@ export function ShellTopBar({ config, viewer, title, greeting }: TopBarProps) {
             <Greeting viewer={viewer} greeting={greeting} />
           </Suspense>
         ) : (
-          <h1 className="min-w-30 text-title-2 font-extrabold tracking-close text-ink">{title}</h1>
+          <h1 className="min-w-0 shrink truncate text-title-2 font-extrabold tracking-close text-ink">{title}</h1>
         )}
+        {/* Fix 2a: the search pill shrinks first (240 px at least); narrower than that it is an icon button. */}
+        <Link href={pageHref(config, "search")} aria-label={t.search} className="ml-auto grid size-11 shrink-0 place-items-center rounded-pill border border-line bg-paper text-ink-2 xl:hidden">
+          <Search aria-hidden className="size-5" strokeWidth={1.75} />
+        </Link>
         <Link
           href={pageHref(config, "search")}
-          className="mx-auto flex h-11 max-w-130 flex-1 items-center gap-2.5 rounded-pill border border-line bg-paper px-4 text-body-sm font-normal text-ink-3 transition-colors hover:border-line-strong"
+          className="mx-auto hidden h-11 max-w-130 min-w-60 flex-1 items-center gap-2.5 rounded-pill border border-line bg-paper px-4 text-body-sm font-normal text-ink-3 transition-colors hover:border-line-strong xl:flex"
         >
           <Search aria-hidden className="size-5 shrink-0" strokeWidth={1.75} />
           <span className="truncate">{t.search}</span>
@@ -305,4 +319,14 @@ export function ShellTopBar({ config, viewer, title, greeting }: TopBarProps) {
 /** The page body under the top bar: 28/32 px padding on desktop, 16 px on phones, 1264 px wide at most. */
 export function ShellContent({ children, className }: { children: ReactNode; className?: string }) {
   return <main className={cn("mx-auto w-full max-w-316 px-4 pt-4 pb-6 lg:px-8 lg:pt-7 lg:pb-12", className)}>{children}</main>;
+}
+
+/** D045: a small "Install app" item in the sidebar footer (hidden once installed). */
+function InstallAppLink() {
+  return (
+    <a href="/onboarding/install" className="flex h-11 items-center gap-3 rounded-nav px-3 text-body-sm font-semibold text-ink-2 hover:bg-paper hover:text-ink [@media(display-mode:standalone)]:hidden">
+      <Download aria-hidden className="size-5 shrink-0" strokeWidth={1.75} />
+      <span className="truncate">{messages.welcome.install.sidebar}</span>
+    </a>
+  );
 }

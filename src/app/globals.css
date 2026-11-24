@@ -305,7 +305,7 @@
   border-width: 1.5px;
 }
 @utility scale-press {
-  scale: 0.97;
+  scale: 0.98;
 }
 /* Gate 2 hero: dark fade on the text side (left on desktop, bottom on phones). */
 @utility hero-fade {

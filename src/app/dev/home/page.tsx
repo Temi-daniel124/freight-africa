@@ -22,6 +22,8 @@ function sampleViewer(role: ShellRole): Viewer {
     isDemo: false,
     fullName: d.viewer.fullName,
     account: d.viewer.account,
+    roleName: "Owner",
+    avatar: null,
     accountInitials: initials(d.viewer.account),
     role: role === "shipper" ? d.viewer.role : messages.shell.roles[role],
     contact: "adaeze@okaforfoods.ng",

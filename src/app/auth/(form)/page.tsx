@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { WELCOME_COOKIE } from "@/features/welcome/cookie";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { safeNext } from "@/features/auth/next-path";
@@ -38,6 +40,9 @@ async function SignIn({ searchParams }: { searchParams: Params }) {
   // Someone already signed in goes straight to where they were heading.
   const { data } = await (await supabaseServer()).auth.getClaims();
   if (data?.claims) redirect(next);
+
+  // D045: the very first visit (no choice made yet, no invite) sees the slides and the Welcome screen.
+  if (!params.mode && !params.next && !(await cookies()).get(WELCOME_COOKIE)) redirect("/auth/welcome");
 
   // D044: "Sign in" is email or phone and the PIN; "Get started" (and invites, which may be new people)
   // is an email code. Sign in is the default: most visits are by people coming back.
