@@ -590,3 +590,15 @@ a private bucket only the person and verification staff can open. This replaces 
 **Why.** Prepayment already protects owners; a required ID check would make every new sender wait.
 The badge still rewards senders who verify, and owners can prefer them.
 
+## D042. The driver's PIN unlocks the app; it never signs anyone in
+
+**Decision (founder, 24 Nov 2026).** Drivers sign in like everyone else, with a one-time code. On
+their phone they then set a 6-number PIN that opens the app each time (the founder's mockup "Driver
+Invite, PIN, consent, sign in" showed phone + PIN as a sign-in; that would be a password, which the
+specs don't allow). The PIN is stored only as a bcrypt hash; obvious PINs (111111, 123456) are
+refused; five wrong tries lock it, and the driver then signs in with a code again and sets a new one.
+Changing a PIN needs a sign-in within the last 15 minutes. "Forgot PIN?" means signing in with a code.
+
+**Why.** A shared or lost phone can't be opened without the PIN, and nothing that can sign in from
+another phone is ever stored.
+
