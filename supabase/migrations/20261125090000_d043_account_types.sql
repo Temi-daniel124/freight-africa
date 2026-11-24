@@ -45,6 +45,11 @@ begin
   ) then
     raise exception 'not allowed' using errcode = '42501';
   end if;
+  -- Someone who drives for another business can't move their driver record here themselves (review):
+  -- that would clear a pause their other owner set.
+  if coalesce(p_drives, false) and exists (select 1 from public.drivers where user_id = v_user and org_id <> p_org) then
+    raise exception 'you already drive for another business' using errcode = '42501';
+  end if;
   update public.organization_members set is_driver = coalesce(p_drives, false) where org_id = p_org and user_id = v_user;
 end;
 $$;

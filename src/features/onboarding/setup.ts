@@ -59,7 +59,12 @@ export const getMyJoining = cache(async (): Promise<MyJoining> => {
     kinds: {
       shipper: owned.some((row) => row.kind === "shipper"),
       transporter: owned.some((row) => row.kind === "transporter"),
-      drives: owned.some((row) => row.kind === "transporter" && row.is_driver),
+      // The active business decides (review): an owner or admin there with "I drive my own truck" on (D043).
+      drives: (() => {
+        const list = rows ?? [];
+        const active = list.find((row) => row.is_active) ?? list[0];
+        return !!active && active.kind === "transporter" && (active.role === "owner" || active.role === "manager") && active.is_driver;
+      })(),
     },
   };
 });

@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(8);
+select plan(9);
 
 insert into auth.users (id, instance_id, aud, role, email, email_confirmed_at, raw_user_meta_data, created_at, updated_at)
 values
@@ -26,6 +26,14 @@ select is((select count(*)::int from public.drivers where user_id = '17171717-00
 select set_config('request.jwt.claims', '{"sub": "17171717-0000-4000-8000-000000000002", "role": "authenticated"}', true);
 select throws_ok($$select public.set_i_drive((select org_id from public.organization_members where user_id = '17171717-0000-4000-8000-000000000001' limit 1), true)$$, '42501', null, 'only owners and admins of that business');
 
+-- Bola drives for another business; switching on here would move (and unpause) that record.
+reset role;
+insert into public.organizations (id, kind, name) values ('17171717-0000-4000-8000-0000000000aa', 'transporter', 'Ade Trucks');
+insert into public.organization_members (org_id, user_id, transporter_role, is_driver) values ('17171717-0000-4000-8000-0000000000aa', '17171717-0000-4000-8000-000000000002', 'driver', true);
+insert into public.organization_members (org_id, user_id, transporter_role) select org_id, '17171717-0000-4000-8000-000000000002', 'manager' from public.organization_members where user_id = '17171717-0000-4000-8000-000000000001';
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub": "17171717-0000-4000-8000-000000000002", "role": "authenticated"}', true);
+select throws_ok($$select public.set_i_drive((select org_id from public.organization_members where user_id = '17171717-0000-4000-8000-000000000001' limit 1), true)$$, '42501', 'you already drive for another business', 'a driver of another business can''t move their record here');
 reset role;
 select * from finish();
 rollback;
