@@ -6,12 +6,14 @@ import { RoadLine } from "@/components/ui/road-line";
 import { Skeleton } from "@/components/ui/skeleton";
 import { signOut } from "@/features/auth/actions";
 import { agentsEnabled, shellFor, type JoiningAs } from "@/features/onboarding/roles";
+
+type NextRole = JoiningAs | "agent";
 import { onboardingSession } from "@/features/onboarding/session";
 import messages from "@/messages/en.json";
 
 const t = messages.onboarding.next;
 
-async function Next({ role }: { role: JoiningAs }) {
+async function Next({ role }: { role: NextRole }) {
   if (role === "agent" && !agentsEnabled()) redirect("/onboarding/role");
   const { agreed, name } = await onboardingSession(`/onboarding/${role}`);
   // The agreements come first.
@@ -42,7 +44,7 @@ async function Next({ role }: { role: JoiningAs }) {
 
 // Where each role's setup (A-04, T-ON-01, G-ON-01) starts until Phase 2 replaces these pages with the real
 // setup screens; until then it leads back into the app, never to a dead end.
-export function NextStep({ role }: { role: JoiningAs }) {
+export function NextStep({ role }: { role: NextRole }) {
   return (
     <div className="flex flex-col gap-6">
       <RoadLine progress={20} />

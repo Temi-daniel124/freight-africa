@@ -1774,6 +1774,10 @@ export type Database = {
       }
       set_active_org: { Args: { p_org: string }; Returns: undefined }
       set_app_pin: { Args: { p_pin: string }; Returns: undefined }
+      set_i_drive: {
+        Args: { p_drives: boolean; p_org: string }
+        Returns: undefined
+      }
       set_driver_paused: {
         Args: { p_driver: string; p_paused: boolean }
         Returns: undefined

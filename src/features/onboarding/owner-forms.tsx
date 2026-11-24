@@ -4,6 +4,7 @@ import { CircleCheck, Lock, TriangleAlert } from "lucide-react";
 import { useActionState, useEffect, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { FieldShell, inputClasses, inputErrorClasses, TextField } from "@/components/ui/field";
+import { Switch } from "@/components/ui/switch";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { cn } from "@/lib/utils";
 import messages from "@/messages/en.json";
@@ -27,7 +28,7 @@ type AboutDefaults = { name: string; companyName: string; drives: boolean; base:
 export function AboutForm({ cities, corridors, defaults }: { cities: Option[]; corridors: Option[]; defaults: AboutDefaults }) {
   const [state, action, pending] = useActionState(saveAbout, { status: "idle", errors: {} } satisfies AboutState);
   const [as, setAs] = useState<"myself" | "company">(defaults.companyName ? "company" : "myself");
-  const [drives, setDrives] = useState<"yes" | "no">(defaults.drives ? "yes" : "no");
+  const [drives, setDrives] = useState(defaults.drives);
   const e = state.errors;
   return (
     <form action={action} className="flex flex-col gap-5" noValidate>
@@ -45,12 +46,8 @@ export function AboutForm({ cities, corridors, defaults }: { cities: Option[]; c
           <TextField id="owner-cac" name="cac" label={t.about.cac} helper={t.about.cacHelp} autoCapitalize="characters" spellCheck={false} error={e.cac ? t.about.errors.cac : undefined} />
         </>
       ) : null}
-      <div className="flex flex-col gap-2">
-        <span className="text-label text-ink">{t.about.drives}</span>
-        <input type="hidden" name="drives" value={drives} />
-        <SegmentedControl label={t.about.drives} value={drives} onChange={setDrives} options={[{ value: "yes", label: t.about.yes }, { value: "no", label: t.about.no }]} />
-        <p className="text-label font-normal text-ink-3">{t.about.drivesHelp}</p>
-      </div>
+      <input type="hidden" name="drives" value={drives ? "yes" : "no"} />
+      <Switch id="owner-drives" label={t.about.drives} help={t.about.drivesHelp} checked={drives} onChange={setDrives} />
       <FieldShell id="owner-base" label={t.about.base} error={e.base ? t.about.errors.base : undefined}>
         <select id="owner-base" name="base" defaultValue={defaults.base} aria-invalid={e.base ? true : undefined} className={cn(inputClasses, e.base && inputErrorClasses, "appearance-auto")}>
           <option value="">{t.about.baseChoose}</option>

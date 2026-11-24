@@ -790,7 +790,7 @@
   "onboarding": {
     "step": "Step 1 of 3",
     "title": "What brings you here?",
-    "lead": "Choose one. You can add another role later.",
+    "lead": "Choose one. You can add a business later.",
     "rolesLabel": "I’m joining as",
     "roles": {
       "shipper": {
@@ -800,13 +800,9 @@
       "owner": {
         "title": "I own trucks",
         "text": "Find loads and get paid fast"
-      },
-      "agent": {
-        "title": "I’m an agent",
-        "text": "Earn by bringing truck owners and senders"
       }
     },
-    "driver": "Are you a driver? Ask the truck owner to add you. You’ll get a WhatsApp invite.",
+    "driver": "Driving for a truck owner? Ask them to invite you.",
     "agreeTitle": "Before you continue",
     "terms": "I agree to the {terms} and the {privacy}.",
     "termsLink": "Terms",
@@ -964,10 +960,10 @@
         "companyName": "Company name",
         "cac": "Registration number (optional)",
         "cacHelp": "Your CAC number, like RC1234567.",
-        "drives": "Do you drive your own truck?",
+        "drives": "I drive my own truck",
         "yes": "Yes",
         "no": "No",
-        "drivesHelp": "If yes, you’ll also get the driver’s trip screen.",
+        "drivesHelp": "Adds the Drive tab for your trips. You can change this in Settings.",
         "base": "Where are your trucks based?",
         "baseChoose": "Choose a city",
         "routes": "Which routes do you run?",
@@ -1056,7 +1052,7 @@
     "roles": {
       "shipper": "Sender",
       "owner": "Truck owner",
-      "ownerDriver": "Truck owner who drives",
+      "ownerDriver": "Truck owner",
       "driver": "Driver",
       "agent": "Agent",
       "staff": "Freight Africa staff"
@@ -1435,7 +1431,7 @@
       "booker": "Booker",
       "finance": "Finance",
       "viewer": "Viewer",
-      "manager": "Manager",
+      "manager": "Admin",
       "driver": "Driver"
     },
     "roleHelp": {
@@ -1623,6 +1619,14 @@
       "licence": "Licence until {date}",
       "pause": "Pause",
       "resume": "Let drive"
+    }
+  },
+  "settings": {
+    "driving": {
+      "title": "Driving",
+      "label": "I drive my own truck",
+      "help": "Adds the Drive tab for your trips.",
+      "failed": "We couldn’t change that. Check your connection and try again."
     }
   }
 }
