@@ -1,7 +1,6 @@
 "use client";
 
 import { ArrowRight, CircleAlert, Mail, ShieldCheck, WifiOff } from "lucide-react";
-import Link from "next/link";
 import { useActionState, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PhoneField } from "@/components/ui/phone-field";
@@ -161,13 +160,14 @@ export function SignInForm({ t, options, next, googleFailed, turnstileSiteKey, p
 
       <p className="mt-8 border-t border-line pt-5 text-caption leading-4.5 text-wrap text-ink-3">
         {before}
-        <Link href="/legal/terms" className="font-semibold text-ink-2 underline underline-offset-2">
+        {/* Plain links: the legal pages live on the website's host, so the app must not prefetch them (CSP). */}
+        <a href="/legal/terms" className="font-semibold text-ink-2 underline underline-offset-2">
           {t.termsLink}
-        </Link>
+        </a>
         {between}
-        <Link href="/legal/privacy" className="font-semibold text-ink-2 underline underline-offset-2">
+        <a href="/legal/privacy" className="font-semibold text-ink-2 underline underline-offset-2">
           {t.privacyLink}
-        </Link>
+        </a>
         {after}
       </p>
     </div>
