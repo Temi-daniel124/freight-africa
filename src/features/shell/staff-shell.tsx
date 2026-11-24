@@ -65,12 +65,13 @@ export function StaffShell({ base, page, person, children }: StaffShellProps) {
           <Groups base={base} />
         </div>
         <main className="mx-auto w-full max-w-316 px-4 pt-4 pb-6 lg:px-8 lg:pt-7 lg:pb-12">
-          {children}
-          <section className="rounded-tile bg-surface shadow-raised lg:rounded-card">
-            <EmptyState title={t.pages[page]} art={<Icon aria-hidden className="size-10 text-green-700" strokeWidth={1.5} />}>
-              {t.empty}
-            </EmptyState>
-          </section>
+          {children ?? (
+            <section className="rounded-tile bg-surface shadow-raised lg:rounded-card">
+              <EmptyState title={t.pages[page]} art={<Icon aria-hidden className="size-10 text-green-700" strokeWidth={1.5} />}>
+                {t.empty}
+              </EmptyState>
+            </section>
+          )}
         </main>
       </div>
     </div>

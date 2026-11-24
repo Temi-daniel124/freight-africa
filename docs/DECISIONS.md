@@ -575,3 +575,18 @@ world-readable: no secrets, no personal data, no waitlist or user exports, ever 
 history was checked for keys and secret files before the switch and was clean.
 
 **Why.** Public repositories get Actions minutes free, and there are no paid tools before revenue.
+
+## D041. Sender identity check is optional and earns a Verified sender badge
+
+**Decision (founder, 24 Nov 2026).** Senders book straight after the one-screen setup (A-04); no ID
+check stands in the way, because they prepay into escrow. An optional **Verify your identity** step
+(ID type, name as on the ID, a photo) earns a **Verified sender** badge that owners see on that
+sender's loads (`is_verified_sender(org)`: an owner of the sending business has passed). Checks run
+through the `VerificationProvider`: the demo provider sends the photo to the verification team, who
+approve or decline with a reason (D039); Didit replaces it when the account exists. ID photos live in
+a private bucket only the person and verification staff can open. This replaces the founder mockup's
+"Level 0 → Level 1" gate, where posting a load needed an approved ID.
+
+**Why.** Prepayment already protects owners; a required ID check would make every new sender wait.
+The badge still rewards senders who verify, and owners can prefer them.
+

@@ -9,11 +9,12 @@ import { parseJoined, type Joined } from "./roles";
 
 export type SetupRole = "shipper" | "owner" | "ownerDriver" | "agent";
 export type SetupStepKey = "details" | "business" | "identity" | "bank" | "truck" | "drivers" | "licence" | "agreement";
-export type SetupStep = { key: SetupStepKey; done: boolean };
+export type SetupStep = { key: SetupStepKey; done: boolean; optional?: boolean; href: string };
 export type Setup = { role: SetupRole; steps: SetupStep[]; complete: boolean };
 
 const STEPS: Record<SetupRole, SetupStepKey[]> = {
-  shipper: ["details"],
+  // D041: the sender's identity check is optional; it earns the Verified sender badge.
+  shipper: ["details", "identity"],
   owner: ["business", "identity", "bank", "truck", "drivers"],
   ownerDriver: ["business", "identity", "bank", "truck", "licence"],
   agent: ["details", "agreement", "identity", "bank"],
@@ -24,18 +25,21 @@ export function setupRoleFor(joined: Joined): SetupRole {
   return joined === "owner_driver" ? "ownerDriver" : joined;
 }
 
-export const getMyJoining = cache(async (): Promise<{ joined: Joined | null; kinds: { shipper: boolean; transporter: boolean; drives: boolean } }> => {
+type MyJoining = { joined: Joined | null; kyc: string; kinds: { shipper: boolean; transporter: boolean; drives: boolean } };
+
+export const getMyJoining = cache(async (): Promise<MyJoining> => {
   const supabase = await supabaseServer();
   const { data: claims } = await supabase.auth.getClaims();
   const sub = claims?.claims?.sub;
-  if (!sub) return { joined: null, kinds: { shipper: false, transporter: false, drives: false } };
+  if (!sub) return { joined: null, kyc: "not_started", kinds: { shipper: false, transporter: false, drives: false } };
   const [{ data: profile }, { data: rows }] = await Promise.all([
-    supabase.from("profiles").select("joining_as").eq("id", sub).maybeSingle(),
+    supabase.from("profiles").select("joining_as, kyc_status").eq("id", sub).maybeSingle(),
     supabase.rpc("my_accounts"),
   ]);
   const owned = (rows ?? []).filter((row) => row.role === "owner");
   return {
     joined: parseJoined(profile?.joining_as),
+    kyc: profile?.kyc_status ?? "not_started",
     kinds: {
       shipper: owned.some((row) => row.kind === "shipper"),
       transporter: owned.some((row) => row.kind === "transporter"),
@@ -44,9 +48,19 @@ export const getMyJoining = cache(async (): Promise<{ joined: Joined | null; kin
   };
 });
 
+const SETUP_HREF: Record<SetupRole, string> = { shipper: "/onboarding/shipper", owner: "/onboarding/owner", ownerDriver: "/onboarding/owner", agent: "/onboarding/agent" };
+const PURPOSE: Record<SetupRole, string> = { shipper: "sender", owner: "owner", ownerDriver: "owner", agent: "agent" };
+
 export async function getSetup(role: SetupRole): Promise<Setup> {
-  const { kinds } = await getMyJoining();
+  const { kinds, kyc } = await getMyJoining();
   const hasOrg = role === "shipper" ? kinds.shipper : role === "agent" ? false : kinds.transporter;
-  const steps = STEPS[role].map((key) => ({ key, done: (key === "details" || key === "business") && hasOrg }));
+  // A check that is waiting counts as done here: the person has nothing more to do for it.
+  const identitySent = kyc === "approved" || kyc === "needs_review" || kyc === "in_progress";
+  const steps = STEPS[role].map((key) => ({
+    key,
+    done: key === "identity" ? identitySent : (key === "details" || key === "business") && hasOrg,
+    optional: role === "shipper" && key === "identity",
+    href: key === "identity" ? `/onboarding/identity/${PURPOSE[role]}` : SETUP_HREF[role],
+  }));
   return { role, steps, complete: steps.every((step) => step.done) };
 }
