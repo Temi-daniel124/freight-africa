@@ -40,6 +40,8 @@ The phases are defined in `BUILD.md` §3. Update this table as work progresses.
 
 ## 3. Current task
 
+**Blocked (24 Nov 2026, 07:00):** GitHub Actions stopped starting jobs: "The job was not started because recent account payments have failed or your spending limit needs to be increased." CI (author check, app, pgTAP) and the `migrate` workflow can't run, so nothing more can be verified or merged. Waiting: #46 (this acceptance record) and #47 (Phase 2 slice 1, catalogue). The founder decides how to unblock (billing page, or repository visibility).
+
 **Next task:** Phase 2, Supply, in order: (1) shipper onboarding A-04 (L0 → L1: profile, ID upload, demo verification); (2) the VerificationProvider interface with the demo provider (staff approve or decline) and the Didit stub; (3) transporter five-step setup T-ON-01 to T-ON-08 and owner-driver; (4) trucks and papers, documents with expiry reminders; (5) driver invite and PIN; (6) the staff verification queue with evidence and decisions. Extend `scripts/seed-demo.mjs` with each slice's demo rows. Phase 1 acceptance: `docs/acceptance/phase-1.md`.
 
 **Founder's standing instructions (24 Nov 2026):** no more design gates; the founder reviews each phase once at the end with the demo accounts. Stop only at the end of a phase (with a "try it" walkthrough) or when truly blocked. Merge on green CI after the independent review for money, auth and RLS. Screenshots at 375 and 1440 px only, as a sanity look; PageSpeed at the end of each phase. Update this file after every merged slice.
