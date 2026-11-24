@@ -24,15 +24,24 @@ stored in `profiles.last_active_org_id`).
 
 | Shell | Base route | Bottom tabs on phone (side nav on desktop) |
 | --- | --- | --- |
-| Shipper | `/app/ship` | Home · Trips · **Book** (centre, raised) · Payments · More |
-| Transporter owner | `/app/haul` | Home · Loads · Trips · Earnings · More |
-| Owner-driver | `/app/haul` | Home · Loads · **Drive** · Earnings · More |
+| Sender | `/app/ship` | Home · Trips · **Book** (centre, raised) · Payments · More |
+| Truck owner | `/app/haul` | Home · Loads · Trips · Earnings · More |
+| Truck owner with **I drive my own truck** on | `/app/haul` | Home · Loads · **Drive** · Earnings · More |
 | Driver | `/app/drive` | Trip · Next load · History · Me |
 | Agent | `/app/agent` | Home · People · **Invite** (centre, raised) · Earnings · Me |
 | Staff | `/admin` | Left sidebar only (desktop first; works on tablet) |
 
-**Top bar (all app shells):** organisation avatar and name (tap → account switcher A-09), page
-title, notification bell with unread count (→ notification centre N-01).
+**Top bar (all app shells):** the person's avatar (tap → account switcher A-09), page title (Home shows
+the greeting), notification bell with unread count (→ notification centre N-01). The bar never
+overflows: the desktop search pill shrinks first (minimum about 240 px, then a search icon button) and
+the switcher name truncates.
+
+**Look (D045):** phone layouts first, like a native app; desktop arranges the same cards in columns
+inside the sidebar and top bar, never a separate design. From 768 px, forms and details open in a right
+panel (440 to 480 px, header with title and close, actions pinned at the bottom, Esc closes, focus
+trapped, scrim); short yes/no confirmations are a small centred dialog; bottom sheets are phone only.
+Single-column list pages are capped at about 880 px wide from 1024 px. Route, plate and reference never
+wrap; secondary lines truncate with an ellipsis. Touch targets are at least 44 px below 1024 px.
 
 **Back behaviour:** the phone's back button and the top-left arrow go to the previous screen in the
 same tab. Flows with steps (booking, onboarding) keep the step in the URL so refresh does not lose
@@ -69,18 +78,22 @@ Two rules matter most for the screen specs here:
 
 ## 6. Global behaviours
 
-- **Real time:** trip screens, load board, payouts and chat update live (Supabase Realtime). No pull
+- **Real time:** trip screens, load board and payouts update live (Supabase Realtime). No pull
   to refresh needed; pull to refresh still works.
 - **Deep links:** every WhatsApp and email message links to the exact screen (`/app/ship/trips/{id}`).
   If not signed in, sign-in returns to that link afterwards.
 - **Permissions:** a screen or action the person's sub-role can't use is hidden, not disabled. A
   direct link to it shows "You don't have access to this. Ask your account owner."
-- **Install prompt:** shown once per device after the first completed action for shippers; required
-  step for drivers and owner-drivers (A-08).
+- **Install prompt (D045):** on a phone's first visit, after the slides, a small card slides up (3
+  times at most, 7 days apart); a sidebar item on desktop; a required step for drivers and truck
+  owners who drive (A-08).
 - **Push permission:** asked only at a moment that explains it ("Get told when a truck accepts"),
   never on first load.
 - **Location permission:** asked only by drivers at **Go to pickup**, with a pre-screen explaining
   why and that location is used only during trips.
-- **Session:** stays signed in for 30 days on a phone; staff 12 hours.
+- **Session (D044):** stays signed in on a known device; the app locks after `app_lock_minutes`
+  (15) and the PIN opens it; a new device needs email (or phone) and PIN. Staff 12 hours, always with
+  the authenticator code.
+- **Chat** between trip parties comes in Launch 2 (D045); trip screens have Call only.
 - **Accessibility:** WCAG 2.2 AA contrast; all inputs labelled; status never shown by colour alone;
   focus visible; screen reader labels for icons; text scales to 200% without losing content.

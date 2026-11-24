@@ -74,6 +74,7 @@ One row per Supabase auth user.
 | email | text unique | verified |
 | language | language_code | default `en` |
 | avatar_path | text | Storage path; for drivers, the KYC selfie crop after approval |
+| avatar_key | text null | The chosen 3D face (D045), e.g. `face-03`; only the key, never gender |
 | date_of_birth | date | From ID scan |
 | nin_last4 | text | |
 | nin_enc | bytea | Encrypted full NIN, owners only |
@@ -353,7 +354,9 @@ The shipper's booking. Becomes visible to owners when funded.
 | corridor_id | uuid | Derived from pickup and final drop-off |
 | goods_category_id | uuid | |
 | goods_description | text | Optional, short |
-| weight_kg | int | |
+| weight_kg | int null | Empty when the sender chose Not sure (D046); a load heavier than a truck's capacity is never matched to it |
+| quantity | int null | Rough amount when the weight isn't known, or the head count for livestock (D046) |
+| quantity_unit | text null | `bags`, `cartons`, `pieces`, `drums`, `tonnes` or `head` |
 | quantity | text | "600 bags" |
 | declared_value_kobo | bigint | |
 | truck_type_id | uuid | Suggested, editable |
@@ -737,3 +740,12 @@ Each runs in one transaction with row locks. Each takes an idempotency key.
 | `cancel_load(load_id, actor, reason)` | load, trip | Applies cancellation rules; refund and fees |
 | `trip_contacts(trip_id)` | none (read) | Returns the phone numbers the caller may see right now, per SYSTEM-LOGIC §18 |
 | `close_trip(trip_id)` | trip | After balance paid and no open dispute: status `closed`, refresh track record, ratings open |
+
+
+## D044 additions (24 Nov 2026)
+
+- `private.app_pins` holds a PIN for every person (not only drivers); `failed` counts wrong tries, 5 locks PIN sign-in.
+- `private.known_devices` (user_id, device_hash, label, city, first_seen, last_seen): devices that signed in; a new one sends the new-sign-in email.
+- `private.pin_attempts` (ip_hash, at): wrong PIN tries per internet address for the rate limit.
+- `profiles.account_locked_at`: set by the "Lock your account" link; email code and a new PIN clear it.
+- Setting `app_lock_minutes` (default 15).

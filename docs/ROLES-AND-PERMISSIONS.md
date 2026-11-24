@@ -19,6 +19,9 @@ disabled.
 - A person may also be an **agent** (`agents`) and/or **staff** (`staff_members`).
 - **Receivers and pickup contacts** have no account; they act only through a token link and a code.
 - The app shows an **account switcher** when a person has more than one organisation or role.
+- People see three account types (D043): **Sender** (a shipper organisation), **Truck owner** (a
+  transporter organisation, one truck or a hundred) and **Driver** (joins only through a truck
+  owner's invite). Agents join through a link staff send; they are not offered at sign-up.
 
 ## 2. Shipper organisations
 
@@ -40,7 +43,7 @@ An organisation always has at least one owner. Individuals are the owner of thei
 
 ## 3. Transporter organisations
 
-| Action | Owner | Manager | Driver |
+| Action | Owner | Admin (stored as `manager`) | Driver |
 | --- | --- | --- | --- |
 | See the load board; accept; offer a different price | ✓ | ✓ | sees return loads in **Next load**; can only suggest to the owner |
 | Assign or change truck and driver (until loaded) | ✓ | ✓ | |
@@ -48,7 +51,7 @@ An organisation always has at least one owner. Individuals are the owner of thei
 | Add, pause, remove drivers | ✓ | ✓ | |
 | See freight, payouts, earnings, statements | ✓ | ✓ | **never** (D003) |
 | Add or change the bank account | ✓ | | |
-| Add or remove managers | ✓ | | |
+| Add or remove admins | ✓ | | |
 | Business details | ✓ | view | |
 | Respond to disputes | ✓ | ✓ | |
 | Rate the sender | ✓ | ✓ | |
@@ -56,8 +59,9 @@ An organisation always has at least one owner. Individuals are the owner of thei
 | Confirm or decline an assigned trip | — | — | ✓ |
 | See loading or delivery codes | **never** | **never** | **never** (codes come from the other side in person) |
 
-Owner-drivers are owners with `is_driver = true`: the owner rights above plus the driver screens, with
-the driving lock (`SYSTEM-LOGIC.md` §19).
+The role `manager` is shown as **Admin** everywhere (D043). A truck owner who switches on **I drive my
+own truck** (`is_driver = true`) keeps the owner rights above and gains the Drive tab, with the driving
+lock (`SYSTEM-LOGIC.md` §19). It is a switch, not a separate role.
 
 ## 4. Agents
 
@@ -86,11 +90,11 @@ They never see prices, values, addresses beyond the stop area, or anyone's phone
 | Viewer | Sees the number of | From | Until |
 | --- | --- | --- | --- |
 | Shipper owner, admin, booker | Driver, truck owner | Trip `assigned` | `delivered` or `cancelled` |
-| Truck owner, manager | The shipper member who booked | `assigned` | `delivered` or `cancelled` |
+| Truck owner, admin | The shipper member who booked | `assigned` | `delivered` or `cancelled` |
 | Driver | The shipper member who booked | `assigned` | `delivered` or `cancelled` |
 | Driver | Pickup contact | `assigned` | `loaded` |
 | Driver | Receiver of the next drop-off | `in_transit` towards that stop | That stop completed |
-| Driver ↔ own owner and managers | Each other | Always | Always |
+| Driver ↔ own owner and admins | Each other | Always | Always |
 | Pickup contact, receiver | Nobody | — | — |
 | Agent | Nobody on the trip | — | — |
 | Staff | Everyone | Always | Always |

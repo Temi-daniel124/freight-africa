@@ -223,9 +223,20 @@ consistent and the app smaller. Icons always sit beside a text label on buttons 
 
 ### 6.3 Illustration
 
-Simple flat line illustrations in Freight Green and `--ink` with road-yellow accents, for: truck type
-chips, goods chips, empty states, onboarding slides and the welcome screens. Consistent 2 px stroke,
-rounded joins, no gradients, no 3D in illustrations. One illustrator style throughout.
+**Soft 3D (D045, replaces the flat line style):** brown boxes (boxes stay brown), green map pins, a
+green shield with a tick, white clouds, a pale grey city, green dashed routes. Our own SVGs in
+`src/components/art/`, drawn from `design-assets/source/`; soft top-left light, gentle gradients on
+volumes only, a soft contact shadow, no outlines. Trucks we draw are full-truckload trucks (flatbed,
+covered, tipper, tanker, livestock) in our livery with the logo, never vans. Placeholders (the person,
+the van) are listed in `docs/design/ASSET-CREDITS.md` as "replace before launch". Outside graphics
+only with a commercial-use licence (Unsplash, CC0, MIT), recorded there.
+
+**Truck load display (D046):** the cargo area fills to weight / capacity rounded to 5 %, with "80%
+full" and "24 t of 30 t"; unknown weight shows the goods and rough amount; livestock shows the animal
+and head count.
+
+**Avatars (D045):** a person's picture is one of the Fluent Emoji 3D faces (MIT) in darker skin tones,
+in a 1 px `--line` circle on `--green-50`; until chosen, initials.
 
 ### 6.4 Brand motifs
 
@@ -323,13 +334,16 @@ the sidebar items and the main action change.
   the safe area clear below it (`pb-tabs`), so nothing hides behind the pill.
 - Each tab: 22 px icon above a 12 px, 600 label. Current tab: Freight Green icon and label with a
   56 × 30 px `--green-100` pill behind the icon. Others: `--ink-2`.
-- **Raised centre action** where a role has one (Book for shippers, Drive for owner-drivers, Invite for
-  agents): a 60 px Freight Green circle with a 26 px white icon, 20 px above the pill, `--shadow-fab`,
-  label under it. It is always a link, never a toggle.
+- **Raised centre action** where a role has one (Book for senders, Drive for truck owners who drive,
+  Invite for agents): a 60 px Freight Green circle with a 26 px white icon, 20 px above the pill,
+  `--shadow-fab`, at least 4 px clear of its label (checked at 320 px). It is always a link, never a
+  toggle.
 - **Drivers:** 72 px pill, 28 px icons, 13 px labels, four tabs (Trip · Next load · History · Me).
-- Badges: a 9 px red dot (or count) at the icon's top right with a 2 px white ring.
+- Badges: a 9 px red dot (or count) outside the icon glyph at its top right, with a 2 px ring in the
+  bar colour.
+- Touch targets: at least 44 px on touch screens; small buttons get an invisible 44 px hit area.
 - Tabs per role: shipper Home · Trips · **Book** · Payments · More; owner Home · Loads · Trips ·
-  Earnings · More; owner-driver Home · Loads · **Drive** · Earnings · More; driver Trip · Next load ·
+  Earnings · More; with **I drive my own truck** on Home · Loads · **Drive** · Earnings · More; driver Trip · Next load ·
   History · Me; agent Home · People · **Invite** · Earnings · Me.
 - Tabs hide during booking, full-screen maps and the photo viewer, and slide back in on exit.
 
@@ -338,7 +352,8 @@ the sidebar items and the main action change.
 - Sidebar `--surface`, 240 px (staff console 260 px, grouped), 1 px right border. The role's main action
   sits at the top as a 48 px primary button; then the items (44 px, 12 px radius, 20 px icon, 14 px 600;
   current item `--green-100` with a Freight Green label); Settings and the signed-in person at the
-  bottom.
+  bottom. Nav labels are one line ("Places", not "Saved places and receivers"); the footer shows the
+  person's name and role ("Owner"), each on one line, truncated, and an **Install app** item.
 - Top bar `--surface`, 64 px (60 px on phones), 1 px bottom border, sticky. Desktop: page title (20 px,
   800), the search pill (44 px, `--paper`, "⌘K" hint), the bell (44 px circle) and the account switcher
   (initials and account name). Phone: account initials, page title (18 px, 800), bell.
@@ -377,6 +392,10 @@ Senders, and the website's "I send goods / I own trucks" switch.
 ---
 
 ## 12. Motion
+
+**D045:** `motion` with LazyMotion; `prefers-reduced-motion` always honoured; nothing bounces more than
+once. Taps 150 ms scale to 0.98; sheets and panels a 320 ms spring; cards fade up 8 px on first show,
+40 ms apart; onboarding slides follow the finger with the picture slower than the text.
 
 ### 12.1 Principles
 
@@ -575,11 +594,16 @@ When the installed app opens: `--surface` background, the submark logo centred a
 line drawing itself beneath it (600 ms). It disappears as soon as the first screen is ready; never held
 for show.
 
-### 14.2 Welcome screens (first launch only, skippable)
+### 14.2 Welcome screens (first visit only, D045; supersedes the table below)
 
-Three full-screen slides, each with a line illustration (top 55%), a title, one line, and dots. **Skip**
-top right on every slide; on the last, the primary **Get started**. Swipe between slides; the road line
-connects the three illustrations so it appears to continue from slide to slide.
+Three slides that follow the finger: the 3D illustration (moving a little slower than the text), a
+title and one line. **Skip** top right; progress pills bottom left; a deep green shaped **Next** button
+bottom right showing 1, 2, 3 (quick vertical slide between numbers; an arrow on the last). Copy:
+"Full truckloads, across Nigeria" / "Book verified trucks on the busiest routes."; "Your payment is held
+safely" / "The truck owner is paid as the trip happens, not before."; "Follow every trip live" / "See
+your goods from loading to delivery." Then the Welcome screen: illustration, "Move full truckloads
+across Nigeria", two feature tiles (Easy booking, Payment held safely), **Get started** and **Sign in**.
+The older slides below are kept only for history.
 
 | Slide | Senders (default) | Owners and drivers (when arriving from an owner link or invite) |
 | --- | --- | --- |
@@ -590,6 +614,14 @@ connects the three illustrations so it appears to continue from slide to slide.
 Not shown again after sign-in, or when the app is opened from a deep link.
 
 ### 14.3 Sign-in and sign-up
+
+**D045 update:** on desktop the 3D illustration fills the left half on a soft surface and the steps sit
+in a card on the right; this replaces the deep-green panel described below. Phones: the welcome
+illustration above, the steps in a white sheet. **PIN screens (D044):** on phones the keypad docks to
+the bottom in a sheet with 28 px top corners; digits 28 px in borderless circular keys at least 72 px
+tall; "Forgot PIN?" in the bottom-left key slot and Delete in the bottom-right; title and six dots
+centred in the space above, with the avatar when known. A wrong PIN shakes the dots and buzzes on
+Android. Desktop: the same card centred, physical keyboard, compact keypad.
 
 Built to the approved Gate 1 target, `docs/design/targets/gate-1/` (founder, 18 Nov 2026); the target wins
 over this summary.

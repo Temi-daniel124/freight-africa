@@ -32,6 +32,37 @@ desktop. "Toast" means a short message that appears briefly at the bottom (phone
 
 ---
 
+
+## D045 and D046 update (24 Nov 2026): Home, Track a trip, trip tracking
+
+These override the older layouts below where they differ. Phone first; desktop arranges the same cards.
+
+**Sender Home (reference 03).** Top: the avatar, "Good morning, Adaeze", the business name and the
+bell. The search pill (no scan button). Two large tiles, **Book a truck** with a truck graphic and
+**Track a trip** with the box, each graphic bleeding off the tile edge. **Needs you** only when
+something waits (pay, answer an offer), "Your move: …". **Current trip**: reference, goods, a status
+chip, progress dots for Booked, Loaded, On the road and Delivered (a small truck marks where it is),
+dates, from/to; tapping it opens trip tracking. **Recent trips** with status chips. Desktop: tiles and
+Current trip on the left, Needs you and Recent trips on the right.
+
+**Track a trip (reference 01, no QR).** The illustration, "Track a trip", a field "Trip reference, like
+FA-7K3Q9" and **Track**. Under it, **On the road now**: one-tap rows for the business's live trips.
+Only trips of the signed-in person's business can be found; anything else: "We can't find that trip in
+Okafor Foods Ltd." Receivers and pickup contacts keep their own `/track/[token]` links.
+
+**Trip tracking (reference 04).** A full-screen map (MapLibre, OpenFreeMap tiles): the route a green
+line, the truck a deep green marker, the destination a pin, Back top left. A deep green slide-up sheet
+with three snap points: peek (reference, status, progress); half (from/to with dates, goods and weight
+or amount, truck plate and type); full (the money for the sender, "₦980,000 held safely", never shown
+to drivers, receivers or pickup contacts). At the bottom, the driver card: avatar, first name, plate and
+one **Call** button; Call opens a small sheet with the number, "Call 0803 …" (`tel:`) and Copy, only
+during a live trip (D018), otherwise it says when calling opens. No chat. Desktop: the map fills the
+content area and the details sit in a fixed right panel 400 px wide. Live positions arrive with Phase 4;
+until then the trip's last known position.
+
+**Post a load (D046).** Weight in tonnes with **Not sure**; with Not sure, an optional rough amount
+(number and unit: bags, cartons, pieces, drums or tonnes). Livestock asks "How many animals?" instead.
+
 ## Part 1. The shipper's goals and the shape of the app
 
 ### 1.1 What a shipper wants
@@ -598,7 +629,7 @@ and where the money is.
      receiver** and **Copy**.
 5. **Truck and driver card**: the driver's first name and photo, the owner's business name, tier
    badge, star rating, insured badge, truck type, plate number in large letters, and a truck photo.
-   Buttons: **Chat**, **Call driver**, **Call owner**, **WhatsApp**.
+   Buttons: **Call driver**, **Call owner**, **WhatsApp** (no chat at launch, D045).
 6. **Timeline**: each step with its time and who did it. For example: Truck confirmed · Driver on the
    way to pickup · Arrived at pickup · Loading started · 4 photos added, seal 00451 · Loaded, advance
    paid to owner · On the road · (upcoming steps in grey). Photos show as thumbnails; tapping opens a
@@ -633,12 +664,11 @@ open as a panel on the right without leaving the trip.
 | Cancelled | "Cancelled." | Refund amount and status; phone numbers hidden |
 
 **Interactions.**
-- **Chat** → S-11 (phone) or the chat side panel (desktop).
 - **Call driver**, **Call owner**: show the number with a **Copy** button and open the phone's
   dialler on phones. **WhatsApp** opens a WhatsApp chat with the driver. Numbers come from the
   server only while the trip is confirmed and live; before that the buttons read "Numbers are shown
   once a truck is confirmed", and after delivery or cancellation "Numbers hidden after the trip
-  ended. Use chat for 48 hours or contact support." (D018).
+  ended. Contact support if you need them." (D018).
 - **Resend** on a code card sends the code again to that contact (limited to 3 times an hour).
 - **Cancel trip** opens a confirm sheet stating the money effect in one sentence, which depends on
   the stage: "You'll get a full refund of ₦1,030,000" before the truck reaches pickup; "You'll get
@@ -666,7 +696,7 @@ screen at every stage. Everything else is a tap away, not mixed in.
 route** buttons (bottom right), a small legend ("Dashed: no signal"), the last update time, and a
 bottom drawer listing the stops with their arrival times. Desktop opens this as a large dialog.
 
-### S-11 Trip chat
+### S-11 Trip chat (Launch 2, D045; not built at launch)
 
 **Purpose.** Talk to the owner, driver and Freight Africa about this trip without leaving the app.
 
@@ -980,7 +1010,7 @@ The app is in English only at launch (D017), so there is no language setting.
 
 ## Part 14. Behaviour that applies everywhere
 
-- **Live updates.** Trip screens, offers, payments and chat update by themselves. The shipper never
+- **Live updates.** Trip screens, offers and payments update by themselves. The shipper never
   needs to refresh.
 - **Deep links.** Every WhatsApp message and email opens the exact screen. If the shipper isn't
   signed in, signing in takes them back to that screen.

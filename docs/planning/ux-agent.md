@@ -13,6 +13,11 @@ paused. Earnings already made will still be paid."
 
 Screen IDs must not be renumbered.
 
+
+**D043 (24 Nov 2026):** agents are not offered at sign-up. An agent joins through a link staff send
+them; their data and rules stay, `agents_enabled` stays the master switch, and Phase 6 builds these
+screens.
+
 ---
 
 ## Part 0. How to read this document

@@ -39,8 +39,7 @@ building it. The screen-by-screen specs in `docs/planning/` are annexes of this 
 | Role | Kind | Summary |
 | --- | --- | --- |
 | Shipper member | Member of a shipper organisation | Books and pays for loads. Sub-roles: owner, admin, booker, finance, viewer |
-| Transporter owner | Member of a transporter organisation | Owns trucks, receives payouts, manages drivers. Sub-roles: owner, manager |
-| Owner-driver | Transporter owner with `is_driver = true` | Owner screens plus driver trip screen |
+| Truck owner | Member of a transporter organisation (one truck or a hundred) | Owns trucks, receives payouts, manages drivers. Sub-roles: owner, admin (stored `manager`). **I drive my own truck** (`is_driver = true`) adds the Drive tab (D043) |
 | Driver | Member of a transporter organisation, role driver | Runs assigned trips. Sees no money |
 | Pickup contact | No account | Person at loading. Gets the loading code by WhatsApp |
 | Receiver | No account | Person at delivery. Gets the tracking link and delivery code |
@@ -133,7 +132,7 @@ Feature IDs (`F-xx`) are referenced from the UX blueprints.
   claimed amount.
 - **F-50 Automatic release** after 24 hours if arrived with photos and no code or problem.
 - **F-51 Waiting time** recording and waiting charges.
-- **F-52 Trip chat** between shipper, owner, driver and staff; text, photos, voice notes.
+- **F-52 Trip chat** between shipper, owner, driver and staff; text, photos, voice notes. **Launch 2** (D045): at launch the trip screen has Call only.
 - **F-53 Call** (real numbers only during a confirmed trip, by phone dialler or WhatsApp; **Ask the driver to call me** for receivers and pickup contacts, D018).
 - **F-54 SOS.** One tap; sends location to staff and owner; staff call back.
 - **F-55 Breakdown and transload.** Driver reports breakdown; staff assign a replacement truck.
@@ -250,9 +249,8 @@ The screen-by-screen spec lives in `docs/planning/`. Treat these as the literal 
 - `ux-conventions.md`: navigation shells, visual language, components, words, global behaviour
 - `ux-public-and-auth.md`: public website, sign-in, sign-up, onboarding, account switcher
 - `ux-shipper.md`
-- `ux-owner.md`: transporter owner, manager and owner-driver
+- `ux-owner.md`: truck owner and admin, including the "I drive my own truck" section (Drive tab)
 - `ux-driver.md`: driver, and the full spec of every driving screen
-- `ux-owner-driver.md`: owner-driver, and how the driving screens differ for them
 - `ux-receiver.md`
 - `ux-agent.md`
 - `ux-admin.md`
@@ -270,3 +268,8 @@ Do not invent screens without a reason traceable to a feature ID above.
 | Masked calling (D018) | Paid service | All numbers come through `trip_contacts()` so a masking provider can replace them |
 | Sideloaded Android app for background tracking (D005) | Only if PWA tracking proves too weak | Tracking ingestion accepts any source |
 | Lane rate data product | Needs volume | Every quote and final price is stored |
+
+## Launch 2 (after launch)
+
+- **F-52 Trip chat** between the sender, the truck owner, the driver and staff (D045). Until then trip
+  screens offer Call only, during a live trip (D018).

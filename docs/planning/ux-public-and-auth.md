@@ -103,45 +103,81 @@ Plain message, quote box, link home. Returns 404 or 410.
 
 ## Part 2. Sign-in and onboarding entry (F-01 to F-10)
 
-### A-01 Sign in or sign up
-**Route** `/auth` (query `role`, `next`, `invite`) · **Who** signed out
+### W-00 First-visit slides (D045)
+**Route** `/welcome` on `app.freight-africa.com` only, first visit (a `fa_seen_intro` flag in local
+storage); the public website stays waitlist-only (D036).
 
-**Layout** Logo (stacked), "Welcome to Freight Africa", three options stacked:
-1. **Continue with Google** (main button style but white with border, Google mark per Google rules).
-2. Phone number input → **Send code on WhatsApp**.
-3. Text link "Use email instead" → swaps phone input for email input → **Send code by email**.
+Three slides that follow the finger (the picture moves a little slower than the text). **Skip** at the
+top right; progress pills at the bottom left; the deep green shaped **Next** button at the bottom right
+shows 1, 2, 3 (the number changes with a quick vertical slide), and on the last slide its arrow leads
+to W-01. Swipe or tap.
+1. "Full truckloads, across Nigeria" / "Book verified trucks on the busiest routes."
+2. "Your payment is held safely" / "The truck owner is paid as the trip happens, not before."
+3. "Follow every trip live" / "See your goods from loading to delivery."
+
+### W-01 Welcome
+The illustration, "Move full truckloads across Nigeria", two small feature tiles (**Easy booking**,
+**Payment held safely**) with green icons, a primary **Get started** and a secondary **Sign in**.
+Desktop: the illustration fills the left half on a soft surface and the steps sit in a card on the
+right (this replaces the deep green sign-in panel). After the slides on a phone's first visit, the
+install card may slide up (A-08), never on top of the slides.
+
+### A-01 Get started or sign in (D044)
+**Route** `/auth` (query `mode=start|signin`, `next`, `invite`) · **Who** signed out
+
+- **Get started:** email → **Send code** → A-02 → A-11 set a PIN → A-12 two-step (optional) → A-03.
+- **Sign in:** email, or phone number for people invited by phone → **Continue** → A-13 enter PIN
+  (then the authenticator code when two-step is on; staff always). No email code.
+- Google and WhatsApp codes are switched off (`AUTH_GOOGLE`, `AUTH_WHATSAPP` unset) and not shown. No
+  wording promises a code by phone or WhatsApp.
 
 Footer: "By continuing you agree to the Terms and Privacy policy" with links.
 
-| Element | Does | Goes to |
-| --- | --- | --- |
-| Continue with Google | Supabase OAuth | Existing user → `next` or `/app`; new user → A-03 |
-| Send code on WhatsApp | Validates number; sends 6-digit code via authentication template; SMS if WhatsApp fails | A-02 |
-| Send code by email | Sends code via Resend | A-02 |
+**Rules** 5 codes per hour per email; 60 an hour per internet address. Invite links pass `invite` so
+the role step is skipped.
 
-**Rules** 5 codes per hour per number or email. Invite links pass `invite` so the role step is
-skipped.
+### A-02 Enter the email code
+**Route** `/auth/code` · Six boxes (`inputMode="numeric"`, `autocomplete="one-time-code"`),
+auto-advance, paste supported. "Sent to ada@okaforfoods.ng" with **Change**. **Resend code** after 30
+seconds, counting down. Wrong code: boxes shake (none with reduced motion), "That code isn't right.
+Check the latest email." After 5 wrong tries: "Too many tries. Get a new code."
 
-### A-02 Enter code
-**Route** `/auth/code` · Six boxes, auto-advance, paste supported, autofill from SMS where the phone
-offers it. "Sent to +234 803 123 4567 on WhatsApp" with **Change**. **Resend code** enabled after 30
-seconds, counting down. Wrong code: boxes shake (no shake if reduced motion), "That code isn't right.
-Check the latest message." After 5 wrong tries: "Too many tries. Get a new code."
+On success: no PIN yet (new person, forgot PIN, PIN locked) → A-11; otherwise `next` or `/app`.
 
-On success: existing user → `next` or `/app`; new user → A-03; invite → A-07.
+### A-11 Set your PIN
+One screen, entered twice ("Choose a 6-number PIN", then "Enter it again"). Obvious PINs are refused
+("Choose a PIN that's harder to guess"). Phones: the keypad is docked to the bottom in a sheet with
+28 px top corners; digits 28 px in borderless circular keys at least 72 px tall; the title and six dots
+sit centred in the space above; the avatar shows above the title when we know who it is. Desktop: the
+same card centred, the physical keyboard works, compact keypad.
+
+### A-12 Add two-step sign-in (optional)
+"Add two-step sign-in" with an authenticator app (QR and setup key), then backup codes to save, and
+**Not now**. Copy recommends it for truck owners and anyone who handles payments. Staff can't skip it.
+
+### A-13 Enter your PIN
+Used for sign-in on a new device (after A-01 Sign in) and to open a locked app (closed or unused for
+`app_lock_minutes`, default 15). Same keypad as A-11. Wrong PIN: the dots shake and Android buzzes
+(`navigator.vibrate`); "That PIN isn't right. 3 tries left." After 2 wrong tries from one internet
+address the bot check is asked for. Five wrong PINs lock PIN sign-in: "PIN sign-in is locked. We've
+emailed you." → **Sign in with an email code** → A-02 → A-11. **Forgot PIN?** sits in the bottom-left
+key slot: email code, then a new PIN. Phone-only accounts: "Ask your truck owner for a new PIN link."
+
+Every lock and every sign-in on a new device emails "New sign-in on [device], [city]. Not you? Lock
+your account"; the link locks the account and signs out every device.
 
 ### A-03 What brings you here?
 **Route** `/onboarding/role` · **Who** new users without an invite
 
-Three large cards with illustrations:
+Two large cards (D043):
 - **I send goods**: "Book trucks for your loads" → A-04.
 - **I own trucks**: "Find loads and get paid fast" → T-ON-01 (ux-owner.md).
-- **I'm an agent**: "Earn by bringing truck owners and senders" → G-ON-01 in ux-agent.md (hidden if agents disabled).
 
-Text below: "Are you a driver? Ask the truck owner to add you. You'll get a WhatsApp invite."
+One line below: "Driving for a truck owner? Ask them to invite you." Agents join through a link staff
+send them (ux-agent.md); they are not offered here.
 
-Consent checkboxes at the bottom of this step (F-10): Terms and Privacy (required), WhatsApp
-messages about my trips (required, explained), Occasional news and offers (optional).
+Consent checkboxes at the bottom of this step (F-10): Terms and Privacy (required), messages about my
+trips (required, explained), Occasional news and offers (optional).
 
 ### A-04 Shipper setup (one screen)
 **Route** `/onboarding/shipper`
@@ -163,28 +199,38 @@ earnings wait until they are.
 ### A-07 Accept invite
 **Route** `/invite/{token}` (team and driver invites) and `/invite/a/{code}` (agent referral)
 
-- Team/driver invite: "Musa Transport invited you to join as a driver." Shows org name, inviter,
-  role. **Accept and continue** → A-01 if signed out → then driver onboarding D-ON-01 or team member
-  lands in the org's shell.
+- **Invited by email:** "Musa Transport invited you to join as a driver." Shows business, inviter,
+  role. **Accept and continue** → A-01 Get started with that email (code, PIN) → driver onboarding
+  D-ON-01, or the team member lands in the business's shell.
+- **Invited by phone** (D044): the link the owner shared from their own WhatsApp is the proof. The
+  person confirms their name, sets a PIN (A-11), and their account is created with that phone number.
+  Afterwards they sign in with phone number and PIN. A forgotten PIN: their owner or an admin taps
+  **Send a new PIN link** on Drivers or Team and shares it the same way.
+- Role wording: "as a driver.", "as a booker.", "as an admin.", "as a viewer." (also in the shared
+  message).
 - Agent referral: "Chinedu (agent) invited you to Freight Africa." **Get started** → A-01 with the
-  referral stored → A-03. The referral attaches only if a new organisation is created.
-- Expired or used: "This invite has expired. Ask for a new one." + **Go to home**.
+  referral stored. The referral attaches only if a new organisation is created.
+- Expired, used or not found: equal-height cards, 32 px padding, content centred: "This invite has
+  expired. Ask for a new one." + **Go to home**.
 
 ### A-08 Install the app
-**Route** `/onboarding/install` · **Who** drivers and owner-drivers (required), others (offered once)
+**Route** `/onboarding/install` · **Who** drivers and truck owners who drive (required step), others
+through the install card.
 
-Detects platform and shows the right steps with pictures:
-- Android Chrome: **Install Freight Africa** button (native install prompt).
-- iPhone Safari: "Tap Share, then Add to Home Screen", with a looping 3-frame illustration.
-- iPhone not in Safari: "Open this page in Safari to install" + copy link button.
-
-Explains why: "Trips need the app installed so tracking and alerts work."
-**I've installed it** → checks `display-mode: standalone` next launch; if opened standalone, marks
-done. Drivers can't start a trip until installed or staff waive it.
+- **Install card (D045):** on a phone's first visit, after the slides (never on top of them), a small
+  card slides up from the bottom: app icon, "Install Freight Africa", "Opens faster and works with a
+  weak signal", a primary **Install** and a quiet **Not now**. On iPhone, Install shows the three Add
+  to Home Screen pictures. Not now hides it for 7 days; it appears 3 times at most. Desktop: a small
+  **Install app** item in the sidebar footer.
+- The required step detects the platform: Android Chrome native prompt; iPhone Safari "Tap Share,
+  then Add to Home Screen" with the three pictures; iPhone not in Safari "Open this page in Safari".
+  "Trips need the app installed so tracking and alerts work." Drivers can't start a trip until
+  installed or staff waive it.
 
 ### A-09 Account switcher (sheet)
-Opened from the org avatar. Lists every org and role the person has: avatar, name, role ("Shipper ·
-Admin", "Truck owner", "Agent"). Tap → switches shell and saves `last_active_org_id`. Bottom links:
+Opened from the avatar. "Signed in as" with the email on its own line under it, truncated. Lists every
+business the person belongs to with its type and role ("Sender · Owner", "Truck owner · Admin") and a
+check mark on the active one. Tap → switches shell and saves `last_active_org_id`. Bottom links:
 **Add a business** (→ A-03), **Settings** (→ A-10), **Sign out**.
 
 ### A-10 Settings
@@ -192,10 +238,11 @@ Admin", "Truck owner", "Agent"). Tap → switches shell and saves `last_active_o
 
 | Section | Contents | Actions |
 | --- | --- | --- |
-| Profile | Photo, name (locked after KYC, "Contact support to change"), phone, email | Edit photo; add or change phone/email with code |
+| Profile | Picture, name (locked after KYC, "Contact support to change"), phone, email | **Choose your picture** (3D faces, D045); add or change phone/email with code |
+| Driving | Truck owners: **I drive my own truck** switch (adds the Drive tab, D043) | Toggle |
 | Notifications | Per event group: WhatsApp, email, push toggles; safety and money groups locked on | Toggle |
 | Install | Install status and steps | → A-08 |
-| Security | Signed-in devices with last active time | **Sign out of this device**, **Sign out everywhere** |
+| Security | PIN, two-step sign-in, app lock after (minutes), signed-in devices with last active time | **Change PIN** (needs a sign-in in the last 15 minutes), **Add two-step sign-in** / **Turn off**, **Sign out of this device**, **Sign out everywhere** |
 | Privacy | Download my data (request, emailed within 7 days), consents with dates | **Withdraw marketing consent**, **Delete my account** (confirm sheet explains what is kept by law, e.g. trip and money records) |
 | Help | → P-11, WhatsApp support number with copy |
 | About | App version, Terms, Privacy | |

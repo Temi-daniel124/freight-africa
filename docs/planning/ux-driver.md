@@ -6,8 +6,8 @@ user journey for the **driver**: a person employed by a truck owner to drive the
 a driver is a member of a transporter organisation with `transporter_role = driver` and
 `is_driver = true` (D003). It covers phones and desktops and contains no drawings.
 
-**This file is the home of every driving screen** (D-01 to D-15). The owner-driver uses the same
-screens with a few additions, listed in `ux-owner-driver.md` Part 6. If the two ever differ on a
+**This file is the home of every driving screen** (D-01 to D-15). The owner who drives uses the same
+screens with a few additions, listed in `ux-owner.md` Part 13. If the two ever differ on a
 driving screen, this file wins.
 
 Screen IDs must not be renumbered.
@@ -22,6 +22,15 @@ layout**, **Desktop layout** (where it applies), **Interactions**, **States**, a
 after 4 seconds.
 
 ---
+
+
+## D045 update (24 Nov 2026): the Trip tab
+
+The founder mockup "camera only, one big button per step", in the new look. With a trip: the map card,
+the next step as one big button, the goods (never money, D003), and **Call** for the pickup or receiver
+contact during the live trip (D018). With no trip: the illustration empty state. At loading the driver
+confirms or corrects the weight or amount (a weighbridge ticket photo is optional, D046). Drivers
+invited by phone sign in with phone number and PIN (D044).
 
 ## Part 1. Who the driver is and how the app is shaped for them
 
@@ -86,7 +95,7 @@ desktop or laptop:
 6. **Drives the trip** with one button: to pickup, arrive, load and photograph, enter the loading code,
    start the trip, rest stops, arrive, delivery photo, enter the delivery code (D-01, D-02, D-03,
    D-09).
-7. **Handles problems**: report a problem, breakdown, SOS, chat and calls (D-04, D-05, D-14).
+7. **Handles problems**: report a problem, breakdown, SOS and calls (D-04, D-05, D-14).
 8. **Finishes** the trip and sees what's next (D-10, D-06).
 9. **Looks back** at past trips and keeps his details right (D-07, D-08).
 10. Gets **help** when needed (D-12, D-13) and **notifications** throughout (N-01).
@@ -259,7 +268,7 @@ tap tells them in advance.
 3. **The load** with the handling note.
 4. **Before you go** checklist (ticks are for the driver only, not recorded): Phone charger in the cab
    · Phone holder · Truck papers with you · Tarpaulin and ropes if needed.
-5. Row of icon buttons: **Directions to pickup** · **Trip details** (D-15) · **Chat** (D-14) ·
+5. Row of icon buttons: **Directions to pickup** · **Trip details** (D-15) ·
    **Call** (the pickup contact; numbers are available because the trip is confirmed).
 6. Main button **Go to pickup**.
 
@@ -282,7 +291,7 @@ already accepted.
 3. **Where you're going**, very large: "To pickup: Dawanau Market" or "To Lagos: Apapa".
 4. Distance and arrival time: "48 km · about 1 h 10 min".
 5. **What to do now**, in one sentence: "Drive to the pickup."
-6. Row of large icon buttons with labels: **Directions** · **Chat** · **Call** · **Rest stops** (D-09)
+6. Row of large icon buttons with labels: **Directions** · **Call** · **Rest stops** (D-09)
    · **Problem** (D-04).
 7. The **main button** at the bottom.
 
@@ -313,7 +322,7 @@ on again." If tracking had paused for 15 minutes, the driver will have had a pus
 - Before loading: the person at the pickup.
 - From the start of the trip: the receiver of the next stop.
 - From the Chat screen header, while the trip is live: the sender who booked.
-- Always: the driver's own owner and managers (same business).
+- Always: the driver's own owner and admins (same business).
 - A banner appears when a contact taps "Ask the driver to call me": "Amina (receiver) asked you to
   call," with **Call now**.
 - Numbers disappear when the trip is delivered or cancelled.
@@ -422,7 +431,7 @@ and to the owner, and, if set, a WhatsApp message to the driver's emergency cont
 emergency number 112 and the Freight Africa operations line in large text with **Copy**. Button **I'm
 safe now** asks for a short note or voice note and returns to the trip.
 
-### D-14 Trip chat
+### D-14 Trip chat (Launch 2, D045; not built at launch)
 
 **Purpose.** Talk to the owner, the sender and Freight Africa about this trip.
 

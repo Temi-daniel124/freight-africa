@@ -307,7 +307,7 @@ doesn't balance is refused; the dispatcher processes a queued test notification 
 pass screenshot review.
 
 ### Phase 2: Supply
-Owner and owner-driver onboarding, driver invitations and onboarding, Didit sessions and webhook
+Truck owner onboarding (with the "I drive my own truck" switch, D043), driver invitations and onboarding, Didit sessions and webhook
 (Smile ID behind the same interface), trucks with photos, plate reading (Tesseract.js), documents with
 expiry reminders, trackers registration, truck types and goods catalogue, bank account with name check,
 the staff verification queue and truck inspection tasks.

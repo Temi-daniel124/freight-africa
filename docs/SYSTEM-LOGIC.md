@@ -590,7 +590,7 @@ only exist on the platform.
 
 - **Driving lock.** For a user with `is_driver = true` on an active trip in `to_pickup` or
   `in_transit`, when the phone's speed has been above *10 km/h* for *30 seconds*, every screen except
-  the Drive tab and SOS is covered (ux-owner-driver.md OD-01). **I'm a passenger** lifts it for *30
+  the Drive tab and SOS is covered (ux-owner.md Part 13 OD-01). **I'm a passenger** lifts it for *30
   minutes* and logs `driving_lock_dismissed`.
 - **Held notifications.** Pushes marked `deliver_when_stopped` (new loads, return loads, offers,
   advance amounts, problems, papers, payouts) wait until the phone has been still for *2 minutes*.
