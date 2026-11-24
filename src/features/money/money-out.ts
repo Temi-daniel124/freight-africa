@@ -22,10 +22,14 @@ export async function processMoneyOut(limit = 20): Promise<Sent> {
     const demo = (payout.organizations as unknown as { is_demo: boolean })
       .is_demo;
     const provider = paymentProvider(demo);
-    if (!provider || (!demo && !payout.bank_account_id)) {
+    // Demo money settles demo accounts only, never a real owner (review: previews share the database).
+    if (!provider || (provider.kind === "demo" && !demo) || (!demo && !payout.bank_account_id)) {
       sent.skipped += 1;
       continue;
     }
+    // Claim it first, so two runs at once never send it twice.
+    const { data: claimed } = await admin.from("payouts").update({ status: "processing" }).eq("id", payout.id).eq("status", "queued").select("id");
+    if (!claimed?.length) continue;
     try {
       const ref = await provider.sendPayout({
         payoutId: payout.id,
@@ -57,10 +61,12 @@ export async function processMoneyOut(limit = 20): Promise<Sent> {
     const demo = (refund.organizations as unknown as { is_demo: boolean })
       .is_demo;
     const provider = paymentProvider(demo);
-    if (!provider) {
+    if (!provider || (provider.kind === "demo" && !demo)) {
       sent.skipped += 1;
       continue;
     }
+    const { data: claimedRefund } = await admin.from("refunds").update({ status: "processing" }).eq("id", refund.id).eq("status", "queued").select("id");
+    if (!claimedRefund?.length) continue;
     try {
       const ref = await provider.sendRefund({
         refundId: refund.id,
