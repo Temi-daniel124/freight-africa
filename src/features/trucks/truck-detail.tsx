@@ -61,7 +61,7 @@ export async function TruckDetail({
   const supabase = await supabaseServer();
   const [{ data: fleet }, { data: papers }, { data: history }, { data: team }] =
     await Promise.all([
-      supabase.rpc("fleet" as never, { p_org: orgId } as never),
+      supabase.rpc("fleet", { p_org: orgId }),
       supabase
         .from("documents")
         .select("id, status, expires_on, type:document_types(name)")

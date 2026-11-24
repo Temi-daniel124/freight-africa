@@ -58,19 +58,7 @@ export async function DriverTrip() {
       </section>
     );
   }
-  const { data: contact } = await (
-    supabase.rpc as unknown as (
-      fn: string,
-      a: object,
-    ) => Promise<{
-      data:
-        | {
-            next_contact_name: string | null;
-            next_contact_phone: string | null;
-          }[]
-        | null;
-    }>
-  )("trip_map", { p_trip: trip.id });
+  const { data: contact } = await supabase.rpc("trip_map", { p_trip: trip.id });
   const c = contact?.[0];
   const step = NEXT[trip.status];
   return (

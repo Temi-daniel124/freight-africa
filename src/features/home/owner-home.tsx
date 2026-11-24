@@ -158,7 +158,7 @@ export async function OwnerHome({
     { data: payouts },
     { data: papers },
   ] = await Promise.all([
-    supabase.rpc("fleet" as never, { p_org: orgId } as never),
+    supabase.rpc("fleet", { p_org: orgId }),
     supabase.rpc("load_board", { p_org: orgId }),
     supabase
       .from("payouts")

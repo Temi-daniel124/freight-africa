@@ -38,12 +38,7 @@ type MapRow = {
 /** One trip for the map (trip_map checks who may see it, and hides the phone and money as D018/D003 say). */
 export async function trackData(tripId: string): Promise<TrackData | null> {
   const supabase = await supabaseServer();
-  const { data } = await (
-    supabase.rpc as unknown as (
-      fn: string,
-      args: object,
-    ) => Promise<{ data: MapRow[] | null }>
-  )("trip_map", { p_trip: tripId });
+  const { data } = await supabase.rpc("trip_map", { p_trip: tripId });
   const r = data?.[0];
   if (!r) return null;
   const load: TruckLoad = r.weight_kg
