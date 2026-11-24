@@ -729,13 +729,37 @@
       "failed": "We couldn’t save that. Check your connection and try again."
     },
     "next": {
-      "title": "Thanks, {name}",
-      "anon": "Thanks",
-      "shipper": "Setting up your sender account comes next. We’re building it now, so check back soon.",
-      "owner": "Setting up your truck business comes next. We’re building it now, so check back soon.",
-      "agent": "Setting up as an agent comes next. We’re building it now, so check back soon.",
+      "title": "Almost there, {name}",
+      "anon": "Almost there",
+      "shipper": "Setting up your sender account opens here very soon. Until then, have a look around your app.",
+      "owner": "Setting up your truck business opens here very soon. Until then, have a look around your app.",
+      "agent": "Setting up as an agent opens here very soon. Until then, have a look around your app.",
+      "home": "Go to your app",
       "change": "Choose a different role",
       "signOut": "Sign out"
+    },
+    "setup": {
+      "title": "Finish setting up",
+      "progress": "{done} of {total} done",
+      "lead": {
+        "shipper": "One short step and you can book your first truck.",
+        "owner": "A few steps before you can take paid loads. You can stop and come back any time.",
+        "ownerDriver": "A few steps before you can take paid loads and drive them. You can stop and come back any time.",
+        "agent": "A few steps before you can start earning. You can stop and come back any time."
+      },
+      "steps": {
+        "details": "Your details",
+        "business": "About you and your business",
+        "identity": "Check your identity",
+        "bank": "Add your bank account",
+        "truck": "Add your truck",
+        "drivers": "Add your drivers",
+        "licence": "Your driver’s licence",
+        "agreement": "How you earn"
+      },
+      "done": "Done",
+      "start": "Start",
+      "change": "Choose a different role"
     }
   },
   "authStates": {
@@ -1185,11 +1209,11 @@
       "emptyText": "Invite the people who book, pay or drive with you."
     },
     "errors": {
-      "42501": "You can't do that in this account.",
+      "22023": "That role isn't available here.",
       "23505": "They're already in the team.",
       "23514": "Every business needs an owner. Make someone else the owner first.",
+      "42501": "You can't do that in this account.",
       "54000": "That's a lot of invites at once. Try again in an hour.",
-      "22023": "That role isn't available here.",
       "P0002": "This invite can no longer be used. Ask for a new one.",
       "default": "Something went wrong. Try again."
     },

@@ -21,3 +21,18 @@ export type RoleState = {
   values: { role: JoiningAs | null; terms: boolean; whatsapp: boolean; marketing: boolean };
   attempt: number;
 };
+
+/** What a profile can record (profiles.joining_as): the A-03 choices plus owner-drivers, who choose that in the owner setup. */
+export const JOINED = ["shipper", "owner", "owner_driver", "agent"] as const;
+export type Joined = (typeof JOINED)[number];
+
+export function parseJoined(value: unknown): Joined | null {
+  return typeof value === "string" && (JOINED as readonly string[]).includes(value) ? (value as Joined) : null;
+}
+
+/** The shell a choice opens before any organisation exists (owner-drivers share the owner's /app/haul). */
+export function shellFor(joined: Joined) {
+  if (joined === "shipper") return "/app/ship";
+  if (joined === "agent") return "/app/agent";
+  return "/app/haul";
+}

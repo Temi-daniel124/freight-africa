@@ -4,9 +4,9 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { ipKey } from "@/lib/ip-key";
 import { supabaseServer } from "@/lib/supabase/server";
-import { agentsEnabled, parseJoiningAs, TERMS_VERSION, type RoleState } from "./roles";
+import { agentsEnabled, parseJoined, parseJoiningAs, shellFor, TERMS_VERSION, type Joined, type RoleState } from "./roles";
 
-/** A-03: saves the agreements (F-10) and moves on to the setup for the chosen role. */
+/** A-03: saves the agreements (F-10) and the choice, then opens that role's app, where Home shows what's left to set up. */
 export async function chooseRole(previous: RoleState, formData: FormData): Promise<RoleState> {
   const attempt = previous.attempt + 1;
   const picked = parseJoiningAs(formData.get("role"));
@@ -42,5 +42,13 @@ export async function chooseRole(previous: RoleState, formData: FormData): Promi
       return { status: "error", missing, values, attempt };
     }
   }
-  redirect(`/onboarding/${role}`);
+  // An owner-driver picking "I own trucks" again stays an owner-driver (that choice is made in the owner setup).
+  const { data: profile } = await supabase.from("profiles").select("joining_as").eq("id", claims.claims.sub).maybeSingle();
+  const joined: Joined = role === null ? "shipper" : role === "owner" && parseJoined(profile?.joining_as) === "owner_driver" ? "owner_driver" : role;
+  const { error: saveError } = await supabase.from("profiles").update({ joining_as: joined }).eq("id", claims.claims.sub);
+  if (saveError) {
+    console.error("saving joining_as failed", saveError.code);
+    return { status: "error", missing, values, attempt };
+  }
+  redirect(shellFor(joined));
 }

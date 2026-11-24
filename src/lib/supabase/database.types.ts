@@ -24,6 +24,7 @@ export type Database = {
           note: string | null
           payload: Json
           requested_by: string
+          self_approved: boolean
           status: string
           subject_id: string
         }
@@ -36,6 +37,7 @@ export type Database = {
           note?: string | null
           payload: Json
           requested_by: string
+          self_approved?: boolean
           status?: string
           subject_id: string
         }
@@ -48,6 +50,7 @@ export type Database = {
           note?: string | null
           payload?: Json
           requested_by?: string
+          self_approved?: boolean
           status?: string
           subject_id?: string
         }
@@ -634,6 +637,7 @@ export type Database = {
           id: string
           kyc_status: Database["public"]["Enums"]["kyc_status"]
           language: Database["public"]["Enums"]["language_code"]
+          joining_as: string | null
           last_active_org_id: string | null
           night_look: string
           nin_enc: string | null
@@ -654,6 +658,7 @@ export type Database = {
           id: string
           kyc_status?: Database["public"]["Enums"]["kyc_status"]
           language?: Database["public"]["Enums"]["language_code"]
+          joining_as?: string | null
           last_active_org_id?: string | null
           night_look?: string
           nin_enc?: string | null
@@ -674,6 +679,7 @@ export type Database = {
           id?: string
           kyc_status?: Database["public"]["Enums"]["kyc_status"]
           language?: Database["public"]["Enums"]["language_code"]
+          joining_as?: string | null
           last_active_org_id?: string | null
           night_look?: string
           nin_enc?: string | null
@@ -889,6 +895,7 @@ export type Database = {
         Args: { p_action: string; p_org: string }
         Returns: boolean
       }
+      can_self_approve: { Args: never; Returns: boolean }
       change_member_role: {
         Args: { p_org: string; p_role: string; p_user: string }
         Returns: undefined
