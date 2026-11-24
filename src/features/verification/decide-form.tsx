@@ -9,7 +9,7 @@ import { decideFleet, decideIdentity, type DecideState } from "./staff-actions";
 const t = messages.shell.staff.verification;
 
 /** Approve, or Decline with a reason the person reads. */
-export function DecideForm({ session, kind = "identity" }: { session: string; kind?: "identity" | "truck" | "document" }) {
+export function DecideForm({ session, kind = "identity" }: { session: string; kind?: "identity" | "truck" | "document" | "bank" }) {
   const [state, action, pending] = useActionState(kind === "identity" ? decideIdentity : decideFleet, { status: "idle", attempt: 0 } satisfies DecideState);
   const [declining, setDeclining] = useState(false);
   if (state.status === "done") return <p className="text-body-sm font-semibold text-success">{t.decided}</p>;

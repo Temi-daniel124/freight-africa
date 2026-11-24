@@ -7,7 +7,8 @@ import { supabaseServer } from "@/lib/supabase/server";
 export async function decideFleet(previous: DecideState, formData: FormData): Promise<DecideState> {
   const attempt = previous.attempt + 1;
   const id = String(formData.get("session") ?? "");
-  const kind = formData.get("kind") === "truck" ? "truck" : "document";
+  const raw = formData.get("kind");
+  const kind = raw === "truck" ? "truck" : raw === "bank" ? "bank_account" : "document";
   const approve = formData.get("decision") === "approve";
   const reason = String(formData.get("reason") ?? "").trim().slice(0, 300);
   if (!approve && !reason) return { status: "needReason", attempt };
@@ -15,7 +16,9 @@ export async function decideFleet(previous: DecideState, formData: FormData): Pr
   const { error } =
     kind === "truck"
       ? await supabase.rpc("decide_truck", { p_truck: id, p_approve: approve, p_note: reason || undefined })
-      : await supabase.rpc("decide_document", { p_document: id, p_approve: approve, p_note: reason || undefined });
+      : kind === "bank_account"
+        ? await supabase.rpc("decide_bank_account", { p_account: id, p_approve: approve, p_note: reason || undefined })
+        : await supabase.rpc("decide_document", { p_document: id, p_approve: approve, p_note: reason || undefined });
   if (error) {
     console.error(`decide_${kind} failed`, error.code);
     return { status: "error", attempt };

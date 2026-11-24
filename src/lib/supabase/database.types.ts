@@ -1540,6 +1540,7 @@ export type Database = {
         Args: { p_token: string }
         Returns: Database["public"]["Enums"]["staff_role"]
       }
+      decide_bank_account: { Args: { p_account: string; p_approve: boolean; p_note?: string }; Returns: undefined }
       add_bank_account: {
         Args: {
           p_account_number: string
