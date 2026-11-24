@@ -116,7 +116,6 @@ create table public.loads (
 );
 create index loads_shipper on public.loads (shipper_org_id, created_at desc);
 create index loads_status on public.loads (status, pickup_from);
-alter table public.ledger_accounts add constraint ledger_accounts_load_fk foreign key (load_id) references public.loads (id);
 
 create table public.load_stops (
   id uuid primary key default gen_random_uuid(),
@@ -273,7 +272,8 @@ declare
   v_bps int := 300;
   v_tier jsonb;
 begin
-  select count(*) into v_ever from public.loads where shipper_org_id = p_org and funded_at is not null;
+  -- A load being paid for counts too, so two first loads paid at once don't both skip the fee (review).
+  select count(*) into v_ever from public.loads where shipper_org_id = p_org and (funded_at is not null or status = 'awaiting_payment');
   if v_ever = 0 and coalesce((private.setting('first_trip_no_fee'))::boolean, true) then
     return 0;
   end if;
@@ -378,6 +378,15 @@ begin
   select * into v_price from private.price(p_org, v_from, v_to, p_truck_type, v_count - 1);
   if v_price.freight_kobo is null then
     raise exception 'we don''t cover this route yet' using errcode = 'P0002';
+  end if;
+  -- Every drop-off is on the priced corridor: its end cities or a town it passes through (review).
+  if exists (
+    select 1 from jsonb_array_elements(p_stops) st
+    join public.cities ci on ci.id = (st ->> 'city')::uuid
+    join public.corridors co on co.id = v_price.corridor_id
+    where ci.id not in (co.city_a_id, co.city_b_id) and not (ci.name = any (co.via))
+  ) then
+    raise exception 'every stop must be on the route' using errcode = '22023';
   end if;
   insert into public.loads (ref, shipper_org_id, created_by, corridor_id, from_city_id, to_city_id, goods_category_id, goods_description,
     weight_kg, quantity, quantity_unit, declared_value_kobo, truck_type_id, pickup_from, pickup_until,
@@ -591,6 +600,13 @@ begin
   if v_truck.id is null or v_truck.org_id <> v_offer.transporter_org_id or v_truck.status <> 'active' then
     raise exception 'choose an active truck' using errcode = '22023';
   end if;
+  -- Every path to a trip checks these again (review): demo stays with demo, the driver is active here.
+  if v_load.is_demo <> coalesce((select is_demo from public.organizations where id = v_offer.transporter_org_id), false) then
+    raise exception 'not allowed' using errcode = '42501';
+  end if;
+  if v_offer.driver_id is not null and not exists (select 1 from public.drivers where user_id = v_offer.driver_id and org_id = v_offer.transporter_org_id and status = 'active' and not paused) then
+    raise exception 'choose one of your active drivers' using errcode = '22023';
+  end if;
   if coalesce(v_load.weight_kg, 0) > v_truck.capacity_kg then
     raise exception 'this load is heavier than the truck can carry' using errcode = '22023';
   end if;
@@ -653,7 +669,13 @@ begin
   if v_org is null or not public.can_in_org(v_org, 'load_board') then
     raise exception 'not allowed' using errcode = '42501';
   end if;
+  if p_driver is not null and not exists (select 1 from public.drivers where user_id = p_driver and org_id = v_org and status = 'active' and not paused) then
+    raise exception 'choose one of your active drivers' using errcode = '22023';
+  end if;
   select * into v_load from public.loads where id = p_load;
+  if v_load.id is null or v_load.is_demo <> coalesce((select is_demo from public.organizations where id = v_org), false) then
+    raise exception 'not allowed' using errcode = '42501';
+  end if;
   if v_load.status <> 'funded' then
     raise exception 'this load was just taken' using errcode = '40001';
   end if;
