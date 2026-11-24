@@ -88,10 +88,16 @@ export async function spendBackupCode(previous: BackupState, formData: FormData)
     return { status: "error", attempt };
   }
   for (const factor of factors?.factors ?? []) {
-    if (factor.factor_type === "totp") await admin.auth.admin.mfa.deleteFactor({ userId, id: factor.id });
+    if (factor.factor_type !== "totp") continue;
+    const { error: deleteError } = await admin.auth.admin.mfa.deleteFactor({ userId, id: factor.id });
+    if (deleteError) {
+      // The code is spent but the authenticator is still there: a super admin resets it (X-00 States).
+      console.error("deleting the lost authenticator failed", deleteError.code);
+      return { status: "error", attempt };
+    }
   }
   const head = await headers();
-  await admin.from("audit_log").insert({
+  const { error: auditError } = await admin.from("audit_log").insert({
     actor_user_id: userId,
     actor_role: "user",
     action: "staff_backup_code_used",
@@ -101,6 +107,7 @@ export async function spendBackupCode(previous: BackupState, formData: FormData)
     ip: (head.get("x-forwarded-for") ?? "").split(",")[0].slice(0, 300) || null,
     user_agent: head.get("user-agent")?.slice(0, 300) ?? null,
   });
+  if (auditError) console.error("audit of a backup code failed", auditError.code);
   // The session still carries the old aal claims; a fresh one is fetched before setting up again.
   await supabase.auth.refreshSession();
   redirect("/admin/setup");
