@@ -501,18 +501,24 @@ begin
     else
       return 'partial';
     end if;
-  elsif v_pay.purpose = 'top_up' and v_load.status in ('funded', 'matched') then
-    -- A counter's top-up: accepted by private.accept_offer below once it is all here.
-    v_needed := v_load.total_kobo + coalesce((select o.amount_kobo - v_load.freight_kobo from public.offers o where o.id = v_pay.offer_id), 0)
-      + coalesce((select private.round_to((o.amount_kobo - v_load.freight_kobo) * v_load.fee_bps / 10000.0, 10000) from public.offers o where o.id = v_pay.offer_id), 0);
-    if (select received_kobo from public.payments where id = v_pay.id) < v_pay.amount_kobo then
+  elsif v_pay.purpose = 'top_up' then
+    -- A counter's top-up. If the counter can no longer be accepted (another owner took the load, it
+    -- expired, the load was cancelled), this money goes straight back (review).
+    if v_load.status <> 'funded' or not exists (select 1 from public.offers where id = v_pay.offer_id and status = 'awaiting_top_up') then
+      v_extra := least(v_held, p_amount_kobo);
+    elsif (select received_kobo from public.payments where id = v_pay.id) < v_pay.amount_kobo then
       return 'partial';
+    else
+      begin
+        perform private.accept_offer(v_pay.offer_id, null);
+      exception when others then
+        -- The money arrived; keep it recorded and give the whole top-up back (review).
+        update public.offers set status = 'expired' where id = v_pay.offer_id;
+        perform private.queue_refund(v_load.id, least(v_held, (select received_kobo from public.payments where id = v_pay.id)), 'The offer could not go ahead', 'topup-failed:' || v_pay.id);
+        return 'refunded';
+      end;
+      v_extra := (select received_kobo from public.payments where id = v_pay.id) - v_pay.amount_kobo;
     end if;
-    if v_load.status = 'funded' and exists (select 1 from public.offers where id = v_pay.offer_id and status = 'awaiting_top_up') then
-      perform private.accept_offer(v_pay.offer_id, null);
-      return 'funded';
-    end if;
-    v_extra := least(v_held, p_amount_kobo);
   else
     -- Paid after the load was cancelled or expired (§4.3): all of it goes back.
     v_extra := least(v_held, p_amount_kobo);
@@ -522,6 +528,12 @@ begin
   end if;
   return 'funded';
 end;
+$$;
+
+-- The service fee a trip owes: the load's fee, plus the fee on an accepted counter's difference.
+create function private.fee_due(p_load uuid, p_trip_freight bigint) returns bigint language sql stable security definer set search_path = '' as $$
+  select l.fee_kobo + case when p_trip_freight > l.freight_kobo then private.round_to((p_trip_freight - l.freight_kobo) * l.fee_bps / 10000.0, 10000) else 0 end
+  from public.loads l where l.id = p_load;
 $$;
 
 -- Escrow → the sender's refundable balance, and a refund to pay (one refund per payment, §7.5).
@@ -679,6 +691,7 @@ begin
   if v_load.status <> 'funded' then
     raise exception 'this load was just taken' using errcode = '40001';
   end if;
+  p_amount_kobo := private.round_to(p_amount_kobo, 100000);
   if p_amount_kobo is null or p_amount_kobo <= v_load.freight_kobo or p_amount_kobo > v_load.freight_kobo + v_load.freight_kobo * (private.setting('counter_max_bps'))::bigint / 10000 then
     raise exception 'a counter is above the price and at most 20 percent more' using errcode = '22023';
   end if;
@@ -821,8 +834,15 @@ begin
   select * into v_load from public.loads where id = v_trip.load_id;
   v_balance := v_trip.freight_kobo - v_trip.advance_kobo - v_trip.commission_kobo;
   v_held := private.ledger_balance(private.ledger_account('escrow', null, v_load.id));
-  v_revenue := v_held - v_balance;
+  -- Revenue is exactly the fee owed and the commission; anything left belongs to the sender (review).
+  v_revenue := private.fee_due(v_load.id, v_trip.freight_kobo) + v_trip.commission_kobo;
+  if v_held < v_balance + v_revenue then
+    raise exception 'the money held is short for this trip; finance must look' using errcode = '23514';
+  end if;
   v_lines := jsonb_build_array(jsonb_build_object('account', private.ledger_account('escrow', null, v_load.id), 'debit', v_held));
+  if v_held - v_balance - v_revenue > 0 then
+    v_lines := v_lines || jsonb_build_object('account', private.ledger_account('shipper_refundable', v_load.shipper_org_id, null), 'credit', v_held - v_balance - v_revenue);
+  end if;
   if v_balance > 0 then
     v_lines := v_lines || jsonb_build_object('account', private.ledger_account('owner_payable', v_trip.transporter_org_id, null), 'credit', v_balance);
   end if;
@@ -832,6 +852,11 @@ begin
   v_tx := private.post_ledger('balance', 'payout:' || p_trip || ':balance', v_lines, v_load.id, p_trip, 'Balance after delivery');
   if v_balance > 0 then
     perform private.queue_payout(p_trip, 'balance', v_balance, v_tx);
+  end if;
+  if v_held - v_balance - v_revenue > 0 then
+    insert into public.refunds (load_id, shipper_org_id, amount_kobo, reason, ledger_transaction_id, idempotency_key)
+    values (v_load.id, v_load.shipper_org_id, v_held - v_balance - v_revenue, 'Money left after the trip', v_tx, 'leftover:' || p_trip)
+    on conflict (idempotency_key) do nothing;
   end if;
   update public.trips set status = 'closed', closed_at = now(), status_changed_at = now() where id = p_trip;
   update public.trucks set availability = 'available' where id = v_trip.truck_id;
@@ -871,6 +896,7 @@ declare
   v_fee bigint;
   v_held bigint;
   v_refund bigint;
+  v_service bigint;
   v_tx uuid;
 begin
   select * into v_load from public.loads where id = p_load for update;
@@ -906,20 +932,22 @@ begin
     perform private.queue_refund(p_load, v_held, coalesce(p_reason, 'Cancelled before the truck reached pickup'), 'cancel:' || p_load, v_user);
   else
     -- At pickup or loading: the owner gets the cancellation fee, we keep the service fee (D019).
-    v_fee := least((private.setting('cancellation_fee_kobo'))::bigint, v_held - v_load.fee_kobo);
-    v_refund := v_held - v_load.fee_kobo - v_fee;
+    v_service := least(v_held, private.fee_due(p_load, v_trip.freight_kobo));
+    v_fee := greatest(0, least((private.setting('cancellation_fee_kobo'))::bigint, v_held - v_service));
+    v_refund := v_held - v_service - v_fee;
     v_tx := private.post_ledger('cancellation', 'cancel:' || p_load,
-      jsonb_build_array(
-        jsonb_build_object('account', private.ledger_account('escrow', null, p_load), 'debit', v_held),
-        jsonb_build_object('account', private.ledger_account('owner_payable', v_trip.transporter_org_id, null), 'credit', v_fee))
-      || case when v_load.fee_kobo > 0 then jsonb_build_array(jsonb_build_object('account', private.ledger_account('platform_revenue'), 'credit', v_load.fee_kobo)) else '[]'::jsonb end
+      jsonb_build_array(jsonb_build_object('account', private.ledger_account('escrow', null, p_load), 'debit', v_held))
+      || case when v_fee > 0 then jsonb_build_array(jsonb_build_object('account', private.ledger_account('owner_payable', v_trip.transporter_org_id, null), 'credit', v_fee)) else '[]'::jsonb end
+      || case when v_service > 0 then jsonb_build_array(jsonb_build_object('account', private.ledger_account('platform_revenue'), 'credit', v_service)) else '[]'::jsonb end
       || case when v_refund > 0 then jsonb_build_array(jsonb_build_object('account', private.ledger_account('shipper_refundable', v_load.shipper_org_id, null), 'credit', v_refund)) else '[]'::jsonb end,
       p_load, v_trip.id, 'Cancelled at pickup');
     if v_refund > 0 then
       insert into public.refunds (load_id, shipper_org_id, amount_kobo, reason, ledger_transaction_id, idempotency_key, requested_by)
       values (p_load, v_load.shipper_org_id, v_refund, coalesce(p_reason, 'Cancelled at pickup'), v_tx, 'cancel-refund:' || p_load, v_user);
     end if;
-    perform private.queue_payout(v_trip.id, 'cancellation_fee', v_fee, v_tx);
+    if v_fee > 0 then
+      perform private.queue_payout(v_trip.id, 'cancellation_fee', v_fee, v_tx);
+    end if;
   end if;
   update public.trips set status = 'cancelled', status_changed_at = now() where id = v_trip.id;
   update public.trucks set availability = 'available' where id = v_trip.truck_id;
@@ -941,6 +969,12 @@ begin
   end if;
   if p_amount_kobo is null or p_amount_kobo <= 0 or char_length(coalesce(p_reason, '')) < 3 then
     raise exception 'an amount and a reason' using errcode = '22023';
+  end if;
+  -- Never from the money behind a load on the board or a trip still running (review).
+  if exists (select 1 from public.loads where id = p_load and status in ('funded', 'matched'))
+     and exists (select 1 from public.trips where load_id = p_load and status not in ('closed', 'cancelled'))
+     or exists (select 1 from public.loads where id = p_load and status = 'funded') then
+    raise exception 'refund after the trip closes, or cancel the load' using errcode = '22023';
   end if;
   v_id := private.queue_refund(p_load, p_amount_kobo, p_reason, 'staff-refund:' || p_load || ':' || gen_random_uuid(), v_user);
   update public.refunds set status = case when p_amount_kobo > (private.setting('payout_two_person_kobo'))::bigint then 'awaiting_approval'::public.refund_status else 'queued' end where id = v_id;
@@ -1015,7 +1049,8 @@ create function public.load_sender_sees(p_load uuid) returns boolean language sq
   select coalesce((select public.can_in_org(l.shipper_org_id, 'view_trips') from public.loads l where l.id = p_load), false);
 $$;
 create function public.load_carrier_sees(p_load uuid) returns boolean language sql stable security definer set search_path = '' as $$
-  select exists (select 1 from public.trips t where t.load_id = p_load and public.can_in_org(t.transporter_org_id, 'load_board'));
+  -- Only while their trip is live (D018: contacts during the trip, not after).
+  select exists (select 1 from public.trips t where t.load_id = p_load and t.status not in ('closed', 'cancelled') and public.can_in_org(t.transporter_org_id, 'load_board'));
 $$;
 
 create function public.can_see_trip(p_trip public.trips) returns boolean language sql stable security definer set search_path = '' as $$
@@ -1114,7 +1149,7 @@ begin
     'private.price(uuid, uuid, uuid, uuid, int)', 'private.shipper_fee_bps(uuid)', 'private.queue_refund(uuid, bigint, text, text, uuid)',
     'private.accept_offer(uuid, uuid)', 'private.owner_tier(uuid)', 'private.queue_payout(uuid, public.payout_kind, bigint, uuid)',
     'private.trip_loaded(uuid, uuid, int, int)', 'private.trip_delivered(uuid, uuid)', 'private.release_balance(uuid, boolean)',
-    'private.round_to(numeric, bigint)', 'private.new_ref()'
+    'private.round_to(numeric, bigint)', 'private.new_ref()', 'private.fee_due(uuid, bigint)'
   ] loop
     execute format('revoke all on function %s from public', f);
   end loop;
