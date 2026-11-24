@@ -30,16 +30,27 @@ export async function makePinResetLink(orgId: string, memberId: string): Promise
 
 export type ResetResult = { status: "ok"; next: string } | { status: "weak" | "used" | "error" };
 
-/** The member opens the link and chooses a new PIN; the link works once, within 24 hours. */
+/** The member opens the link and chooses a new PIN; the link is spent only once the PIN is set (review). */
 export async function resetPinWithLink(token: string, pin: string): Promise<ResetResult> {
   if (pinIsWeak(pin)) return { status: "weak" };
-  const { data: rows, error } = await supabaseAdmin().rpc("use_pin_reset_link", { p_token_hash: hash(token) });
+  const admin = supabaseAdmin();
+  const { data: rows, error } = await admin.rpc("peek_pin_reset_account", { p_token_hash: hash(token) });
   const row = rows?.[0];
   if (error || !row) return { status: "used" };
   const session = await openSessionFor(row.email);
   if (!session) return { status: "error" };
-  const { error: pinError } = await (await supabaseServer()).rpc("set_app_pin", { p_pin: pin });
-  if (pinError) return { status: pinError.code === "22023" ? "weak" : "error" };
+  const supabase = await supabaseServer();
+  // A fresh sign-in, so set_app_pin replaces the old PIN and clears the lockout.
+  const { error: pinError } = await supabase.rpc("set_app_pin", { p_pin: pin });
+  if (pinError) {
+    await supabase.auth.signOut({ scope: "local" });
+    return { status: pinError.code === "22023" ? "weak" : "error" };
+  }
+  const { data: spent } = await admin.rpc("use_pin_reset_link", { p_token_hash: hash(token), p_keep_session: session.sessionId });
+  if (spent !== true) {
+    await supabase.auth.signOut({ scope: "local" });
+    return { status: "used" };
+  }
   await finishSignIn(session.userId, session.sessionId, null);
   return { status: "ok", next: "/app" };
 }

@@ -31,7 +31,7 @@ export async function acceptPhoneInvite(token: string, name: string, pin: string
   if (taken === true) return { status: "exists" };
 
   const email = internalEmailFor(randomUUID());
-  const { error: createError } = await admin.auth.admin.createUser({
+  const { data: created, error: createError } = await admin.auth.admin.createUser({
     phone,
     phone_confirm: true,
     email,
@@ -43,18 +43,29 @@ export async function acceptPhoneInvite(token: string, name: string, pin: string
     return { status: createError.status === 422 ? "exists" : "error" };
   }
 
+  // If anything after this fails, the half-made account is removed so the invite can be tried again (review).
+  const undo = async () => {
+    if (created?.user) await admin.auth.admin.deleteUser(created.user.id);
+  };
   const session = await openSessionFor(email);
-  if (!session) return { status: "error" };
+  if (!session) {
+    await undo();
+    return { status: "error" };
+  }
   const supabase = await supabaseServer();
   await supabase.from("profiles").update({ full_name: fullName }).eq("id", session.userId);
   const { error: pinError } = await supabase.rpc("set_app_pin", { p_pin: pin });
   if (pinError) {
     console.error("set_app_pin for a phone invite failed", pinError.code);
+    await supabase.auth.signOut({ scope: "local" });
+    await undo();
     return { status: pinError.code === "22023" ? "weak" : "error" };
   }
   const { data: org, error: acceptError } = await supabase.rpc("accept_invite", { p_token: token });
   if (acceptError || !org) {
     console.error("accept_invite by phone failed", acceptError?.code);
+    await supabase.auth.signOut({ scope: "local" });
+    await undo();
     return { status: "error" };
   }
   await finishSignIn(session.userId, session.sessionId, null);

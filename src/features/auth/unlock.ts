@@ -48,10 +48,21 @@ export const requireUnlocked = cache(async (next = "/app"): Promise<Gate> => {
 
 /** For server actions: the same check, returning false instead of redirecting (the action refuses). */
 export async function isUnlockedNow(): Promise<boolean> {
-  const { data } = await (await supabaseServer()).auth.getClaims();
+  const supabase = await supabaseServer();
+  const { data } = await supabase.auth.getClaims();
   const claims = data?.claims;
   if (!claims || typeof claims.session_id !== "string") return false;
+  if (!(await secondStepDone())) return false;
   return isUnlocked(claims.sub, claims.session_id);
+}
+
+/** False while an account with two-step on (or a staff account) has given only the first step (review). */
+export async function secondStepDone(): Promise<boolean> {
+  const supabase = await supabaseServer();
+  const { data: aal } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+  if (aal && aal.nextLevel === "aal2" && aal.currentLevel !== "aal2") return false;
+  const { data: staff } = await supabase.rpc("my_staff_role");
+  return !staff || aal?.currentLevel === "aal2";
 }
 
 /** First line of every server action that reads or changes private data (D044): refuse a locked app. */
