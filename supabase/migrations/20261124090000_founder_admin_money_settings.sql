@@ -59,6 +59,20 @@ create function private.active_super_admins() returns int language sql stable se
 $$;
 revoke all on function private.active_super_admins() from public;
 
+-- Any change to who is staff takes the same transaction lock that a sole super admin takes before
+-- counting, so a second super admin being added at that moment either is seen or waits (review fix).
+create function private.lock_super_admin_count() returns trigger language plpgsql set search_path = '' as $$
+begin
+  perform pg_advisory_xact_lock(hashtext('freight_africa.super_admin_count'));
+  return null;
+end;
+$$;
+revoke all on function private.lock_super_admin_count() from public;
+create trigger staff_members_lock_super_admin_count before insert or update or delete on public.staff_members
+  for each statement execute function private.lock_super_admin_count();
+create trigger profiles_lock_super_admin_count before update of status, deleted_at on public.profiles
+  for each statement execute function private.lock_super_admin_count();
+
 -- For the X-17 screen: whether this person may approve their own request, and so must re-enter a code.
 create function public.can_self_approve() returns boolean language sql stable security definer set search_path = '' as $$
   select public.is_staff('super_admin') and private.active_super_admins() = 1;
@@ -90,6 +104,7 @@ begin
   end if;
   if v_approval.requested_by = v_user then
     -- D037: alone only while there is no second super admin, and only with a freshly entered code.
+    perform pg_advisory_xact_lock(hashtext('freight_africa.super_admin_count'));
     if private.active_super_admins() <> 1 then
       raise exception 'a second person must approve' using errcode = '42501';
     end if;
