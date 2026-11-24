@@ -45,9 +45,19 @@ function audit(width) {
   for (const el of document.querySelectorAll("body *")) {
     if (!visible(el) || el.closest("[aria-hidden=true], svg, [data-layout-ignore]")) continue;
     const s = getComputedStyle(el);
-    const hasText = [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim());
-    if (hasText && el.scrollWidth > el.clientWidth + 1 && s.textOverflow !== "ellipsis" && s.overflowX !== "auto" && s.overflowX !== "scroll" && el.clientWidth > 0) {
-      problems.push(`text overflows without an ellipsis: ${name(el)}`);
+    // Screen-reader-only text is clipped on purpose.
+    if (s.clip !== "auto" && s.clip !== "" || el.closest(".sr-only")) continue;
+    const texts = [...el.childNodes].filter((n) => n.nodeType === 3 && n.textContent.trim());
+    if (!texts.length || el.clientWidth === 0 || s.textOverflow === "ellipsis" || s.overflowX === "auto" || s.overflowX === "scroll") continue;
+    const box = el.getBoundingClientRect();
+    for (const node of texts) {
+      const range = document.createRange();
+      range.selectNodeContents(node);
+      const r = range.getBoundingClientRect();
+      if (r.right > box.right + 1 || r.left < box.left - 1) {
+        problems.push(`text overflows without an ellipsis: ${name(el)}`);
+        break;
+      }
     }
   }
   for (const card of document.querySelectorAll(".rounded-card, .rounded-tile")) {
@@ -107,6 +117,16 @@ async function signIn(page, login) {
 }
 
 const browser = await chromium.launch({ channel: process.env.PW_CHANNEL ?? "chrome" });
+// A protected Vercel preview: open its share link first, which sets the access cookie for the context.
+async function newContext() {
+  const context = await browser.newContext();
+  if (process.env.SHARE_URL) {
+    const page = await context.newPage();
+    await page.goto(process.env.SHARE_URL, { waitUntil: "domcontentloaded" });
+    await page.close();
+  }
+  return context;
+}
 let failures = 0;
 async function check(context, path, tag) {
   for (const width of WIDTHS) {
@@ -128,13 +148,13 @@ async function check(context, path, tag) {
 }
 
 {
-  const context = await browser.newContext();
+  const context = await newContext();
   await context.addCookies([{ name: "fa_welcome_seen", value: "1", url: BASE }]);
   for (const path of PUBLIC) await check(context, path, "public");
   await context.close();
 }
 for (const account of ACCOUNTS) {
-  const context = await browser.newContext();
+  const context = await newContext();
   const page = await context.newPage();
   await signIn(page, account.login);
   await page.close();
