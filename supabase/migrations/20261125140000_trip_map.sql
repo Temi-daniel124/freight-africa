@@ -41,7 +41,7 @@ begin
     split_part(coalesce(p.full_name, ''), ' ', 1), p.avatar_key,
     case when v_live and ((v_sender and public.can_in_org(v_load.shipper_org_id, 'see_trip_phones')) or public.can_in_org(v_trip.transporter_org_id, 'load_board')) then p.phone end,
     case when v_sender and (public.can_in_org(v_load.shipper_org_id, 'see_money') or public.can_in_org(v_load.shipper_org_id, 'pay')) and v_trip.status <> 'closed'
-      then private.ledger_balance(private.ledger_account('escrow', null, v_load.id)) end,
+      then (select private.ledger_balance(a.id) from public.ledger_accounts a where a.kind = 'escrow' and a.load_id = v_load.id) end,
     -- The next stop's contact (pickup before loading, then the receiver) for the truck side during a live trip.
     case when v_live and v_carrier then ns.contact_name end,
     case when v_live and v_carrier then ns.contact_phone end
