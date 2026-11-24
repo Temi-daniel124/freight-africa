@@ -2,6 +2,7 @@ import "server-only";
 import { redirect } from "next/navigation";
 import { connection } from "next/server";
 import { cache } from "react";
+import { requireUnlocked } from "@/features/auth/unlock";
 import { supabaseServer } from "@/lib/supabase/server";
 import type { Database } from "@/lib/supabase/database.types";
 
@@ -39,6 +40,8 @@ export const staffGate = cache(async (next = "/admin"): Promise<StaffGate> => {
   if (!verified) return { step: "enroll", role, name, email, factorId: null };
   if (claims.aal !== "aal2") return { step: "verify", role, name, email, factorId: verified.id };
   if (!own?.staff_code_accepted_at) return { step: "code", role, name, email, factorId: verified.id };
+  // D044: staff too open the console with their PIN on this device (after the authenticator code).
+  await requireUnlocked(next);
   return { step: "ready", role, name, email, factorId: verified.id };
 });
 

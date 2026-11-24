@@ -1,5 +1,6 @@
 "use server";
 
+import { assertUnlocked } from "@/features/auth/unlock";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { supabaseServer } from "@/lib/supabase/server";
@@ -23,6 +24,7 @@ export const shipperSchema = z
   .refine((v) => v.as === "myself" || v.businessName.length >= 2, { path: ["businessName"] });
 
 export async function setUpShipper(_previous: ShipperState, formData: FormData): Promise<ShipperState> {
+  await assertUnlocked();
   const values = {
     name: String(formData.get("name") ?? ""),
     as: formData.get("as") === "business" ? ("business" as const) : ("myself" as const),

@@ -1,11 +1,10 @@
 "use server";
 
 import { randomUUID } from "node:crypto";
-import { redirect } from "next/navigation";
 import { supabaseServer } from "@/lib/supabase/server";
-import { markUnlocked } from "./pin";
+import { assertUnlocked } from "@/features/auth/unlock";
 
-// The driver's own setup (ux-driver.md D-ON-03) and the app-lock PIN (D042).
+// The driver's own setup (ux-driver.md D-ON-03). The PIN lives in src/features/auth (D044).
 
 async function session() {
   const supabase = await supabaseServer();
@@ -16,42 +15,11 @@ async function session() {
   return { supabase, userId, sessionId };
 }
 
-export type PinResult = { status: "ok" | "wrong" | "locked" | "weak" | "fresh" | "error"; left?: number };
-
-export async function setPin(pin: string): Promise<PinResult> {
-  const { supabase, userId, sessionId } = await session();
-  if (!userId || !sessionId) return { status: "error" };
-  const { error } = await supabase.rpc("set_app_pin", { p_pin: pin });
-  if (error) return { status: error.code === "22023" ? "weak" : error.code === "28000" ? "fresh" : "error" };
-  await markUnlocked(userId, sessionId);
-  return { status: "ok" };
-}
-
-export async function unlockWithPin(pin: string, attemptsSoFar: number): Promise<PinResult> {
-  const { supabase, userId, sessionId } = await session();
-  if (!userId || !sessionId) return { status: "error" };
-  const { data, error } = await supabase.rpc("check_app_pin", { p_pin: pin });
-  if (error) return { status: "error" };
-  if (data === "ok") {
-    await markUnlocked(userId, sessionId);
-    return { status: "ok" };
-  }
-  if (data === "locked") return { status: "locked" };
-  if (data === "none") return { status: "ok" };
-  return { status: "wrong", left: Math.max(0, 4 - attemptsSoFar) };
-}
-
-/** Locked out: sign out, so the next sign-in (with a code) allows a new PIN. */
-export async function signOutForNewPin() {
-  const { supabase } = await session();
-  await supabase.auth.signOut();
-  redirect("/auth?next=/onboarding/pin");
-}
-
 type Ticket = { status: "ok"; path: string; token: string } | { status: "error" };
 
 /** A one-time address for the driver's licence photo, in <org>/drivers/<their id>/. */
 export async function licenceUploadTicket(): Promise<Ticket> {
+  await assertUnlocked();
   const { supabase, userId } = await session();
   if (!userId) return { status: "error" };
   const { data: driver } = await supabase.from("drivers").select("org_id").eq("user_id", userId).maybeSingle();
@@ -65,6 +33,7 @@ export async function licenceUploadTicket(): Promise<Ticket> {
 export type LicenceState = { status: "idle" | "invalid" | "sent" | "error"; errors: { photo?: boolean; expires?: "missing" | "expired"; number?: boolean } };
 
 export async function sendLicence(_previous: LicenceState, formData: FormData): Promise<LicenceState> {
+  await assertUnlocked();
   const photo = String(formData.get("licence") ?? "");
   const expires = String(formData.get("expires") ?? "");
   const number = String(formData.get("number") ?? "").toUpperCase().replace(/\s+/g, "");

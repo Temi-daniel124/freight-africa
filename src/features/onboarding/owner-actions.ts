@@ -1,5 +1,6 @@
 "use server";
 
+import { assertUnlocked } from "@/features/auth/unlock";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { nameMatchScore } from "@/lib/payments/name-match";
@@ -33,6 +34,7 @@ async function myTransporter(supabase: Awaited<ReturnType<typeof supabaseServer>
 }
 
 export async function saveAbout(_previous: AboutState, formData: FormData): Promise<AboutState> {
+  await assertUnlocked();
   const parsed = aboutSchema.safeParse({
     name: formData.get("name") ?? "",
     as: formData.get("as") === "company" ? "company" : "myself",
@@ -112,6 +114,7 @@ async function resolve(ctx: NonNullable<Awaited<ReturnType<typeof lookupContext>
 
 /** Called as the tenth digit is typed: shows the account name and whether it matches. */
 export async function lookUpAccount(bankCode: string, number: string): Promise<Lookup> {
+  await assertUnlocked();
   const ctx = await lookupContext();
   if (!ctx?.org) return { status: "error" };
   // Owners only, 20 lookups an hour: the answer is a stranger's name (review fix).
@@ -129,6 +132,7 @@ export async function lookUpAccount(bankCode: string, number: string): Promise<L
 export type BankState = { status: "idle" | "invalid" | "notFound" | "error" | "unavailable"; errors: { bank?: boolean; number?: boolean } };
 
 export async function saveBankAccount(_previous: BankState, formData: FormData): Promise<BankState> {
+  await assertUnlocked();
   const bankCode = String(formData.get("bank") ?? "");
   const number = String(formData.get("number") ?? "").replace(/\D/g, "");
   const errors = { bank: !bankCode, number: !accountNumber.safeParse(number).success };

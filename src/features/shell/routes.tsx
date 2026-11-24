@@ -12,7 +12,7 @@ import { TeamPage } from "@/features/org/team-page";
 import { TrucksPage } from "@/features/trucks/trucks-page";
 import { SettingsPage } from "@/features/settings/settings-page";
 import { DriversPage } from "@/features/drivers/drivers-page";
-import { requireUnlocked } from "@/features/drivers/pin";
+import { requireUnlocked } from "@/features/auth/unlock";
 import { getMyJoining, type SetupRole } from "@/features/onboarding/setup";
 import { SetupChecklist } from "@/features/onboarding/setup-checklist";
 import { PlaceholderPage } from "./placeholder-page";
@@ -44,38 +44,27 @@ async function ResolvedShell({ role, children }: { role: ShellRole; children: Re
   );
 }
 
-/** D042: a driver with a PIN opens the app with it; until then the driver screens stay closed. */
-async function PinGate({ children }: { children: ReactNode }) {
+/** D044: every role's shell opens only after the PIN on this device (and the authenticator code when two-step is on). */
+async function PinGate({ base, children }: { base: string; children: ReactNode }) {
   await connection();
-  await requireUnlocked();
+  await requireUnlocked(base);
   return <>{children}</>;
 }
 
 export function shellLayout(role: ShellRole) {
   return function ShellLayout({ children }: { children: ReactNode }) {
-    if (role === "driver") {
-      const config = shells.driver;
-      return (
-        <Suspense fallback={<Skeleton className="h-dvh w-full rounded-none" />}>
-          <PinGate>
-            <AppShell config={config} viewer={getViewer(config)}>
-              {children}
-            </AppShell>
-          </PinGate>
-        </Suspense>
-      );
-    }
-    if (role !== "owner") {
-      const config = shells[role];
-      return (
-        <AppShell config={config} viewer={getViewer(config)}>
-          {children}
-        </AppShell>
-      );
-    }
+    const base = shells[role].base;
     return (
       <Suspense fallback={<Skeleton className="h-dvh w-full rounded-none" />}>
-        <ResolvedShell role={role}>{children}</ResolvedShell>
+        <PinGate base={base}>
+          {role === "owner" ? (
+            <ResolvedShell role={role}>{children}</ResolvedShell>
+          ) : (
+            <AppShell config={shells[role]} viewer={getViewer(shells[role])}>
+              {children}
+            </AppShell>
+          )}
+        </PinGate>
       </Suspense>
     );
   };
@@ -99,7 +88,8 @@ async function VerifiedSender() {
 
 async function HomeContent({ role }: { role: ShellRole }) {
   const resolved = await resolveRole(role);
-  if (resolved === "driver") await requireUnlocked();
+  // Pages check the PIN themselves too: layouts don't run again on in-app navigation.
+  await requireUnlocked(shells[resolved].base);
   const config = shells[resolved];
   const setupRole = SETUP_ROLES[resolved];
   return (
@@ -162,15 +152,15 @@ export function shellPageMetadata(role: ShellRole) {
 async function SectionPage({ role, params }: { role: ShellRole; params: Promise<{ page: string }> }) {
   const { page } = await params;
   const resolved = await resolveRole(role);
-  // Each driver page checks the PIN itself too: layouts don't run again on in-app navigation.
-  if (resolved === "driver") await requireUnlocked();
+  // Each page checks the PIN itself too: layouts don't run again on in-app navigation (D044).
+  await requireUnlocked(shells[resolved].base);
   if (!isPage(resolved, page)) notFound();
   const config = shells[resolved];
   const viewer = getViewer(config);
   return (
     <>
       <ShellTopBar config={config} viewer={viewer} title={messages.shell.pages[page].title} />
-      <ShellContent>{page === "team" ? <TeamPage viewer={viewer} /> : page === "trucks" ? <TrucksPage /> : page === "drivers" ? <DriversPage orgId={(await viewer).orgId} /> : page === "settings" ? <SettingsPage viewer={viewer} /> : <PlaceholderPage config={config} page={page} />}</ShellContent>
+      <ShellContent>{page === "team" ? <TeamPage viewer={viewer} /> : page === "trucks" ? <TrucksPage /> : page === "drivers" ? <DriversPage orgId={(await viewer).orgId} /> : page === "settings" || page === "me" ? <SettingsPage viewer={viewer} base={config.base} /> : <PlaceholderPage config={config} page={page} />}</ShellContent>
     </>
   );
 }
@@ -187,6 +177,7 @@ export function shellSection(role: ShellRole) {
 
 async function SubpageBody({ role, title, children }: { role: ShellRole; title: string; children: ReactNode }) {
   const config = shells[await resolveRole(role)];
+  await requireUnlocked(config.base);
   const viewer = getViewer(config);
   return (
     <>

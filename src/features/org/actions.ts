@@ -1,5 +1,6 @@
 "use server";
 
+import { assertUnlocked } from "@/features/auth/unlock";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { APP_ORIGIN } from "@/lib/hosts";
@@ -28,6 +29,7 @@ export type InviteState = ActionState & { link?: string; who?: string; role?: st
 
 /** A-09: switch to another of the person's accounts, then open its shell. */
 export async function switchAccount(formData: FormData) {
+  await assertUnlocked();
   const org = text(formData, "org");
   const supabase = await supabaseServer();
   const { error } = await supabase.rpc("set_active_org", { p_org: org });
@@ -39,6 +41,7 @@ export async function switchAccount(formData: FormData) {
 
 /** A-07: accept a team or driver invite, then land in that organisation's shell. */
 export async function acceptInvite(_state: ActionState, formData: FormData): Promise<ActionState> {
+  await assertUnlocked();
   const token = text(formData, "token");
   const supabase = await supabaseServer();
   const { data: org, error } = await supabase.rpc("accept_invite", { p_token: token });
@@ -53,6 +56,7 @@ export async function acceptInvite(_state: ActionState, formData: FormData): Pro
 
 /** S-20: create an invite and hand back the link to send (notify() sends it for us from slice 8). */
 export async function createInvite(state: InviteState, formData: FormData): Promise<InviteState> {
+  await assertUnlocked();
   const attempt = (state.attempt ?? 0) + 1;
   const org = text(formData, "org");
   const role = text(formData, "role");
@@ -78,12 +82,14 @@ export async function createInvite(state: InviteState, formData: FormData): Prom
 }
 
 export async function revokeInvite(formData: FormData) {
+  await assertUnlocked();
   const supabase = await supabaseServer();
   await supabase.rpc("revoke_invite", { p_invite: text(formData, "invite") });
   revalidatePath("/app", "layout");
 }
 
 export async function changeMemberRole(_state: ActionState, formData: FormData): Promise<ActionState> {
+  await assertUnlocked();
   const supabase = await supabaseServer();
   const { error } = await supabase.rpc("change_member_role", { p_org: text(formData, "org"), p_user: text(formData, "user"), p_role: text(formData, "role") });
   if (error) return { status: "error", message: sentence(error.code) };
@@ -92,6 +98,7 @@ export async function changeMemberRole(_state: ActionState, formData: FormData):
 }
 
 export async function removeMember(_state: ActionState, formData: FormData): Promise<ActionState> {
+  await assertUnlocked();
   const supabase = await supabaseServer();
   const { error } = await supabase.rpc("remove_member", { p_org: text(formData, "org"), p_user: text(formData, "user") });
   if (error) return { status: "error", message: sentence(error.code) };

@@ -1,3 +1,4 @@
+import { PinLinkButton } from "@/features/auth/pin-link-button";
 import { StatusChip } from "@/components/ui/chip";
 import { EmptyState } from "@/components/ui/empty-state";
 import { initials, type Viewer } from "@/features/shell/viewer";
@@ -95,7 +96,10 @@ export function TeamView({ orgId: org, orgName, grantable, members, invites }: T
                 </p>
               </div>
               {manageable ? (
-                <MemberSheet orgId={org} orgName={organisation.name} userId={member.userId} name={member.name ?? t.you} role={role} roles={grantable} isMe={member.isMe} />
+                <div className="flex flex-col items-end gap-2">
+                  <MemberSheet orgId={org} orgName={organisation.name} userId={member.userId} name={member.name ?? t.you} role={role} roles={grantable} isMe={member.isMe} />
+                  {member.phone && !member.email && !member.isMe ? <PinLinkButton orgId={org} memberId={member.userId} name={member.name ?? ""} /> : null}
+                </div>
               ) : (
                 <span />
               )}

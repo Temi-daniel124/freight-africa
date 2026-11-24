@@ -1778,6 +1778,35 @@ export type Database = {
         Args: { p_drives: boolean; p_org: string }
         Returns: undefined
       }
+      change_app_pin: { Args: { p_new: string; p_old: string }; Returns: string }
+      create_pin_reset_link: {
+        Args: { p_member: string; p_org: string; p_token_hash: string }
+        Returns: undefined
+      }
+      lock_account: { Args: { p_user: string }; Returns: undefined }
+      my_pin_locked: { Args: never; Returns: boolean }
+      my_pin_tries_left: { Args: never; Returns: number }
+      new_backup_codes: { Args: never; Returns: string[] }
+      peek_phone_invite: {
+        Args: { p_token: string }
+        Returns: { org_name: string; phone: string; role: string }[]
+      }
+      peek_pin_reset_link: { Args: { p_token_hash: string }; Returns: string }
+      pin_ip_failures: { Args: { p_ip_key: string }; Returns: number }
+      pin_sign_in_phone_taken: { Args: { p_phone: string }; Returns: boolean }
+      pin_sign_in: {
+        Args: { p_ip_key: string; p_login: string; p_pin: string }
+        Returns: Json
+      }
+      record_device: {
+        Args: { p_city: string; p_device_hash: string; p_label: string; p_user: string }
+        Returns: boolean
+      }
+      use_backup_code: { Args: { p_code: string }; Returns: boolean }
+      use_pin_reset_link: {
+        Args: { p_token_hash: string }
+        Returns: { email: string; full_name: string; user_id: string }[]
+      }
       set_driver_paused: {
         Args: { p_driver: string; p_paused: boolean }
         Returns: undefined

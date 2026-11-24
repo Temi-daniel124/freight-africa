@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import { Logo } from "@/components/brand/Logo";
 import { Skeleton } from "@/components/ui/skeleton";
 import { InviteFrame, InviteView } from "@/features/org/invite-view";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 import { supabaseServer } from "@/lib/supabase/server";
 import messages from "@/messages/en.json";
 
@@ -18,7 +19,9 @@ async function Invite({ params }: { params: Promise<{ token: string }> }) {
   const [{ data: rows }, { data: claims }] = await Promise.all([supabase.rpc("invite_details", { p_token: token }), supabase.auth.getClaims()]);
   const row = rows?.[0];
   const invite = row ? { orgName: row.org_name, role: row.role, inviter: row.invited_by_first_name, state: row.state } : null;
-  return <InviteView invite={invite} token={token} signedIn={Boolean(claims?.claims)} />;
+  // Whether it went to a phone (D044) is read with the service key; the browser never sees the number.
+  const { data: phoneRows } = invite?.state === "open" ? await supabaseAdmin().rpc("peek_phone_invite", { p_token: token }) : { data: null };
+  return <InviteView invite={invite} token={token} signedIn={Boolean(claims?.claims)} byPhone={Boolean(phoneRows?.length)} />;
 }
 
 export default function InvitePage({ params }: { params: Promise<{ token: string }> }) {

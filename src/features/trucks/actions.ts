@@ -1,5 +1,6 @@
 "use server";
 
+import { assertUnlocked } from "@/features/auth/unlock";
 import { randomUUID } from "node:crypto";
 import { z } from "zod";
 import { supabaseServer } from "@/lib/supabase/server";
@@ -17,6 +18,7 @@ async function fleetOrg(supabase: Awaited<ReturnType<typeof supabaseServer>>) {
 
 /** A one-time address to upload one truck or paper photo into the business's folder. */
 export async function fleetUploadTicket(): Promise<Ticket> {
+  await assertUnlocked();
   const supabase = await supabaseServer();
   const org = await fleetOrg(supabase);
   if (!org) return { status: "error" };
@@ -40,6 +42,7 @@ export type AddTruckState = {
 const today = () => new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Lagos" }).format(new Date());
 
 export async function addTruck(_previous: AddTruckState, formData: FormData): Promise<AddTruckState> {
+  await assertUnlocked();
   const get = (key: string) => String(formData.get(key) ?? "").trim();
   const errors: AddTruckState["errors"] = {};
   const back = get("back");

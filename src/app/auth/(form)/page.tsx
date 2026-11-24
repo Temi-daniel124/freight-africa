@@ -6,6 +6,7 @@ import { safeNext } from "@/features/auth/next-path";
 import { requestHome } from "@/lib/ip-key";
 import { turnstileSiteKey } from "@/lib/turnstile";
 import { signInOptions } from "@/features/auth/options";
+import { LoginForm } from "@/features/auth/login-form";
 import { SignInForm } from "@/features/auth/sign-in-form";
 import { supabaseServer } from "@/lib/supabase/server";
 import messages from "@/messages/en.json";
@@ -38,10 +39,14 @@ async function SignIn({ searchParams }: { searchParams: Params }) {
   const { data } = await (await supabaseServer()).auth.getClaims();
   if (data?.claims) redirect(next);
 
+  // D044: "Sign in" is email or phone and the PIN; "Get started" (and invites, which may be new people)
+  // is an email code. Sign in is the default: most visits are by people coming back.
+  const mode = first(params.mode) === "start" || (first(params.mode) !== "signin" && next.startsWith("/invite/")) ? "start" : "signin";
+  if (mode === "signin") return <LoginForm next={next} />;
   return <SignInForm t={messages.auth} options={signInOptions()} next={next} googleFailed={first(params.error) === "google"} turnstileSiteKey={turnstileSiteKey()} />;
 }
 
-// A-01 Sign in or sign up.
+// A-01 Get started (email code) or Sign in (email or phone, then PIN).
 export default function AuthPage({ searchParams }: { searchParams: Params }) {
   return (
     <Suspense fallback={<FormSkeleton />}>
