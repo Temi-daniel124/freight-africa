@@ -24,7 +24,8 @@ begin
   end if;
   select * into v_load from public.loads where id = v_trip.load_id;
   v_sender := public.can_in_org(v_load.shipper_org_id, 'view_trips');
-  v_carrier := public.can_in_org(v_trip.transporter_org_id, 'load_board') or v_trip.driver_id = (select auth.uid());
+  -- A driver counts only while still an active member of the business (review).
+  v_carrier := public.can_in_org(v_trip.transporter_org_id, 'load_board') or (v_trip.driver_id = (select auth.uid()) and public.can_in_org(v_trip.transporter_org_id, 'view_trips'));
   if not (v_sender or v_carrier or public.is_staff()) then
     return;
   end if;
