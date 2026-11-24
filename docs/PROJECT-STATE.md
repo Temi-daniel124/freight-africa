@@ -4,7 +4,7 @@
 start of every session and updates it at the end (`CLAUDE.md` §2). It records facts about progress; it
 never overrides a higher document.
 
-**Last updated:** 15 Nov 2026, by Claude Code (launch page accepted on freight-africa.com).
+**Last updated:** 24 Nov 2026, by Claude Code (Gate 4 and slice 4 screens merged; founder is super admin; D037–D039).
 
 ---
 
@@ -29,10 +29,10 @@ The phases are defined in `BUILD.md` §3. Update this table as work progresses.
 | --- | --- | --- | --- |
 | 0 | Bootstrap: repo, scaffold, accounts linked, CI green | Done | |
 | 0L | Launch page: pre-launch home, waitlist, privacy and terms (D030) | **Accepted** 15 Nov 2026 | PageSpeed Insights mobile 98 (LCP 2.5 s, TBT 40 ms), desktop 100; real phone sign-up and confirmation email delivered |
-| 1 | Foundations: auth, organisations, roles, RLS, tokens, ledger, settings, audit | In progress | Slices 1–3 done; database for slices 4 (organisations, members, invites), 5 (staff, two-step sign-in), 6 (settings, approvals, audit log), 7 (ledger) and 8 (link tokens, notifications, job dispatcher) merged and live, 202 pgTAP tests; slice 9 (app shells, Gate 4) and the slice 4 screens awaiting review; staff two-step sign-in screens next |
-| 2 | Supply: owner and driver onboarding, Didit, trucks, documents, catalogue, verification queue | Not started | |
-| 3 | Booking and money: quotes, loads, payments, escrow, releases, refunds, receipts | Not started | Needs Bachs keys and API docs |
-| 4 | The trip: load board, offers, trips, driver flow, trip mode, codes, receiver pages, notifications, live map | Not started | Needs WhatsApp setup |
+| 1 | Foundations: auth, organisations, roles, RLS, tokens, ledger, settings, audit | In progress | Slices 1–9 merged and live (Gate 4 #37, slice 4 screens #40); founder is the first super admin; D037 money settings (#39); role step opens the role's app with Finish setting up (#41); staff two-step sign-in screens (#42) and demo accounts (#43) in review; then the Phase 1 acceptance check |
+| 2 | Supply: owner and driver onboarding, Didit, trucks, documents, catalogue, verification queue | Not started | Demo verification provider until Didit (D039) |
+| 3 | Booking and money: quotes, loads, payments, escrow, releases, refunds, receipts | Not started | Demo payment provider until Bachs (D039); ledger postings real |
+| 4 | The trip: load board, offers, trips, driver flow, trip mode, codes, receiver pages, notifications, live map | Not started | In-app and email instead of WhatsApp until Meta (D039) |
 | 5 | Problems: disputes, SOS, cancellations, waiting, breakdowns, fraud flags, strikes | Not started | |
 | 6 | Growth: return loads, agents, discounts, offers, ratings, tiers | Not started | |
 | 7 | Website and SEO | Not started | Needs photography |
@@ -40,9 +40,11 @@ The phases are defined in `BUILD.md` §3. Update this table as work progresses.
 
 ## 3. Current task
 
-**Next task:** the staff console's two-step sign-in screens (slice 5 screens: X-00 invite, authenticator setup with backup codes, code challenge, lost-authenticator path), built with the Gate 4 components on the StaffShell; then the Phase 1 acceptance check (BUILD.md) and Phase 2.
+**Next task:** merge #42 (staff two-step sign-in, after its independent review) and #43 (demo accounts), apply both migrations, run `npm run demo:seed`, test the staff flow end to end with a demo staff account, then the Phase 1 acceptance check (BUILD.md) and record it. Then Phase 2, 3 and 4 in order (founder, 24 Nov 2026), one slice per PR, with demo providers (D039) and the founder's mockups as the design reference (D038, `docs/design/reference/founder-mockups/`).
 
-**Waiting for the founder:** Gate 4 review (PR #28: app shells, /app, /dev/home, /dev/components) and the slice 4 screens (PR #30, stacked on #28: account switcher, /invite, Team; /dev/team, /dev/invite). After approval: retarget #30 to main, merge #28 then #30.
+**Founder's standing instructions (24 Nov 2026):** no more design gates; the founder reviews each phase once at the end with the demo accounts. Stop only at the end of a phase (with a "try it" walkthrough) or when truly blocked. Merge on green CI after the independent review for money, auth and RLS. Screenshots at 375 and 1440 px only, as a sanity look; PageSpeed at the end of each phase. Update this file after every merged slice.
+
+**Merging stacked or rebased PRs:** force-pushing a PR branch is blocked on this laptop; push the rebased commits under a new branch name and open a replacement PR (as #37 and #40 replaced #28 and #30).
 
 **Working rules from 19 Nov 2026** (DEVELOPMENT-WORKFLOW §1A): backend slices merge on green CI after the independent review for money, auth and RLS; screen comparisons at 375 and 1440 within 2 px; browser suites one file at a time.
 
@@ -64,8 +66,6 @@ for these at the moment they're needed, with exact steps.
 | Meta Business portfolio, WhatsApp number on a new SIM, app credentials (D021) | Phase 4 | Personal Facebook login required by Meta |
 | SMS provider account (optional backup) | Phase 4 | Account ownership |
 | Photography shoot at a park and a market, with permission forms | Phase 7 | On-site |
-| Sign in once at app.freight-africa.com with temmydaniel124@gmail.com, so the email is confirmed; then the founder is made the first super admin (the slice 5 migration only grants it to a confirmed email) | Slice 5 screens | Only the founder can confirm the address |
-| Decide whether time and tier settings that affect money (free_waiting_hours, auto_release_hours, tier_*_trips, tier_gold_rating, agent_share_months, payment_expiry_hours, min_loading_photos) also need a second super admin, like the ten kobo and rate settings | Before Phase 3 | Changes who can do what (ROLES §8) |
 | Approving destructive or money-moving actions (D027 gates) | Ongoing | Founder decision |
 
 ## 5. Risks and watch items
@@ -87,6 +87,7 @@ for these at the moment they're needed, with exact steps.
 
 Add one line per session, newest first: date · what was done · what's next.
 
+- 24 Nov 2026 · Gate 4 and slice 4 screens approved and merged (#37, #40, replacing #28 and #30); founder made first super admin and D037 money settings with sole-admin code re-entry, plus D038 (mockups, no gates) and D039 (demo providers) (#39); role step now opens the role's app with a Finish setting up card (#41); staff two-step sign-in screens (#42) and demo accounts (#43) opened · Phase 1 acceptance, then Phase 2.
 - 19–23 Nov 2026 · Gate 3 approved; D036 waitlist-only public site; Gates 1–3 merged and live (#24–#26); ink-3 darkened for accessibility (#27; PageSpeed before it: mobile 97/96, desktop 100/96; the API quota blocked a re-run); Gate 4 app shells built (#28, review); slice 4 organisations, members, invites (#29 live; screens #30, review); slice 5 staff and two-step sign-in (#31), slice 6 settings, approvals, audit log (#32), slice 7 ledger (#33), slice 8 notifications and dispatcher (#34, #35), each after an independent review with its fixes; dispatcher connected through Vault and accepted (one test email, sent once) · staff two-step sign-in screens.
 - 19 Nov 2026 · Gate 3 landing sections built to the approved target (shared section heading; How it works cards with restyled screens; payment band with timeline card; Who it's for side by side with role links; route cards; pricing with instant switch; questions as <details>, first open; closing band; footer), text within 1 px except the mockup's .seg class clash; replaced sections removed; launch suite 29/29, auth 17/17, gallery 4/4 · awaiting Gate 3 approval.
 - 18 Nov 2026 · Gate 2 header and hero built to the approved target (solid pill header, inset photo, waitlist bar handing off to /waitlist with role, route and number, proof row; bar states on /dev/landing-states), text within 1 px, CLS 0; then adaptive hero height and 1200 px tablet portraits (scripts/photos/export-portrait.py, same blurs); approved 18 Nov · Gate 3.
