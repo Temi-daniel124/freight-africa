@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(16);
+select plan(17);
 
 -- A sender (owner of Bello Agro), a stranger, and two verification staff.
 insert into auth.users (id, instance_id, aud, role, email, email_confirmed_at, raw_user_meta_data, created_at, updated_at)
@@ -21,6 +21,12 @@ insert into storage.objects (bucket_id, name) values
   ('verification', 'a1a1a1a1-0000-4000-8000-000000000002/id-front.jpg');
 
 select ok(not public.is_verified_sender('b2b2b2b2-0000-4000-8000-000000000001'), 'a new sender has no badge');
+update public.settings set value = 'false' where key = 'demo_identity_checks';
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub": "a1a1a1a1-0000-4000-8000-000000000001", "role": "authenticated", "aal": "aal1"}', true);
+select throws_ok($$select public.submit_identity_check('sender', 'nin_slip', 'AISHA BELLO', 'a1a1a1a1-0000-4000-8000-000000000001/id-front.jpg')$$, '42501', null, 'with demo checks off, a real account cannot send a photo check (D039)');
+reset role;
+update public.settings set value = 'true' where key = 'demo_identity_checks';
 
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub": "a1a1a1a1-0000-4000-8000-000000000001", "role": "authenticated", "aal": "aal1"}', true);
