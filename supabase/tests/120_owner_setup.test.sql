@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(16);
+select plan(19);
 
 -- Musa Haulage: Ibrahim (owner), Bola (manager); and a stranger.
 insert into auth.users (id, instance_id, aud, role, email, email_confirmed_at, raw_user_meta_data, created_at, updated_at)
@@ -32,6 +32,14 @@ reset role;
 select is((select corridor_ids from public.organizations where id = 'd4d4d4d4-0000-4000-8000-000000000001'), array[current_setting('test.lk')::uuid], 'the routes are saved');
 select ok((select is_driver from public.organization_members where user_id = 'c3c3c3c3-0000-4000-8000-000000000001'), 'and the owner is now an owner-driver (D003)');
 
+-- Without an approved identity check, even a perfect match waits for staff (review fix).
+set local role service_role;
+select set_config('test.b0', public.add_bank_account('c3c3c3c3-0000-4000-8000-000000000001', 'd4d4d4d4-0000-4000-8000-000000000001', '058', 'GTBank', '1111111111', 'Ibrahim Musa', 100)::text, true);
+reset role;
+select is((select status from public.bank_accounts where id = current_setting('test.b0')::uuid), 'needs_review', 'an unverified owner''s account waits for staff');
+-- Ibrahim's ID is approved.
+insert into public.verification_sessions (user_id, purpose, provider, status, name_on_id) values ('c3c3c3c3-0000-4000-8000-000000000001', 'owner', 'demo', 'approved', 'IBRAHIM MUSA');
+
 -- T-ON-04: bank accounts are added only by the server after the name lookup.
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub": "c3c3c3c3-0000-4000-8000-000000000001", "role": "authenticated"}', true);
@@ -54,7 +62,8 @@ select set_config('test.b2', public.add_bank_account('c3c3c3c3-0000-4000-8000-00
 reset role;
 select is((select status from public.bank_accounts where id = current_setting('test.b2')::uuid), 'needs_review', 'a name that doesn''t match waits for staff');
 select is((select status from public.bank_accounts where id = current_setting('test.b1')::uuid), 'disabled', 'the old account stops receiving payouts');
-select is((select count(*)::int from public.notifications where user_id = 'c3c3c3c3-0000-4000-8000-000000000001' and event = 'bank_account.changed'), 2, 'the owner is told in the app and by email');
+select is((select count(*)::int from public.notifications where user_id = 'c3c3c3c3-0000-4000-8000-000000000001' and event = 'bank_account.changed'), 4, 'each change tells the owner in the app and by email');
+select is((select count(*)::int from public.bank_accounts where org_id = 'd4d4d4d4-0000-4000-8000-000000000001' and status <> 'disabled'), 1, 'only one account receives payouts');
 
 -- Who sees the accounts: the owner, never the manager or a stranger, and never the number.
 set local role authenticated;
@@ -62,6 +71,9 @@ select set_config('request.jwt.claims', '{"sub": "c3c3c3c3-0000-4000-8000-000000
 select is((select count(*)::int from public.bank_accounts), 0, 'a manager does not see the bank accounts');
 select set_config('request.jwt.claims', '{"sub": "c3c3c3c3-0000-4000-8000-000000000001", "role": "authenticated"}', true);
 select throws_ok($$select account_number_enc from public.bank_accounts$$, '42501', null, 'even the owner cannot read the encrypted number');
+select ok(public.note_bank_lookup(), 'an owner may look an account up');
+select set_config('request.jwt.claims', '{"sub": "c3c3c3c3-0000-4000-8000-000000000003", "role": "authenticated"}', true);
+select ok(not public.note_bank_lookup(), 'someone without a truck business may not');
 
 select * from finish();
 rollback;

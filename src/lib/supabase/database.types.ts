@@ -1242,6 +1242,7 @@ export type Database = {
     Functions: {
       accept_invite: { Args: { p_token: string }; Returns: string }
       add_bank_account: { Args: { p_account_number: string; p_bank_code: string; p_bank_name: string; p_org: string; p_resolved_name: string; p_score: number; p_user: string }; Returns: string }
+      note_bank_lookup: { Args: never; Returns: boolean }
       log_identity_photo_view: { Args: { p_reason: string; p_session: string }; Returns: undefined }
       save_transporter_profile: { Args: { p_corridors: string[]; p_drives: boolean; p_home_city: string; p_org: string }; Returns: undefined }
       accept_staff_code: { Args: never; Returns: undefined }
