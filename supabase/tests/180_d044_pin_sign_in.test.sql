@@ -41,10 +41,12 @@ select is(public.pin_sign_in('adaeze@okaforfoods.ng', '111999', 'ip-b') ->> 'jus
 select is(public.pin_sign_in('adaeze@okaforfoods.ng', '480157', 'ip-c') ->> 'status', 'locked', 'even the right PIN is refused once locked');
 
 -- Twenty wrong tries from one address in 15 minutes stop that address.
+reset role;
 insert into private.pin_attempts (ip_key) select 'ip-z' from generate_series(1, 20);
 select is(public.pin_sign_in('emeka@nwosuhaulage.ng', '480157', 'ip-z') ->> 'status', 'limited', 'too many wrong PINs from one address');
 
 -- Phone accounts sign in with the number and PIN.
+reset role;
 insert into private.app_pins (user_id, pin_hash) values ('18181818-0000-4000-8000-000000000002', extensions.crypt('730264', extensions.gen_salt('bf', 4)));
 select is(public.pin_sign_in('2348031234567', '730264', 'ip-d') ->> 'status', 'ok', 'a phone-invited driver signs in with phone number and PIN');
 
