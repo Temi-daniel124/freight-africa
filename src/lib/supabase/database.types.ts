@@ -113,6 +113,33 @@ export type Database = {
         }
         Relationships: []
       }
+      cities: {
+        Row: {
+          id: string
+          is_corridor_hub: boolean
+          location: unknown
+          name: string
+          slug: string
+          state: string
+        }
+        Insert: {
+          id?: string
+          is_corridor_hub?: boolean
+          location: unknown
+          name: string
+          slug: string
+          state: string
+        }
+        Update: {
+          id?: string
+          is_corridor_hub?: boolean
+          location?: unknown
+          name?: string
+          slug?: string
+          state?: string
+        }
+        Relationships: []
+      }
       consents: {
         Row: {
           at: string
@@ -150,6 +177,143 @@ export type Database = {
             columns: ["user_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      corridors: {
+        Row: {
+          active: boolean
+          city_a_id: string
+          city_b_id: string
+          distance_km: number
+          id: string
+          name: string
+          slug: string
+          typical_hours: number
+          via: string[]
+        }
+        Insert: {
+          active?: boolean
+          city_a_id: string
+          city_b_id: string
+          distance_km: number
+          id?: string
+          name: string
+          slug: string
+          typical_hours: number
+          via?: string[]
+        }
+        Update: {
+          active?: boolean
+          city_a_id?: string
+          city_b_id?: string
+          distance_km?: number
+          id?: string
+          name?: string
+          slug?: string
+          typical_hours?: number
+          via?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "corridors_city_a_id_fkey"
+            columns: ["city_a_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "corridors_city_b_id_fkey"
+            columns: ["city_b_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      document_types: {
+        Row: {
+          applies_to: string
+          blocks_when_expired: boolean
+          code: string
+          has_expiry: boolean
+          id: string
+          name: string
+          required: boolean
+        }
+        Insert: {
+          applies_to: string
+          blocks_when_expired?: boolean
+          code: string
+          has_expiry?: boolean
+          id?: string
+          name: string
+          required?: boolean
+        }
+        Update: {
+          applies_to?: string
+          blocks_when_expired?: boolean
+          code?: string
+          has_expiry?: boolean
+          id?: string
+          name?: string
+          required?: boolean
+        }
+        Relationships: []
+      }
+      goods_categories: {
+        Row: {
+          active: boolean
+          code: string
+          handling_note: string | null
+          icon_path: string | null
+          id: string
+          is_banned: boolean
+          loss_allowance_bps: number
+          name: string
+          needs_seal: boolean
+          parent_id: string | null
+          required_doc_type_ids: string[]
+          sort_order: number
+          specialist_only: boolean
+        }
+        Insert: {
+          active?: boolean
+          code: string
+          handling_note?: string | null
+          icon_path?: string | null
+          id?: string
+          is_banned?: boolean
+          loss_allowance_bps?: number
+          name: string
+          needs_seal?: boolean
+          parent_id?: string | null
+          required_doc_type_ids?: string[]
+          sort_order?: number
+          specialist_only?: boolean
+        }
+        Update: {
+          active?: boolean
+          code?: string
+          handling_note?: string | null
+          icon_path?: string | null
+          id?: string
+          is_banned?: boolean
+          loss_allowance_bps?: number
+          name?: string
+          needs_seal?: boolean
+          parent_id?: string | null
+          required_doc_type_ids?: string[]
+          sort_order?: number
+          specialist_only?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "goods_categories_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "goods_categories"
             referencedColumns: ["id"]
           },
         ]
@@ -579,6 +743,7 @@ export type Database = {
           created_by: string | null
           id: string
           insured_until: string | null
+          is_demo: boolean
           kind: Database["public"]["Enums"]["org_kind"]
           logo_path: string | null
           name: string
@@ -593,6 +758,7 @@ export type Database = {
           created_by?: string | null
           id?: string
           insured_until?: string | null
+          is_demo?: boolean
           kind: Database["public"]["Enums"]["org_kind"]
           logo_path?: string | null
           name: string
@@ -607,6 +773,7 @@ export type Database = {
           created_by?: string | null
           id?: string
           insured_until?: string | null
+          is_demo?: boolean
           kind?: Database["public"]["Enums"]["org_kind"]
           logo_path?: string | null
           name?: string
@@ -635,9 +802,10 @@ export type Database = {
           emergency_contact_phone: string | null
           full_name: string | null
           id: string
+          is_demo: boolean
+          joining_as: string | null
           kyc_status: Database["public"]["Enums"]["kyc_status"]
           language: Database["public"]["Enums"]["language_code"]
-          joining_as: string | null
           last_active_org_id: string | null
           night_look: string
           nin_enc: string | null
@@ -656,9 +824,10 @@ export type Database = {
           emergency_contact_phone?: string | null
           full_name?: string | null
           id: string
+          is_demo?: boolean
+          joining_as?: string | null
           kyc_status?: Database["public"]["Enums"]["kyc_status"]
           language?: Database["public"]["Enums"]["language_code"]
-          joining_as?: string | null
           last_active_org_id?: string | null
           night_look?: string
           nin_enc?: string | null
@@ -677,9 +846,10 @@ export type Database = {
           emergency_contact_phone?: string | null
           full_name?: string | null
           id?: string
+          is_demo?: boolean
+          joining_as?: string | null
           kyc_status?: Database["public"]["Enums"]["kyc_status"]
           language?: Database["public"]["Enums"]["language_code"]
-          joining_as?: string | null
           last_active_org_id?: string | null
           night_look?: string
           nin_enc?: string | null
@@ -825,6 +995,132 @@ export type Database = {
           },
         ]
       }
+      truck_type_goods: {
+        Row: {
+          goods_category_id: string
+          truck_type_id: string
+        }
+        Insert: {
+          goods_category_id: string
+          truck_type_id: string
+        }
+        Update: {
+          goods_category_id?: string
+          truck_type_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "truck_type_goods_goods_category_id_fkey"
+            columns: ["goods_category_id"]
+            isOneToOne: false
+            referencedRelation: "goods_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "truck_type_goods_truck_type_id_fkey"
+            columns: ["truck_type_id"]
+            isOneToOne: false
+            referencedRelation: "truck_types"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      truck_types: {
+        Row: {
+          active: boolean
+          capacity_kg_default: number
+          capacity_kg_max: number
+          capacity_kg_min: number
+          code: string
+          id: string
+          name: string
+          picture_path: string | null
+          sort_order: number
+        }
+        Insert: {
+          active?: boolean
+          capacity_kg_default: number
+          capacity_kg_max: number
+          capacity_kg_min: number
+          code: string
+          id?: string
+          name: string
+          picture_path?: string | null
+          sort_order?: number
+        }
+        Update: {
+          active?: boolean
+          capacity_kg_default?: number
+          capacity_kg_max?: number
+          capacity_kg_min?: number
+          code?: string
+          id?: string
+          name?: string
+          picture_path?: string | null
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      verification_sessions: {
+        Row: {
+          id: string
+          user_id: string
+          purpose: string
+          provider: string
+          provider_session_id: string | null
+          checks: string[]
+          status: Database["public"]["Enums"]["kyc_status"]
+          id_type: string | null
+          name_on_id: string | null
+          evidence_paths: string[]
+          decision_reason: string | null
+          extracted: Json | null
+          cost_usd_cents: number | null
+          reviewed_by: string | null
+          completed_at: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          purpose: string
+          provider: string
+          provider_session_id?: string | null
+          checks?: string[]
+          status?: Database["public"]["Enums"]["kyc_status"]
+          id_type?: string | null
+          name_on_id?: string | null
+          evidence_paths?: string[]
+          decision_reason?: string | null
+          extracted?: Json | null
+          cost_usd_cents?: number | null
+          reviewed_by?: string | null
+          completed_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          user_id?: string
+          purpose?: string
+          provider?: string
+          provider_session_id?: string | null
+          checks?: string[]
+          status?: Database["public"]["Enums"]["kyc_status"]
+          id_type?: string | null
+          name_on_id?: string | null
+          evidence_paths?: string[]
+          decision_reason?: string | null
+          extracted?: Json | null
+          cost_usd_cents?: number | null
+          reviewed_by?: string | null
+          completed_at?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       waitlist_signups: {
         Row: {
           consent_at: string
@@ -873,12 +1169,15 @@ export type Database = {
     }
     Functions: {
       accept_invite: { Args: { p_token: string }; Returns: string }
-      am_i_demo: { Args: never; Returns: boolean }
+      decide_identity_check: { Args: { p_approve: boolean; p_reason?: string; p_session: string }; Returns: undefined }
+      is_verified_sender: { Args: { p_org: string }; Returns: boolean }
+      submit_identity_check: { Args: { p_id_type: string; p_name_on_id: string; p_photo_path: string; p_purpose: string }; Returns: string }
       accept_staff_code: { Args: never; Returns: undefined }
       accept_staff_invite: {
         Args: { p_token: string }
         Returns: Database["public"]["Enums"]["staff_role"]
       }
+      am_i_demo: { Args: never; Returns: boolean }
       auth_code_failed: { Args: { p_key: string }; Returns: number }
       auth_code_open: { Args: { p_key: string }; Returns: boolean }
       auth_code_passed: { Args: { p_key: string }; Returns: undefined }

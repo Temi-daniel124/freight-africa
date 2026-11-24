@@ -837,7 +837,7 @@
       "title": "Finish setting up",
       "progress": "{done} of {total} done",
       "lead": {
-        "shipper": "One short step and you can book your first truck.",
+        "shipper": "Book whenever you’re ready. Verifying your identity is optional and earns a badge owners can see.",
         "owner": "A few steps before you can take paid loads. You can stop and come back any time.",
         "ownerDriver": "A few steps before you can take paid loads and drive them. You can stop and come back any time.",
         "agent": "A few steps before you can start earning. You can stop and come back any time."
@@ -845,7 +845,7 @@
       "steps": {
         "details": "Your details",
         "business": "About you and your business",
-        "identity": "Check your identity",
+        "identity": "Verify your identity",
         "bank": "Add your bank account",
         "truck": "Add your truck",
         "drivers": "Add your drivers",
@@ -854,7 +854,82 @@
       },
       "done": "Done",
       "start": "Start",
-      "change": "Choose a different role"
+      "change": "Choose a different role",
+      "optional": "Optional"
+    },
+    "shipper": {
+      "title": "Tell us who’s sending",
+      "lead": "Two quick answers and you can book a truck.",
+      "name": "Your name",
+      "sendingAs": "Sending as",
+      "myself": "Myself",
+      "business": "A business",
+      "businessName": "Business name",
+      "cac": "Registration number (optional)",
+      "cacHelp": "Your CAC number, like RC1234567. Helps large customers trust you.",
+      "submit": "Start booking",
+      "saving": "Setting up",
+      "errors": {
+        "name": "Enter your name",
+        "businessName": "Enter the business name",
+        "cac": "That doesn’t look like a CAC number. Check it, or leave it empty.",
+        "failed": "We couldn’t set that up. Check your connection and try again."
+      }
+    },
+    "identity": {
+      "title": "Verify your identity",
+      "lead": {
+        "sender": "Optional. Owners see a Verified sender badge on your loads.",
+        "owner": "So senders can trust the trucks on Freight Africa.",
+        "driver": "So the truck owner and senders know who is driving.",
+        "agent": "So the people you bring can trust you."
+      },
+      "idType": "ID type",
+      "idTypes": {
+        "nin_slip": "National ID (NIN slip)",
+        "national_id": "National ID card",
+        "drivers_licence": "Driver’s licence",
+        "passport": "International passport",
+        "voters_card": "Voter’s card"
+      },
+      "nameOnId": "Name as it appears on the ID",
+      "photo": "Photo of your ID",
+      "photoHelp": "The whole ID, flat, in good light. Every word must be readable.",
+      "takePhoto": "Take a photo",
+      "retake": "Retake",
+      "privacy": "Only the verification team can open your ID. Others see only your badge.",
+      "submit": "Submit for checking",
+      "saving": "Sending",
+      "back": "Back",
+      "sent": {
+        "title": "Received",
+        "text": "We’ll tell you here and by email when it has been checked. It usually takes less than a day.",
+        "home": "Back to home"
+      },
+      "waiting": {
+        "title": "Being checked",
+        "text": "Your ID is with our verification team. We’ll tell you here and by email."
+      },
+      "approved": {
+        "title": "You’re verified",
+        "text": "Your ID was checked by our team."
+      },
+      "declined": {
+        "title": "We couldn’t verify your ID",
+        "text": "{reason} Send a new photo to try again."
+      },
+      "unavailable": {
+        "title": "Identity checks open soon",
+        "text": "You can keep using Freight Africa. We’ll tell you when you can verify."
+      },
+      "errors": {
+        "idType": "Choose the ID type",
+        "name": "Enter your name as it is on the ID",
+        "photo": "Take or choose a photo of your ID",
+        "tooBig": "That photo is too big. Try again with the camera.",
+        "waiting": "A check is already waiting.",
+        "failed": "We couldn’t send that. Check your connection and try again."
+      }
     }
   },
   "authStates": {
@@ -1084,7 +1159,29 @@
         "help": "Help"
       },
       "search": "Search references, plates, phones or names",
-      "empty": "This part of the console is being built."
+      "empty": "This part of the console is being built.",
+      "verification": {
+        "title": "Identity checks",
+        "empty": "Nothing to check. New ID photos will show here.",
+        "submitted": "Sent {when}",
+        "purposes": {
+          "sender": "Sender",
+          "owner": "Truck owner",
+          "driver": "Driver",
+          "agent": "Agent"
+        },
+        "nameOnId": "Name on the ID",
+        "accountName": "Account name",
+        "idType": "ID type",
+        "approve": "Approve",
+        "decline": "Decline",
+        "reason": "Reason (they will read this)",
+        "reasonPlaceholder": "The photo is too dark to read.",
+        "needReason": "Say why, so they can fix it",
+        "failed": "That didn’t save. Try again.",
+        "decided": "Saved",
+        "photoAlt": "ID photo sent by {name}"
+      }
     },
     "home": {
       "needsAction": "Needs your action",
@@ -1131,7 +1228,8 @@
         "text": "Owners and senders you invite, and what they've earned you."
       }
     },
-    "demo": "Demo account. Nothing here is real: no money moves and nobody is contacted."
+    "demo": "Demo account. Nothing here is real: no money moves and nobody is contacted.",
+    "verifiedSender": "Verified sender"
   },
   "devHome": {
     "viewer": {
