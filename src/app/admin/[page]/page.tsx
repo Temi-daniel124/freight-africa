@@ -3,6 +3,7 @@ import { staffNav, type StaffPage } from "@/features/shell/config";
 import { StaffShell } from "@/features/shell/staff-shell";
 import { staffGate } from "@/features/staff/gate";
 import { staffMetadata, StaffSuspense } from "@/features/staff/staff-page";
+import { BankQueue } from "@/features/verification/bank-queue";
 import { FleetQueue } from "@/features/verification/fleet-queue";
 import { VerificationQueue } from "@/features/verification/queue";
 import messages from "@/messages/en.json";
@@ -31,6 +32,10 @@ async function Console({ params }: { params: Promise<{ page: string }> }) {
         <section className="flex flex-col gap-3">
           <h2 className="text-title-2 text-ink">{v.trucksTitle}</h2>
           <FleetQueue />
+        </section>
+        <section className="flex flex-col gap-3">
+          <h2 className="text-title-2 text-ink">{v.bankTitle}</h2>
+          <BankQueue />
         </section>
       </div>
     ) : undefined;

@@ -1263,7 +1263,10 @@
         "paper": "Paper",
         "expires": "Expires {date}",
         "truckOf": "Truck {plate} · {org}",
-        "peopleTitle": "Identity checks"
+        "peopleTitle": "Identity checks",
+        "bankTitle": "Bank accounts to check",
+        "bankEmpty": "No bank accounts to check.",
+        "bankLine": "{bank} ending {last4} · name match {score}%"
       }
     },
     "home": {
