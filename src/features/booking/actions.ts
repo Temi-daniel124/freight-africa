@@ -166,7 +166,8 @@ export async function startPayment(
   if (!payment.provider_ref) {
     const { data: demo } = await supabase.rpc("am_i_demo");
     const provider = paymentProvider(demo === true);
-    if (!provider) return { status: "noProvider" };
+    // A real business never gets a demo account number (review).
+    if (!provider || (provider.kind === "demo" && demo !== true)) return { status: "noProvider" };
     const collection = await provider.createCollection({
       paymentId: payment.id,
       amountKobo: Number(payment.amount_kobo),
@@ -260,19 +261,21 @@ export async function acceptCounter(
     .select("id, amount_kobo, expires_at")
     .eq("id", paymentId as string)
     .maybeSingle();
-  if (provider && payment) {
+  if (!provider || (provider.kind === "demo" && demo !== true) || !payment) return { status: "noProvider" };
+  {
     const c = await provider.createCollection({
       paymentId: payment.id,
       amountKobo: Number(payment.amount_kobo),
       expiresAt: payment.expires_at,
     });
-    await supabaseAdmin().rpc("attach_collection", {
+    const { error: attachError } = await supabaseAdmin().rpc("attach_collection", {
       p_payment: payment.id,
       p_provider: provider.kind,
       p_ref: c.ref,
       p_account: c.accountNumber,
       p_bank: c.bank,
     });
+    if (attachError) return { status: "error" };
   }
   revalidatePath(`/app/ship/trips/${loadId}`);
   return { status: "ok" };
