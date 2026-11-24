@@ -628,7 +628,102 @@
       "title": "Staff console",
       "text": "This area is for Freight Africa staff. The console opens here once staff accounts are set up.",
       "signedInAs": "Signed in as {who}",
-      "signOut": "Sign out"
+      "signOut": "Sign out",
+      "eyebrow": "Staff console",
+      "notStaffTitle": "This console is for Freight Africa staff",
+      "notStaffText": "You’re signed in as {who}, which isn’t a staff account. If you were invited, open the link in your invite email.",
+      "toApp": "Go to the app",
+      "roles": {
+        "super_admin": "Super admin",
+        "operations": "Operations",
+        "verification": "Verification",
+        "finance": "Finance",
+        "support": "Support",
+        "field_agent": "Field agent"
+      },
+      "invite": {
+        "title": "Welcome to the Freight Africa team",
+        "role": "Your role: {role}",
+        "text": "Sign in with the email this invite was sent to. Then you’ll set up two-step sign-in, which every staff account needs.",
+        "continue": "Continue",
+        "used": "This invite has already been used or has expired. Ask a super admin for a new one.",
+        "otherEmail": "This invite was sent to a different email. Sign out, then sign in with the email the invite went to.",
+        "failed": "We couldn’t accept the invite. Check your connection and try again.",
+        "expired": "This invite has expired. Ask a super admin for a new one.",
+        "signOut": "Sign out"
+      },
+      "setup": {
+        "step": "Step 1 of 2 · Two-step sign-in",
+        "title": "Link your authenticator app",
+        "text": "Every staff sign-in needs a code from this app, as well as your email code.",
+        "scan": "Scan this with Google Authenticator, Microsoft Authenticator or a similar app, or type this key:",
+        "qrAlt": "QR code for your authenticator app",
+        "copyKey": "Copy key",
+        "copied": "Copied",
+        "label": "Enter the 6-digit code from the app",
+        "confirm": "Confirm",
+        "checking": "Checking",
+        "wrong": "That code isn’t right. Check the app and try the newest code.",
+        "failed": "Something went wrong. Check your connection and try again.",
+        "loading": "Getting your QR code",
+        "startFailed": "We couldn’t start the setup. Reload the page to try again.",
+        "codesStep": "Step 2 of 2 · Backup codes",
+        "codesTitle": "Save your backup codes",
+        "codesText": "If you lose your phone, one of these codes lets you set up a new authenticator. Each works once. Keep them somewhere safe, away from your phone.",
+        "copyCodes": "Copy codes",
+        "saved": "I’ve saved these somewhere safe",
+        "savedError": "Tick this to continue",
+        "turnOn": "Turn on two-step sign-in"
+      },
+      "verify": {
+        "title": "Enter your code",
+        "text": "Open your authenticator app and type the 6 digits for Freight Africa.",
+        "label": "6-digit code",
+        "submit": "Verify",
+        "checking": "Checking",
+        "wrong": "That code isn’t right. Check the app and try the newest code.",
+        "failed": "Something went wrong. Check your connection and try again.",
+        "lost": "Lost your phone?",
+        "useBackup": "Use a backup code"
+      },
+      "recover": {
+        "title": "Use a backup code",
+        "text": "Type one of the backup codes you saved when you set up two-step sign-in. Then you’ll link a new authenticator app.",
+        "label": "Backup code",
+        "placeholder": "XXXX-XXXX-XXXX-XXXX",
+        "submit": "Continue",
+        "checking": "Checking",
+        "wrong": "That code isn’t right, or it has been used.",
+        "tooMany": "Too many tries. Wait an hour, or ask a super admin to reset your two-step sign-in.",
+        "failed": "Something went wrong. Check your connection and try again.",
+        "none": "No backup codes left? Ask a super admin to reset your two-step sign-in. The reset is logged and needs a second super admin.",
+        "back": "Back to the code"
+      },
+      "code": {
+        "step": "Before you start",
+        "title": "The staff code",
+        "points": [
+          {
+            "title": "Keep people’s data in the console",
+            "text": "Never copy, photograph or share anyone’s details outside the console."
+          },
+          {
+            "title": "Money actions have reasons and a second person",
+            "text": "Every refund, payout and setting change needs a reason. The large ones need a second approval."
+          },
+          {
+            "title": "Talk to users only through the console",
+            "text": "Never from your personal WhatsApp, phone or email."
+          },
+          {
+            "title": "Everything is logged",
+            "text": "What you open and what you change is written to the audit log, with your name."
+          }
+        ],
+        "agree": "I’ve read and agree",
+        "agreeError": "Tick this to continue",
+        "continue": "Continue"
+      }
     },
     "offline": "You’re offline. Connect to the internet to continue.",
     "backToSite": "Back to the website",
