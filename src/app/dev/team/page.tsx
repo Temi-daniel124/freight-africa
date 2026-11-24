@@ -15,6 +15,7 @@ export default function DevTeamPage() {
   const config = shells.shipper;
   const viewer: Promise<Viewer> = Promise.resolve({
     firstName: "Adaeze",
+    isDemo: false,
     fullName: "Adaeze Okafor",
     account: "Okafor Foods Ltd",
     accountInitials: initials("Okafor Foods Ltd"),

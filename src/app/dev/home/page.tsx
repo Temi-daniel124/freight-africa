@@ -19,6 +19,7 @@ type PreviewRole = (typeof roles)[number];
 function sampleViewer(role: ShellRole): Viewer {
   return {
     firstName: d.viewer.firstName,
+    isDemo: false,
     fullName: d.viewer.fullName,
     account: d.viewer.account,
     accountInitials: initials(d.viewer.account),

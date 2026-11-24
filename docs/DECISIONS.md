@@ -555,6 +555,8 @@ behind its interface with a demo implementation and a real one:
 A demo provider works only when `VERCEL_ENV` is not `production`, or when the account is a demo
 account (`is_demo`). Demo accounts and their data (`scripts/seed-demo.mjs`) are marked `is_demo`, so
 the cleanup before launch removes them in one go.
+Demo data is seen only by demo accounts: demo loads never reach a real owner's load board, and real
+loads never reach a demo account, so a review can't touch real users or real money.
 
 **Why.** The founder reviews whole phases with demo accounts; the real keys switch on without
 rewriting business code.

@@ -24,6 +24,8 @@ export type Viewer = {
   orgId: string | null;
   /** Every account for the switcher (A-09), the active one first. */
   accounts: Account[];
+  /** A demo account (D039): the shell says so on every page. */
+  isDemo: boolean;
 };
 
 export function initials(name: string) {
@@ -47,9 +49,10 @@ export const getViewer = cache(async (config: ShellConfig): Promise<Viewer> => {
   const { data: agreed } = await supabase.rpc("has_accepted_terms", { p_version: TERMS_VERSION });
   if (agreed !== true) redirect("/onboarding/role");
 
-  const [{ data: profile }, { data: rows }] = await Promise.all([
+  const [{ data: profile }, { data: rows }, { data: isDemo }] = await Promise.all([
     supabase.from("profiles").select("full_name").eq("id", claims.sub).maybeSingle(),
     supabase.rpc("my_accounts"),
+    supabase.rpc("am_i_demo"),
   ]);
   const accounts = toAccounts(rows ?? []);
   const active = accounts.find((account) => account.active) ?? null;
@@ -61,7 +64,7 @@ export const getViewer = cache(async (config: ShellConfig): Promise<Viewer> => {
   // Until the person has an organisation, the account is their own name and the shell's role.
   const account = active?.name ?? fullName;
   const role = active ? `${active.label} · ${active.name}` : messages.shell.roles[config.role];
-  return { firstName, fullName, account, accountInitials: initials(account), role, contact, unread: 0, orgId: active?.orgId ?? null, accounts };
+  return { firstName, fullName, account, accountInitials: initials(account), role, contact, unread: 0, orgId: active?.orgId ?? null, accounts, isDemo: isDemo === true };
 });
 
 /** "Good morning" / "Good afternoon" / "Good evening", by the clock in Lagos (times are shown in Africa/Lagos). */
