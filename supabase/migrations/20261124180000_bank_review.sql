@@ -21,8 +21,9 @@ begin
   if v_account.id is null or v_account.status <> 'needs_review' then
     raise exception 'this account is not waiting' using errcode = 'P0002';
   end if;
-  if v_account.added_by = v_user then
-    raise exception 'nobody approves their own bank account' using errcode = '42501';
+  -- Nobody decides on a bank account of a business they belong to (review).
+  if v_account.added_by = v_user or exists (select 1 from public.organization_members where org_id = v_account.org_id and user_id = v_user) then
+    raise exception 'nobody approves their own business''s bank account' using errcode = '42501';
   end if;
   update public.bank_accounts
   set status = case when not p_approve then 'disabled' when usable_from <= now() then 'active' else 'pending_hold' end
