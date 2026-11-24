@@ -62,12 +62,21 @@ create policy "verification photos: staff read" on storage.objects for select to
 -- Submitting (demo provider): the photo must already be in the person's own folder.
 -- ---------------------------------------------------------------------------------------------------
 
+-- The photo check is the demo provider (D039): demo accounts always, everyone else only while the
+-- demo_identity_checks setting is on (before launch). At launch it is switched off and Didit decides.
+insert into public.settings (key, value, is_money, description) values
+  ('demo_identity_checks', 'true', false, 'Whether real accounts may send an ID photo for staff to check (the demo provider). Off at launch, when Didit takes over.')
+on conflict (key) do nothing;
+
 create function public.submit_identity_check(p_purpose text, p_id_type text, p_name_on_id text, p_photo_path text) returns uuid
 language plpgsql security definer set search_path = '' as $$
 declare
   v_user uuid := private.require_user();
   v_id uuid;
 begin
+  if not (public.am_i_demo() or coalesce(private.setting('demo_identity_checks') = 'true'::jsonb, false)) then
+    raise exception 'identity checks open soon' using errcode = '42501';
+  end if;
   if p_photo_path is null or split_part(p_photo_path, '/', 1) <> v_user::text or p_photo_path like '%..%' then
     raise exception 'that photo is not yours' using errcode = '42501';
   end if;

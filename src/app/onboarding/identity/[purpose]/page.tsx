@@ -53,8 +53,7 @@ async function Check({ purpose }: { purpose: CheckPurpose }) {
   );
 }
 
-// The identity check (D041 for senders; T-ON-03, D-ON-02, G-ON-03 for the others), founder mockup 2.3.
-export default async function IdentityPage({ params }: { params: Promise<{ purpose: string }> }) {
+async function Page({ params }: { params: Promise<{ purpose: string }> }) {
   const { purpose } = await params;
   if (!(purpose in HOMES)) notFound();
   const p = purpose as CheckPurpose;
@@ -68,9 +67,16 @@ export default async function IdentityPage({ params }: { params: Promise<{ purpo
         <h1 className="text-title-1 text-ink">{t.title}</h1>
         <p className="text-body text-ink-2">{t.lead[p]}</p>
       </div>
-      <Suspense fallback={<Skeleton className="h-96 w-full rounded-card" />}>
-        <Check purpose={p} />
-      </Suspense>
+      <Check purpose={p} />
     </div>
+  );
+}
+
+// The identity check (D041 for senders; T-ON-03, D-ON-02, G-ON-03 for the others), founder mockup 2.3.
+export default function IdentityPage({ params }: { params: Promise<{ purpose: string }> }) {
+  return (
+    <Suspense fallback={<Skeleton className="h-96 w-full rounded-card" />}>
+      <Page params={params} />
+    </Suspense>
   );
 }
