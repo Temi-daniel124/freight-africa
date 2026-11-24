@@ -58,5 +58,5 @@ export function InviteView({ invite, token, signedIn, byPhone = false }: { invit
 }
 
 export function InviteFrame({ children }: { children: ReactNode }) {
-  return <div className="w-full max-w-md rounded-card bg-surface p-5 shadow-raised lg:p-8">{children}</div>;
+  return <div className="flex min-h-80 w-full max-w-md flex-col justify-center rounded-card bg-surface p-8 text-center shadow-raised">{children}</div>;
 }

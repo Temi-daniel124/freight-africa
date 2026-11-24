@@ -69,10 +69,14 @@ type TeamViewProps = { orgId: string; orgName: string; grantable: Role[]; member
 export function TeamView({ orgId: org, orgName, grantable, members, invites }: TeamViewProps) {
   const inviteRoles = grantable.filter((role) => role !== "owner");
   const organisation = { name: orgName };
+  const owners = members.filter((member) => member.role === "owner").length;
+  const people = (members.length === 1 ? t.onePerson : t.people).replace("{n}", String(members.length));
   return (
-    <div className="flex flex-col gap-5">
+    <div className="flex w-full flex-col gap-5 lg:max-w-[880px]">
       <div className="flex items-center justify-between gap-4">
-        <p className="text-body text-ink-2">{organisation.name}</p>
+        <p className="min-w-0 truncate text-body text-ink-2">
+          {organisation.name} · {people}
+        </p>
         {inviteRoles.length ? <InviteSheet orgId={org} orgName={organisation.name} roles={inviteRoles} /> : null}
       </div>
 
@@ -86,18 +90,18 @@ export function TeamView({ orgId: org, orgName, grantable, members, invites }: T
                 {initials(member.name ?? "")}
               </span>
               <div className="min-w-0">
-                <p className="truncate text-body-sm text-ink">
-                  {member.name ?? showContact(member.phone, member.email)}
-                  {member.isMe ? <span className="font-normal text-ink-3"> · {t.you}</span> : null}
+                <p className="flex min-w-0 text-body-sm text-ink">
+                  <span className="truncate">{member.name ?? showContact(member.phone, member.email)}</span>
+                  {member.isMe ? <span className="shrink-0 font-normal whitespace-pre text-ink-3"> · {t.you}</span> : null}
                 </p>
-                <p className="mt-0.5 flex flex-wrap items-center gap-2 text-caption font-medium tracking-normal text-ink-3">
+                <p className="mt-0.5 flex min-w-0 items-center gap-2 text-caption font-medium tracking-normal text-ink-3">
                   <StatusChip tone="neutral">{messages.org.roles[role] ?? role}</StatusChip>
-                  <span className="whitespace-nowrap">{showContact(member.phone, member.email)}</span>
+                  <span className="min-w-0 truncate">{showContact(member.phone, member.email)}</span>
                 </p>
               </div>
               {manageable ? (
                 <div className="flex flex-col items-end gap-2">
-                  <MemberSheet orgId={org} orgName={organisation.name} userId={member.userId} name={member.name ?? t.you} role={role} roles={grantable} isMe={member.isMe} />
+                  <MemberSheet orgId={org} orgName={organisation.name} userId={member.userId} name={member.name ?? t.you} role={role} roles={grantable} isMe={member.isMe} soleOwner={member.isMe && member.role === "owner" && owners === 1} />
                   {member.phone && !member.email && !member.isMe ? <PinLinkButton orgId={org} memberId={member.userId} name={member.name ?? ""} /> : null}
                 </div>
               ) : (
@@ -124,7 +128,7 @@ export function TeamView({ orgId: org, orgName, grantable, members, invites }: T
                   </div>
                   <form action={revokeInvite}>
                     <input type="hidden" name="invite" value={invite.id} />
-                    <button type="submit" className="rounded-pill px-3 py-2 text-label font-bold tracking-normal text-danger hover:bg-danger-100">
+                    <button type="submit" className="min-h-11 rounded-pill px-3 py-2 text-label font-bold tracking-normal text-danger hover:bg-danger-100">
                       {t.revoke}
                     </button>
                   </form>

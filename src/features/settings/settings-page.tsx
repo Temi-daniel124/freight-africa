@@ -2,6 +2,7 @@ import type { Viewer } from "@/features/shell/viewer";
 import { supabaseServer } from "@/lib/supabase/server";
 import messages from "@/messages/en.json";
 import { lockMinutes } from "@/features/auth/unlock";
+import { AvatarPicker } from "./avatar-picker";
 import { DriveSwitch } from "./drive-switch";
 import { SecuritySection } from "./security-section";
 
@@ -18,7 +19,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 /** A-10 Settings (ux-public-and-auth.md), inside any shell. */
 export async function SettingsPage({ viewer, base }: { viewer: Promise<Viewer>; base: string }) {
-  const { orgId } = await viewer;
+  const { orgId, fullName, avatar } = await viewer;
   const supabase = await supabaseServer();
   const { data: rows } = await supabase.rpc("my_accounts");
   const active = (rows ?? []).find((row) => row.org_id === orgId);
@@ -27,6 +28,9 @@ export async function SettingsPage({ viewer, base }: { viewer: Promise<Viewer>; 
   const canDrive = active?.kind === "transporter" && (active.role === "owner" || active.role === "manager");
   return (
     <div className="mx-auto flex w-full max-w-[880px] flex-col gap-4">
+      <Section title={t.picture.title}>
+        <AvatarPicker name={fullName} current={avatar ? (avatar.split("/").pop()?.replace(".webp", "") ?? null) : null} />
+      </Section>
       {canDrive && orgId ? (
         <Section title={t.driving.title}>
           <DriveSwitch orgId={orgId} drives={!!active?.is_driver} />
