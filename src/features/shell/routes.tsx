@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { BadgeCheck } from "lucide-react";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { cache, Suspense, type ReactNode } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -11,7 +11,7 @@ import { shellPages, shells, type PageKey, type ShellRole } from "./config";
 import { TeamPage } from "@/features/org/team-page";
 import { TrucksPage } from "@/features/trucks/trucks-page";
 import { DriversPage } from "@/features/drivers/drivers-page";
-import { isUnlocked } from "@/features/drivers/pin";
+import { requireUnlocked } from "@/features/drivers/pin";
 import { getMyJoining, type SetupRole } from "@/features/onboarding/setup";
 import { SetupChecklist } from "@/features/onboarding/setup-checklist";
 import { PlaceholderPage } from "./placeholder-page";
@@ -46,13 +46,7 @@ async function ResolvedShell({ role, children }: { role: ShellRole; children: Re
 /** D042: a driver with a PIN opens the app with it; until then the driver screens stay closed. */
 async function PinGate({ children }: { children: ReactNode }) {
   await connection();
-  const supabase = await supabaseServer();
-  const { data } = await supabase.auth.getClaims();
-  const claims = data?.claims;
-  if (claims && typeof claims.session_id === "string") {
-    const { data: has } = await supabase.rpc("has_app_pin");
-    if (has === true && !(await isUnlocked(claims.sub, claims.session_id))) redirect("/onboarding/pin?unlock=1");
-  }
+  await requireUnlocked();
   return <>{children}</>;
 }
 
@@ -104,6 +98,7 @@ async function VerifiedSender() {
 
 async function HomeContent({ role }: { role: ShellRole }) {
   const resolved = await resolveRole(role);
+  if (resolved === "driver") await requireUnlocked();
   const config = shells[resolved];
   const setupRole = SETUP_ROLES[resolved];
   return (
@@ -166,6 +161,8 @@ export function shellPageMetadata(role: ShellRole) {
 async function SectionPage({ role, params }: { role: ShellRole; params: Promise<{ page: string }> }) {
   const { page } = await params;
   const resolved = await resolveRole(role);
+  // Each driver page checks the PIN itself too: layouts don't run again on in-app navigation.
+  if (resolved === "driver") await requireUnlocked();
   if (!isPage(resolved, page)) notFound();
   const config = shells[resolved];
   const viewer = getViewer(config);
