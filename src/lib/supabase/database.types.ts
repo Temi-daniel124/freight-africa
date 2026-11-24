@@ -1063,63 +1063,78 @@ export type Database = {
       }
       verification_sessions: {
         Row: {
-          id: string
-          user_id: string
-          purpose: string
-          provider: string
-          provider_session_id: string | null
           checks: string[]
-          status: Database["public"]["Enums"]["kyc_status"]
+          completed_at: string | null
+          cost_usd_cents: number | null
+          created_at: string
+          decision_reason: string | null
+          evidence_paths: string[]
+          extracted: Json | null
+          id: string
           id_type: string | null
           name_on_id: string | null
-          evidence_paths: string[]
-          decision_reason: string | null
-          extracted: Json | null
-          cost_usd_cents: number | null
+          provider: string
+          provider_session_id: string | null
+          purpose: string
           reviewed_by: string | null
-          completed_at: string | null
-          created_at: string
+          status: Database["public"]["Enums"]["kyc_status"]
           updated_at: string
+          user_id: string
         }
         Insert: {
+          checks?: string[]
+          completed_at?: string | null
+          cost_usd_cents?: number | null
+          created_at?: string
+          decision_reason?: string | null
+          evidence_paths?: string[]
+          extracted?: Json | null
           id?: string
-          user_id: string
-          purpose: string
+          id_type?: string | null
+          name_on_id?: string | null
           provider: string
           provider_session_id?: string | null
-          checks?: string[]
-          status?: Database["public"]["Enums"]["kyc_status"]
-          id_type?: string | null
-          name_on_id?: string | null
-          evidence_paths?: string[]
-          decision_reason?: string | null
-          extracted?: Json | null
-          cost_usd_cents?: number | null
+          purpose: string
           reviewed_by?: string | null
-          completed_at?: string | null
-          created_at?: string
+          status?: Database["public"]["Enums"]["kyc_status"]
           updated_at?: string
+          user_id: string
         }
         Update: {
-          id?: string
-          user_id?: string
-          purpose?: string
-          provider?: string
-          provider_session_id?: string | null
           checks?: string[]
-          status?: Database["public"]["Enums"]["kyc_status"]
+          completed_at?: string | null
+          cost_usd_cents?: number | null
+          created_at?: string
+          decision_reason?: string | null
+          evidence_paths?: string[]
+          extracted?: Json | null
+          id?: string
           id_type?: string | null
           name_on_id?: string | null
-          evidence_paths?: string[]
-          decision_reason?: string | null
-          extracted?: Json | null
-          cost_usd_cents?: number | null
+          provider?: string
+          provider_session_id?: string | null
+          purpose?: string
           reviewed_by?: string | null
-          completed_at?: string | null
-          created_at?: string
+          status?: Database["public"]["Enums"]["kyc_status"]
           updated_at?: string
+          user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "verification_sessions_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "verification_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       waitlist_signups: {
         Row: {
@@ -1169,9 +1184,6 @@ export type Database = {
     }
     Functions: {
       accept_invite: { Args: { p_token: string }; Returns: string }
-      decide_identity_check: { Args: { p_approve: boolean; p_reason?: string; p_session: string }; Returns: undefined }
-      is_verified_sender: { Args: { p_org: string }; Returns: boolean }
-      submit_identity_check: { Args: { p_id_type: string; p_name_on_id: string; p_photo_path: string; p_purpose: string }; Returns: string }
       accept_staff_code: { Args: never; Returns: undefined }
       accept_staff_invite: {
         Args: { p_token: string }
@@ -1248,6 +1260,10 @@ export type Database = {
         Args: { p_approval: string; p_approve: boolean; p_note?: string }
         Returns: undefined
       }
+      decide_identity_check: {
+        Args: { p_approve: boolean; p_reason?: string; p_session: string }
+        Returns: undefined
+      }
       finish_notification: {
         Args: {
           p_error?: string
@@ -1286,6 +1302,7 @@ export type Database = {
         Args: { p_roles: Database["public"]["Enums"]["staff_role"][] }
         Returns: boolean
       }
+      is_verified_sender: { Args: { p_org: string }; Returns: boolean }
       join_waitlist: {
         Args: {
           p_corridors: string[]
@@ -1354,6 +1371,15 @@ export type Database = {
           role: Database["public"]["Enums"]["staff_role"]
           state: string
         }[]
+      }
+      submit_identity_check: {
+        Args: {
+          p_id_type: string
+          p_name_on_id: string
+          p_photo_path: string
+          p_purpose: string
+        }
+        Returns: string
       }
       team_members: {
         Args: { p_org: string }

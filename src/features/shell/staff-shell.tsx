@@ -10,13 +10,13 @@ import { SidebarLinks } from "./nav-links";
 
 const t = messages.shell.staff;
 
-function Groups({ base }: { base: string }) {
+function Groups({ base, page }: { base: string; page: StaffPage }) {
   return (
     <div className="flex flex-col gap-4">
       {staffNav.map((group, index) => (
         <div key={group.group ?? index}>
           {group.group ? <p className="mb-1 px-3 text-caption font-bold tracking-caps text-ink-3 uppercase">{t.groups[group.group]}</p> : null}
-          <SidebarLinks base={base} current={`${base}/work`} items={group.items.map((item) => ({ href: `${base}/${item.page}`, label: t.pages[item.page], icon: item.icon }))} />
+          <SidebarLinks base={base} current={`${base}/${page}`} items={group.items.map((item) => ({ href: `${base}/${item.page}`, label: t.pages[item.page], icon: item.icon }))} />
         </div>
       ))}
     </div>
@@ -37,7 +37,7 @@ export function StaffShell({ base, page, person, children }: StaffShellProps) {
       <aside className="sticky top-0 hidden h-dvh flex-col gap-5 overflow-y-auto border-r border-line bg-surface px-4 py-5 lg:flex">
         <Logo variant="primary-green" alt={messages.site.homeLabel} className="mx-2 my-1 h-8.5 self-start" />
         <nav aria-label={messages.shell.mainNav}>
-          <Groups base={base} />
+          <Groups base={base} page={page} />
         </nav>
         <div className="mt-auto flex flex-col gap-0.5 border-t border-line pt-3">
           <SidebarLinks base={base} items={[{ href: `${base}/playbooks`, label: t.pages.playbooks, icon: "book" }, { href: `${base}/help`, label: t.pages.help, icon: "help" }]} />
@@ -62,7 +62,7 @@ export function StaffShell({ base, page, person, children }: StaffShellProps) {
           </Link>
         </header>
         <div id="staff-menu" popover="auto" className="inset-auto top-16 left-4 m-0 max-h-[80dvh] w-72 overflow-y-auto rounded-inner border border-line bg-surface p-3 shadow-floating">
-          <Groups base={base} />
+          <Groups base={base} page={page} />
         </div>
         <main className="mx-auto w-full max-w-316 px-4 pt-4 pb-6 lg:px-8 lg:pt-7 lg:pb-12">
           {children ?? (
