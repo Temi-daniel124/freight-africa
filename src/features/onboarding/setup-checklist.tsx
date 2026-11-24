@@ -60,9 +60,12 @@ export async function SetupChecklist({ role }: { role: SetupRole }) {
           {t.start}: {messages.onboarding.setup.steps[next.key]}
         </Link>
       ) : null}
-      <Link href="/onboarding/role" className={cn(buttonVariants({ variant: "tertiary", size: "text" }), "mt-3 w-full")}>
-        {t.change}
-      </Link>
+      {/* Drivers are added by their truck owner; they don't choose a role. */}
+      {role === "driver" ? null : (
+        <Link href="/onboarding/role" className={cn(buttonVariants({ variant: "tertiary", size: "text" }), "mt-3 w-full")}>
+          {t.change}
+        </Link>
+      )}
     </section>
   );
 }
