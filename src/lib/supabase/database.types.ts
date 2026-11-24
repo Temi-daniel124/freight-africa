@@ -113,6 +113,54 @@ export type Database = {
         }
         Relationships: []
       }
+      bank_accounts: {
+        Row: {
+          id: string
+          org_id: string
+          bank_code: string
+          bank_name: string
+          account_number_enc: string
+          account_last4: string
+          resolved_name: string
+          name_match_score: number
+          status: string
+          usable_from: string
+          added_by: string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          org_id: string
+          bank_code: string
+          bank_name: string
+          account_number_enc: string
+          account_last4: string
+          resolved_name: string
+          name_match_score: number
+          status?: string
+          usable_from?: string
+          added_by?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          org_id?: string
+          bank_code?: string
+          bank_name?: string
+          account_number_enc?: string
+          account_last4?: string
+          resolved_name?: string
+          name_match_score?: number
+          status?: string
+          usable_from?: string
+          added_by?: string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       cities: {
         Row: {
           id: string
@@ -739,6 +787,9 @@ export type Database = {
         Row: {
           blocked_reason: string | null
           cac_number: string | null
+          corridor_ids: string[]
+          default_bank_account_id: string | null
+          home_city_id: string | null
           created_at: string
           created_by: string | null
           id: string
@@ -754,6 +805,9 @@ export type Database = {
         Insert: {
           blocked_reason?: string | null
           cac_number?: string | null
+          corridor_ids?: string[]
+          default_bank_account_id?: string | null
+          home_city_id?: string | null
           created_at?: string
           created_by?: string | null
           id?: string
@@ -769,6 +823,9 @@ export type Database = {
         Update: {
           blocked_reason?: string | null
           cac_number?: string | null
+          corridor_ids?: string[]
+          default_bank_account_id?: string | null
+          home_city_id?: string | null
           created_at?: string
           created_by?: string | null
           id?: string
@@ -1184,6 +1241,9 @@ export type Database = {
     }
     Functions: {
       accept_invite: { Args: { p_token: string }; Returns: string }
+      add_bank_account: { Args: { p_account_number: string; p_bank_code: string; p_bank_name: string; p_org: string; p_resolved_name: string; p_score: number; p_user: string }; Returns: string }
+      log_identity_photo_view: { Args: { p_reason: string; p_session: string }; Returns: undefined }
+      save_transporter_profile: { Args: { p_corridors: string[]; p_drives: boolean; p_home_city: string; p_org: string }; Returns: undefined }
       accept_staff_code: { Args: never; Returns: undefined }
       accept_staff_invite: {
         Args: { p_token: string }

@@ -22,6 +22,8 @@ export async function VerificationQueue() {
   if (!sessions?.length) {
     return <p className="rounded-tile bg-surface p-6 text-body text-ink-2 shadow-raised lg:rounded-card">{t.empty}</p>;
   }
+  // SECURITY.md §11: opening someone's ID photo is logged, with the reason.
+  await Promise.all(sessions.map((s) => supabase.rpc("log_identity_photo_view", { p_session: s.id, p_reason: "verification review" })));
   const [{ data: people }, { data: links }] = await Promise.all([
     supabase.from("profiles").select("id, full_name, email").in("id", [...new Set(sessions.map((s) => s.user_id))]),
     supabase.storage.from("verification").createSignedUrls(sessions.flatMap((s) => s.evidence_paths), 600),
