@@ -79,6 +79,8 @@ begin
   foreach t in array array['cities', 'corridors', 'truck_types', 'document_types', 'goods_categories', 'truck_type_goods'] loop
     execute format('alter table public.%I enable row level security', t);
     execute format('create policy "%s: everyone reads" on public.%I for select to anon, authenticated using (true)', t, t);
+    -- Supabase's default privileges grant everything on new tables; truncate isn't covered by RLS.
+    execute format('revoke all on public.%I from anon, authenticated', t);
     execute format('grant select on public.%I to anon, authenticated', t);
     execute format('grant select, insert, update, delete on public.%I to service_role', t);
   end loop;

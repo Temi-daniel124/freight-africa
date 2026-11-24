@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(10);
+select plan(11);
 
 select is((select count(*)::int from public.corridors where active), 4, 'four corridors at launch (D013)');
 select is((select name from public.corridors where slug = 'eastern-loop'), 'Port Harcourt ⇄ Aba ⇄ Onitsha ⇄ Enugu', 'the eastern loop');
@@ -14,6 +14,8 @@ select ok((select bool_and(not exists (select 1 from public.truck_type_goods tg 
 select ok((select specialist_only from public.goods_categories where code = 'fuel'), 'fuel is for specialists only');
 select is((select array_length(required_doc_type_ids, 1) from public.goods_categories where code = 'livestock'), 1, 'livestock needs a vet certificate');
 select is((select count(*)::int from public.document_types where applies_to = 'truck' and required and blocks_when_expired), 3, 'three truck papers block a truck when they expire');
+
+select ok(not has_table_privilege('anon', 'public.cities', 'truncate') and not has_table_privilege('authenticated', 'public.goods_categories', 'insert'), 'outsiders have read rights only');
 
 set local role anon;
 select is((select count(*)::int from public.truck_types), 6, 'anyone can read the truck types');
