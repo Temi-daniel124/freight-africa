@@ -3,6 +3,7 @@ import { staffNav, type StaffPage } from "@/features/shell/config";
 import { StaffShell } from "@/features/shell/staff-shell";
 import { staffGate } from "@/features/staff/gate";
 import { staffMetadata, StaffSuspense } from "@/features/staff/staff-page";
+import { FleetQueue } from "@/features/verification/fleet-queue";
 import { VerificationQueue } from "@/features/verification/queue";
 import messages from "@/messages/en.json";
 
@@ -19,7 +20,20 @@ async function Console({ params }: { params: Promise<{ page: string }> }) {
   if (gate.step !== "ready") redirect("/admin");
   const role = gate.role ? messages.auth.staff.roles[gate.role] : "";
   // Pages with their own content so far; the rest show the console's placeholder until their slice.
-  const content = page === "verification" ? <VerificationQueue /> : undefined;
+  const v = messages.shell.staff.verification;
+  const content =
+    page === "verification" ? (
+      <div className="flex flex-col gap-8">
+        <section className="flex flex-col gap-3">
+          <h2 className="text-title-2 text-ink">{v.peopleTitle}</h2>
+          <VerificationQueue />
+        </section>
+        <section className="flex flex-col gap-3">
+          <h2 className="text-title-2 text-ink">{v.trucksTitle}</h2>
+          <FleetQueue />
+        </section>
+      </div>
+    ) : undefined;
   return (
     <StaffShell base="/admin" page={page as StaffPage} person={{ name: gate.name, role }}>
       {content}

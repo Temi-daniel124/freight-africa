@@ -30,14 +30,14 @@ type MyJoining = {
   kyc: string;
   kinds: { shipper: boolean; transporter: boolean; drives: boolean };
   /** The transporter business this person owns: whether T-ON-02 (routes) and T-ON-04 (bank) are done. */
-  transporter: { routes: boolean; bank: boolean };
+  transporter: { routes: boolean; bank: boolean; truck: boolean };
 };
 
 export const getMyJoining = cache(async (): Promise<MyJoining> => {
   const supabase = await supabaseServer();
   const { data: claims } = await supabase.auth.getClaims();
   const sub = claims?.claims?.sub;
-  if (!sub) return { joined: null, kyc: "not_started", kinds: { shipper: false, transporter: false, drives: false }, transporter: { routes: false, bank: false } };
+  if (!sub) return { joined: null, kyc: "not_started", kinds: { shipper: false, transporter: false, drives: false }, transporter: { routes: false, bank: false, truck: false } };
   const [{ data: profile }, { data: rows }] = await Promise.all([
     supabase.from("profiles").select("joining_as, kyc_status").eq("id", sub).maybeSingle(),
     supabase.rpc("my_accounts"),
@@ -47,10 +47,13 @@ export const getMyJoining = cache(async (): Promise<MyJoining> => {
   const { data: org } = transporterId
     ? await supabase.from("organizations").select("corridor_ids, default_bank_account_id").eq("id", transporterId).maybeSingle()
     : { data: null };
+  const { count: trucks } = transporterId
+    ? await supabase.from("trucks").select("id", { count: "exact", head: true }).eq("org_id", transporterId).neq("status", "retired")
+    : { count: 0 };
   return {
     joined: parseJoined(profile?.joining_as),
     kyc: profile?.kyc_status ?? "not_started",
-    transporter: { routes: (org?.corridor_ids?.length ?? 0) > 0, bank: !!org?.default_bank_account_id },
+    transporter: { routes: (org?.corridor_ids?.length ?? 0) > 0, bank: !!org?.default_bank_account_id, truck: (trucks ?? 0) > 0 },
     kinds: {
       shipper: owned.some((row) => row.kind === "shipper"),
       transporter: owned.some((row) => row.kind === "transporter"),
@@ -68,7 +71,7 @@ function hrefFor(role: SetupRole, key: SetupStepKey) {
   if (key === "business") return "/onboarding/owner?step=about";
   if (key === "bank") return "/onboarding/owner?step=bank";
   // Trucks, drivers and the licence get their own screens in the next slices.
-  if (key === "truck") return "/app/haul/trucks";
+  if (key === "truck") return "/app/haul/trucks/new";
   if (key === "drivers") return "/app/haul/drivers";
   return "/onboarding/owner";
 }
@@ -82,6 +85,7 @@ export async function getSetup(role: SetupRole): Promise<Setup> {
     business: kinds.transporter && transporter.routes,
     identity: identitySent,
     bank: transporter.bank,
+    truck: transporter.truck,
   };
   const steps = STEPS[role].map((key) => ({
     key,

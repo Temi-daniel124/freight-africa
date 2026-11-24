@@ -9,6 +9,7 @@ import messages from "@/messages/en.json";
 import { AppShell, ShellContent, ShellTopBar } from "./app-shell";
 import { shellPages, shells, type PageKey, type ShellRole } from "./config";
 import { TeamPage } from "@/features/org/team-page";
+import { TrucksPage } from "@/features/trucks/trucks-page";
 import { getMyJoining, type SetupRole } from "@/features/onboarding/setup";
 import { SetupChecklist } from "@/features/onboarding/setup-checklist";
 import { PlaceholderPage } from "./placeholder-page";
@@ -144,7 +145,7 @@ async function SectionPage({ role, params }: { role: ShellRole; params: Promise<
   return (
     <>
       <ShellTopBar config={config} viewer={viewer} title={messages.shell.pages[page].title} />
-      <ShellContent>{page === "team" ? <TeamPage viewer={viewer} /> : <PlaceholderPage config={config} page={page} />}</ShellContent>
+      <ShellContent>{page === "team" ? <TeamPage viewer={viewer} /> : page === "trucks" ? <TrucksPage /> : <PlaceholderPage config={config} page={page} />}</ShellContent>
     </>
   );
 }
@@ -157,4 +158,26 @@ export function shellSection(role: ShellRole) {
       </Suspense>
     );
   };
+}
+
+async function SubpageBody({ role, title, children }: { role: ShellRole; title: string; children: ReactNode }) {
+  const config = shells[await resolveRole(role)];
+  const viewer = getViewer(config);
+  return (
+    <>
+      <ShellTopBar config={config} viewer={viewer} title={title} />
+      <ShellContent>{children}</ShellContent>
+    </>
+  );
+}
+
+/** A page deeper than a tab (Add a truck), inside the role's shell with its own title. */
+export function ShellSubpage({ role, title, children }: { role: ShellRole; title: string; children: ReactNode }) {
+  return (
+    <Suspense fallback={<Skeleton className="m-4 h-40 lg:m-8" />}>
+      <SubpageBody role={role} title={title}>
+        {children}
+      </SubpageBody>
+    </Suspense>
+  );
 }
