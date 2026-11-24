@@ -50,7 +50,9 @@ create trigger organization_members_driver after insert or update of is_driver, 
 create function private.drop_driver() returns trigger language plpgsql security definer set search_path = '' as $$
 begin
   if old.is_driver and (tg_op = 'DELETE' or not new.is_driver or new.status <> 'active') then
-    delete from public.drivers where user_id = old.user_id and org_id = old.org_id;
+    -- A staff suspension stays with the person (review): their record is kept, so joining another
+    -- business can't wipe it (ensure_driver keeps 'suspended' when it moves them).
+    delete from public.drivers where user_id = old.user_id and org_id = old.org_id and status <> 'suspended';
   end if;
   return null;
 end;

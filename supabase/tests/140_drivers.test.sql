@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(19);
+select plan(20);
 
 -- Musa Haulage: Ibrahim (owner); Sani joins as a driver; a stranger; Kemi (verification).
 insert into auth.users (id, instance_id, aud, role, email, email_confirmed_at, raw_user_meta_data, created_at, updated_at)
@@ -64,6 +64,12 @@ select throws_ok($$select public.set_app_pin('735190')$$, '28000', null, 'changi
 reset role;
 delete from public.organization_members where user_id = 'a7a7a7a7-0000-4000-8000-000000000002';
 select is((select count(*)::int from public.drivers where user_id = 'a7a7a7a7-0000-4000-8000-000000000002'), 0, 'a driver who leaves the business is no longer its driver');
+-- A staff-suspended driver who leaves and joins again is still suspended.
+insert into public.organization_members (org_id, user_id, transporter_role, is_driver) values ('b8b8b8b8-0000-4000-8000-000000000001', 'a7a7a7a7-0000-4000-8000-000000000002', 'driver', true);
+update public.drivers set status = 'suspended' where user_id = 'a7a7a7a7-0000-4000-8000-000000000002';
+delete from public.organization_members where user_id = 'a7a7a7a7-0000-4000-8000-000000000002';
+insert into public.organization_members (org_id, user_id, transporter_role, is_driver) values ('b8b8b8b8-0000-4000-8000-000000000001', 'a7a7a7a7-0000-4000-8000-000000000002', 'driver', true);
+select is((select status::text from public.drivers where user_id = 'a7a7a7a7-0000-4000-8000-000000000002'), 'suspended', 'a staff suspension survives leaving and rejoining');
 
 select * from finish();
 rollback;
