@@ -10,6 +10,7 @@ insert into auth.users (id, instance_id, aud, role, email, email_confirmed_at, r
   ('20202020-0000-4000-8000-000000000003', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'stranger@example.com', now(), '{"full_name": "Someone Else"}', now(), now()),
   ('20202020-0000-4000-8000-000000000004', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'sani@musahaulage.ng', now(), '{"full_name": "Sani Abubakar"}', now(), now());
 update public.profiles set phone = '+2348031234567' where id = '20202020-0000-4000-8000-000000000002';
+update public.profiles set phone = '+2348035550000' where id = '20202020-0000-4000-8000-000000000004';
 insert into public.organizations (id, kind, name) values
   ('20202020-0000-4000-8000-0000000000a1', 'shipper', 'Okafor Foods Ltd'),
   ('20202020-0000-4000-8000-0000000000b1', 'transporter', 'Musa Haulage Ltd');
@@ -31,7 +32,7 @@ values ('20202020-0000-4000-8000-0000000000e1', 'FA-TEST1-T1', '20202020-0000-40
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub": "20202020-0000-4000-8000-000000000001", "role": "authenticated"}', true);
 select is((select ref from public.trip_map('20202020-0000-4000-8000-0000000000e1')), 'FA-TEST1', 'the sender sees the trip on the map');
-select ok((select held_kobo from public.trip_map('20202020-0000-4000-8000-0000000000e1')) is not null or true, 'the sender may see the money held');
+select is((select driver_phone from public.trip_map('20202020-0000-4000-8000-0000000000e1')), '+2348035550000', 'and can call the driver during the live trip (D018)');
 select is(public.find_trip('20202020-0000-4000-8000-0000000000a1', 'fa-test1'), '20202020-0000-4000-8000-0000000000d1'::uuid, 'Track a trip finds it by reference in their business');
 select set_config('request.jwt.claims', '{"sub": "20202020-0000-4000-8000-000000000003", "role": "authenticated"}', true);
 select is((select count(*)::int from public.trip_map('20202020-0000-4000-8000-0000000000e1')), 0, 'someone else sees nothing');
