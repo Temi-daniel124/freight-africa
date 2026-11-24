@@ -325,6 +325,79 @@ export type Database = {
         }
         Relationships: []
       }
+      documents: {
+        Row: {
+          created_at: string
+          doc_type_id: string
+          expires_on: string | null
+          file_path: string
+          id: string
+          ocr: Json | null
+          org_id: string
+          reminded_days: number[]
+          review_note: string | null
+          reviewed_by: string | null
+          status: Database["public"]["Enums"]["doc_status"]
+          subject_id: string
+          subject_kind: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          doc_type_id: string
+          expires_on?: string | null
+          file_path: string
+          id?: string
+          ocr?: Json | null
+          org_id: string
+          reminded_days?: number[]
+          review_note?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["doc_status"]
+          subject_id: string
+          subject_kind: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          doc_type_id?: string
+          expires_on?: string | null
+          file_path?: string
+          id?: string
+          ocr?: Json | null
+          org_id?: string
+          reminded_days?: number[]
+          review_note?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["doc_status"]
+          subject_id?: string
+          subject_kind?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documents_doc_type_id_fkey"
+            columns: ["doc_type_id"]
+            isOneToOne: false
+            referencedRelation: "document_types"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "documents_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       goods_categories: {
         Row: {
           active: boolean
@@ -1081,6 +1154,36 @@ export type Database = {
           },
         ]
       }
+      truck_goods_exclusions: {
+        Row: {
+          goods_category_id: string
+          truck_id: string
+        }
+        Insert: {
+          goods_category_id: string
+          truck_id: string
+        }
+        Update: {
+          goods_category_id?: string
+          truck_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "truck_goods_exclusions_goods_category_id_fkey"
+            columns: ["goods_category_id"]
+            isOneToOne: false
+            referencedRelation: "goods_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "truck_goods_exclusions_truck_id_fkey"
+            columns: ["truck_id"]
+            isOneToOne: false
+            referencedRelation: "trucks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       truck_type_goods: {
         Row: {
           goods_category_id: string
@@ -1146,6 +1249,110 @@ export type Database = {
           sort_order?: number
         }
         Relationships: []
+      }
+      trucks: {
+        Row: {
+          approved_at: string | null
+          availability: Database["public"]["Enums"]["availability"]
+          capacity_kg: number
+          corridor_ids: string[]
+          created_at: string
+          default_driver_id: string | null
+          id: string
+          last_known_at: string | null
+          last_known_location: unknown
+          make: string | null
+          model: string | null
+          org_id: string
+          photo_paths: string[]
+          plate_number: string
+          review_note: string | null
+          reviewed_by: string | null
+          status: Database["public"]["Enums"]["truck_status"]
+          tracker_device_id: string | null
+          truck_type_id: string
+          unavailable_until: string | null
+          updated_at: string
+          year: number | null
+        }
+        Insert: {
+          approved_at?: string | null
+          availability?: Database["public"]["Enums"]["availability"]
+          capacity_kg: number
+          corridor_ids?: string[]
+          created_at?: string
+          default_driver_id?: string | null
+          id?: string
+          last_known_at?: string | null
+          last_known_location?: unknown
+          make?: string | null
+          model?: string | null
+          org_id: string
+          photo_paths?: string[]
+          plate_number: string
+          review_note?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["truck_status"]
+          tracker_device_id?: string | null
+          truck_type_id: string
+          unavailable_until?: string | null
+          updated_at?: string
+          year?: number | null
+        }
+        Update: {
+          approved_at?: string | null
+          availability?: Database["public"]["Enums"]["availability"]
+          capacity_kg?: number
+          corridor_ids?: string[]
+          created_at?: string
+          default_driver_id?: string | null
+          id?: string
+          last_known_at?: string | null
+          last_known_location?: unknown
+          make?: string | null
+          model?: string | null
+          org_id?: string
+          photo_paths?: string[]
+          plate_number?: string
+          review_note?: string | null
+          reviewed_by?: string | null
+          status?: Database["public"]["Enums"]["truck_status"]
+          tracker_device_id?: string | null
+          truck_type_id?: string
+          unavailable_until?: string | null
+          updated_at?: string
+          year?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trucks_default_driver_id_fkey"
+            columns: ["default_driver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trucks_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trucks_reviewed_by_fkey"
+            columns: ["reviewed_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trucks_truck_type_id_fkey"
+            columns: ["truck_type_id"]
+            isOneToOne: false
+            referencedRelation: "truck_types"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       verification_sessions: {
         Row: {
@@ -1287,6 +1494,27 @@ export type Database = {
         }
         Returns: string
       }
+      add_truck: {
+        Args: {
+          p_capacity_kg: number
+          p_corridors: string[]
+          p_excluded_goods?: string[]
+          p_org: string
+          p_photos: string[]
+          p_plate: string
+          p_truck_type: string
+        }
+        Returns: string
+      }
+      add_truck_document: {
+        Args: {
+          p_doc_type: string
+          p_expires_on: string
+          p_photo: string
+          p_truck: string
+        }
+        Returns: string
+      }
       am_i_demo: { Args: never; Returns: boolean }
       auth_code_failed: { Args: { p_key: string }; Returns: number }
       auth_code_open: { Args: { p_key: string }; Returns: boolean }
@@ -1358,8 +1586,16 @@ export type Database = {
         Args: { p_approval: string; p_approve: boolean; p_note?: string }
         Returns: undefined
       }
+      decide_document: {
+        Args: { p_approve: boolean; p_document: string; p_note?: string }
+        Returns: undefined
+      }
       decide_identity_check: {
         Args: { p_approve: boolean; p_reason?: string; p_session: string }
+        Returns: undefined
+      }
+      decide_truck: {
+        Args: { p_approve: boolean; p_note?: string; p_truck: string }
         Returns: undefined
       }
       finish_notification: {
@@ -1514,7 +1750,9 @@ export type Database = {
     }
     Enums: {
       account_status: "active" | "pending" | "suspended" | "banned"
+      availability: "available" | "on_trip" | "unavailable"
       consent_kind: "terms" | "privacy" | "whatsapp" | "location" | "marketing"
+      doc_status: "pending" | "approved" | "rejected" | "expired"
       kyc_status:
         | "not_started"
         | "in_progress"
@@ -1566,6 +1804,13 @@ export type Database = {
         | "support"
         | "field_agent"
       transporter_role: "owner" | "manager" | "driver"
+      truck_status:
+        | "draft"
+        | "pending_review"
+        | "active"
+        | "paused"
+        | "suspended"
+        | "retired"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1694,7 +1939,9 @@ export const Constants = {
   public: {
     Enums: {
       account_status: ["active", "pending", "suspended", "banned"],
+      availability: ["available", "on_trip", "unavailable"],
       consent_kind: ["terms", "privacy", "whatsapp", "location", "marketing"],
+      doc_status: ["pending", "approved", "rejected", "expired"],
       kyc_status: [
         "not_started",
         "in_progress",
@@ -1751,6 +1998,14 @@ export const Constants = {
         "field_agent",
       ],
       transporter_role: ["owner", "manager", "driver"],
+      truck_status: [
+        "draft",
+        "pending_review",
+        "active",
+        "paused",
+        "suspended",
+        "retired",
+      ],
     },
   },
 } as const

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useActionState, useEffect, useRef, useState, type ReactNode } from "react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { FieldShell, inputClasses, inputErrorClasses, TextField } from "@/components/ui/field";
+import { shrinkImage as shrink } from "@/lib/shrink-image";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 import messages from "@/messages/en.json";
@@ -12,7 +13,6 @@ import type { CheckPurpose } from "@/lib/verification/provider";
 import { identityUploadTicket, submitIdentity, type IdentityState } from "./actions";
 
 const t = messages.onboarding.identity;
-const MAX_SIDE = 1600;
 
 function ErrorLine({ id, children }: { id?: string; children: ReactNode }) {
   return (
@@ -21,17 +21,6 @@ function ErrorLine({ id, children }: { id?: string; children: ReactNode }) {
       {children}
     </p>
   );
-}
-
-/** Shrinks a phone photo to at most 1600 px on its long side as JPEG: readable, and light on data. */
-async function shrink(file: File): Promise<Blob> {
-  const bitmap = await createImageBitmap(file);
-  const scale = Math.min(1, MAX_SIDE / Math.max(bitmap.width, bitmap.height));
-  const canvas = document.createElement("canvas");
-  canvas.width = Math.round(bitmap.width * scale);
-  canvas.height = Math.round(bitmap.height * scale);
-  canvas.getContext("2d")?.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-  return new Promise((resolve, reject) => canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error("no image"))), "image/jpeg", 0.85));
 }
 
 /** The identity check (mockup 2.3): ID type, name as on the ID, a photo with a preview, Submit for checking. */

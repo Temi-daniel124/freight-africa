@@ -1255,7 +1255,13 @@
         "needReason": "Say why, so they can fix it",
         "failed": "That didn’t save. Try again.",
         "decided": "Saved",
-        "photoAlt": "ID photo sent by {name}"
+        "photoAlt": "ID photo sent by {name}",
+        "trucksTitle": "Trucks and papers",
+        "truckEmpty": "No trucks or papers to check.",
+        "paper": "Paper",
+        "expires": "Expires {date}",
+        "truckOf": "Truck {plate} · {org}",
+        "peopleTitle": "Identity checks"
       }
     },
     "home": {
@@ -1500,6 +1506,66 @@
       "notFoundText": "Check the link, or ask for a new one.",
       "wrongPerson": "This invite was sent to a different phone number or email. Sign in with that one, or ask for a new invite.",
       "home": "Go to home"
+    }
+  },
+  "trucks": {
+    "list": {
+      "add": "Add a truck",
+      "empty": "No trucks yet",
+      "emptyText": "Add your first truck to start taking loads. It takes about 5 minutes with its papers.",
+      "status": {
+        "draft": "Needs a change",
+        "pending_review": "Being checked",
+        "active": "Ready for loads",
+        "paused": "Paused: papers expired",
+        "suspended": "Suspended",
+        "retired": "Retired"
+      },
+      "capacity": "{tonnes} t"
+    },
+    "add": {
+      "title": "Add a truck",
+      "lead": "Photos and taps, almost no typing. We usually check trucks within 4 hours.",
+      "back": "Photo of the back of the truck",
+      "backHelp": "Fit the number plate in the photo.",
+      "plate": "Number plate",
+      "plateHelp": "As on the plate, like LSR 123 XY",
+      "type": "Truck type",
+      "capacity": "Capacity",
+      "more": "More photos (recommended)",
+      "moreHelp": "Side and front. Senders trust trucks they can see.",
+      "side": "Side",
+      "front": "Front",
+      "goods": "Goods this truck carries",
+      "goodsHelp": "Untick anything you won’t take.",
+      "papers": "Papers",
+      "papersHelp": "A clear photo of each, and its expiry date.",
+      "expires": "Expires on",
+      "optional": "Optional",
+      "git": "Earns the Insured badge once checked.",
+      "routes": "Routes this truck runs",
+      "takePhoto": "Take a photo",
+      "retake": "Retake",
+      "uploading": "Uploading",
+      "submit": "Send for checking",
+      "saving": "Sending",
+      "sent": {
+        "title": "Truck sent for checking",
+        "text": "We usually check trucks within 4 hours. A Freight Africa field agent may visit to see it. We’ll tell you here and by email.",
+        "list": "See your trucks"
+      },
+      "errors": {
+        "back": "Take a photo of the back with the plate",
+        "plate": "Check the plate number",
+        "plateTaken": "A truck with this plate is already on Freight Africa. Contact us if it’s yours.",
+        "type": "Choose the truck type",
+        "capacity": "Choose the capacity",
+        "paper": "Add a photo and the expiry date",
+        "expired": "This paper has expired. Add the new one.",
+        "routes": "Choose at least one route",
+        "upload": "That photo didn’t upload. Try again.",
+        "failed": "We couldn’t send that. Check your connection and try again."
+      }
     }
   }
 }

@@ -4,18 +4,19 @@ import { useActionState, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { TextField } from "@/components/ui/field";
 import messages from "@/messages/en.json";
-import { decideIdentity, type DecideState } from "./staff-actions";
+import { decideFleet, decideIdentity, type DecideState } from "./staff-actions";
 
 const t = messages.shell.staff.verification;
 
 /** Approve, or Decline with a reason the person reads. */
-export function DecideForm({ session }: { session: string }) {
-  const [state, action, pending] = useActionState(decideIdentity, { status: "idle", attempt: 0 } satisfies DecideState);
+export function DecideForm({ session, kind = "identity" }: { session: string; kind?: "identity" | "truck" | "document" }) {
+  const [state, action, pending] = useActionState(kind === "identity" ? decideIdentity : decideFleet, { status: "idle", attempt: 0 } satisfies DecideState);
   const [declining, setDeclining] = useState(false);
   if (state.status === "done") return <p className="text-body-sm font-semibold text-success">{t.decided}</p>;
   return (
     <form action={action} className="flex flex-col gap-3">
       <input type="hidden" name="session" value={session} />
+      <input type="hidden" name="kind" value={kind} />
       {declining ? (
         <TextField
           id={`reason-${session}`}
