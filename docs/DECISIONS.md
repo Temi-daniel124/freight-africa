@@ -508,3 +508,53 @@ of search (robots and `noindex`).
 
 **Why.** Nobody can use the app before launch, so a Sign in link only leads people to a dead end; the
 waitlist is the one thing a visitor can do today.
+
+## D037. Money settings need two super admins; a sole super admin re-enters the code
+
+**Decision (founder, 24 Nov 2026).** Every setting that changes who gets paid, how much, or when needs
+a second super admin's approval (`approvals`, ROLES-AND-PERMISSIONS §8). That covers the kobo and rate
+settings and also `auto_release_hours`, `free_waiting_hours`, `tier_established_trips`,
+`tier_gold_trips`, `tier_gold_rating`, `agent_share_months`, and the dispute settings from
+SYSTEM-LOGIC §13 (`dispute_window_hours` 48, `dispute_hold_bps` 1000, `dispute_two_person_kobo`
+₦1m). Settings that don't move money (`payment_expiry_hours`, `min_loading_photos`, timers for
+alerts) still change at once, and every change is logged.
+
+While there is only one active super admin, that person may approve their own request, but only after
+re-entering their two-step code: the database accepts it only if the session verified an authenticator
+code in the last 5 minutes (the `amr` claim), marks the approval `self_approved`, and writes an
+`approval_decided_alone` row to the audit log. As soon as a second super admin exists, nobody approves
+alone. The founder is the first super admin (migration `20261124090000`).
+
+**Why.** Time and tier values move money just as surely as amounts: a longer auto-release holds an
+owner's pay longer, and a lower gold threshold raises advances. One founder can't wait for a second
+admin who doesn't exist yet, so the fresh code and the audit row stand in for the second person.
+
+## D038. Founder mockups are the design reference; no more design gates
+
+**Decision (founder, 24 Nov 2026).** The founder's boards in `docs/design/reference/founder-mockups/`
+(Admin, Transporters, Shippers, Drivers, Authentication) are the visual and UX reference for every
+Phase 2–4 screen, built with the Gate 4 components and tokens. Where a mockup disagrees with
+DECISIONS, PRODUCT, SYSTEM-LOGIC or a `ux-*.md` spec, the spec wins (for example, money is prepaid
+and held in escrow, never "recorded, not moved"). There are no more per-screen design gates: the
+founder reviews each phase once at the end, using the demo accounts. Screenshots at 375 and 1440 px
+are a sanity look; PageSpeed only at the end of each phase.
+
+**Why.** Gates 1–4 settled the visual language; per-screen gates now slow the build more than they
+improve it.
+
+## D039. Demo providers until the real accounts exist
+
+**Decision (founder, 24 Nov 2026).** Outside accounts must not block the build. Each provider sits
+behind its interface with a demo implementation and a real one:
+- `VerificationProvider`: demo = staff approve or decline from the console; real = Didit.
+- `PaymentProvider`: demo = a simulated bank transfer the demo payer confirms; real = Bachs. Every
+  ledger posting is real either way.
+- WhatsApp channel: until Meta is set up, the same messages go in-app and by email; real = WhatsApp
+  Cloud API.
+
+A demo provider works only when `VERCEL_ENV` is not `production`, or when the account is a demo
+account (`is_demo`). Demo accounts and their data (`scripts/seed-demo.mjs`) are marked `is_demo`, so
+the cleanup before launch removes them in one go.
+
+**Why.** The founder reviews whole phases with demo accounts; the real keys switch on without
+rewriting business code.

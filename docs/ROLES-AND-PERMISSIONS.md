@@ -128,7 +128,9 @@ readable by other users.
 
 Required, and the requester can't approve their own item: payouts above ₦5m · any manual refund · any
 fee or money setting change · ledger adjustments · dispute decisions above ₦1m · staff role changes ·
-two-step sign-in resets for staff (second super admin).
+two-step sign-in resets for staff (second super admin). Money settings include time and tier values
+(D037). While there is only one super admin, they may approve their own setting change after
+re-entering their two-step code; the database checks it and the audit log records it (D037).
 
 ## 9. Data access summary (RLS)
 
