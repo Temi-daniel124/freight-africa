@@ -72,6 +72,8 @@ create table public.bank_accounts (
   updated_at timestamptz not null default now()
 );
 create index bank_accounts_org on public.bank_accounts (org_id, created_at desc);
+-- One account receives payouts at a time (review fix: two saves at once could leave two).
+create unique index bank_accounts_one_live on public.bank_accounts (org_id) where status <> 'disabled';
 create trigger bank_accounts_touch before update on public.bank_accounts for each row execute function private.touch_updated_at();
 
 alter table public.organizations add column default_bank_account_id uuid references public.bank_accounts (id) on delete set null;
@@ -108,6 +110,7 @@ returns uuid language plpgsql security definer set search_path = '' as $$
 declare
   v_id uuid;
   v_first boolean;
+  v_verified boolean;
 begin
   if not exists (
     select 1 from public.organization_members m join public.organizations o on o.id = m.org_id
@@ -118,18 +121,22 @@ begin
   if p_account_number !~ '^[0-9]{10}$' then
     raise exception 'an account number has 10 digits' using errcode = '22023';
   end if;
+  perform 1 from public.organizations where id = p_org for update;
   v_first := not exists (select 1 from public.bank_accounts where org_id = p_org and status <> 'disabled');
+  -- One payout account at a time: the new one replaces the old, and payouts wait out its 24 hours.
+  update public.bank_accounts set status = 'disabled' where org_id = p_org and status <> 'disabled';
+  -- The match only counts against a name our checks verified (review fix): with no approved identity
+  -- check yet, the account waits for staff whatever the score.
+  v_verified := exists (select 1 from public.verification_sessions where user_id = p_user and status = 'approved');
   insert into public.bank_accounts (org_id, bank_code, bank_name, account_number_enc, account_last4, resolved_name, name_match_score, status, added_by)
   values (
     p_org, p_bank_code, btrim(p_bank_name),
     extensions.pgp_sym_encrypt(p_account_number, private.bank_key()),
     right(p_account_number, 4), upper(btrim(p_resolved_name)), greatest(0, least(100, p_score)),
-    case when p_score < 80 then 'needs_review' else 'pending_hold' end,
+    case when p_score < 80 or not v_verified then 'needs_review' else 'pending_hold' end,
     p_user
   )
   returning id into v_id;
-  -- One payout account at a time: the new one replaces the old, and payouts wait out its 24 hours.
-  update public.bank_accounts set status = 'disabled' where org_id = p_org and id <> v_id and status <> 'disabled';
   update public.organizations set default_bank_account_id = v_id where id = p_org;
   if not v_first then
     perform private.notify('bank_account.changed', 'bank_account.changed', array['in_app', 'email']::public.notify_channel[],
@@ -152,6 +159,34 @@ revoke all on function private.release_bank_holds() from public;
 insert into public.message_templates (code, channel, subject, body, variables) values
   ('bank_account.changed', 'email', 'Your payout bank account was changed', 'The bank account for your Freight Africa payouts was changed to one ending {{last4}}. Payouts wait 24 hours. If this wasn''t you, contact us now.', '{last4}'),
   ('bank_account.changed', 'in_app', null, 'Payout account changed to one ending {{last4}}. Payouts wait 24 hours.', '{last4}');
+
+-- Account-name lookups show a stranger's name, so they are limited (review fix): owners of a
+-- transporter business only, 20 an hour each (SECURITY.md §10 rate limits).
+create table private.bank_lookups (
+  user_id uuid not null,
+  at timestamptz not null default now()
+);
+create index bank_lookups_user_at on private.bank_lookups (user_id, at desc);
+
+create function public.note_bank_lookup() returns boolean language plpgsql security definer set search_path = '' as $$
+declare
+  v_user uuid := private.require_user();
+begin
+  if not exists (
+    select 1 from public.organization_members m join public.organizations o on o.id = m.org_id
+    where m.user_id = v_user and m.transporter_role = 'owner' and m.status = 'active' and o.kind = 'transporter'
+  ) then
+    return false;
+  end if;
+  if (select count(*) from private.bank_lookups where user_id = v_user and at > now() - interval '1 hour') >= 20 then
+    return false;
+  end if;
+  insert into private.bank_lookups (user_id) values (v_user);
+  return true;
+end;
+$$;
+revoke all on function public.note_bank_lookup() from public;
+grant execute on function public.note_bank_lookup() to authenticated;
 
 -- ---------------------------------------------------------------------------------------------------
 -- SECURITY §11: staff opening someone's ID photo is logged with the reason.

@@ -92,7 +92,8 @@ async function lookupContext() {
     supabase.from("verification_sessions").select("name_on_id").eq("status", "approved").order("created_at", { ascending: false }).limit(1).maybeSingle(),
     myTransporter(supabase),
   ]);
-  const references = [profile?.full_name, check?.name_on_id, org?.name].filter((n): n is string => !!n);
+  // Only a name our identity check verified counts (review fix): names people type could be anyone's.
+  const references = [check?.name_on_id].filter((n): n is string => !!n);
   return { userId, org, references, demoName: profile?.full_name ?? org?.name ?? "", provider: paymentProvider(isDemo === true) };
 }
 
@@ -111,7 +112,10 @@ async function resolve(ctx: NonNullable<Awaited<ReturnType<typeof lookupContext>
 /** Called as the tenth digit is typed: shows the account name and whether it matches. */
 export async function lookUpAccount(bankCode: string, number: string): Promise<Lookup> {
   const ctx = await lookupContext();
-  if (!ctx) return { status: "error" };
+  if (!ctx?.org) return { status: "error" };
+  // Owners only, 20 lookups an hour: the answer is a stranger's name (review fix).
+  const { data: allowed } = await (await supabaseServer()).rpc("note_bank_lookup");
+  if (allowed !== true) return { status: "error" };
   try {
     const found = await resolve(ctx, bankCode, number);
     return found.status === "found" ? { status: "found", name: found.name, matches: found.score >= 80 } : { status: found.status };
