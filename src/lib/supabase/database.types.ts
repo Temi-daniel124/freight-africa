@@ -398,6 +398,64 @@ export type Database = {
           },
         ]
       }
+      drivers: {
+        Row: {
+          created_at: string
+          default_truck_id: string | null
+          licence_expires_on: string | null
+          licence_number: string | null
+          org_id: string
+          paused: boolean
+          status: Database["public"]["Enums"]["account_status"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          default_truck_id?: string | null
+          licence_expires_on?: string | null
+          licence_number?: string | null
+          org_id: string
+          paused?: boolean
+          status?: Database["public"]["Enums"]["account_status"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          default_truck_id?: string | null
+          licence_expires_on?: string | null
+          licence_number?: string | null
+          org_id?: string
+          paused?: boolean
+          status?: Database["public"]["Enums"]["account_status"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "drivers_default_truck_id_fkey"
+            columns: ["default_truck_id"]
+            isOneToOne: false
+            referencedRelation: "trucks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "drivers_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "drivers_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       goods_categories: {
         Row: {
           active: boolean
@@ -1494,6 +1552,10 @@ export type Database = {
         }
         Returns: string
       }
+      add_driver_licence: {
+        Args: { p_expires_on: string; p_number?: string; p_photo: string }
+        Returns: string
+      }
       add_truck: {
         Args: {
           p_capacity_kg: number
@@ -1542,6 +1604,7 @@ export type Database = {
         Args: { p_key: string; p_note?: string; p_value: Json }
         Returns: string
       }
+      check_app_pin: { Args: { p_pin: string }; Returns: string }
       claim_notifications: {
         Args: { p_limit?: number }
         Returns: {
@@ -1617,6 +1680,7 @@ export type Database = {
         Returns: undefined
       }
       has_accepted_terms: { Args: { p_version: string }; Returns: boolean }
+      has_app_pin: { Args: never; Returns: boolean }
       invite_details: {
         Args: { p_token: string }
         Returns: {
@@ -1626,6 +1690,10 @@ export type Database = {
           role: string
           state: string
         }[]
+      }
+      is_current_driver: {
+        Args: { p_org: string; p_user: string }
+        Returns: boolean
       }
       is_member: { Args: { p_org: string }; Returns: boolean }
       is_staff: {
@@ -1704,6 +1772,11 @@ export type Database = {
         Returns: undefined
       }
       set_active_org: { Args: { p_org: string }; Returns: undefined }
+      set_app_pin: { Args: { p_pin: string }; Returns: undefined }
+      set_driver_paused: {
+        Args: { p_driver: string; p_paused: boolean }
+        Returns: undefined
+      }
       set_notification_preference: {
         Args: {
           p_channel: Database["public"]["Enums"]["notify_channel"]

@@ -7,8 +7,8 @@ import { parseJoined, type Joined } from "./roles";
 // role's setup (A-04, T-ON-02 to T-ON-06, G-ON-01 to G-ON-04) and which are done. Steps that Phase 2
 // tracks (identity, bank, trucks, licence) stay open until their slices record them.
 
-export type SetupRole = "shipper" | "owner" | "ownerDriver" | "agent";
-export type SetupStepKey = "details" | "business" | "identity" | "bank" | "truck" | "drivers" | "licence" | "agreement";
+export type SetupRole = "shipper" | "owner" | "ownerDriver" | "agent" | "driver";
+export type SetupStepKey = "details" | "business" | "identity" | "bank" | "truck" | "drivers" | "licence" | "agreement" | "pin";
 export type SetupStep = { key: SetupStepKey; done: boolean; optional?: boolean; href: string };
 export type Setup = { role: SetupRole; steps: SetupStep[]; complete: boolean };
 
@@ -18,6 +18,8 @@ const STEPS: Record<SetupRole, SetupStepKey[]> = {
   owner: ["business", "identity", "bank", "truck", "drivers"],
   ownerDriver: ["business", "identity", "bank", "truck", "licence"],
   agent: ["details", "agreement", "identity", "bank"],
+  // ux-driver D-ON-02 to D-ON-04, and the app-lock PIN (D042).
+  driver: ["identity", "licence", "pin"],
 };
 
 /** Which shell role a joining choice maps to. */
@@ -62,10 +64,12 @@ export const getMyJoining = cache(async (): Promise<MyJoining> => {
   };
 });
 
-const PURPOSE: Record<SetupRole, string> = { shipper: "sender", owner: "owner", ownerDriver: "owner", agent: "agent" };
+const PURPOSE: Record<SetupRole, string> = { shipper: "sender", owner: "owner", ownerDriver: "owner", agent: "agent", driver: "driver" };
 
 function hrefFor(role: SetupRole, key: SetupStepKey) {
   if (key === "identity") return `/onboarding/identity/${PURPOSE[role]}`;
+  if (key === "licence") return "/onboarding/licence";
+  if (key === "pin") return "/onboarding/pin";
   if (role === "shipper") return "/onboarding/shipper";
   if (role === "agent") return "/onboarding/agent";
   if (key === "business") return "/onboarding/owner?step=about";
@@ -78,6 +82,14 @@ function hrefFor(role: SetupRole, key: SetupStepKey) {
 
 export async function getSetup(role: SetupRole): Promise<Setup> {
   const { kinds, kyc, transporter } = await getMyJoining();
+  const needsDriver = role === "driver" || role === "ownerDriver";
+  const supabase = needsDriver ? await supabaseServer() : null;
+  const [{ count: licences }, { data: hasPin }] = supabase
+    ? await Promise.all([
+        supabase.from("documents").select("id", { count: "exact", head: true }).eq("subject_kind", "driver").in("status", ["pending", "approved"]),
+        supabase.rpc("has_app_pin"),
+      ])
+    : [{ count: 0 }, { data: false }];
   // A check that is waiting counts as done here: the person has nothing more to do for it.
   const identitySent = kyc === "approved" || kyc === "needs_review" || kyc === "in_progress";
   const done: Partial<Record<SetupStepKey, boolean>> = {
@@ -86,6 +98,8 @@ export async function getSetup(role: SetupRole): Promise<Setup> {
     identity: identitySent,
     bank: transporter.bank,
     truck: transporter.truck,
+    licence: (licences ?? 0) > 0,
+    pin: hasPin === true,
   };
   const steps = STEPS[role].map((key) => ({
     key,
