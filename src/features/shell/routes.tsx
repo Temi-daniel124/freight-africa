@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { connection } from "next/server";
 import { cache, Suspense, type ReactNode } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import messages from "@/messages/en.json";
@@ -21,6 +22,8 @@ export const shellMetadata: Metadata = { robots: { index: false, follow: false }
  * tab. Before the transporter organisation exists, the A-03/T-ON choice (profiles.joining_as) decides.
  */
 const resolveRole = cache(async (role: ShellRole): Promise<ShellRole> => {
+  // Home and the shells depend on who is signed in, so they render per request (no prerendered clock).
+  await connection();
   if (role !== "owner") return role;
   const { joined, kinds } = await getMyJoining();
   return kinds.drives || (!kinds.transporter && joined === "owner_driver") ? "ownerDriver" : "owner";

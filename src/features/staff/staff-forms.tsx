@@ -118,7 +118,7 @@ export function EnrollFlow() {
         <img src={start.qr} alt={t.setup.qrAlt} width={176} height={176} className="size-44 shrink-0 rounded-inner border border-line bg-white p-2" />
         <div className="flex min-w-0 flex-col gap-2">
           <p className="text-body-sm text-ink-2">{t.setup.scan}</p>
-          <code className="rounded-field bg-paper px-3 py-2.5 font-mono text-body-sm tracking-kv break-all text-ink">{key}</code>
+          <code className="rounded-field bg-paper px-3 py-2.5 font-mono text-body-sm tracking-kv break-words text-ink">{key}</code>
           <CopyButton text={start.secret} label={t.setup.copyKey} />
         </div>
       </div>
