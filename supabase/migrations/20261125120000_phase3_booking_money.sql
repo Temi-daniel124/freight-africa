@@ -1042,6 +1042,7 @@ create policy "refunds: staff" on public.refunds for select to authenticated usi
 
 revoke all on public.loads, public.load_stops, public.payments, public.offers, public.trips, public.trip_events, public.payouts, public.refunds from anon, authenticated;
 grant select on public.load_stops, public.payments, public.offers, public.trip_events, public.payouts, public.refunds to authenticated;
+grant select, insert, update, delete on public.loads, public.load_stops, public.payments, public.offers, public.trips, public.trip_events, public.payouts, public.refunds, public.lane_prices to service_role;
 -- Loads: everything a sender or carrier reads; money columns are fine for both (the price is the deal).
 grant select on public.loads to authenticated;
 -- Trips: drivers read their trips, so the money columns are not granted; owners read them through trip_money().
