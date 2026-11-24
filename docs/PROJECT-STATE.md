@@ -4,7 +4,7 @@
 start of every session and updates it at the end (`CLAUDE.md` §2). It records facts about progress; it
 never overrides a higher document.
 
-**Last updated:** 24 Nov 2026, by Claude Code (Gate 4 and slice 4 screens merged; founder is super admin; D037–D039).
+**Last updated:** 24 Nov 2026 evening, by Claude Code (D043–D046; account types and PIN sign-in live).
 
 ---
 
@@ -42,7 +42,18 @@ The phases are defined in `BUILD.md` §3. Update this table as work progresses.
 
 **Unblocked (24 Nov 2026):** GitHub Actions had stopped starting jobs on the private repository (billing); the founder had the repository made public (D040). It goes back to private when production is complete.
 
-**Next task:** the founder reviews Phase 2 with the demo accounts. Meanwhile, the Phase 2 items not built yet (`docs/acceptance/phase-2.md`): plate and expiry reading (Tesseract.js), GPS tracker registration (T-18), truck inspection tasks for field agents; then Phase 3 (booking and money) with the demo payment provider. Phase 4 note: every driver page or server action that reads trip data must call `requireUnlocked()` (src/features/drivers/pin.ts).
+**Founder brief of 24 Nov 2026 (sections 0 to 5, one long run; stop only when all merged and live, or truly blocked).** Progress:
+
+- **Done and live:** section 0 decisions D043–D046 and all docs (#61); D043 account types (#62, migration applied); D044 sign-in (#63, migration applied, demo accounts reseeded with `DEMO_PIN` from the git-ignored `.env.founder.local`, phone-only demo driver 0803 000 0101). Live test: the phone driver signs in with phone + PIN and lands on /app/drive.
+- **In progress:** `fix/pin-keypad` (a fast key could be lost; keypad docks to the bottom on phones). Re-test the sender (temmydaniel124+fa-shipper@gmail.com + PIN) on production after it merges.
+- **Assets ready (uncommitted until the look PR):** `public/art/courier-placeholder.webp` (checks cut out by `scratchpad cutout.py`; redo from `design-assets/source/` if lost), `public/avatars/face-01..12.webp` (Fluent Emoji 3D, MIT, darker tones).
+- **Not yet built from D044:** the fresh check for sensitive actions (authenticator code if two-step is on, otherwise an email code) on bank change, team role change, payouts.
+
+**Next task, in this order:**
+1. **The new look (section 1 shared pieces + section 2 fixes), one PR per slice:** (a) `src/components/art/` SVG illustrations (box, pin, shield, clouds, city, dashed route) and full-truckload truck SVGs (flatbed, covered, tipper, tanker, livestock) with the D046 load display; (b) `sheet.tsx` rewrite: vaul below 768 px, right panel 440–480 px from 768 px, centred dialog for yes/no; (c) motion (LazyMotion, reduced motion): tap 0.98, sheet spring 320 ms, card fade-up 8 px / 40 ms; (d) `/welcome` three slides + Welcome screen, auth layout with the illustration on the left (desktop); (e) install card (3 times max, 7 days apart) and sidebar Install app; (f) avatars: `profiles.avatar_key`, Choose your picture in setup and Settings; (g) section 2 fixes a–h (1024 px top bar overflow, nav label "Places", sidebar footer name + role, tab label gap, 44 px targets, Team fixes, invite cards, switcher, bell badge) and (i) `npm run check:layout`.
+2. **Phase 3 data model before the Home screens** (they need loads and trips): loads with D046 `quantity`, `quantity_unit`, nullable `weight_kg`; quotes and counter-offers; bookings; payments into escrow through `PaymentProvider` (demo provider); trips with status and last known position; seed the demo sender and owner (6 trucks in every state, one livestock, one weight unknown).
+3. Then the screens on real data: sender Home, Track a trip, trip tracking (MapLibre + OpenFreeMap), truck owner Home and truck detail, Drivers page, driver Trip tab.
+4. Section 4 (finish Phase 2: Tesseract plate/expiry reading, T-18 trackers, inspections, phase-2 acceptance with Didit "demo until account"), then the rest of section 5 (Phase 3 complete).
 
 **Founder's standing instructions (24 Nov 2026):** no more design gates; the founder reviews each phase once at the end with the demo accounts. Stop only at the end of a phase (with a "try it" walkthrough) or when truly blocked. Merge on green CI after the independent review for money, auth and RLS. Screenshots at 375 and 1440 px only, as a sanity look; PageSpeed at the end of each phase. Update this file after every merged slice.
 
@@ -89,6 +100,8 @@ for these at the moment they're needed, with exact steps.
 ## 7. Session log
 
 Add one line per session, newest first: date · what was done · what's next.
+
+- 24 Nov 2026 (evening) · Founder brief D043–D046: decisions and docs (#61); account types, "I drive my own truck" switch, Admin label (#62); sign-in with an email code once per device then a PIN, optional two-step, app lock for every role, phone invites and PIN links (#63), each independently reviewed with findings fixed; migrations applied; demo PIN seeded · the new look, then Phase 3.
 
 - 24 Nov 2026 (later) · Phase 2 built and tested end to end on production with the demo accounts: catalogue (#47), identity checks with the optional Verified sender badge (D041, #48, #49), transporter setup with an encrypted payout bank account (#50, #51), trucks and papers with daily expiry checks (#52 to #54), drivers, licence and the app-lock PIN (D042, #55 to #58), bank accounts needing review (#59); every money, auth and RLS slice independently reviewed and its findings fixed; PageSpeed API quota exhausted (Lighthouse: sign-in accessibility 100, best practices fixed for a CSP prefetch error) · founder review of Phase 2; plate reading, trackers, inspections; Phase 3.
 - 24 Nov 2026 · Gate 4 and slice 4 screens approved and merged (#37, #40, replacing #28 and #30); founder made first super admin and D037 money settings with sole-admin code re-entry, plus D038 (mockups, no gates) and D039 (demo providers) (#39); role step now opens the role's app with a Finish setting up card (#41); staff two-step sign-in screens (#42, review fix; tested live), demo accounts seeded (#43), shell homes per request (#45), mockups committed (#44); Phase 1 accepted; repo made public (D040); catalogue (#47); identity checks and A-04 with optional Verified sender (D041, #48, #49) ; transporter setup with bank accounts (#50, #51); trucks and papers (#52 to #54); drivers and the PIN (D042, #55 to #57) · Phase 2 slice 6, verification queue.
