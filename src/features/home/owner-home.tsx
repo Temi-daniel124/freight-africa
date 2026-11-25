@@ -172,7 +172,7 @@ export async function OwnerHome({
       .lte("expires_on", inDays(30))
       .eq("status", "approved"),
   ]);
-  const trucks = (fleet ?? []) as unknown as FleetTruck[];
+  const trucks: FleetTruck[] = fleet ?? [];
   const onTrip = trucks.filter((x) => x.trip_id);
   const earnings = (payouts ?? []).reduce(
     (sum, p) => sum + Number(p.amount_kobo),
