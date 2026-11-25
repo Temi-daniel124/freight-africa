@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Home · desktop</title>
+
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+html,body{margin:0;height:100%;background:#F5F5F1}
+*{box-sizing:border-box}
+a{color:#0C5034;text-decoration:none}
+.side{flex:0 0 248px;background:#FFFFFF;border-right:1px solid #E6E8E3;padding:24px 16px;display:flex;flex-direction:column;gap:4px}
+.nav{display:flex;align-items:center;gap:12px;height:44px;padding:0 14px;border-radius:14px;font-size:15px;font-weight:600;color:#4A5A51}
+.nav.on{background:#EEF5F0;color:#0C5034}
+.card{background:#FFFFFF;border:1px solid #E6E8E3;border-radius:24px}
+.lbl{font-size:13px;font-weight:600;color:#64716A;letter-spacing:0.04em}
+th{font-size:12px;font-weight:600;color:#64716A;text-align:left;padding:0 0 10px;letter-spacing:0.04em}
+td{padding:14px 0;border-top:1px solid #F0F2EE;font-size:14px}
+</style>
+</helmet>
+<div style="width:100%;height:100%;min-height:1000px;display:flex;background:#F5F5F1;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#0F1A14;-webkit-font-smoothing:antialiased">
+  <aside class="side">
+    <img src="../assets/logo-green.png" alt="Freight Africa" style="height:28px;width:auto;align-self:flex-start;margin:4px 8px 24px">
+    <a href="D03-Book.html" style="height:48px;border-radius:45px;background:#0C5034;color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;font-size:15px;font-weight:600;margin-bottom:16px;box-shadow:0 12px 24px -14px rgba(12,80,52,.7)"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Book a truck</a>
+    <a class="nav on" href="D02-Home.html">Home</a>
+    <a class="nav" href="D05-Trips.html">Trips</a>
+    <a class="nav" href="D07-Payments.html">Payments</a>
+    <a class="nav" href="D10-Team.html">Team</a>
+    <a class="nav" href="D11-Places.html">Saved places</a>
+    <div style="margin-top:auto;display:flex;align-items:center;gap:10px;padding:12px;border-radius:18px;background:#F5F5F1">
+      <img src="../assets/adaeze.webp" alt="" style="width:36px;height:36px;border-radius:50%">
+      <span style="flex:1;min-width:0"><span style="display:block;font-size:14px;font-weight:600">Adaeze Okafor</span><span style="display:block;font-size:12px;color:#64716A">Okafor Foods Ltd</span></span>
+    </div>
+  </aside>
+
+  <main style="flex:1;min-width:0;padding:32px 40px 48px">
+    <div style="max-width:1080px;margin:0 auto">
+      <header style="display:flex;align-items:center;gap:16px">
+        <div style="flex:1"><div style="font-size:14px;color:#64716A">Good morning</div><h1 style="margin:2px 0 0;font-size:34px;font-weight:600;letter-spacing:-0.035em">Adaeze</h1></div>
+        <div style="width:320px;height:48px;border-radius:999px;background:#FFFFFF;border:1px solid #E6E8E3;display:flex;align-items:center;gap:10px;padding:0 16px;font-size:14px;color:#64716A"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64716A" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>Search trips, places or plates</div>
+        <span style="width:48px;height:48px;border-radius:50%;background:#FFFFFF;border:1px solid #E6E8E3;display:flex;align-items:center;justify-content:center;position:relative"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0F1A14" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 21h4"/></svg><span style="position:absolute;top:12px;right:13px;width:8px;height:8px;border-radius:50%;background:#D92D20;border:2px solid #fff"></span></span>
+      </header>
+
+      <a href="D04-Pay.html" style="margin-top:24px;display:flex;align-items:center;gap:16px;padding:16px 20px;border-radius:20px;background:#FDEEDC;color:#0F1A14">
+        <span style="width:40px;height:40px;border-radius:12px;background:#FFFFFF;display:flex;align-items:center;justify-content:center"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B4530B" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+        <span style="flex:1"><span style="display:block;font-size:15px;font-weight:600">Lagos → Abuja is a draft. Pay ₦980,000 to book it. Trucks aren't held for drafts.</span></span>
+        <span style="height:40px;padding:0 20px;border-radius:999px;background:#0C5034;color:#fff;display:flex;align-items:center;font-size:14px;font-weight:600">Pay now</span>
+      </a>
+
+      <div style="margin-top:20px;display:grid;grid-template-columns:1.4fr 1fr;gap:20px">
+        <a href="D06-Tracking.html" class="card" style="padding:22px 24px;color:#0F1A14;display:block">
+          <div style="display:flex;justify-content:space-between;align-items:center"><span class="lbl">CURRENT TRIP · FA-7K3Q9</span><span style="font-size:12px;font-weight:600;border-radius:999px;padding:5px 10px;background:#E5EEFB;color:#1E5FBF">On the road</span></div>
+          <div style="margin-top:14px;display:flex;align-items:flex-end;gap:24px">
+            <div><div style="font-size:13px;color:#64716A">Lagos · Thu 26 Nov</div><div style="font-size:28px;font-weight:600;letter-spacing:-0.03em">Apapa</div></div>
+            <div style="flex:1;height:2px;margin-bottom:16px;background:repeating-linear-gradient(90deg,#0C5034 0 6px,transparent 6px 12px)"></div>
+            <div style="text-align:right"><div style="font-size:13px;color:#64716A">Kano · Sat 28 Nov</div><div style="font-size:28px;font-weight:600;letter-spacing:-0.03em">Dawanau</div></div>
+          </div>
+          <div style="margin-top:22px;display:flex;gap:6px"><span style="flex:1;height:6px;border-radius:6px;background:#0C5034"></span><span style="flex:1;height:6px;border-radius:6px;background:#0C5034"></span><span style="flex:1;height:6px;border-radius:6px;background:linear-gradient(90deg,#0C5034 55%,#EEF1EC 55%)"></span><span style="flex:1;height:6px;border-radius:6px;background:#EEF1EC"></span></div>
+          <div style="margin-top:8px;display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:#64716A"><span>Booked</span><span>Loaded</span><span style="color:#0C5034">On the road</span><span>Delivered</span></div>
+          <div style="margin-top:18px;padding-top:16px;border-top:1px solid #F0F2EE;display:flex;align-items:center;gap:12px">
+            <img src="../assets/driver.webp" alt="" style="width:40px;height:40px;border-radius:50%;background:#EEF5F0">
+            <span style="flex:1"><span style="display:block;font-size:14px;font-weight:600">Musa Ibrahim</span><span style="display:block;font-size:12px;color:#64716A">Flatbed · KJA 482 XA · Rice, 600 bags · 80% full</span></span>
+            <span style="height:40px;padding:0 18px;border-radius:999px;border:1px solid #E6E8E3;display:flex;align-items:center;font-size:14px;font-weight:600;color:#0C5034">Track</span>
+          </div>
+        </a>
+        <div style="display:grid;grid-template-rows:1fr 1fr;gap:20px">
+          <a href="D03-Book.html" style="border-radius:24px;background:#083826;color:#fff;padding:22px 24px;position:relative;overflow:hidden;display:block">
+            <div style="position:relative;z-index:1"><div style="font-size:22px;font-weight:600;letter-spacing:-0.025em">Book a truck</div><div style="margin-top:4px;font-size:14px;color:#9FD5B6">Fixed price in under a minute</div></div>
+            <svg aria-hidden="true" width="200" height="96" viewBox="0 0 200 96" style="position:absolute;right:-24px;bottom:-6px"><rect x="6" y="16" width="128" height="58" rx="7" fill="#FFFFFF"/><rect x="6" y="56" width="128" height="6" fill="#9FD5B6"/><path d="M138 32h27c4 0 7 2 9 5l13 18c1 2 2 4 2 6v13h-51z" fill="#FFFFFF"/><path d="M150 38h14l9 13h-23z" fill="#9FD5B6"/><rect x="0" y="72" width="194" height="6" rx="3" fill="#0C5034"/><circle cx="32" cy="80" r="10" fill="#0F1A14"/><circle cx="58" cy="80" r="10" fill="#0F1A14"/><circle cx="166" cy="80" r="10" fill="#0F1A14"/></svg>
+          </a>
+          <a href="D06-Tracking.html" class="card" style="padding:22px 24px;position:relative;overflow:hidden;display:block;color:#0F1A14">
+            <div style="font-size:22px;font-weight:600;letter-spacing:-0.025em">Track a trip</div><div style="margin-top:4px;font-size:14px;color:#64716A">Use a reference like FA-7K3Q9</div>
+            <img src="../assets/box.png" alt="" style="position:absolute;right:-10px;bottom:-24px;width:130px;height:130px;object-fit:contain">
+          </a>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:20px;padding:22px 24px 8px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px"><span style="font-size:18px;font-weight:600;letter-spacing:-0.015em">Recent trips</span><a href="D05-Trips.html" style="font-size:14px;font-weight:600">All trips</a></div>
+        <table style="width:100%;border-collapse:collapse">
+          <thead><tr><th>ROUTE</th><th>GOODS</th><th>DATE</th><th>STATUS</th><th style="text-align:right">AMOUNT</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600">Lagos → Kano</td><td>Rice, 600 bags</td><td>26 Nov</td><td><span style="font-size:12px;font-weight:600;border-radius:999px;padding:4px 10px;background:#E5EEFB;color:#1E5FBF">On the road</span></td><td style="text-align:right;font-variant-numeric:tabular-nums">₦1,850,000</td></tr>
+            <tr><td style="font-weight:600">Lagos → Abuja</td><td>Cement, 30 t</td><td>26 Nov</td><td><span style="font-size:12px;font-weight:600;border-radius:999px;padding:4px 10px;background:#FDEEDC;color:#B4530B">Needs payment</span></td><td style="text-align:right;font-variant-numeric:tabular-nums">₦980,000</td></tr>
+            <tr><td style="font-weight:600">Lagos → Port Harcourt</td><td>Tomatoes, 18 t</td><td>14 Nov</td><td><span style="font-size:12px;font-weight:600;border-radius:999px;padding:4px 10px;background:#EEF5F0;color:#0C5034">Delivered</span></td><td style="text-align:right;font-variant-numeric:tabular-nums">₦1,240,000</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

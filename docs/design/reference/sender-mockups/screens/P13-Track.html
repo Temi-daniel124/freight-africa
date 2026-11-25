@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Track a trip</title>
+
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F5F5F1}
+*{box-sizing:border-box}
+a{color:#0C5034;text-decoration:none}
+.row{display:flex;align-items:center;gap:14px;padding:14px 0}
+</style>
+</helmet>
+<div style="width:390px;height:844px;position:relative;overflow:hidden;background:#F5F5F1;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#0F1A14;-webkit-font-smoothing:antialiased">
+  <header style="display:flex;align-items:center;gap:12px;padding:14px 16px 0">
+    <a href="P07-Home.html" aria-label="Back" style="width:44px;height:44px;border-radius:50%;background:#FFFFFF;border:1px solid #E6E8E3;display:flex;align-items:center;justify-content:center"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0F1A14" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></a>
+  </header>
+
+  <div style="margin:10px 20px 0;height:250px;border-radius:28px;background:#083826;position:relative;overflow:hidden">
+    <svg aria-hidden="true" width="350" height="250" viewBox="0 0 350 250" style="position:absolute;inset:0"><path d="M-10 190 C 70 150, 120 210, 190 150 S 300 70, 370 90" fill="none" stroke="#0C5034" stroke-width="22" stroke-linecap="round"/><path d="M-10 190 C 70 150, 120 210, 190 150 S 300 70, 370 90" fill="none" stroke="#9FD5B6" stroke-width="2" stroke-dasharray="2 9" stroke-linecap="round"/></svg>
+    <img src="../assets/box.png" alt="" style="position:absolute;right:18px;top:18px;width:150px;height:150px;object-fit:contain">
+    <div style="position:absolute;left:20px;bottom:20px;color:#FFFFFF">
+      <div style="font-size:26px;line-height:1.15;font-weight:600;letter-spacing:-0.03em">Track a trip</div>
+      <div style="margin-top:6px;font-size:14px;color:#9FD5B6">See where your goods are, live.</div>
+    </div>
+  </div>
+
+  <div style="padding:22px 20px 0">
+    <label for="ref" style="display:block;font-size:14px;font-weight:600;margin-bottom:8px">Trip reference</label>
+    <div style="display:flex;gap:10px">
+      <input id="ref" value="FA-7K3Q9" style="flex:1;min-width:0;height:56px;border-radius:18px;border:1.5px solid #0C5034;box-shadow:0 0 0 4px #DCEBE2;padding:0 16px;font:600 17px 'Plus Jakarta Sans',sans-serif;letter-spacing:0.04em;color:#0F1A14;background:#FFFFFF">
+      <a href="P14-Tracking.html" style="width:96px;height:56px;border-radius:45px;background:#0C5034;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600;box-shadow:0 12px 24px -12px rgba(12,80,52,.6)">Track</a>
+    </div>
+    <div style="margin-top:8px;font-size:13px;color:#64716A">It's on your booking message, e.g. FA-7K3Q9</div>
+  </div>
+
+  <div style="margin:24px 20px 0">
+    <div style="font-size:13px;font-weight:600;color:#64716A;letter-spacing:0.04em">ON THE ROAD NOW</div>
+    <div style="margin-top:8px;background:#FFFFFF;border:1px solid #E6E8E3;border-radius:24px;padding:2px 16px">
+      <a class="row" href="P14-Tracking.html" style="color:#0F1A14">
+        <span style="width:44px;height:44px;border-radius:14px;background:#E5EEFB;display:flex;align-items:center;justify-content:center"><svg aria-hidden="true" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1E5FBF" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg></span>
+        <span style="flex:1;min-width:0"><span style="display:block;font-size:16px;font-weight:600">Lagos → Kano</span><span style="display:block;margin-top:2px;font-size:13px;color:#64716A">FA-7K3Q9 · passing Lokoja</span></span>
+        <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#64716A" stroke-width="1.8" stroke-linecap="round"><path d="m9 6 6 6-6 6"/></svg>
+      </a>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

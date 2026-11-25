@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Trip tracking</title>
+
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F5F5F1}
+*{box-sizing:border-box}
+a{color:#0C5034;text-decoration:none}
+.k{display:block;font-size:12px;color:#9FD5B6;font-weight:500}
+.v{display:block;margin-top:3px;font-size:15px;font-weight:600;color:#FFFFFF}
+</style>
+</helmet>
+<div style="width:390px;height:844px;position:relative;overflow:hidden;background:#E9ECE6;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#0F1A14;-webkit-font-smoothing:antialiased">
+  <svg aria-hidden="true" width="390" height="520" viewBox="0 0 390 520" style="position:absolute;left:0;top:0">
+    <rect width="390" height="520" fill="#E9ECE6"/>
+    <path d="M0 120 L390 60 M0 300 L390 250 M80 0 L130 520 M260 0 L300 520 M0 420 L390 380" stroke="#FFFFFF" stroke-width="10"/>
+    <path d="M-20 200 C 60 180, 140 260, 200 210 S 320 120, 410 150" stroke="#FFFFFF" stroke-width="14" fill="none"/>
+    <path d="M40 470 C 90 400, 120 360, 170 320 S 240 220, 300 110" stroke="#0C5034" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <path d="M170 320 S 240 220, 300 110" stroke="#9FD5B6" stroke-width="6" fill="none" stroke-linecap="round" stroke-dasharray="1 12"/>
+    <circle cx="40" cy="470" r="9" fill="#FFFFFF" stroke="#0C5034" stroke-width="4"/>
+    <g transform="translate(300 110)"><path d="M0 -34c-11 0-19 8-19 19 0 14 19 31 19 31s19-17 19-31c0-11-8-19-19-19z" fill="#083826"/><circle cx="0" cy="-15" r="7" fill="#9FD5B6"/></g>
+  </svg>
+  <div style="position:absolute;left:150px;top:298px;width:44px;height:44px;border-radius:50%;background:#0C5034;border:4px solid #FFFFFF;box-shadow:0 8px 20px -6px rgba(12,80,52,.7);display:flex;align-items:center;justify-content:center"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg></div>
+  <div style="position:absolute;left:200px;top:290px;background:#FFFFFF;border-radius:14px;padding:8px 12px;font-size:12px;font-weight:600;box-shadow:0 10px 24px -14px rgba(15,26,20,.5)">Lokoja · 2 min ago</div>
+
+  <div style="position:absolute;top:14px;left:16px;right:16px;display:flex;justify-content:space-between">
+    <a href="P12-Trips.html" aria-label="Back" style="width:44px;height:44px;border-radius:50%;background:#FFFFFF;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px -12px rgba(15,26,20,.5)"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0F1A14" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></a>
+    <span style="height:44px;padding:0 16px;border-radius:999px;background:#FFFFFF;display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;box-shadow:0 8px 20px -12px rgba(15,26,20,.5)"><span style="width:8px;height:8px;border-radius:50%;background:#1E9E5A"></span>Live</span>
+  </div>
+
+  <section style="position:absolute;left:0;right:0;bottom:0;background:#083826;border-radius:30px 30px 0 0;padding:12px 20px 28px;color:#FFFFFF">
+    <div style="width:40px;height:4px;border-radius:4px;background:rgba(255,255,255,.25);margin:0 auto 16px"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:12px;font-weight:600;letter-spacing:0.06em;color:#9FD5B6">FA-7K3Q9</span><span style="font-size:12px;font-weight:600;background:rgba(159,213,182,.16);color:#9FD5B6;border-radius:999px;padding:5px 10px">On the road</span></div>
+    <div style="margin-top:10px;font-size:26px;font-weight:600;letter-spacing:-0.03em">Arrives Sat, about 2 pm</div>
+    <div style="margin-top:14px;display:flex;gap:6px">
+      <span style="flex:1;height:5px;border-radius:5px;background:#9FD5B6"></span><span style="flex:1;height:5px;border-radius:5px;background:#9FD5B6"></span><span style="flex:1;height:5px;border-radius:5px;background:linear-gradient(90deg,#9FD5B6 55%,rgba(255,255,255,.18) 55%)"></span><span style="flex:1;height:5px;border-radius:5px;background:rgba(255,255,255,.18)"></span>
+    </div>
+    <div style="margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:14px 16px">
+      <span><span class="k">From</span><span class="v">Apapa, Lagos</span></span>
+      <span><span class="k">To</span><span class="v">Dawanau, Kano</span></span>
+      <span><span class="k">Goods</span><span class="v">Rice · 600 bags</span></span>
+      <span><span class="k">Truck</span><span class="v">Flatbed · 80% full</span></span>
+    </div>
+    <div style="margin-top:18px;background:#FFFFFF;border-radius:22px;padding:12px 12px 12px 12px;display:flex;align-items:center;gap:12px;color:#0F1A14">
+      <img src="../assets/driver.webp" alt="" style="width:48px;height:48px;border-radius:50%;background:#EEF5F0;object-fit:cover">
+      <span style="flex:1;min-width:0"><span style="display:block;font-size:16px;font-weight:600">Musa Ibrahim</span><span style="display:block;margin-top:2px;font-size:13px;color:#64716A">Driver · KJA 482 XA</span></span>
+      <a href="#" style="height:48px;padding:0 18px;border-radius:45px;background:#0C5034;color:#FFFFFF;display:flex;align-items:center;gap:8px;font-size:15px;font-weight:600"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg>Call</a>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

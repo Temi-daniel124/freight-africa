@@ -1,0 +1,912 @@
+{
+ "v": 3,
+ "createdOnFiles": {
+  "v": 1,
+  "at": "2026-11-25T06:55:00Z"
+ },
+ "title": "Freight Africa — Sender screens",
+ "launch": {
+  "view": "canvas",
+  "page": "phone-in"
+ },
+ "pages": [
+  {
+   "id": "phone-in",
+   "name": "Phone · getting in"
+  },
+  {
+   "id": "phone-book",
+   "name": "Phone · booking and paying"
+  },
+  {
+   "id": "phone-trips",
+   "name": "Phone · trips"
+  },
+  {
+   "id": "phone-account",
+   "name": "Phone · money and account"
+  },
+  {
+   "id": "desktop",
+   "name": "Desktop"
+  },
+  {
+   "id": "docs",
+   "name": "PDF documents"
+  }
+ ],
+ "boards": {
+  "Main.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "01 Onboarding",
+   "page": "phone-in",
+   "radius": 44
+  },
+  "P01b-Slide2.dc.html": {
+   "x": 470,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Onboarding slide 2",
+   "page": "phone-in",
+   "radius": 44
+  },
+  "P01c-Slide3.dc.html": {
+   "x": 940,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Onboarding slide 3",
+   "page": "phone-in",
+   "radius": 44
+  },
+  "P02-Welcome.dc.html": {
+   "x": 1410,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "02 Welcome",
+   "page": "phone-in",
+   "radius": 44
+  },
+  "P03-SignIn.dc.html": {
+   "x": 1880,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "03 Sign in",
+   "page": "phone-in",
+   "radius": 44
+  },
+  "P04-Code.dc.html": {
+   "x": 2350,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "04 Email code",
+   "page": "phone-in",
+   "radius": 44
+  },
+  "P05-PIN.dc.html": {
+   "x": 2820,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "05 Create PIN",
+   "page": "phone-in",
+   "radius": 44
+  },
+  "P05b-Unlock.dc.html": {
+   "x": 3290,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Unlock with PIN",
+   "page": "phone-in",
+   "radius": 44
+  },
+  "P05c-Locked.dc.html": {
+   "x": 3760,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "PIN locked",
+   "page": "phone-in",
+   "radius": 44
+  },
+  "P06-Role.dc.html": {
+   "x": 0,
+   "y": 1004,
+   "w": 390,
+   "h": 844,
+   "title": "06 What brings you here",
+   "page": "phone-in",
+   "radius": 44
+  },
+  "P06b-Setup.dc.html": {
+   "x": 470,
+   "y": 1004,
+   "w": 390,
+   "h": 900,
+   "title": "Set up as a sender",
+   "page": "phone-in",
+   "radius": 44
+  },
+  "P06c-Install.dc.html": {
+   "x": 940,
+   "y": 1004,
+   "w": 390,
+   "h": 900,
+   "title": "Install the app",
+   "page": "phone-in",
+   "radius": 44
+  },
+  "P07-Home.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "07 Home",
+   "page": "phone-book",
+   "radius": 44
+  },
+  "P07b-HomeEmpty.dc.html": {
+   "x": 470,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Home · first visit",
+   "page": "phone-book",
+   "radius": 44
+  },
+  "P07c-Notifications.dc.html": {
+   "x": 940,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Notifications",
+   "page": "phone-book",
+   "radius": 44
+  },
+  "P08-Book.dc.html": {
+   "x": 1410,
+   "y": 0,
+   "w": 390,
+   "h": 1170,
+   "title": "08 Book a truck",
+   "page": "phone-book",
+   "radius": 44
+  },
+  "P08a-Place.dc.html": {
+   "x": 1880,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Place picker",
+   "page": "phone-book",
+   "radius": 44
+  },
+  "P08b-Goods.dc.html": {
+   "x": 2350,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Add an item",
+   "page": "phone-book",
+   "radius": 44
+  },
+  "P08c-NoTruck.dc.html": {
+   "x": 2820,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "No truck on that day",
+   "page": "phone-book",
+   "radius": 44
+  },
+  "P08d-Contacts.dc.html": {
+   "x": 3290,
+   "y": 0,
+   "w": 390,
+   "h": 1000,
+   "title": "Book a truck · step 2 contacts",
+   "page": "phone-book",
+   "radius": 44
+  },
+  "P09-Price.dc.html": {
+   "x": 3760,
+   "y": 0,
+   "w": 390,
+   "h": 1240,
+   "title": "09 Price and review",
+   "page": "phone-book",
+   "radius": 44
+  },
+  "P09b-Offer.dc.html": {
+   "x": 0,
+   "y": 1400,
+   "w": 390,
+   "h": 990,
+   "title": "Offer your own price",
+   "page": "phone-book",
+   "radius": 44
+  },
+  "P10-Pay.dc.html": {
+   "x": 470,
+   "y": 1400,
+   "w": 390,
+   "h": 844,
+   "title": "10 Pay by transfer",
+   "page": "phone-book",
+   "radius": 44
+  },
+  "P10b-Confirming.dc.html": {
+   "x": 940,
+   "y": 1400,
+   "w": 390,
+   "h": 844,
+   "title": "Confirming payment",
+   "page": "phone-book",
+   "radius": 44
+  },
+  "P10c-Failed.dc.html": {
+   "x": 1410,
+   "y": 1400,
+   "w": 390,
+   "h": 844,
+   "title": "Payment didn't go through",
+   "page": "phone-book",
+   "radius": 44
+  },
+  "P10d-Draft.dc.html": {
+   "x": 1880,
+   "y": 1400,
+   "w": 390,
+   "h": 844,
+   "title": "Saved as a draft",
+   "page": "phone-book",
+   "radius": 44
+  },
+  "P11-Finding.dc.html": {
+   "x": 2350,
+   "y": 1400,
+   "w": 390,
+   "h": 900,
+   "title": "Finding a truck",
+   "page": "phone-book",
+   "radius": 44
+  },
+  "P11b-Counter.dc.html": {
+   "x": 2820,
+   "y": 1400,
+   "w": 390,
+   "h": 844,
+   "title": "Owners replied to your offer",
+   "page": "phone-book",
+   "radius": 44
+  },
+  "P11d-CounterBack.dc.html": {
+   "x": 3290,
+   "y": 1400,
+   "w": 390,
+   "h": 844,
+   "title": "Offer again",
+   "page": "phone-book",
+   "radius": 44
+  },
+  "P11c-NoTruck24.dc.html": {
+   "x": 3760,
+   "y": 1400,
+   "w": 390,
+   "h": 900,
+   "title": "No truck after 24 hours",
+   "page": "phone-book",
+   "radius": 44
+  },
+  "P12-Trips.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "12 Trips",
+   "page": "phone-trips",
+   "radius": 44
+  },
+  "P12b-Drafts.dc.html": {
+   "x": 470,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Trips · drafts",
+   "page": "phone-trips",
+   "radius": 44
+  },
+  "P12c-TripsEmpty.dc.html": {
+   "x": 940,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Trips · empty",
+   "page": "phone-trips",
+   "radius": 44
+  },
+  "P13-Track.dc.html": {
+   "x": 1410,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "13 Track a trip",
+   "page": "phone-trips",
+   "radius": 44
+  },
+  "P14-Tracking.dc.html": {
+   "x": 1880,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "14 Trip tracking",
+   "page": "phone-trips",
+   "radius": 44
+  },
+  "P14b-Trip.dc.html": {
+   "x": 2350,
+   "y": 0,
+   "w": 390,
+   "h": 1500,
+   "title": "Trip · truck confirmed",
+   "page": "phone-trips",
+   "radius": 44
+  },
+  "P14c-Delivered.dc.html": {
+   "x": 2820,
+   "y": 0,
+   "w": 390,
+   "h": 1080,
+   "title": "Trip · delivered",
+   "page": "phone-trips",
+   "radius": 44
+  },
+  "P14d-Report.dc.html": {
+   "x": 3290,
+   "y": 0,
+   "w": 390,
+   "h": 1180,
+   "title": "Report a problem",
+   "page": "phone-trips",
+   "radius": 44
+  },
+  "P14e-Cancel.dc.html": {
+   "x": 3760,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Cancel trip",
+   "page": "phone-trips",
+   "radius": 44
+  },
+  "P14f-Undo.dc.html": {
+   "x": 0,
+   "y": 1660,
+   "w": 390,
+   "h": 844,
+   "title": "Cancelled · undo",
+   "page": "phone-trips",
+   "radius": 44
+  },
+  "P15-Payments.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "15 Payments",
+   "page": "phone-account",
+   "radius": 44
+  },
+  "P15b-Receipt.dc.html": {
+   "x": 470,
+   "y": 0,
+   "w": 390,
+   "h": 980,
+   "title": "Receipt",
+   "page": "phone-account",
+   "radius": 44
+  },
+  "P15c-PaySeveral.dc.html": {
+   "x": 940,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Pay for several trips",
+   "page": "phone-account",
+   "radius": 44
+  },
+  "P16-More.dc.html": {
+   "x": 1410,
+   "y": 0,
+   "w": 390,
+   "h": 960,
+   "title": "16 More",
+   "page": "phone-account",
+   "radius": 44
+  },
+  "P16a-Switch.dc.html": {
+   "x": 1880,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Switch account",
+   "page": "phone-account",
+   "radius": 44
+  },
+  "P16b-Team.dc.html": {
+   "x": 2350,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Team",
+   "page": "phone-account",
+   "radius": 44
+  },
+  "P16c-Invite.dc.html": {
+   "x": 2820,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Invite someone",
+   "page": "phone-account",
+   "radius": 44
+  },
+  "P16d-Places.dc.html": {
+   "x": 3290,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Saved places and receivers",
+   "page": "phone-account",
+   "radius": 44
+  },
+  "P16e-Security.dc.html": {
+   "x": 3760,
+   "y": 0,
+   "w": 390,
+   "h": 900,
+   "title": "PIN and security",
+   "page": "phone-account",
+   "radius": 44
+  },
+  "P16f-Notif.dc.html": {
+   "x": 0,
+   "y": 1140,
+   "w": 390,
+   "h": 844,
+   "title": "Notification settings",
+   "page": "phone-account",
+   "radius": 44
+  },
+  "P16g-Business.dc.html": {
+   "x": 470,
+   "y": 1140,
+   "w": 390,
+   "h": 844,
+   "title": "Business profile",
+   "page": "phone-account",
+   "radius": 44
+  },
+  "P25-Help.dc.html": {
+   "x": 940,
+   "y": 1140,
+   "w": 390,
+   "h": 900,
+   "title": "Help",
+   "page": "phone-account",
+   "radius": 44
+  },
+  "D01-SignIn.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 1440,
+   "h": 900,
+   "title": "D1 Sign in",
+   "page": "desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "D01b-Unlock.dc.html": {
+   "x": 1520,
+   "y": 0,
+   "w": 1440,
+   "h": 900,
+   "title": "Enter PIN · desktop",
+   "page": "desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "D02-Home.dc.html": {
+   "x": 3040,
+   "y": 0,
+   "w": 1440,
+   "h": 1000,
+   "title": "D2 Home",
+   "page": "desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "D02b-HomeNoTrip.dc.html": {
+   "x": 4560,
+   "y": 0,
+   "w": 1440,
+   "h": 900,
+   "title": "Home · no trip on the road",
+   "page": "desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "D02c-HomeFirst.dc.html": {
+   "x": 0,
+   "y": 1160,
+   "w": 1440,
+   "h": 900,
+   "title": "Home · first visit · desktop",
+   "page": "desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "D14-Notifications.dc.html": {
+   "x": 1520,
+   "y": 1160,
+   "w": 1440,
+   "h": 900,
+   "title": "Notifications panel · desktop",
+   "page": "desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "D03-Book.dc.html": {
+   "x": 3040,
+   "y": 1160,
+   "w": 1440,
+   "h": 1320,
+   "title": "D3 Book a truck",
+   "page": "desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "D03b-NoTruck.dc.html": {
+   "x": 4560,
+   "y": 1160,
+   "w": 1440,
+   "h": 1320,
+   "title": "No truck that day · desktop",
+   "page": "desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "D03c-Goods.dc.html": {
+   "x": 0,
+   "y": 2640,
+   "w": 1440,
+   "h": 1320,
+   "title": "Add an item · desktop",
+   "page": "desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "D03d-Offer.dc.html": {
+   "x": 1520,
+   "y": 2640,
+   "w": 1440,
+   "h": 1320,
+   "title": "Offer your own price · desktop",
+   "page": "desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "D04-Pay.dc.html": {
+   "x": 3040,
+   "y": 2640,
+   "w": 1440,
+   "h": 900,
+   "title": "D4 Pay",
+   "page": "desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "D04b-Draft.dc.html": {
+   "x": 4560,
+   "y": 2640,
+   "w": 1440,
+   "h": 1320,
+   "title": "Saved as draft · desktop",
+   "page": "desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "D04c-Confirming.dc.html": {
+   "x": 0,
+   "y": 4120,
+   "w": 1440,
+   "h": 900,
+   "title": "Confirming payment · desktop",
+   "page": "desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "D08-Finding.dc.html": {
+   "x": 1520,
+   "y": 4120,
+   "w": 1440,
+   "h": 900,
+   "title": "Finding a truck and offers · desktop",
+   "page": "desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "D09-Trip.dc.html": {
+   "x": 3040,
+   "y": 4120,
+   "w": 1440,
+   "h": 1000,
+   "title": "Trip detail · desktop",
+   "page": "desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "D05-Trips.dc.html": {
+   "x": 4560,
+   "y": 4120,
+   "w": 1440,
+   "h": 900,
+   "title": "D5 Trips with the detail panel",
+   "page": "desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "D06-Tracking.dc.html": {
+   "x": 0,
+   "y": 5280,
+   "w": 1440,
+   "h": 900,
+   "title": "D6 Trip tracking",
+   "page": "desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "D07-Payments.dc.html": {
+   "x": 1520,
+   "y": 5280,
+   "w": 1440,
+   "h": 900,
+   "title": "D7 Payments",
+   "page": "desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "D07b-Receipt.dc.html": {
+   "x": 3040,
+   "y": 5280,
+   "w": 1440,
+   "h": 1000,
+   "title": "Receipt · desktop",
+   "page": "desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "D10-Team.dc.html": {
+   "x": 4560,
+   "y": 5280,
+   "w": 1440,
+   "h": 900,
+   "title": "Team · desktop",
+   "page": "desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "D11-Places.dc.html": {
+   "x": 0,
+   "y": 6440,
+   "w": 1440,
+   "h": 900,
+   "title": "Saved places and receivers · desktop",
+   "page": "desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "D12-Settings.dc.html": {
+   "x": 1520,
+   "y": 6440,
+   "w": 1440,
+   "h": 1000,
+   "title": "Settings · desktop",
+   "page": "desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "D13-Help.dc.html": {
+   "x": 3040,
+   "y": 6440,
+   "w": 1440,
+   "h": 900,
+   "title": "Help · desktop",
+   "page": "desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "DOC-Receipt.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 794,
+   "h": 1123,
+   "title": "Receipt PDF",
+   "page": "docs",
+   "print": "flow",
+   "paper": "a4"
+  },
+  "DOC-Statement.dc.html": {
+   "x": 874,
+   "y": 0,
+   "w": 794,
+   "h": 1123,
+   "title": "Statement PDF",
+   "page": "docs",
+   "print": "flow",
+   "paper": "a4"
+  }
+ },
+ "order": [
+  "Main.dc.html",
+  "P01b-Slide2.dc.html",
+  "P01c-Slide3.dc.html",
+  "P02-Welcome.dc.html",
+  "P03-SignIn.dc.html",
+  "P04-Code.dc.html",
+  "P05-PIN.dc.html",
+  "P05b-Unlock.dc.html",
+  "P05c-Locked.dc.html",
+  "P06-Role.dc.html",
+  "P06b-Setup.dc.html",
+  "P06c-Install.dc.html",
+  "P07-Home.dc.html",
+  "P07b-HomeEmpty.dc.html",
+  "P07c-Notifications.dc.html",
+  "P08-Book.dc.html",
+  "P08a-Place.dc.html",
+  "P08b-Goods.dc.html",
+  "P08c-NoTruck.dc.html",
+  "P08d-Contacts.dc.html",
+  "P09-Price.dc.html",
+  "P09b-Offer.dc.html",
+  "P10-Pay.dc.html",
+  "P10b-Confirming.dc.html",
+  "P10c-Failed.dc.html",
+  "P10d-Draft.dc.html",
+  "P11-Finding.dc.html",
+  "P11b-Counter.dc.html",
+  "P11d-CounterBack.dc.html",
+  "P11c-NoTruck24.dc.html",
+  "P12-Trips.dc.html",
+  "P12b-Drafts.dc.html",
+  "P12c-TripsEmpty.dc.html",
+  "P13-Track.dc.html",
+  "P14-Tracking.dc.html",
+  "P14b-Trip.dc.html",
+  "P14c-Delivered.dc.html",
+  "P14d-Report.dc.html",
+  "P14e-Cancel.dc.html",
+  "P14f-Undo.dc.html",
+  "P15-Payments.dc.html",
+  "P15b-Receipt.dc.html",
+  "P15c-PaySeveral.dc.html",
+  "P16-More.dc.html",
+  "P16a-Switch.dc.html",
+  "P16b-Team.dc.html",
+  "P16c-Invite.dc.html",
+  "P16d-Places.dc.html",
+  "P16e-Security.dc.html",
+  "P16f-Notif.dc.html",
+  "P16g-Business.dc.html",
+  "P25-Help.dc.html",
+  "D01-SignIn.dc.html",
+  "D01b-Unlock.dc.html",
+  "D02-Home.dc.html",
+  "D02b-HomeNoTrip.dc.html",
+  "D02c-HomeFirst.dc.html",
+  "D14-Notifications.dc.html",
+  "D03-Book.dc.html",
+  "D03b-NoTruck.dc.html",
+  "D03c-Goods.dc.html",
+  "D03d-Offer.dc.html",
+  "D04-Pay.dc.html",
+  "D04b-Draft.dc.html",
+  "D04c-Confirming.dc.html",
+  "D08-Finding.dc.html",
+  "D09-Trip.dc.html",
+  "D05-Trips.dc.html",
+  "D06-Tracking.dc.html",
+  "D07-Payments.dc.html",
+  "D07b-Receipt.dc.html",
+  "D10-Team.dc.html",
+  "D11-Places.dc.html",
+  "D12-Settings.dc.html",
+  "D13-Help.dc.html",
+  "DOC-Receipt.dc.html",
+  "DOC-Statement.dc.html"
+ ],
+ "notes": {
+  "t-phone-in": {
+   "x": 0,
+   "y": -300,
+   "text": "Sender · Phone · getting in",
+   "kind": "title1",
+   "maxW": 4150,
+   "page": "phone-in"
+  },
+  "s1": {
+   "x": 4270,
+   "y": 0,
+   "w": 440,
+   "fill": "green",
+   "page": "phone-in",
+   "text": "Look: paper #F5F5F1, white cards (24 px radius), deep green #083826, primary #0C5034. Plus Jakarta Sans at 500–600 only, headings tracked tight. One filled button per screen. Shared styles live in fa.css (README in the zip)."
+  },
+  "t-phone-book": {
+   "x": 0,
+   "y": -300,
+   "text": "Sender · Phone · booking and paying",
+   "kind": "title1",
+   "maxW": 4150,
+   "page": "phone-book"
+  },
+  "s2": {
+   "x": 4270,
+   "y": 0,
+   "w": 460,
+   "fill": "orange",
+   "page": "phone-book",
+   "text": "Payment: 'Continue to Bachs' opens Bachs's own hosted page (like Paystack). We don't draw or copy it. On return, 'Confirming your payment' shows, then Finding a truck.\n\nOffers: you pay the price you offer (held). Owners accept or reply; you accept and pay the difference, offer again once, or decline. No agreement in 24 h → raise, change day, or full refund.\n\nDrafts: not booked, no truck held, price can change."
+  },
+  "t-phone-trips": {
+   "x": 0,
+   "y": -300,
+   "text": "Sender · Phone · trips",
+   "kind": "title1",
+   "maxW": 4150,
+   "page": "phone-trips"
+  },
+  "t-phone-account": {
+   "x": 0,
+   "y": -300,
+   "text": "Sender · Phone · money and account",
+   "kind": "title1",
+   "maxW": 4150,
+   "page": "phone-account"
+  },
+  "t-desktop": {
+   "x": 0,
+   "y": -300,
+   "text": "Sender · Desktop",
+   "kind": "title1",
+   "maxW": 6000,
+   "page": "desktop"
+  },
+  "s3": {
+   "x": 6120,
+   "y": 0,
+   "w": 440,
+   "fill": "green",
+   "page": "desktop",
+   "text": "Desktop: 248 px sidebar. Book a truck keeps a full-height order panel on the right that updates live as you fill the form (sticky, never a slide-in). Details and invites slide in from the right; confirmations are centred dialogs. No bottom sheets on desktop."
+  },
+  "t-docs": {
+   "x": 0,
+   "y": -300,
+   "text": "Sender · PDF documents",
+   "kind": "title1",
+   "maxW": 1800,
+   "page": "docs"
+  }
+ },
+ "designSystems": []
+}

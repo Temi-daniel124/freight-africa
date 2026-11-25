@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>PIN and security</title>
+
+<link rel="stylesheet" href="../assets/fa.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>body{margin:0;background:#F5F5F1}a{color:#0C5034}</style>
+</helmet>
+<div class="ph" style="height:900px">
+<header class="row" style="padding:14px 16px 0;gap:12px">
+  <a class="ib" href="P16-More.html" aria-label="Back"><svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="m15 18-6-6 6-6"/></svg></a>
+  <h1 class="sp h2">PIN and security</h1>
+</header>
+<div class="px" style="padding-top:16px">
+  <div class="lbl" style="margin:0 4px 8px">Profile</div>
+  <div class="card" style="padding:0 16px">
+    <a class="li" href="#"><span class="sp"><span class="s" style="display:block">Name</span><span class="w6">Adaeze Okafor</span></span><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64716A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="m9 6 6 6-6 6"/></svg></a>
+    <a class="li" href="#"><span class="sp"><span class="s" style="display:block">Email</span><span class="w6">adaeze@okaforfoods.ng</span></span><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64716A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="m9 6 6 6-6 6"/></svg></a>
+    <a class="li" href="#"><span class="sp"><span class="s" style="display:block">Phone</span><span class="w6">+234 803 123 4567</span></span><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64716A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="m9 6 6 6-6 6"/></svg></a>
+  </div>
+  <div class="lbl" style="margin:20px 4px 8px">Sign-in</div>
+  <div class="card" style="padding:0 16px">
+    <a class="li" href="P05-PIN.html"><span class="ibs soft"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0C5034" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><circle cx="8" cy="15" r="4"/><path d="m11 12 9-9M17 6l3 3"/></svg></span><span class="sp w6">Change PIN</span><svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#64716A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="m9 6 6 6-6 6"/></svg></a>
+    <a class="li" href="#"><span class="ibs soft"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0C5034" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="M12 3 4 6v6c0 5 3.5 8 8 9 4.5-1 8-4 8-9V6z"/><path d="m9 12 2 2 4-4"/></svg></span><span class="sp"><span class="w6" style="display:block">Two-step sign-in</span><span class="m">Adds a code from an authenticator app</span></span><span class="sw" role="switch" aria-checked="false" aria-label="Two-step sign-in"></span></a>
+    <div class="li"><span class="ibs soft"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0C5034" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span class="sp"><span class="w6" style="display:block">Lock after</span><span class="m">15 minutes unused, or when closed</span></span></div>
+  </div>
+  <div class="lbl" style="margin:20px 4px 8px">Devices signed in</div>
+  <div class="card" style="padding:0 16px">
+    <div class="li"><span class="ibs" style="background:#F0F2EE"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4A5A51" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg></span><span class="sp"><span class="w6" style="display:block">This phone · Chrome</span><span class="m">Lagos · active now</span></span></div>
+    <div class="li"><span class="ibs" style="background:#F0F2EE"><svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4A5A51" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg></span><span class="sp"><span class="w6" style="display:block">Windows laptop · Edge</span><span class="m">Lagos · 2 days ago</span></span><a href="#" class="w6 red" style="font-size:14px">Sign out</a></div>
+  </div>
+  <a class="btnl" href="#" style="color:#B42318;margin-top:8px">Sign out everywhere</a>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

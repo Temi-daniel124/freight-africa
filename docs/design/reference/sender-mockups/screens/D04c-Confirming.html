@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Confirming payment · desktop</title>
+
+<link rel="stylesheet" href="../assets/fa.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>body{margin:0;background:#F5F5F1}a{color:#0C5034}</style>
+</helmet>
+<div class="pg" style="min-height:900px">
+<div style="min-height:900px;display:flex;align-items:center;justify-content:center;position:relative">
+  <img src="../assets/logo-green.png" alt="Freight Africa" style="position:absolute;left:40px;top:36px;height:30px">
+  <div class="card" style="width:460px;padding:44px 36px;text-align:center">
+    <a href="D08-Finding.html" aria-label="Payment confirmed (prototype: click to continue)" style="position:relative;width:88px;height:88px;display:block;margin:0 auto">
+      <svg aria-hidden="true" width="88" height="88" viewBox="0 0 96 96"><circle cx="48" cy="48" r="42" fill="none" stroke="#E1E5E0" stroke-width="6"/></svg>
+      <svg aria-hidden="true" width="88" height="88" viewBox="0 0 96 96" class="spin" style="position:absolute;inset:0"><path d="M48 6a42 42 0 0 1 42 42" fill="none" stroke="#0C5034" stroke-width="6" stroke-linecap="round"/></svg>
+    </a>
+    <h1 class="h2" style="margin-top:24px">Confirming your payment</h1>
+    <p class="b ink2" style="margin:8px 0 0">Back from Bachs. This usually takes a few seconds.</p>
+    <div class="row" style="justify-content:center;gap:14px;margin-top:20px"><span class="m">FA-7K3Q9</span><span class="num w6">₦1,850,000</span></div>
+    <p class="s" style="margin:20px 0 0">You can close this tab. We'll email you the moment it's confirmed.</p>
+  </div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
