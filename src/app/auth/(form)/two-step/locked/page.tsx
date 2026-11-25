@@ -6,6 +6,7 @@ import { realEmail } from "@/features/auth/phone-account";
 import { TwoStepLocked } from "@/features/auth/two-step-forms";
 import { twoStepLocked } from "@/features/auth/two-step-lock";
 import { requestHome } from "@/lib/ip-key";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 import { supabaseServer } from "@/lib/supabase/server";
 
 type Params = Promise<Record<string, string | string[] | undefined>>;
@@ -18,7 +19,8 @@ async function Locked({ searchParams }: { searchParams: Params }) {
   const claims = data?.claims;
   if (!claims) redirect("/auth?mode=signin");
   if (!(await twoStepLocked(claims.sub))) redirect(`/auth/two-step?next=${encodeURIComponent(next)}`);
-  const { data: staff } = await supabase.rpc("my_staff_role");
+  // my_staff_role() is empty while locked, so the server key asks (only for the note under the button).
+  const { data: staff } = await supabaseAdmin().from("staff_members").select("user_id").eq("user_id", claims.sub).eq("active", true).maybeSingle();
   return <TwoStepLocked email={realEmail(typeof claims.email === "string" ? claims.email : "")} next={next} staff={!!staff} />;
 }
 

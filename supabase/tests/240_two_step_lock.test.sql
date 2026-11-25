@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(16);
+select plan(17);
 
 insert into auth.users (id, instance_id, aud, role, email, email_confirmed_at, raw_user_meta_data, created_at, updated_at) values
   ('24242424-0000-4000-8000-000000000001', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'kemi@freight-africa.com', now(), '{"full_name": "Kemi Adeyemi"}', now(), now()),
@@ -31,6 +31,7 @@ insert into public.staff_members (user_id, role) values ('24242424-0000-4000-800
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub": "24242424-0000-4000-8000-000000000001", "role": "authenticated", "aal": "aal2"}', true);
 select is(public.is_staff(), false, 'a locked account is not staff');
+select is(public.my_staff_role(), null, 'and has no staff role for the money and trip checks');
 reset role;
 
 -- Only a confirmed email code clears it.
