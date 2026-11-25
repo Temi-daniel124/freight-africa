@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { staffNav, type StaffPage } from "@/features/shell/config";
 import { StaffShell } from "@/features/shell/staff-shell";
 import { staffGate } from "@/features/staff/gate";
+import { EscrowView, PayoutsView, RefundsView } from "@/features/money/finance-views";
 import { staffMetadata, StaffSuspense } from "@/features/staff/staff-page";
 import { BankQueue } from "@/features/verification/bank-queue";
 import { FleetQueue } from "@/features/verification/fleet-queue";
@@ -38,6 +39,12 @@ async function Console({ params }: { params: Promise<{ page: string }> }) {
           <BankQueue />
         </section>
       </div>
+    ) : page === "escrow" ? (
+      <EscrowView />
+    ) : page === "payouts" ? (
+      <PayoutsView />
+    ) : page === "refunds" ? (
+      <RefundsView />
     ) : undefined;
   return (
     <StaffShell base="/admin" page={page as StaffPage} person={{ name: gate.name, role }}>

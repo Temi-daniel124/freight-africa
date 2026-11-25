@@ -2060,5 +2060,41 @@
     "assignSave": "Save",
     "pause": "Pause truck",
     "resume": "Let it take loads again"
+  },
+  "finance": {
+    "none": "Nothing here yet.",
+    "account": "Account",
+    "load": "Load",
+    "status": "Status",
+    "balance": "Balance",
+    "date": "Date",
+    "business": "Business",
+    "trip": "Trip",
+    "kind": "Kind",
+    "amount": "Amount",
+    "reason": "Reason",
+    "approve": "Approve",
+    "approveFailed": "You can't approve this one. A second person approves it.",
+    "kinds": {
+      "escrow": "Held for a load",
+      "provider_cash": "Money at the provider",
+      "platform_revenue": "Our revenue",
+      "owner_payable": "Owed to an owner",
+      "shipper_refundable": "Owed back to a sender",
+      "processing_cost": "Processing costs",
+      "promo_expense": "Promotions",
+      "dispute_reserve": "Held for a problem",
+      "owner_receivable": "Owed by an owner",
+      "agent_payable": "Owed to an agent"
+    },
+    "statuses": {
+      "queued": "Queued",
+      "awaiting_approval": "Needs approval",
+      "processing": "Sending",
+      "paid": "Paid",
+      "failed": "Failed",
+      "held": "Held",
+      "reversed": "Reversed"
+    }
   }
 }
