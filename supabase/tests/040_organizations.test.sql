@@ -191,17 +191,17 @@ select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000
 select throws_ok($$select public.create_invite('bbbbbbbb-0000-4000-8000-000000000002', 'driver', '+2348031110012', null)$$, '42501', null, 'a driver cannot add drivers');
 
 -- Changing roles and removing people (S-20, T-16).
-select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000002", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', format('{"sub": "%s", "role": "authenticated", "amr": [{"method": "otp", "timestamp": %s}]}', 'aaaaaaaa-0000-4000-8000-000000000002', extract(epoch from now())::bigint), true);
 select lives_ok($$select public.change_member_role('bbbbbbbb-0000-4000-8000-000000000001', 'aaaaaaaa-0000-4000-8000-000000000003', 'finance')$$, 'an admin changes a booker to finance');
 select throws_ok($$select public.change_member_role('bbbbbbbb-0000-4000-8000-000000000001', 'aaaaaaaa-0000-4000-8000-000000000001', 'viewer')$$, '42501', null, 'an admin cannot change the owner''s role');
 select throws_ok($$select public.remove_member('bbbbbbbb-0000-4000-8000-000000000001', 'aaaaaaaa-0000-4000-8000-000000000001')$$, '42501', null, 'an admin cannot remove the owner');
 select lives_ok($$select public.remove_member('bbbbbbbb-0000-4000-8000-000000000001', 'aaaaaaaa-0000-4000-8000-000000000005')$$, 'an admin removes a viewer');
 
-select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000001", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', format('{"sub": "%s", "role": "authenticated", "amr": [{"method": "otp", "timestamp": %s}]}', 'aaaaaaaa-0000-4000-8000-000000000001', extract(epoch from now())::bigint), true);
 select throws_ok($$select public.remove_member('bbbbbbbb-0000-4000-8000-000000000001', 'aaaaaaaa-0000-4000-8000-000000000001')$$, '23514', null, 'the last owner cannot leave');
 select throws_ok($$select public.change_member_role('bbbbbbbb-0000-4000-8000-000000000001', 'aaaaaaaa-0000-4000-8000-000000000001', 'admin')$$, '23514', null, 'or step down without another owner');
 
-select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000011", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', format('{"sub": "%s", "role": "authenticated", "amr": [{"method": "otp", "timestamp": %s}]}', 'aaaaaaaa-0000-4000-8000-000000000011', extract(epoch from now())::bigint), true);
 select throws_ok($$select public.change_member_role('bbbbbbbb-0000-4000-8000-000000000002', 'aaaaaaaa-0000-4000-8000-000000000013', 'manager')$$, '22023', null, 'a driver is not turned into a manager by a role change');
 
 -- The team list: names for everyone, contact details only for the people who manage the team.

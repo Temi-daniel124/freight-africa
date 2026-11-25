@@ -1,0 +1,61 @@
+"use server";
+
+import { supabaseAdmin } from "@/lib/supabase/admin";
+import { supabaseServer } from "@/lib/supabase/server";
+import { issueCode } from "./code-issue";
+import { codeKey } from "./pending";
+import { realEmail } from "./phone-account";
+import { markUnlocked } from "./unlock";
+
+// D044 / SECURITY §3: the fresh check before a sensitive action (team roles now; bank account and
+// payouts use it too). Two-step on: the authenticator code. Otherwise: an email code. Either one gives
+// the session a fresh sign-in time, which the database checks (signed_in_within 15 minutes).
+
+export type FreshMethod = "totp" | "email" | "none";
+
+export async function freshMethod(): Promise<FreshMethod> {
+  const supabase = await supabaseServer();
+  const { data: factors } = await supabase.auth.mfa.listFactors();
+  if (factors?.totp.some((f) => f.status === "verified")) return "totp";
+  const { data } = await supabase.auth.getClaims();
+  return realEmail(typeof data?.claims?.email === "string" ? data.claims.email : "") ? "email" : "none";
+}
+
+/** Sends an email code to the signed-in person's own address (the usual per-hour limits apply). */
+export async function sendFreshCode(): Promise<{ status: "sent" | "rateLimited" | "error" }> {
+  const { data } = await (await supabaseServer()).auth.getClaims();
+  const email = realEmail(typeof data?.claims?.email === "string" ? data.claims.email : "");
+  if (!email) return { status: "error" };
+  const issued = await issueCode("email", email);
+  if (!issued.ok) return { status: issued.reason === "rate_limited" ? "rateLimited" : "error" };
+  return { status: "sent" };
+}
+
+/** The code from the authenticator app or the email; five wrong email codes lock it, as at sign-in. */
+export async function confirmFresh(code: string): Promise<{ status: "ok" | "wrong" | "locked" | "error" }> {
+  if (!/^\d{6}$/.test(code)) return { status: "wrong" };
+  const supabase = await supabaseServer();
+  const method = await freshMethod();
+  if (method === "totp") {
+    const { data: factors } = await supabase.auth.mfa.listFactors();
+    const factor = factors?.totp.find((f) => f.status === "verified");
+    if (!factor) return { status: "error" };
+    const { error } = await supabase.auth.mfa.challengeAndVerify({ factorId: factor.id, code });
+    return { status: error ? "wrong" : "ok" };
+  }
+  if (method !== "email") return { status: "error" };
+  const { data } = await supabase.auth.getClaims();
+  const email = realEmail(typeof data?.claims?.email === "string" ? data.claims.email : "");
+  const admin = supabaseAdmin();
+  const key = codeKey("email", email);
+  const { data: left } = await admin.rpc("auth_code_try", { p_key: key });
+  if (typeof left !== "number") return { status: "error" };
+  if (left < 0) return { status: "locked" };
+  const { error } = await supabase.auth.verifyOtp({ email, token: code, type: "email" });
+  if (error) return { status: left === 0 ? "locked" : "wrong" };
+  await admin.rpc("auth_code_passed", { p_key: key });
+  // The email code opened a new session; the app stays open on it.
+  const { data: fresh } = await supabase.auth.getClaims();
+  if (fresh?.claims && typeof fresh.claims.session_id === "string") await markUnlocked(fresh.claims.sub, fresh.claims.session_id);
+  return { status: "ok" };
+}

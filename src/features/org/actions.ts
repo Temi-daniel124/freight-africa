@@ -24,7 +24,7 @@ function sentence(code: string | undefined) {
   return (code && code in errors ? errors[code as keyof typeof errors] : errors.default) as string;
 }
 
-export type ActionState = { status: "idle" | "error"; message?: string };
+export type ActionState = { status: "idle" | "error" | "fresh"; message?: string };
 export type InviteState = ActionState & { link?: string; who?: string; role?: string; attempt?: number; contactError?: boolean };
 
 /** A-09: switch to another of the person's accounts, then open its shell. */
@@ -92,6 +92,8 @@ export async function changeMemberRole(_state: ActionState, formData: FormData):
   await assertUnlocked();
   const supabase = await supabaseServer();
   const { error } = await supabase.rpc("change_member_role", { p_org: text(formData, "org"), p_user: text(formData, "user"), p_role: text(formData, "role") });
+  // D044: a role change needs a fresh check; the sheet asks for it, then sends the form again.
+  if (error?.code === "28000") return { status: "fresh" };
   if (error) return { status: "error", message: sentence(error.code) };
   revalidatePath("/app", "layout");
   return { status: "idle" };
