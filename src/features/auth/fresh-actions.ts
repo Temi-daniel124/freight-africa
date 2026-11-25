@@ -5,7 +5,7 @@ import { supabaseServer } from "@/lib/supabase/server";
 import { issueCode } from "./code-issue";
 import { codeKey } from "./pending";
 import { realEmail } from "./phone-account";
-import { markUnlocked } from "./unlock";
+import { assertUnlocked, markUnlocked } from "./unlock";
 
 // D044 / SECURITY §3: the fresh check before a sensitive action (team roles now; bank account and
 // payouts use it too). Two-step on: the authenticator code. Otherwise: an email code. Either one gives
@@ -23,6 +23,8 @@ export async function freshMethod(): Promise<FreshMethod> {
 
 /** Sends an email code to the signed-in person's own address (the usual per-hour limits apply). */
 export async function sendFreshCode(): Promise<{ status: "sent" | "rateLimited" | "error" }> {
+  // Only from an open app: a locked app is opened with the PIN, never with this (review).
+  await assertUnlocked();
   const { data } = await (await supabaseServer()).auth.getClaims();
   const email = realEmail(typeof data?.claims?.email === "string" ? data.claims.email : "");
   if (!email) return { status: "error" };
@@ -33,6 +35,7 @@ export async function sendFreshCode(): Promise<{ status: "sent" | "rateLimited" 
 
 /** The code from the authenticator app or the email; five wrong email codes lock it, as at sign-in. */
 export async function confirmFresh(code: string): Promise<{ status: "ok" | "wrong" | "locked" | "error" }> {
+  await assertUnlocked();
   if (!/^\d{6}$/.test(code)) return { status: "wrong" };
   const supabase = await supabaseServer();
   const method = await freshMethod();
@@ -54,7 +57,7 @@ export async function confirmFresh(code: string): Promise<{ status: "ok" | "wron
   const { error } = await supabase.auth.verifyOtp({ email, token: code, type: "email" });
   if (error) return { status: left === 0 ? "locked" : "wrong" };
   await admin.rpc("auth_code_passed", { p_key: key });
-  // The email code opened a new session; the app stays open on it.
+  // The email code opened a new session; the app was already open (checked above), so it stays open on it.
   const { data: fresh } = await supabase.auth.getClaims();
   if (fresh?.claims && typeof fresh.claims.session_id === "string") await markUnlocked(fresh.claims.sub, fresh.claims.session_id);
   return { status: "ok" };
