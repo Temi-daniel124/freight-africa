@@ -24,6 +24,7 @@ When two documents disagree, the one higher in this list wins.
 | # | Document | Holds |
 | --- | --- | --- |
 | 1 | `docs/DECISIONS.md` | Final decisions D001 onwards |
+| 1a | `docs/design/reference/<role>-mockups` | The approved screens: visual authority for UI questions only (D050) |
 | 2 | `docs/PRODUCT.md` | What the product is, users, money, trip flow |
 | 3 | `docs/DATA-MODEL.md` (+ annex `docs/SYSTEM-LOGIC.md`) | Tables, functions, states, rules, edge cases |
 | 4 | `docs/ARCHITECTURE.md` | System parts, environments, repository layout |
@@ -38,8 +39,8 @@ When two documents disagree, the one higher in this list wins.
 | 13 | `SECURITY.md` | Secrets, access, data protection |
 | 14 | `DESIGN_SYSTEM.md` | Every visual rule |
 
-Exception: for visual questions, `DESIGN_SYSTEM.md` is the detailed source; higher documents override
-it only where they state a visual rule explicitly.
+Exception: for visual questions, the approved mockups (1a, D050) come first, then `DESIGN_SYSTEM.md`;
+other documents override them only where they state a visual rule explicitly.
 
 ## 3. Non-negotiables
 

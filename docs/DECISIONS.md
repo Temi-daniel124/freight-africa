@@ -356,6 +356,7 @@ account owner to do personally (see `docs/PROJECT-STATE.md` §4).
 **Decision.** The governing documents, highest authority first:
 
 1. `docs/DECISIONS.md`
+   - For UI questions only: `docs/design/reference/<role>-mockups` (D050)
 2. `docs/PRODUCT.md`
 3. `docs/DATA-MODEL.md` (with its annex `docs/SYSTEM-LOGIC.md`)
 4. `docs/ARCHITECTURE.md`
@@ -736,3 +737,124 @@ fast, and our server keeps control of guessing.
 
 **Why.** Owners see at a glance how full each truck is; senders who don't know the weight can still
 book.
+
+## D047. Offers: the sender can offer their own price, paid now and held
+
+**Decision (founder, 25 Nov 2026).** Extends the owner offers in `ux-owner.md` T-03a and `ux-shipper.md`
+S-07 (sender-mockups P09, P09b, P11b, P11d, P11c).
+- On the price step the sender picks **Book at our price** (the fastest) or **Offer your own price**.
+- An offer has a minimum, a setting (`offer_min_bps`; 80% of our price in the mockups). The offer
+  screen shows quick choices (−5%, −8%, −10% or a typed price), a "chance an owner accepts" meter and
+  which offers owners usually accept.
+- The offered amount is **paid now and held** in escrow, like any booking.
+- Owners **accept** the offer, or **reply once** with their own price.
+- The sender then accepts a reply and **pays the difference**, **offers again once** (that owner has
+  1 hour to answer), or **declines**.
+- If there is no agreement within 24 hours, the sender **raises the price**, **changes the day**, or
+  gets a **full refund**.
+- Every load is still paid in full before a truck goes (D001).
+
+**Why.** Senders bargain anyway; doing it inside the app keeps the money held and the trip prepaid.
+
+**Consequences.** Offers, replies and differences go through the double-entry ledger in kobo,
+idempotent, with pgTAP tests and the independent money review. The staff console shows "Offers
+waiting" (admin X04).
+
+## D048. Bachs hosted checkout
+
+**Decision (founder, 25 Nov 2026).** Replaces the bank-account-number screen in `ux-shipper.md` S-06.
+- **Pay** sends the sender to **Bachs's own hosted payment page**, like Paystack.
+- On return the sender sees **"Confirming your payment"**, then **"Finding your truck"**. A failed
+  payment shows a screen saying **nothing was taken**.
+- We never draw or imitate Bachs's page. The account-number screen is gone.
+- Until the Bachs keys arrive, the demo provider (D039) behaves the same way: a hosted demo page,
+  then the same return screens.
+
+**Why.** A hosted page keeps card and bank details off our servers and is familiar to Nigerian payers.
+
+**Consequences.** Reconciliation in the console compares our ledger with Bachs (or the demo provider).
+
+## D049. Drafts replace "pay later"
+
+**Decision (founder, 25 Nov 2026).** Renames "Save and pay later" (sender-mockups P10d, P12b, P15c).
+- **Save as draft** shows a check-mark confirmation (a bottom sheet on phones, a centred dialog on
+  desktop). It says the order **isn't placed**, **no truck is held**, and the **price and
+  availability can change**.
+- Drafts live in **Trips → Drafts**, with **Pay for several** at once.
+- No "pay by 6 pm to keep Thursday" wording anywhere.
+
+**Why.** A saved booking that holds nothing must not sound like a reservation.
+
+## D050. The approved mockups are the visual authority for app screens
+
+**Decision (founder, 25 Nov 2026).** `docs/design/reference/<role>-mockups` (sender, owner, driver,
+admin, agent) is the visual authority for app screens. It sits in the D028 order **directly under
+`docs/DECISIONS.md`, for UI questions only**: layout, spacing, type sizes and weights, radii, colours,
+copy and which screens exist. It wins over `DESIGN_SYSTEM.md`, `docs/design/design-direction.md` and
+the `ux-*.md` files where they differ, and `DESIGN_SYSTEM.md` is updated to match.
+- The copy in the mockups is used as written (moved into `src/messages/en.json`).
+- Sample people and numbers in the mockups are sample data for `/dev` previews and the demo seed
+  only, never hard-coded in real screens.
+- Phone is drawn at 390 px and desktop at 1440 px (fluid); in between, the same patterns apply
+  (desktop sidebar from `lg`, phone tabs below it).
+
+**Why.** The founder approved exact screens; building to them removes guesswork.
+
+## D051. Drivers message their owner; they never see the owner's phone number
+
+**Decision (founder, 25 Nov 2026).** Driver-mockups DV32b, DV32c; owner-mockups O19d, O19e, OD11b.
+- Drivers never see the owner's phone number. They **message** the owner with a reason (truck needs
+  repair, can't work a day, papers question, something else) plus a short text or a voice note.
+- The owner reads and replies in **Messages from drivers** (quick replies allowed); the reply reaches
+  the driver's Notifications.
+- This is **not live chat**; live chat is still Launch 2. **SOS never goes through messages.**
+- The owner, and owner Admins, can still call a driver from Driver detail.
+
+## D052. Real install detection
+
+**Decision (founder, 25 Nov 2026).** Driver-mockups DV05, DV05b–e.
+- Tapping **Install**, or the browser reporting "accepted", only moves to a **waiting** state.
+- **"Installed"** is recorded only when the app runs in standalone display mode (or
+  `navigator.standalone` on iPhone) **and that installed app checks in with the server**.
+- A cancelled install or a dropped connection shows **Not installed yet**.
+- On iPhone the home-screen app starts signed out, so it asks for a **one-time 6-digit setup code,
+  valid 30 minutes**.
+
+**Why.** Browsers report "accepted" before anything is on the home screen, and trip tracking depends
+on the real app.
+
+## D053. Agents: staff link only, settings for the share, SMS and email while WhatsApp is off
+
+**Decision (founder, 25 Nov 2026).** Agent-mockups.
+- Agents join **only from a link Freight Africa staff send**; there is no agent card on the sign-up
+  role step. Then they choose a PIN and sign in with phone number plus PIN.
+- The share rate and length come from settings (`agent_share_bps`, `agent_share_months`), never
+  hard-coded.
+- While WhatsApp is off, invites by phone number, reminders and "check and pay" messages go by **SMS
+  and email**. "Share on WhatsApp" uses the phone's own share sheet.
+- Reminders: at most 1 a day per person and 3 per step. A booking made for a sender expires after 7
+  days; the sender checks, edits and pays it through Bachs (D048).
+- The programme stays switched off in production (`agents_enabled = false`) until its Phase 6
+  acceptance.
+
+## D054. Staff: two-step sign-in required, 12-hour sessions, and the authenticator lock
+
+**Decision (founder, 25 Nov 2026).** Admin-mockups X00a–X00k.
+- Two-step sign-in is **required for every staff account**: an authenticator app plus **10 backup
+  codes**. Staff sessions last **12 hours**. Google sign-in is off for staff.
+- Five wrong authenticator codes in a row lock two-step sign-in for the account until an email code
+  is confirmed (X00j), with the same alert email as the PIN lock. This applies to every account with
+  two-step on, not only staff. A two-step reset needs a second super admin.
+
+## D055. Availability before picking a day, and several goods per booking
+
+**Decision (founder, 25 Nov 2026).** Sender-mockups P08, P08b, P08c (listed in the sender README for
+this log).
+- Each day chip shows how many trucks of that type are free ("8 free", "Full"). A full day offers the
+  closest options: the next day, another truck type with its price difference, or "Keep the day and
+  wait" (we tell them when one frees up; nothing is charged).
+- "What are you sending?" is a list of items, each with a description, an amount (tonnes or a count)
+  and a value used for matching only. The total weight shows under the list; over one truck's
+  capacity, the app suggests splitting the booking.
+- Money copy: money is held when paid; part goes to the owner when the goods are loaded, and the rest
+  when the receiver confirms delivery with the code.

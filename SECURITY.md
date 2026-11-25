@@ -109,6 +109,8 @@ The Resend key used as Supabase's SMTP password is stored only inside Supabase A
   session could call Supabase Auth's MFA verify directly; that path is limited only by Supabase's
   per-IP verify rate limit. Supabase's MFA Verification Attempt hook would close it but needs the
   Teams plan; revisit with the paid plan before launch (Phase 8).
+- **Database rule:** a function that needs two-step sign-in reads `private.session_aal()`, never the
+  `aal` claim directly; it reports `aal1` while the account is locked (migration 20261125200000).
 - Sign-in and code endpoints are rate-limited per phone, email and IP (§10).
 - Redirect URLs restricted to the domain, `localhost:3000` and the project's Vercel previews.
 
