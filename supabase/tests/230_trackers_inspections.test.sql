@@ -16,16 +16,19 @@ insert into public.staff_members (user_id, role) values ('23232323-0000-4000-800
 
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub": "23232323-0000-4000-8000-000000000001", "role": "authenticated"}', true);
-select lives_ok($$select public.set_truck_tracker('23232323-0000-4000-8000-0000000000c1', '86-1234-5678-901')$$, 'the owner connects a tracker');
+create temp table keys (k text);
+grant all on keys to authenticated, service_role;
+insert into keys select public.set_truck_tracker('23232323-0000-4000-8000-0000000000c1', '86-1234-5678-901');
+select ok((select char_length(k) from keys) = 36, 'the owner connects a tracker and gets its key once');
 reset role;
 set local role service_role;
-select is(public.tracker_ping('861234567890 1', 6.6018, 3.3515, now()), true, 'its position arrives');
-select is(public.tracker_ping('000000000000', 6.6, 3.3, now()), false, 'an unknown tracker is ignored');
+select is(public.tracker_ping((select k from keys), 6.6018, 3.3515, now()), true, 'its position arrives with the key');
+select is(public.tracker_ping('8612345678901', 6.6, 3.3, now()), false, 'the IMEI alone moves nothing (no spoofing)');
 reset role;
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub": "23232323-0000-4000-8000-000000000001", "role": "authenticated"}', true);
 select ok((select lat from public.truck_signal('23232323-0000-4000-8000-0000000000c1')) between 6.6 and 6.61, 'Test connection shows where the signal came from');
-select throws_ok($$select public.tracker_ping('861234567890', 1, 1, now())$$, '42501', null, 'the browser can never send positions');
+select throws_ok($$select public.tracker_ping('0123456789abcdef0123456789abcdef0123', 1, 1, now())$$, '42501', null, 'the browser can never send positions');
 
 select set_config('request.jwt.claims', '{"sub": "23232323-0000-4000-8000-000000000002", "role": "authenticated", "aal": "aal2"}', true);
 create temp table task_ids (id uuid);

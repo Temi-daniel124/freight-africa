@@ -2745,8 +2745,8 @@ export type Database = {
       set_app_pin: { Args: { p_pin: string }; Returns: undefined }
       record_fresh_check: { Args: { p_session: string; p_user: string }; Returns: undefined }
       fresh_try: { Args: { p_user: string }; Returns: boolean }
-      tracker_ping: { Args: { p_at: string; p_device: string; p_lat: number; p_lng: number }; Returns: boolean }
-      set_truck_tracker: { Args: { p_device: string; p_truck: string }; Returns: undefined }
+      tracker_ping: { Args: { p_at: string; p_key: string; p_lat: number; p_lng: number }; Returns: boolean }
+      set_truck_tracker: { Args: { p_device: string; p_truck: string }; Returns: string }
       truck_signal: { Args: { p_truck: string }; Returns: { at: string; lat: number; lng: number }[] }
       create_inspection: { Args: { p_agent: string; p_due: string; p_truck: string }; Returns: string }
       complete_inspection: { Args: { p_checks: Json; p_note?: string; p_pass: boolean; p_photos: string[]; p_task: string }; Returns: undefined }

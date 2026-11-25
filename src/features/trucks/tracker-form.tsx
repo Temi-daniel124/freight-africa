@@ -31,6 +31,8 @@ export function TrackerForm({ truckId, current, server }: { truckId: string; cur
   const [message, setMessage] = useState<string | null>(null);
   const [pending, start] = useTransition();
   const [testing, setTesting] = useState(false);
+  // The key is shown once, inside the server address to set on the tracker.
+  const [key, setKey] = useState<string | null>(null);
 
   const test = async () => {
     setTesting(true);
@@ -57,7 +59,7 @@ export function TrackerForm({ truckId, current, server }: { truckId: string; cur
       <TextField id="tracker-id" label={t.idLabel} helper={t.idHelp} value={device} onChange={(e) => setDevice(e.target.value)} autoCapitalize="characters" spellCheck={false} />
       <div className="flex flex-col gap-2">
         <p className="text-label text-ink">{t.setOnTracker}</p>
-        <CopyRow label={t.server} value={server} />
+        <CopyRow label={t.server} value={key ? `${server}?key=${key}` : t.saveFirst} />
         <CopyRow label={t.protocol} value="OsmAnd (HTTP)" />
       </div>
       {message ? (
@@ -71,6 +73,7 @@ export function TrackerForm({ truckId, current, server }: { truckId: string; cur
           onClick={() =>
             start(async () => {
               const r = await saveTracker(truckId, device);
+              if (r.status === "ok") setKey(r.key);
               setMessage(r.status === "ok" ? t.saved : r.status === "invalid" ? t.invalid : r.status === "taken" ? t.taken : messages.booking.errors.failed);
             })
           }

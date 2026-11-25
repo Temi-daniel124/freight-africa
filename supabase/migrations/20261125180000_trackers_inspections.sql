@@ -5,43 +5,53 @@
 -- T-18: an owner or admin connects a tracker to a truck. Trackers send positions to our server
 -- (OsmAnd protocol, /api/trackers/osmand); a position updates the truck's last known place and time.
 -- ---------------------------------------------------------------------------------------------------
-create unique index trucks_tracker_device on public.trucks (tracker_device_id) where tracker_device_id is not null;
+-- A tracker proves itself with a random key set in its server address (never the IMEI alone, which is
+-- printed on the device): only the key's hash is stored, and the key is shown to the owner once.
+alter table public.trucks add column tracker_key_hash text unique check (tracker_key_hash is null or tracker_key_hash ~ '^[0-9a-f]{64}$');
 
-create function public.set_truck_tracker(p_truck uuid, p_device text) returns void
+-- Connects a tracker (the ID is for the owner's reference) and returns the key to set on it; again
+-- makes a new key, which stops the old one. A null ID disconnects it.
+create function public.set_truck_tracker(p_truck uuid, p_device text) returns text
 language plpgsql security definer set search_path = '' as $$
 declare
   v_truck public.trucks;
   v_device text := nullif(upper(regexp_replace(coalesce(p_device, ''), '[^0-9A-Za-z]', '', 'g')), '');
+  v_key text;
 begin
   select * into v_truck from public.trucks where id = p_truck for update;
   if v_truck.id is null or not public.can_in_org(v_truck.org_id, 'manage_trucks') then
     raise exception 'not allowed' using errcode = '42501';
   end if;
-  if v_device is not null and (char_length(v_device) < 6 or char_length(v_device) > 32) then
+  if v_device is null then
+    update public.trucks set tracker_device_id = null, tracker_key_hash = null where id = p_truck;
+    return null;
+  end if;
+  if char_length(v_device) < 6 or char_length(v_device) > 32 then
     raise exception 'a tracker ID is 6 to 32 letters and numbers' using errcode = '22023';
   end if;
-  if v_device is not null and exists (select 1 from public.trucks where tracker_device_id = v_device and id <> p_truck) then
-    raise exception 'that tracker is connected to another truck' using errcode = '23505';
-  end if;
-  update public.trucks set tracker_device_id = v_device where id = p_truck;
+  v_key := encode(extensions.gen_random_bytes(18), 'hex');
+  update public.trucks set tracker_device_id = v_device, tracker_key_hash = encode(extensions.digest(v_key, 'sha256'), 'hex') where id = p_truck;
+  return v_key;
 end;
 $$;
 
--- Server only: a tracker sent a position. Unknown trackers are ignored (false).
-create function public.tracker_ping(p_device text, p_lat float8, p_lng float8, p_at timestamptz) returns boolean
+-- Server only: a tracker sent a position with its key. Wrong keys are ignored (false). A position from
+-- the future counts as now; an older one than the last never moves the truck back.
+create function public.tracker_ping(p_key text, p_lat float8, p_lng float8, p_at timestamptz) returns boolean
 language plpgsql security definer set search_path = '' as $$
 declare
   v_truck uuid;
+  v_at timestamptz := least(coalesce(p_at, now()), now());
 begin
-  if p_lat is null or p_lng is null or p_lat not between -90 and 90 or p_lng not between -180 and 180 then
+  if p_key is null or p_key !~ '^[0-9a-f]{36}$' or p_lat is null or p_lng is null or p_lat not between -90 and 90 or p_lng not between -180 and 180 then
     return false;
   end if;
-  update public.trucks set last_known_location = extensions.st_setsrid(extensions.st_makepoint(p_lng, p_lat), 4326)::extensions.geography,
-    last_known_at = least(coalesce(p_at, now()), now())
-  where tracker_device_id = upper(regexp_replace(coalesce(p_device, ''), '[^0-9A-Za-z]', '', 'g'))
-    and (last_known_at is null or last_known_at <= least(coalesce(p_at, now()), now()))
+  update public.trucks set last_known_location = extensions.st_setsrid(extensions.st_makepoint(p_lng, p_lat), 4326)::extensions.geography, last_known_at = v_at
+  where tracker_key_hash = encode(extensions.digest(p_key, 'sha256'), 'hex')
+    -- At most one position every 10 seconds per truck, so a flood of pings writes nothing (review).
+    and (last_known_at is null or last_known_at <= v_at - interval '10 seconds')
   returning id into v_truck;
-  -- A truck on a trip carries its trip's position too (Phase 4 adds the full ping history).
+  -- A truck on a trip carries its trip's position too (Phase 4 adds the full ping history and checks).
   if v_truck is not null then
     update public.trips set last_location = extensions.st_setsrid(extensions.st_makepoint(p_lng, p_lat), 4326)::extensions.geography, last_ping_at = now()
     where truck_id = v_truck and status in ('to_pickup', 'at_pickup', 'loading', 'loaded', 'in_transit', 'arrived');
@@ -77,7 +87,7 @@ create table public.field_tasks (
 create index field_tasks_assignee on public.field_tasks (assigned_to, status, due_at);
 create trigger field_tasks_audit after insert or update or delete on public.field_tasks for each row execute function private.audit_row('id');
 alter table public.field_tasks enable row level security;
-create policy "field tasks: assignee reads" on public.field_tasks for select to authenticated using (assigned_to = (select auth.uid()));
+create policy "field tasks: assignee reads" on public.field_tasks for select to authenticated using (assigned_to = (select auth.uid()) and (select public.is_staff_in(array['field_agent']::public.staff_role[])));
 create policy "field tasks: verification and admins read" on public.field_tasks for select to authenticated
   using ((select public.is_staff_in(array['verification', 'operations', 'super_admin']::public.staff_role[])));
 revoke all on public.field_tasks from anon, authenticated;
@@ -101,7 +111,7 @@ begin
   if not exists (select 1 from public.trucks where id = p_truck) then
     raise exception 'unknown truck' using errcode = 'P0002';
   end if;
-  if not exists (select 1 from public.staff_members where user_id = p_agent and role = 'field_agent') then
+  if not exists (select 1 from public.staff_members where user_id = p_agent and role = 'field_agent' and active) then
     raise exception 'choose a field agent' using errcode = '22023';
   end if;
   insert into public.field_tasks (kind, subject_id, assigned_to, created_by, due_at) values ('truck_inspection', p_truck, p_agent, v_user, coalesce(p_due, now() + interval '2 days'))
