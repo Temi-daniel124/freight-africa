@@ -2498,6 +2498,7 @@ export type Database = {
           to_phone: string
         }[]
       }
+      clear_two_step_lock: { Args: { p_user: string }; Returns: undefined }
       complete_inspection: {
         Args: {
           p_checks: Json
@@ -2633,7 +2634,9 @@ export type Database = {
           weight_kg: number
         }[]
       }
+      fresh_refund: { Args: { p_user: string }; Returns: undefined }
       fresh_try: { Args: { p_user: string }; Returns: boolean }
+      fresh_wrong: { Args: { p_user: string }; Returns: boolean }
       give_onboarding_consents: {
         Args: {
           p_ip_key?: string
@@ -2947,6 +2950,7 @@ export type Database = {
           lng: number
         }[]
       }
+      two_step_locked: { Args: { p_user: string }; Returns: boolean }
       update_organization: {
         Args: { p_cac_number?: string; p_name: string; p_org: string }
         Returns: undefined

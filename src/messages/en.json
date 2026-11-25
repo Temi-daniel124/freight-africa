@@ -760,7 +760,9 @@
       "lockedIntro": "Someone entered the wrong PIN five times, so PIN sign-in is locked. To get back in, sign in with an email code and choose a new PIN.",
       "notYou": "Not you? Lock your account. Every device is signed out, and you’ll sign in again with an email code.",
       "lockButton": "Lock your account",
-      "lockNote": "If it was you, you don’t need to do anything."
+      "lockNote": "If it was you, you don’t need to do anything.",
+      "twoStepLockedSubject": "Two-step sign-in is locked on your account",
+      "twoStepLockedIntro": "Someone entered 5 wrong authenticator codes in a row, so two-step sign-in is locked. To get back in, confirm it was you with an email code, then sign in again."
     },
     "pin": {
       "setTitle": "Choose a 6-number PIN",
@@ -829,7 +831,18 @@
       "backupLabel": "Backup code",
       "backupWrong": "That backup code isn’t right, or it was used before.",
       "tooMany": "Too many tries. Try again in an hour.",
-      "failed": "Something went wrong. Check your connection and try again."
+      "failed": "Something went wrong. Check your connection and try again.",
+      "locked": {
+        "title": "Two-step sign-in is locked",
+        "lead": "5 wrong authenticator codes in a row. We've locked two-step sign-in for this account and emailed {email}.",
+        "stepEmail": "Open the email and confirm it was you with the code inside",
+        "stepSignIn": "Then sign in again, or use a backup code",
+        "stepNotYou": "Wasn't you? Use \"Lock my account\" in the email",
+        "send": "Send me the email code",
+        "sending": "Sending",
+        "rateLimited": "Too many codes sent. Try again in an hour.",
+        "staffNote": "Lost your phone and backup codes? Ask a super admin to reset two-step sign-in. A second super admin must approve it."
+      }
     },
     "lock": {
       "title": "Lock your account?",
@@ -856,7 +869,8 @@
       "wrong": "That code isn’t right.",
       "locked": "Too many tries. Try again in an hour.",
       "failed": "Something went wrong. Try again.",
-      "none": "Ask the business owner to make this change."
+      "none": "Ask the business owner to make this change.",
+      "twoStepLocked": "5 wrong authenticator codes in a row. Two-step sign-in is locked and we've emailed you. Sign out, then sign in again with an email code."
     }
   },
   "fonts": {

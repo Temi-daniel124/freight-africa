@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { safeNext } from "@/features/auth/next-path";
 import { VerifyTwoStep } from "@/features/auth/two-step-forms";
+import { twoStepLocked } from "@/features/auth/two-step-lock";
 import { requestHome } from "@/lib/ip-key";
 import { supabaseServer } from "@/lib/supabase/server";
 
@@ -20,6 +21,7 @@ async function Step({ searchParams }: { searchParams: Params }) {
     const { data: staff } = await supabase.rpc("my_staff_role");
     redirect(staff ? "/admin/setup" : next);
   }
+  if (await twoStepLocked(data.claims.sub)) redirect(`/auth/two-step/locked?next=${encodeURIComponent(next)}`);
   return <VerifyTwoStep next={next} />;
 }
 

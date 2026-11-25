@@ -26,7 +26,7 @@ export function FreshCheck({ onDone }: { onDone: () => void }) {
       if (result.status === "ok") onDone();
       else {
         setCode("");
-        setError(result.status === "locked" ? t.locked : result.status === "wrong" ? t.wrong : t.failed);
+        setError(result.status === "twoStepLocked" ? t.twoStepLocked : result.status === "locked" ? t.locked : result.status === "wrong" ? t.wrong : t.failed);
       }
     });
   return (
