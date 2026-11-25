@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { supabaseServer } from "@/lib/supabase/server";
+import { checkAuthenticatorCode, passedCheck } from "@/features/auth/two-step-lock";
 
 // The staff console's two-step sign-in (ux-admin X-00; SECURITY.md §3). Every step runs here on the
 // server with the person's own session; the database functions check staff status and aal2 again.
@@ -60,8 +61,14 @@ export async function verifyStaffCode(previous: VerifyState, formData: FormData)
   const { data: factors } = await supabase.auth.mfa.listFactors();
   const factor = factors?.totp.find((item) => item.status === "verified");
   if (!factor) redirect("/admin/setup");
-  const { error } = await supabase.auth.mfa.challengeAndVerify({ factorId: factor.id, code });
-  if (error) return { status: error.status === 422 || error.code === "mfa_verification_failed" ? "wrong" : "error", attempt };
+  const { data: me } = await supabase.auth.getClaims();
+  const claims = me?.claims;
+  if (!claims) redirect("/auth?mode=signin");
+  // The same lock as every other authenticator check: five wrong codes in a row (X00j, review).
+  const result = await checkAuthenticatorCode(claims.sub, typeof claims.email === "string" ? claims.email : null, () => supabase.auth.mfa.challengeAndVerify({ factorId: factor.id, code }));
+  if (result === "locked") redirect("/auth/two-step/locked?next=%2Fadmin");
+  if (result !== "ok") return { status: result, attempt };
+  if (!(await passedCheck(supabase))) redirect("/auth/two-step/locked?next=%2Fadmin");
   redirect("/admin");
 }
 

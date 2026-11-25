@@ -39,6 +39,24 @@ export async function checkAuthenticatorCode(userId: string, email: string | nul
   return "locked";
 }
 
+type ServerClient = Awaited<ReturnType<typeof import("@/lib/supabase/server").supabaseServer>>;
+
+/**
+ * After a right authenticator code: record the fresh check, which also clears the tries. The database
+ * refuses it if a lock landed while the code was in flight; then the now-aal2 session is ended, so a
+ * locked account never keeps one (review).
+ */
+export async function passedCheck(supabase: ServerClient): Promise<boolean> {
+  const { data } = await supabase.auth.getClaims();
+  const claims = data?.claims;
+  if (!claims || typeof claims.session_id !== "string") return false;
+  const { error } = await supabaseAdmin().rpc("record_fresh_check", { p_user: claims.sub, p_session: claims.session_id });
+  if (!error) return true;
+  if (error.code !== "28000") console.error("record_fresh_check failed", error.code);
+  await supabase.auth.signOut({ scope: "local" });
+  return false;
+}
+
 export async function twoStepLocked(userId: string): Promise<boolean> {
   const { data } = await supabaseAdmin().rpc("two_step_locked", { p_user: userId });
   return data === true;
