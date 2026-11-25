@@ -9,7 +9,7 @@ import { safeNext } from "./next-path";
 import { TWO_STEP_OFFERED_COOKIE } from "./pin-cookies";
 import { finishSignIn } from "./pin-session";
 import { sendCodeTo } from "./code-issue";
-import { checkAuthenticatorCode, twoStepLocked } from "./two-step-lock";
+import { checkAuthenticatorCode, passedCheck, twoStepLocked } from "./two-step-lock";
 import { realEmail } from "./phone-account";
 
 // D044 optional two-step sign-in for everyone (staff keep theirs in the console, required).
@@ -85,11 +85,10 @@ export async function verifyTwoStep(previous: CodeState, formData: FormData): Pr
   if (result !== "ok") return { status: result, attempt };
   const { data } = await supabase.auth.getClaims();
   const claims = data?.claims;
-  if (claims && typeof claims.session_id === "string") {
-    // The authenticator code was just given: that is also a fresh check for this session, and clears the tries.
-    await supabaseAdmin().rpc("record_fresh_check", { p_user: claims.sub, p_session: claims.session_id });
-    await finishSignIn(claims.sub, claims.session_id, typeof claims.email === "string" ? claims.email : null);
-  }
+  // The authenticator code was just given: that is also a fresh check for this session, and clears the
+  // tries. If a lock landed while this code was in flight, the session is signed out (review).
+  if (!(await passedCheck(supabase))) redirect(`/auth/two-step/locked?next=${encodeURIComponent(next)}`);
+  if (claims && typeof claims.session_id === "string") await finishSignIn(claims.sub, claims.session_id, typeof claims.email === "string" ? claims.email : null);
   redirect(next);
 }
 

@@ -11,6 +11,10 @@ create table private.two_step_locks (
 );
 revoke all on private.two_step_locks from public, anon, authenticated;
 
+-- Tries still being checked don't count towards the lock; only codes found wrong do (review: a right
+-- code in flight must not be overtaken by a lock made of tries that hadn't been answered yet).
+alter table private.fresh_tries add column wrong boolean not null default false;
+
 -- Server only: before an authenticator code is checked. False when locked (or this would be a sixth).
 create or replace function public.fresh_try(p_user uuid) returns boolean language plpgsql security definer set search_path = '' as $$
 begin
@@ -19,8 +23,8 @@ begin
   if exists (select 1 from private.two_step_locks where user_id = p_user) then
     return false;
   end if;
+  -- Five tries open at once, or five wrong ones: no more codes are checked for now.
   if (select count(*) from private.fresh_tries where user_id = p_user) >= 5 then
-    insert into private.two_step_locks (user_id) values (p_user) on conflict (user_id) do nothing;
     return false;
   end if;
   insert into private.fresh_tries (user_id) values (p_user);
@@ -36,7 +40,9 @@ begin
   if exists (select 1 from private.two_step_locks where user_id = p_user) then
     return false;
   end if;
-  if (select count(*) from private.fresh_tries where user_id = p_user) < 5 then
+  update private.fresh_tries set wrong = true
+  where ctid = (select ctid from private.fresh_tries where user_id = p_user and not wrong order by at limit 1);
+  if (select count(*) from private.fresh_tries where user_id = p_user and wrong) < 5 then
     return false;
   end if;
   insert into private.two_step_locks (user_id) values (p_user);
@@ -48,7 +54,7 @@ $$;
 -- Server only: a code check that never happened (the auth service failed) gives its try back.
 create function public.fresh_refund(p_user uuid) returns void language sql security definer set search_path = '' as $$
   delete from private.fresh_tries
-  where ctid = (select ctid from private.fresh_tries where user_id = p_user order by at desc limit 1);
+  where ctid = (select ctid from private.fresh_tries where user_id = p_user and not wrong order by at desc limit 1);
 $$;
 
 -- Server only: is two-step sign-in locked for this person?
@@ -91,3 +97,31 @@ grant execute on function public.fresh_refund(uuid) to service_role;
 grant execute on function public.two_step_locked(uuid) to service_role;
 grant execute on function public.clear_two_step_lock(uuid) to service_role;
 grant execute on function public.record_fresh_check(uuid, uuid) to service_role;
+
+-- A locked account never counts as staff with two-step done, even if its session reached aal2 some
+-- other way (for example by calling Supabase Auth directly). Supabase's MFA verification hook, which
+-- would stop that at the source, needs the Teams plan (SECURITY.md §3, residual risk).
+create or replace function public.is_staff(p_role public.staff_role default null) returns boolean language sql stable security definer set search_path = '' as $$
+  select coalesce((select auth.jwt() ->> 'aal'), '') = 'aal2'
+    and not exists (select 1 from private.two_step_locks l where l.user_id = (select auth.uid()))
+    and exists (
+      select 1 from public.staff_members s
+      join public.profiles p on p.id = s.user_id and p.status = 'active' and p.deleted_at is null
+      where s.user_id = (select auth.uid()) and s.active and (p_role is null or s.role = p_role)
+    );
+$$;
+
+create or replace function public.is_staff_in(p_roles public.staff_role[]) returns boolean language sql stable security definer set search_path = '' as $$
+  select coalesce((select auth.jwt() ->> 'aal'), '') = 'aal2'
+    and not exists (select 1 from private.two_step_locks l where l.user_id = (select auth.uid()))
+    and exists (
+      select 1 from public.staff_members s
+      join public.profiles p on p.id = s.user_id and p.status = 'active' and p.deleted_at is null
+      where s.user_id = (select auth.uid()) and s.active and s.role = any (p_roles)
+    );
+$$;
+
+create or replace function private.staff_aal2() returns boolean language sql stable security definer set search_path = '' as $$
+  select coalesce((select auth.jwt() ->> 'aal'), '') = 'aal2'
+    and not exists (select 1 from private.two_step_locks l where l.user_id = (select auth.uid()));
+$$;

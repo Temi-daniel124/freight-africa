@@ -100,6 +100,15 @@ The Resend key used as Supabase's SMTP password is stored only inside Supabase A
   who handles payments. Sensitive actions (bank account change, team role change, payouts) need a fresh
   check: the authenticator code if two-step is on, otherwise an email code. A new bank account still
   waits 24 hours.
+- Authenticator lock (25 Nov 2026, admin X00j): five wrong authenticator codes in a row, at sign-in,
+  in the staff console or in a fresh check, lock two-step sign-in for the account until an email code
+  is confirmed at sign-in. The wrong code that locks it sends the security email with the "Lock your
+  account" link; the lock and unlock are audited. While locked, no fresh check is recorded and
+  `is_staff`, `is_staff_in` and `staff_aal2` are false even for an `aal2` session.
+  **Residual risk:** our count sees only codes sent through our server. Someone holding an `aal1`
+  session could call Supabase Auth's MFA verify directly; that path is limited only by Supabase's
+  per-IP verify rate limit. Supabase's MFA Verification Attempt hook would close it but needs the
+  Teams plan; revisit with the paid plan before launch (Phase 8).
 - Sign-in and code endpoints are rate-limited per phone, email and IP (§10).
 - Redirect URLs restricted to the domain, `localhost:3000` and the project's Vercel previews.
 
