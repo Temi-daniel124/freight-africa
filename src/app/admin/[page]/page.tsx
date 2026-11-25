@@ -3,6 +3,7 @@ import { staffNav, type StaffPage } from "@/features/shell/config";
 import { StaffShell } from "@/features/shell/staff-shell";
 import { staffGate } from "@/features/staff/gate";
 import { EscrowView, PayoutsView, RefundsView } from "@/features/money/finance-views";
+import { FieldTasks } from "@/features/staff/field-tasks";
 import { staffMetadata, StaffSuspense } from "@/features/staff/staff-page";
 import { BankQueue } from "@/features/verification/bank-queue";
 import { FleetQueue } from "@/features/verification/fleet-queue";
@@ -39,6 +40,8 @@ async function Console({ params }: { params: Promise<{ page: string }> }) {
           <BankQueue />
         </section>
       </div>
+    ) : page === "tasks" ? (
+      <FieldTasks />
     ) : page === "escrow" ? (
       <EscrowView />
     ) : page === "payouts" ? (

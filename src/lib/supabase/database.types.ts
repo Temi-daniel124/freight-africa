@@ -14,6 +14,12 @@ export type Database = {
   }
   public: {
     Tables: {
+      field_tasks: {
+        Row: { id: string; kind: string; subject_id: string; assigned_to: string; created_by: string | null; due_at: string; status: string; result: Json | null; photos: string[]; created_at: string; done_at: string | null }
+        Insert: { id?: string; kind?: string; subject_id?: string; assigned_to?: string; created_by?: string | null; due_at?: string; status?: string; result?: Json | null; photos?: string[]; created_at?: string; done_at?: string | null }
+        Update: { id?: string; kind?: string; subject_id?: string; assigned_to?: string; created_by?: string | null; due_at?: string; status?: string; result?: Json | null; photos?: string[]; created_at?: string; done_at?: string | null }
+        Relationships: []
+      }
       approvals: {
         Row: {
           approved_by: string | null
@@ -2739,6 +2745,11 @@ export type Database = {
       set_app_pin: { Args: { p_pin: string }; Returns: undefined }
       record_fresh_check: { Args: { p_session: string; p_user: string }; Returns: undefined }
       fresh_try: { Args: { p_user: string }; Returns: boolean }
+      tracker_ping: { Args: { p_at: string; p_device: string; p_lat: number; p_lng: number }; Returns: boolean }
+      set_truck_tracker: { Args: { p_device: string; p_truck: string }; Returns: undefined }
+      truck_signal: { Args: { p_truck: string }; Returns: { at: string; lat: number; lng: number }[] }
+      create_inspection: { Args: { p_agent: string; p_due: string; p_truck: string }; Returns: string }
+      complete_inspection: { Args: { p_checks: Json; p_note?: string; p_pass: boolean; p_photos: string[]; p_task: string }; Returns: undefined }
       set_driver_paused: {
         Args: { p_driver: string; p_paused: boolean }
         Returns: undefined

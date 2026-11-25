@@ -1,3 +1,4 @@
+import { SendInspection } from "@/features/staff/inspect-form";
 import { formatPlate } from "@/lib/plate";
 import { supabaseServer } from "@/lib/supabase/server";
 import messages from "@/messages/en.json";
@@ -29,6 +30,9 @@ export async function FleetQueue() {
     supabase.storage.from("fleet").createSignedUrls([...(trucks ?? []).flatMap((x) => x.photo_paths), ...(docs ?? []).map((d) => d.file_path)], 600),
   ]);
   const orgName = new Map((orgs ?? []).map((o) => [o.id, o.name]));
+  // Field agents verification can send to look at a truck in person (X-30).
+  const { data: staff } = await supabase.from("staff_members").select("user_id, role, profile:profiles(full_name)").eq("role", "field_agent");
+  const agents = (staff ?? []).map((m) => ({ id: m.user_id, name: (m.profile as unknown as { full_name: string | null } | null)?.full_name ?? "" }));
   const plateOf = new Map([...(trucks ?? []), ...(docTrucks ?? [])].map((x) => [x.id, x.plate_number]));
   const url = new Map((links ?? []).map((l) => [l.path, l.signedUrl]));
   const typeName = new Map((types ?? []).map((x) => [x.id, x.name]));
@@ -53,6 +57,7 @@ export async function FleetQueue() {
               </p>
             </div>
             <DecideForm session={truck.id} kind="truck" />
+            <SendInspection truckId={truck.id} agents={agents} />
           </div>
         </li>
       ))}
