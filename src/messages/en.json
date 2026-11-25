@@ -1337,7 +1337,8 @@
         "staff": "Staff and on-call",
         "audit": "Audit log",
         "playbooks": "Playbooks",
-        "help": "Help"
+        "help": "Help",
+        "tasks": "My tasks"
       },
       "search": "Search references, plates, phones or names",
       "empty": "This part of the console is being built.",
@@ -2113,5 +2114,48 @@
   },
   "ocr": {
     "check": "Read from the photo. Check it before you save."
+  },
+  "tracker": {
+    "title": "Connect a GPS tracker",
+    "lead": "If this truck carries a tracker, connect it. Your trips keep being tracked even when the driver's phone is off.",
+    "types": "Works with trackers that can send to a web address in the OsmAnd format (most do, and so does the free Traccar Client app).",
+    "idLabel": "Tracker ID",
+    "idHelp": "Usually the IMEI number on the tracker's label or in its app.",
+    "setOnTracker": "Set these on the tracker",
+    "server": "Server address",
+    "protocol": "Format",
+    "copy": "Copy",
+    "copied": "Copied",
+    "save": "Save",
+    "test": "Test connection",
+    "saved": "Tracker saved. Use Test connection to check it.",
+    "invalid": "A tracker ID is 6 to 32 letters and numbers.",
+    "taken": "That tracker is connected to another truck.",
+    "waiting": "Waiting for a signal (up to 5 minutes)…",
+    "received": "Signal received at {time}, near {lat}, {lng}.",
+    "noSignal": "No signal yet. Check the server address on the tracker and that it has power and data.",
+    "connect": "Connect a GPS tracker"
+  },
+  "tasks": {
+    "title": "My tasks",
+    "empty": "No tasks for you right now.",
+    "truck": "Inspect truck {plate}",
+    "due": "Due {date}",
+    "owner": "Owner",
+    "checklist": "Checklist",
+    "checks": {
+      "plate_matches": "Plate matches the papers",
+      "roadworthy": "Visibly roadworthy",
+      "tarpaulin": "Tarpaulin and ropes",
+      "tyres": "Tyres in good shape"
+    },
+    "pass": "Pass",
+    "problem": "Report a problem",
+    "problemNote": "What's the problem?",
+    "done": "Done",
+    "failed": "We couldn't save that. Try again.",
+    "send": "Send a field agent",
+    "agent": "Field agent",
+    "sent": "Inspection sent."
   }
 }

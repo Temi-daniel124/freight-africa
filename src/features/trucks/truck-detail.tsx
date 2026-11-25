@@ -231,6 +231,9 @@ export async function TruckDetail({
             <p className="text-body-sm text-ink-2">{messages.home2.noDriver}</p>
           )}
         </Card>
+        <Link href={`/app/haul/trucks/${x.truck_id}/tracker`} className="rounded-tile bg-surface p-5 text-body-sm font-semibold text-green-700 shadow-raised lg:rounded-card">
+          {messages.tracker.connect}
+        </Link>
         <Card title={t.papers}>
           {papers?.length ? (
             <dl className="divide-y divide-line">
