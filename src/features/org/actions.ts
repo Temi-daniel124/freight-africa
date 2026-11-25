@@ -69,6 +69,7 @@ export async function createInvite(state: InviteState, formData: FormData): Prom
     p_phone: "phone" in contact ? contact.phone : undefined,
     p_email: "email" in contact ? contact.email : undefined,
   });
+  if (error?.code === "28000") return { status: "fresh", attempt };
   if (error || !token) return { status: "error", message: sentence(error?.code), attempt };
   const origin = process.env.VERCEL_ENV === "production" ? APP_ORIGIN : await requestOrigin();
   revalidatePath("/app", "layout");
@@ -103,6 +104,7 @@ export async function removeMember(_state: ActionState, formData: FormData): Pro
   await assertUnlocked();
   const supabase = await supabaseServer();
   const { error } = await supabase.rpc("remove_member", { p_org: text(formData, "org"), p_user: text(formData, "user") });
+  if (error?.code === "28000") return { status: "fresh" };
   if (error) return { status: "error", message: sentence(error.code) };
   revalidatePath("/app", "layout");
   return { status: "idle" };

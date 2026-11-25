@@ -95,6 +95,7 @@ export function InviteSheet({
   orgName: string;
   roles: Role[];
 }) {
+  const inviteForm = useRef<HTMLFormElement>(null);
   const [state, action, pending] = useActionState<InviteState, FormData>(
     createInvite,
     { status: "idle" },
@@ -152,7 +153,8 @@ export function InviteSheet({
           </a>
         </div>
       ) : (
-        <form action={action} className="flex flex-col gap-4" noValidate>
+        <form ref={inviteForm} action={action} className="flex flex-col gap-4" noValidate>
+          {state.status === "fresh" ? <FreshCheck onDone={() => inviteForm.current?.requestSubmit()} /> : null}
           <input type="hidden" name="org" value={orgId} />
           <TextField
             key={state.attempt}
@@ -218,6 +220,7 @@ export function MemberSheet({
   >(removeMember, { status: "idle" });
   const [choice, setChoice] = useState<Role>(role);
   const roleForm = useRef<HTMLFormElement>(null);
+  const removeForm = useRef<HTMLFormElement>(null);
   const changeable =
     role !== "driver" &&
     roles.filter((r) => r !== "driver").length > 1 &&
@@ -264,7 +267,8 @@ export function MemberSheet({
       {soleOwner ? (
         <p className="text-body-sm font-normal text-ink-2">{t.soleOwner}</p>
       ) : (
-        <form action={removeAction} className="flex flex-col gap-2">
+        <form ref={removeForm} action={removeAction} className="flex flex-col gap-2">
+          {removeState.status === "fresh" ? <FreshCheck onDone={() => removeForm.current?.requestSubmit()} /> : null}
           <input type="hidden" name="org" value={orgId} />
           <input type="hidden" name="user" value={userId} />
           <p className="text-body-sm font-normal text-ink-2">

@@ -2737,6 +2737,8 @@ export type Database = {
       }
       set_active_org: { Args: { p_org: string }; Returns: undefined }
       set_app_pin: { Args: { p_pin: string }; Returns: undefined }
+      record_fresh_check: { Args: { p_session: string; p_user: string }; Returns: undefined }
+      fresh_try: { Args: { p_user: string }; Returns: boolean }
       set_driver_paused: {
         Args: { p_driver: string; p_paused: boolean }
         Returns: undefined
