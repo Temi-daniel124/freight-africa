@@ -125,3 +125,23 @@ create or replace function private.staff_aal2() returns boolean language sql sta
   select coalesce((select auth.jwt() ->> 'aal'), '') = 'aal2'
     and not exists (select 1 from private.two_step_locks l where l.user_id = (select auth.uid()));
 $$;
+
+-- The same for every check built on the staff role or a recent authenticator code (review: the money
+-- and trip functions check my_staff_role() and the aal claim inline, so they inherit this).
+create or replace function public.my_staff_role() returns public.staff_role language sql stable security definer set search_path = '' as $$
+  select s.role from public.staff_members s
+  where s.user_id = (select auth.uid()) and s.active
+    and not exists (select 1 from private.two_step_locks l where l.user_id = s.user_id);
+$$;
+
+create or replace function private.totp_verified_within(p_seconds int) returns boolean language sql stable security definer set search_path = '' as $$
+  select coalesce((select auth.jwt() ->> 'aal'), '') = 'aal2'
+    and not exists (select 1 from private.two_step_locks l where l.user_id = (select auth.uid()))
+    and exists (
+      select 1 from jsonb_array_elements(coalesce((select auth.jwt() -> 'amr'), '[]'::jsonb)) a
+      where a ->> 'method' = 'totp'
+        and (a ->> 'timestamp') ~ '^[0-9]+$'
+        and (a ->> 'timestamp')::bigint >= extract(epoch from now())::bigint - p_seconds
+    );
+$$;
+revoke all on function private.totp_verified_within(int) from public;
