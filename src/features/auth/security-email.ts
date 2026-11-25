@@ -5,11 +5,13 @@ const fill = (text: string, values: Record<string, string>) => text.replace(/\{(
 const escape = (text: string) => text.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c] ?? c);
 
 /** D044: "New sign-in on [device], [city]. Not you? Lock your account", and the PIN-locked notice. */
-export function securityEmail(kind: "newDevice" | "locked", to: string, device: string, city: string, lockLink: string): EmailMessage {
+export type SecurityEmailKind = "newDevice" | "locked" | "twoStepLocked";
+
+export function securityEmail(kind: SecurityEmailKind, to: string, device: string, city: string, lockLink: string): EmailMessage {
   const t = messages.auth.security;
   const where = city ? fill(t.where, { device, city }) : device;
-  const subject = kind === "newDevice" ? fill(t.newDeviceSubject, { where }) : t.lockedSubject;
-  const intro = kind === "newDevice" ? fill(t.newDeviceIntro, { where }) : t.lockedIntro;
+  const subject = kind === "newDevice" ? fill(t.newDeviceSubject, { where }) : kind === "twoStepLocked" ? t.twoStepLockedSubject : t.lockedSubject;
+  const intro = kind === "newDevice" ? fill(t.newDeviceIntro, { where }) : kind === "twoStepLocked" ? t.twoStepLockedIntro : t.lockedIntro;
   const html = `<!doctype html><html lang="en"><body style="margin:0;background:#F6F8F5;font-family:-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;color:#0F1A14">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:32px 16px">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;background:#FFFFFF;border:1px solid #E2E8E3;border-radius:24px">

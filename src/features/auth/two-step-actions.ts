@@ -8,6 +8,9 @@ import { supabaseServer } from "@/lib/supabase/server";
 import { safeNext } from "./next-path";
 import { TWO_STEP_OFFERED_COOKIE } from "./pin-cookies";
 import { finishSignIn } from "./pin-session";
+import { sendCodeTo } from "./code-issue";
+import { checkAuthenticatorCode, twoStepLocked } from "./two-step-lock";
+import { realEmail } from "./phone-account";
 
 // D044 optional two-step sign-in for everyone (staff keep theirs in the console, required).
 
@@ -72,11 +75,21 @@ export async function verifyTwoStep(previous: CodeState, formData: FormData): Pr
   const { data: factors } = await supabase.auth.mfa.listFactors();
   const factor = factors?.totp.find((item) => item.status === "verified");
   if (!factor) redirect(next);
-  const { error } = await supabase.auth.mfa.challengeAndVerify({ factorId: factor.id, code });
-  if (error) return { status: error.status === 422 || error.code === "mfa_verification_failed" ? "wrong" : "error", attempt };
+  const { data: me } = await supabase.auth.getClaims();
+  const userId = me?.claims?.sub;
+  if (!userId) redirect("/auth?mode=signin");
+  const email = typeof me?.claims?.email === "string" ? me.claims.email : null;
+  // Five wrong codes in a row lock two-step sign-in until an email code (admin X00j).
+  const result = await checkAuthenticatorCode(userId, email, () => supabase.auth.mfa.challengeAndVerify({ factorId: factor.id, code }));
+  if (result === "locked") redirect(`/auth/two-step/locked?next=${encodeURIComponent(next)}`);
+  if (result !== "ok") return { status: result, attempt };
   const { data } = await supabase.auth.getClaims();
   const claims = data?.claims;
-  if (claims && typeof claims.session_id === "string") await finishSignIn(claims.sub, claims.session_id, typeof claims.email === "string" ? claims.email : null);
+  if (claims && typeof claims.session_id === "string") {
+    // The authenticator code was just given: that is also a fresh check for this session, and clears the tries.
+    await supabaseAdmin().rpc("record_fresh_check", { p_user: claims.sub, p_session: claims.session_id });
+    await finishSignIn(claims.sub, claims.session_id, typeof claims.email === "string" ? claims.email : null);
+  }
   redirect(next);
 }
 
@@ -110,4 +123,20 @@ export async function spendTwoStepBackup(previous: BackupState, formData: FormDa
   const c = fresh?.claims;
   if (c && typeof c.session_id === "string") await finishSignIn(c.sub, c.session_id, typeof c.email === "string" ? c.email : null);
   redirect(next);
+}
+
+export type UnlockCodeState = { status: "idle" | "rateLimited" | "error" };
+
+/** X00j "Send me the email code": the code that clears the lock, to the account's own email. */
+export async function sendTwoStepUnlockCode(_previous: UnlockCodeState, formData: FormData): Promise<UnlockCodeState> {
+  const next = safeNext(String(formData.get("next") ?? ""), await requestHome());
+  const { data } = await (await supabaseServer()).auth.getClaims();
+  const claims = data?.claims;
+  if (!claims) redirect("/auth?mode=signin");
+  if (!(await twoStepLocked(claims.sub))) redirect(`/auth/two-step?next=${encodeURIComponent(next)}`);
+  const email = realEmail(typeof claims.email === "string" ? claims.email : "");
+  if (!email) return { status: "error" };
+  const sent = await sendCodeTo(email, next);
+  if (sent !== "ok") return { status: sent };
+  redirect("/auth/code");
 }

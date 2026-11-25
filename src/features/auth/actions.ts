@@ -8,6 +8,7 @@ import { passesTurnstile, turnstileSiteKey } from "@/lib/turnstile";
 import { issueCode } from "./code-issue";
 import { safeNext } from "./next-path";
 import { signInOptions } from "./options";
+import { clearTwoStepLock } from "./two-step-lock";
 import { clearPendingCode, codeKey, readPendingCode, setPendingCode } from "./pending";
 import { codeExpired } from "./pending-seal";
 import { parseCode, parseDestination, type CodeChannel } from "./schema";
@@ -94,6 +95,11 @@ export async function verifyCode(previous: VerifyState, formData: FormData): Pro
   }
 
   await admin.rpc("auth_code_passed", { p_key: key });
+  // A confirmed email code is what opens a locked two-step sign-in (admin X00j). A PIN never does.
+  if (pending.channel === "email") {
+    const { data: me } = await supabase.auth.getClaims();
+    if (me?.claims?.sub) await clearTwoStepLock(me.claims.sub);
+  }
   // The screen shows the boxes turning green, then opens /auth/done, which clears the "code on its way"
   // cookie and goes to `next`. Clearing it here would re-render this page into a redirect too early.
   return { status: "ok", attempt };

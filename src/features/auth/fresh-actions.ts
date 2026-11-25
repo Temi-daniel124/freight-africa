@@ -5,6 +5,7 @@ import { supabaseServer } from "@/lib/supabase/server";
 import { issueCode } from "./code-issue";
 import { codeKey } from "./pending";
 import { realEmail } from "./phone-account";
+import { checkAuthenticatorCode } from "./two-step-lock";
 import { assertUnlocked, markUnlocked } from "./unlock";
 
 // D044 / SECURITY §3: the fresh check before a sensitive action (team roles now; bank account and
@@ -34,7 +35,7 @@ export async function sendFreshCode(): Promise<{ status: "sent" | "rateLimited" 
 }
 
 /** The code from the authenticator app or the email; five wrong email codes lock it, as at sign-in. */
-export async function confirmFresh(code: string): Promise<{ status: "ok" | "wrong" | "locked" | "error" }> {
+export async function confirmFresh(code: string): Promise<{ status: "ok" | "wrong" | "locked" | "twoStepLocked" | "error" }> {
   await assertUnlocked();
   if (!/^\d{6}$/.test(code)) return { status: "wrong" };
   const supabase = await supabaseServer();
@@ -46,11 +47,11 @@ export async function confirmFresh(code: string): Promise<{ status: "ok" | "wron
     const { data: me } = await supabase.auth.getClaims();
     const userId = me?.claims?.sub;
     if (!userId) return { status: "error" };
-    // Five wrong authenticator codes an hour lock the fresh check (security review).
-    const { data: allowed } = await supabaseAdmin().rpc("fresh_try", { p_user: userId });
-    if (allowed !== true) return { status: "locked" };
-    const { error } = await supabase.auth.mfa.challengeAndVerify({ factorId: factor.id, code });
-    if (error) return { status: "wrong" };
+    // Five wrong authenticator codes in a row lock two-step sign-in, here as at sign-in (admin X00j).
+    const email = typeof me?.claims?.email === "string" ? me.claims.email : null;
+    const result = await checkAuthenticatorCode(userId, email, () => supabase.auth.mfa.challengeAndVerify({ factorId: factor.id, code }));
+    if (result === "locked") return { status: "twoStepLocked" };
+    if (result !== "ok") return { status: result };
     return (await record()) ? { status: "ok" } : { status: "error" };
   }
   if (method !== "email") return { status: "error" };

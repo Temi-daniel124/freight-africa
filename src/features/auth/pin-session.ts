@@ -6,7 +6,7 @@ import { supabaseServer } from "@/lib/supabase/server";
 import { deviceContext, deviceHash, deviceId } from "./device";
 import { lockLinkToken } from "./lock-link";
 import { realEmail } from "./phone-account";
-import { securityEmail } from "./security-email";
+import { securityEmail, type SecurityEmailKind } from "./security-email";
 import { markUnlocked } from "./unlock";
 
 /**
@@ -43,7 +43,7 @@ export async function needsSecondStep(): Promise<boolean> {
 }
 
 /** Sends a security email (new device or PIN lock) to an account's real address; never fails the sign-in. */
-export async function sendSecurityEmail(userId: string, email: string | null | undefined, kind: "newDevice" | "locked", label?: string, city?: string) {
+export async function sendSecurityEmail(userId: string, email: string | null | undefined, kind: SecurityEmailKind, label?: string, city?: string) {
   const to = realEmail(email);
   if (!to) return;
   try {

@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Copy, KeyRound, TriangleAlert } from "lucide-react";
+import { Check, Copy, KeyRound, Lock, Mail, ShieldCheck, TriangleAlert } from "lucide-react";
 import { startTransition, useActionState, useEffect, useRef, useState, type ReactNode } from "react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { CodeInput } from "@/components/ui/code-input";
@@ -8,7 +8,7 @@ import { TextField } from "@/components/ui/field";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import messages from "@/messages/en.json";
-import { confirmTwoStep, skipTwoStep, startTwoStep, spendTwoStepBackup, verifyTwoStep, type BackupState, type CodeState, type ConfirmState, type EnrollStart } from "./two-step-actions";
+import { confirmTwoStep, sendTwoStepUnlockCode, skipTwoStep, startTwoStep, spendTwoStepBackup, verifyTwoStep, type BackupState, type CodeState, type ConfirmState, type EnrollStart, type UnlockCodeState } from "./two-step-actions";
 
 const t = messages.auth.twoStep;
 const s = messages.auth.staff;
@@ -186,6 +186,41 @@ export function VerifyTwoStep({ next }: { next: string }) {
       <Button variant="tertiary" size="text" className="self-start" onClick={() => setBackup(true)}>
         {t.useBackup}
       </Button>
+    </form>
+  );
+}
+
+/** X00j: five wrong authenticator codes in a row locked two-step sign-in; an email code opens it. */
+export function TwoStepLocked({ email, next, staff }: { email: string; next: string; staff: boolean }) {
+  const l = t.locked;
+  const [state, action, pending] = useActionState(sendTwoStepUnlockCode, { status: "idle" } satisfies UnlockCodeState);
+  const steps = [
+    { icon: Mail, text: l.stepEmail },
+    { icon: KeyRound, text: l.stepSignIn },
+    { icon: ShieldCheck, text: l.stepNotYou },
+  ];
+  return (
+    <form action={action} className="flex flex-col">
+      <span className="flex size-16 items-center justify-center rounded-tile bg-danger-100 text-danger">
+        <Lock aria-hidden className="size-[30px]" strokeWidth={1.8} />
+      </span>
+      <h1 className="mt-2 text-title-1 text-ink">{l.title}</h1>
+      <p className="mt-2 text-body text-ink-2">{l.lead.replace("{email}", email)}</p>
+      <ul className="mt-[18px] rounded-card border border-line bg-surface px-4 py-1">
+        {steps.map(({ icon: Icon, text }) => (
+          <li key={text} className="flex items-center gap-3 border-b border-line py-3 text-label text-ink last:border-b-0">
+            <Icon aria-hidden className="size-[18px] shrink-0 text-primary" strokeWidth={1.8} />
+            <span>{text}</span>
+          </li>
+        ))}
+      </ul>
+      <input type="hidden" name="next" value={next} />
+      {state.status === "rateLimited" ? <div className="mt-4"><ErrorLine>{l.rateLimited}</ErrorLine></div> : null}
+      {state.status === "error" ? <div className="mt-4"><ErrorLine>{t.failed}</ErrorLine></div> : null}
+      <Button type="submit" loading={pending} loadingLabel={l.sending} loadingText className="mt-[18px] w-full">
+        {l.send}
+      </Button>
+      {staff ? <p className="mt-3 text-center text-caption text-ink-3">{l.staffNote}</p> : null}
     </form>
   );
 }
