@@ -25,14 +25,14 @@ const iconTones: Record<string, string> = {
 function SectionHead({ title, action }: { title: string; action?: ReactNode }) {
   return (
     <div className="mb-3 flex items-center justify-between">
-      <h2 className="text-body-lg leading-5.5 font-extrabold tracking-close text-ink">{title}</h2>
+      <h2 className="text-body-lg leading-5.5 font-semibold tracking-close text-ink">{title}</h2>
       {action}
     </div>
   );
 }
 
 function Ref({ children }: { children: ReactNode }) {
-  return <span className="tabular font-bold tracking-kv">{children}</span>;
+  return <span className="tabular font-semibold tracking-kv">{children}</span>;
 }
 
 /** Puts the trip reference into a sentence ("{ref} is waiting for payment") in its plate style. */
@@ -57,7 +57,7 @@ function BookCard({ config, from, className }: { config: ShellConfig; from?: str
   ];
   return (
     <section className={cn("rounded-tile bg-surface p-4.5 shadow-raised lg:rounded-card lg:p-6", className)}>
-      <h2 className="text-body-lg leading-5.5 font-extrabold tracking-close text-ink">{t.bookTitle}</h2>
+      <h2 className="text-body-lg leading-5.5 font-semibold tracking-close text-ink">{t.bookTitle}</h2>
       <p className="mt-1 text-label font-normal tracking-normal text-ink-2">{t.bookText}</p>
       <div className="mt-4 mb-3 grid grid-cols-2 gap-2 lg:grid-cols-1">
         {fields.map((field) => (
@@ -146,7 +146,7 @@ export function ShipperHomeReturning({ config, data }: { config: ShellConfig; da
           <SectionHead
             title={t.liveTrips}
             action={
-              <Link href={trips} className="text-label font-bold tracking-normal text-green-700 hover:underline">
+              <Link href={trips} className="text-label font-semibold tracking-normal text-green-700 hover:underline">
                 {t.seeAllTrips}
               </Link>
             }
@@ -172,7 +172,7 @@ export function ShipperHomeReturning({ config, data }: { config: ShellConfig; da
                       <Ref>{trip.ref}</Ref>
                     </td>
                     <td className="px-5 py-4">
-                      <span className="font-bold">{trip.route}</span>
+                      <span className="font-semibold">{trip.route}</span>
                       <span className="mt-0.5 block text-caption leading-3.75 font-medium tracking-normal text-ink-3">{trip.sub}</span>
                     </td>
                     <td className="px-5 py-4">
@@ -184,7 +184,7 @@ export function ShipperHomeReturning({ config, data }: { config: ShellConfig; da
                       {trip.next}
                       <span className="mt-0.5 block text-caption leading-3.75 font-medium tracking-normal text-ink-3">{trip.nextSub}</span>
                     </td>
-                    <td className="tabular px-5 py-4 text-right font-bold">
+                    <td className="tabular px-5 py-4 text-right font-semibold">
                       <span className="inline-flex items-center gap-1.5">
                         {trip.locked ? <Lock aria-hidden className="size-3.5 text-green-700" strokeWidth={1.75} /> : null}
                         {trip.held}
@@ -207,9 +207,9 @@ export function ShipperHomeReturning({ config, data }: { config: ShellConfig; da
                       {trip.status}
                     </StatusChip>
                   </div>
-                  <p className="mt-2 text-body-lg leading-5.5 font-extrabold tracking-close text-ink">{trip.route}</p>
+                  <p className="mt-2 text-body-lg leading-5.5 font-semibold tracking-close text-ink">{trip.route}</p>
                   <p className="mt-1 text-label leading-4 font-normal tracking-normal text-ink-2">{trip.phoneNext}</p>
-                  <p className="tabular mt-3 flex items-center gap-1.5 border-t border-line pt-3 text-label leading-4 font-bold tracking-normal text-ink">
+                  <p className="tabular mt-3 flex items-center gap-1.5 border-t border-line pt-3 text-label leading-4 font-semibold tracking-normal text-ink">
                     <Lock aria-hidden className="size-4 text-green-700" strokeWidth={1.75} />
                     {trip.held} {trip.heldSub}
                   </p>
@@ -227,9 +227,9 @@ export function ShipperHomeReturning({ config, data }: { config: ShellConfig; da
             {data.again.map((trip) => (
               <li key={trip.route} className="w-55 shrink-0">
                 <Link href={pageHref(config, "book")} className="block rounded-tray bg-surface px-4 py-3.5 shadow-raised">
-                  <b className="block text-body leading-4.75 font-bold text-ink">{trip.route}</b>
+                  <b className="block text-body leading-4.75 font-semibold text-ink">{trip.route}</b>
                   <small className="mt-0.5 block text-caption leading-3.75 font-medium tracking-normal text-ink-3">{trip.detail}</small>
-                  <span className="tabular mt-2.5 block text-label font-bold tracking-normal text-green-700">{t.lastTime.replace("{amount}", trip.amount)}</span>
+                  <span className="tabular mt-2.5 block text-label font-semibold tracking-normal text-green-700">{t.lastTime.replace("{amount}", trip.amount)}</span>
                 </Link>
               </li>
             ))}

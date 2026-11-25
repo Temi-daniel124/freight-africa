@@ -13,7 +13,7 @@ export function StaffCard({ eyebrow, title, text, children }: StaffCardProps) {
       <div className="flex w-full flex-1 flex-col gap-6 bg-surface px-5 pt-8 pb-10 lg:max-w-120 lg:flex-none lg:rounded-card lg:border lg:border-line lg:p-10 lg:shadow-raised">
         <div className="flex flex-col gap-3">
           <Logo variant="primary-green" className="h-8 self-start" priority />
-          <p className="text-caption font-bold tracking-caps text-ink-3 uppercase">{eyebrow}</p>
+          <p className="text-caption font-semibold tracking-caps text-ink-3 uppercase">{eyebrow}</p>
         </div>
         <div className="flex flex-col gap-2">
           <h1 className="text-title-1 text-ink">{title}</h1>

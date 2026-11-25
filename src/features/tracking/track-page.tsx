@@ -79,7 +79,7 @@ export async function TrackPage({
       </section>
       {live.length ? (
         <section>
-          <h2 className="mb-3 text-body-lg font-extrabold text-ink">
+          <h2 className="mb-3 text-body-lg font-semibold text-ink">
             {t.live}
           </h2>
           <ul className="overflow-hidden rounded-tile bg-surface shadow-raised lg:rounded-card">
@@ -93,7 +93,7 @@ export async function TrackPage({
                     <Truck aria-hidden className="size-5" strokeWidth={1.75} />
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="tabular block text-body-sm font-bold whitespace-nowrap text-ink">
+                    <span className="tabular block text-body-sm font-semibold whitespace-nowrap text-ink">
                       {row.ref}
                     </span>
                     <span className="block truncate text-caption font-medium whitespace-nowrap text-ink-3">

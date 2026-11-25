@@ -129,7 +129,7 @@ export function HeroBar({ t, corridors, preview }: HeroBarProps) {
         >
           <span className="text-caption font-semibold tracking-normal text-ink-3">{t.phoneLabel}</span>
           <span className="flex items-center text-control font-semibold">
-            <span className="tabular mr-0.5 border-r border-line pr-2.5 font-bold text-ink-2">+234</span>
+            <span className="tabular mr-0.5 border-r border-line pr-2.5 font-semibold text-ink-2">+234</span>
             <input
               ref={phoneRef}
               id="hero-phone"
@@ -155,7 +155,7 @@ export function HeroBar({ t, corridors, preview }: HeroBarProps) {
           disabled={!online}
           loading={sending}
           loadingLabel={t.sending}
-          className="h-auto min-h-14 rounded-field px-7 text-control font-bold hover:translate-y-0 lg:min-h-15"
+          className="h-auto min-h-14 rounded-field px-7 text-control font-semibold hover:translate-y-0 lg:min-h-15"
         >
           {t.submit}
           <ArrowRight aria-hidden className="size-4.5" strokeWidth={1.75} />

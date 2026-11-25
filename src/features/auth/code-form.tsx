@@ -215,7 +215,7 @@ export function CodeForm({ t, channel, to, length, expiresInMs = null, preview }
 
       {blocked ? (
         // With no tries left, or the code expired, getting a new code is the one thing to do.
-        <Button className="mt-6 w-full text-control font-bold" disabled={!online} loading={resending} loadingLabel={t.checking} onClick={resendNow}>
+        <Button className="mt-6 w-full text-control font-semibold" disabled={!online} loading={resending} loadingLabel={t.checking} onClick={resendNow}>
           {t.resend}
         </Button>
       ) : done ? null : (

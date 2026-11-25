@@ -19,7 +19,7 @@ export async function SetupChecklist({ role }: { role: SetupRole }) {
   return (
     <section aria-labelledby="setup-title" className="rounded-tile bg-surface p-4.5 shadow-raised lg:rounded-card lg:p-6">
       <div className="flex items-baseline justify-between gap-3">
-        <h2 id="setup-title" className="text-body-lg leading-5.5 font-extrabold tracking-close text-ink">
+        <h2 id="setup-title" className="text-body-lg leading-5.5 font-semibold tracking-close text-ink">
           {t.title}
         </h2>
         <span className="shrink-0 text-label text-ink-3 tabular">
@@ -38,7 +38,7 @@ export async function SetupChecklist({ role }: { role: SetupRole }) {
               <Link href={step.href} className="flex min-h-12 items-center gap-3 py-2.5 hover:text-green-700">
                 <span
                   className={cn(
-                    "flex size-6 shrink-0 items-center justify-center rounded-pill text-micro font-bold tabular",
+                    "flex size-6 shrink-0 items-center justify-center rounded-pill text-micro font-semibold tabular",
                     step.done ? "bg-green-700 text-white" : isNext ? "border-2 border-green-700 text-green-700" : "border border-line-strong text-ink-3",
                   )}
                 >

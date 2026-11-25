@@ -23,7 +23,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
         <div className="mx-auto mt-2 w-full max-w-56 lg:my-auto lg:max-w-120">
           <SafeTripScene />
         </div>
-        <p className="hidden text-title-3 font-bold text-balance text-green-900 lg:block">{messages.welcome.title}</p>
+        <p className="hidden text-title-3 font-semibold text-balance text-green-900 lg:block">{messages.welcome.title}</p>
       </aside>
 
       <section className="relative -mt-7 flex flex-col rounded-t-sheet bg-surface px-5 pt-8 lg:mt-0 lg:rounded-none lg:bg-transparent lg:px-12 lg:pt-2">

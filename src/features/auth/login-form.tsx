@@ -57,7 +57,7 @@ export function LoginForm({ next }: { next: string }) {
             {error}
           </p>
         ) : null}
-        <Button type="submit" className="mt-4 w-full text-control font-bold" disabled={!online} loading={pending} loadingLabel={t.continuing}>
+        <Button type="submit" className="mt-4 w-full text-control font-semibold" disabled={!online} loading={pending} loadingLabel={t.continuing}>
           {t.continue}
           <ArrowRight aria-hidden className="size-4.5" strokeWidth={1.75} />
         </Button>

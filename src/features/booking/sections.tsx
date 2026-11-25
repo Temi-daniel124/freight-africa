@@ -147,7 +147,7 @@ export async function PaymentsPage({ viewer }: { viewer: Promise<Viewer> }) {
               className="flex min-h-16 items-center gap-3 border-t border-line px-4 py-3 first:border-t-0 lg:px-5"
             >
               <span className="min-w-0 flex-1">
-                <span className="tabular block text-body-sm font-bold whitespace-nowrap text-ink">
+                <span className="tabular block text-body-sm font-semibold whitespace-nowrap text-ink">
                   {load?.ref}
                 </span>
                 <span className="block truncate text-caption font-medium text-ink-3">
@@ -155,7 +155,7 @@ export async function PaymentsPage({ viewer }: { viewer: Promise<Viewer> }) {
                   {lagosDate.format(new Date(p.received_at ?? p.created_at))}
                 </span>
               </span>
-              <span className="tabular shrink-0 text-body-sm font-bold text-ink">
+              <span className="tabular shrink-0 text-body-sm font-semibold text-ink">
                 {naira(Number(p.amount_kobo))}
               </span>
               <StatusChip tone={done ? "success" : "warning"}>
@@ -176,7 +176,7 @@ export async function PaymentsPage({ viewer }: { viewer: Promise<Viewer> }) {
       </ul>
       {refunds?.length ? (
         <section>
-          <h2 className="mb-3 text-body-lg font-extrabold text-ink">
+          <h2 className="mb-3 text-body-lg font-semibold text-ink">
             {t.refunds}
           </h2>
           <ul className="overflow-hidden rounded-tile bg-surface shadow-raised lg:rounded-card">
@@ -186,14 +186,14 @@ export async function PaymentsPage({ viewer }: { viewer: Promise<Viewer> }) {
                 className="flex min-h-16 items-center gap-3 border-t border-line px-4 py-3 first:border-t-0 lg:px-5"
               >
                 <span className="min-w-0 flex-1">
-                  <span className="tabular block text-body-sm font-bold whitespace-nowrap text-ink">
+                  <span className="tabular block text-body-sm font-semibold whitespace-nowrap text-ink">
                     {(r.load as unknown as { ref: string } | null)?.ref}
                   </span>
                   <span className="block truncate text-caption font-medium text-ink-3">
                     {r.reason}
                   </span>
                 </span>
-                <span className="tabular shrink-0 text-body-sm font-bold text-ink">
+                <span className="tabular shrink-0 text-body-sm font-semibold text-ink">
                   {naira(Number(r.amount_kobo))}
                 </span>
                 <StatusChip tone={r.status === "paid" ? "success" : "info"}>
@@ -297,7 +297,7 @@ export async function EarningsPage({ viewer }: { viewer: Promise<Viewer> }) {
     <div className="mx-auto flex w-full max-w-[880px] flex-col gap-5">
       <section className="rounded-tile bg-green-900 p-5 text-white shadow-raised lg:rounded-card lg:p-6">
         <p className="text-body-sm text-white/75">{t.month}</p>
-        <p className="tabular text-[32px] leading-10 font-extrabold">
+        <p className="tabular text-[32px] leading-10 font-semibold">
           {naira(month)}
         </p>
       </section>
@@ -311,7 +311,7 @@ export async function EarningsPage({ viewer }: { viewer: Promise<Viewer> }) {
                 className="flex min-h-16 items-center gap-3 border-t border-line px-4 py-3 hover:bg-paper lg:px-5"
               >
                 <span className="min-w-0 flex-1">
-                  <span className="block text-body-sm font-bold text-ink">
+                  <span className="block text-body-sm font-semibold text-ink">
                     {t[p.kind as "advance"] ?? p.kind}
                   </span>
                   <span className="tabular block truncate text-caption font-medium whitespace-nowrap text-ink-3">
@@ -319,7 +319,7 @@ export async function EarningsPage({ viewer }: { viewer: Promise<Viewer> }) {
                     {lagosDate.format(new Date(p.paid_at ?? p.created_at))}
                   </span>
                 </span>
-                <span className="tabular shrink-0 text-body-sm font-bold text-ink">
+                <span className="tabular shrink-0 text-body-sm font-semibold text-ink">
                   {naira(Number(p.amount_kobo))}
                 </span>
                 <StatusChip tone={p.status === "paid" ? "success" : "info"}>

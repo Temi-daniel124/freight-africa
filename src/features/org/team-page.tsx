@@ -86,7 +86,7 @@ export function TeamView({ orgId: org, orgName, grantable, members, invites }: T
           const manageable = grantable.includes(role) || member.isMe;
           return (
             <li key={member.userId} className="grid grid-cols-row items-center gap-3 border-t border-line px-4 py-3 first:border-t-0 lg:px-5 lg:py-3.5">
-              <span aria-hidden className="grid size-9 place-items-center rounded-pill bg-green-100 text-label font-bold text-green-700 lg:size-10">
+              <span aria-hidden className="grid size-9 place-items-center rounded-pill bg-green-100 text-label font-semibold text-green-700 lg:size-10">
                 {initials(member.name ?? "")}
               </span>
               <div className="min-w-0">
@@ -114,7 +114,7 @@ export function TeamView({ orgId: org, orgName, grantable, members, invites }: T
 
       {invites.length ? (
         <section>
-          <h2 className="mb-3 text-body-lg leading-5.5 font-extrabold tracking-close text-ink">{t.pending}</h2>
+          <h2 className="mb-3 text-body-lg leading-5.5 font-semibold tracking-close text-ink">{t.pending}</h2>
           <ul className="overflow-hidden rounded-tile bg-surface shadow-raised lg:rounded-card">
             {invites.map((invite) => {
               const role = invite.role;
@@ -128,7 +128,7 @@ export function TeamView({ orgId: org, orgName, grantable, members, invites }: T
                   </div>
                   <form action={revokeInvite}>
                     <input type="hidden" name="invite" value={invite.id} />
-                    <button type="submit" className="min-h-11 rounded-pill px-3 py-2 text-label font-bold tracking-normal text-danger hover:bg-danger-100">
+                    <button type="submit" className="min-h-11 rounded-pill px-3 py-2 text-label font-semibold tracking-normal text-danger hover:bg-danger-100">
                       {t.revoke}
                     </button>
                   </form>

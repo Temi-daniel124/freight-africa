@@ -33,7 +33,7 @@ function Tile({
       href={href}
       className="relative flex h-36 overflow-hidden rounded-tile bg-surface p-4 shadow-raised transition-transform active:scale-press lg:h-44 lg:rounded-card lg:p-5"
     >
-      <span className="relative z-1 max-w-[9ch] text-body-lg leading-tight font-extrabold text-ink lg:text-title-3">
+      <span className="relative z-1 max-w-[9ch] text-body-lg leading-tight font-semibold text-ink lg:text-title-3">
         {title}
       </span>
       <span aria-hidden className="absolute -right-6 -bottom-3 w-[70%]">
@@ -55,7 +55,7 @@ function Section({
   return (
     <section className="flex min-w-0 flex-col gap-3">
       <div className="flex items-center justify-between gap-3">
-        <h2 className="text-body-lg font-extrabold text-ink">{title}</h2>
+        <h2 className="text-body-lg font-semibold text-ink">{title}</h2>
         {action}
       </div>
       {children}

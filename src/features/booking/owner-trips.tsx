@@ -97,7 +97,7 @@ export async function OwnerTripsPage({ viewer }: { viewer: Promise<Viewer> }) {
             className="flex min-h-18 items-center gap-3 border-t border-line px-4 py-3 hover:bg-paper lg:px-5"
           >
             <span className="min-w-0 flex-1">
-              <span className="tabular block text-body-sm font-bold whitespace-nowrap text-ink">
+              <span className="tabular block text-body-sm font-semibold whitespace-nowrap text-ink">
                 {r.ref}
               </span>
               <span className="block truncate text-caption font-medium whitespace-nowrap text-ink-3">
@@ -155,7 +155,7 @@ export async function OwnerTripPage({ id }: { id: string }) {
       <section className="rounded-tile bg-surface p-5 shadow-raised lg:rounded-card lg:p-6">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <h1 className="tabular text-title-2 font-extrabold whitespace-nowrap text-ink">
+            <h1 className="tabular text-title-2 font-semibold whitespace-nowrap text-ink">
               {r.ref}
             </h1>
             <p className="truncate text-body-sm whitespace-nowrap text-ink-2">

@@ -33,7 +33,7 @@ function links(config: ShellConfig, items: ShellConfig["tabs"], badgeHome = fals
 
 function Avatar({ text, src, className }: { text: string; src?: string | null; className?: string }) {
   return (
-    <span className={cn("grid size-9 shrink-0 place-items-center overflow-hidden rounded-pill bg-green-100 text-label font-bold text-green-700", className)}>
+    <span className={cn("grid size-9 shrink-0 place-items-center overflow-hidden rounded-pill bg-green-100 text-label font-semibold text-green-700", className)}>
       {/* eslint-disable-next-line @next/next/no-img-element -- small local 3D faces (D045) */}
       {src ? <img src={src} alt="" className="size-full object-cover" /> : text}
     </span>
@@ -127,7 +127,7 @@ async function Greeting({ viewer, greeting, phone }: { viewer: Promise<Viewer>; 
     return (
       <p className="min-w-0 flex-1 text-body font-medium text-ink-2">
         {hello}
-        {v.firstName ? <b className="block truncate text-body-lg leading-5 font-extrabold text-ink">{v.firstName}</b> : null}
+        {v.firstName ? <b className="block truncate text-body-lg leading-5 font-semibold text-ink">{v.firstName}</b> : null}
       </p>
     );
   }
@@ -136,7 +136,7 @@ async function Greeting({ viewer, greeting, phone }: { viewer: Promise<Viewer>; 
       {hello}
       {v.firstName ? (
         <>
-          , <b className="font-extrabold text-ink">{v.firstName}</b>
+          , <b className="font-semibold text-ink">{v.firstName}</b>
         </>
       ) : null}
     </p>
@@ -156,7 +156,7 @@ function Bell_({ href, unread, size }: { href: string; unread: number; size: "md
     >
       <Bell aria-hidden className="size-5" strokeWidth={1.75} />
       {unread ? (
-        <span aria-hidden className="tabular absolute -top-1 -right-1 grid h-4.5 min-w-4.5 place-items-center rounded-pill bg-danger px-1.25 text-micro font-bold text-white ring-2 ring-surface">
+        <span aria-hidden className="tabular absolute -top-1 -right-1 grid h-4.5 min-w-4.5 place-items-center rounded-pill bg-danger px-1.25 text-micro font-semibold text-white ring-2 ring-surface">
           {unread}
         </span>
       ) : null}
@@ -186,7 +186,7 @@ async function AccountMenu({ viewer, settingsHref, id, phone }: { viewer: Promis
           phone ? "size-11 justify-center" : "h-11 min-w-0 gap-2.5 border border-line pr-3 pl-1.5",
         )}
       >
-        <Avatar text={initials(v.fullName)} src={v.avatar} className={phone ? undefined : "size-8 text-caption font-bold tracking-normal"} />
+        <Avatar text={initials(v.fullName)} src={v.avatar} className={phone ? undefined : "size-8 text-caption font-semibold tracking-normal"} />
         {phone ? null : (
           <>
             <span className="max-w-40 min-w-0 truncate">{v.account}</span>
@@ -222,7 +222,7 @@ async function AccountMenu({ viewer, settingsHref, id, phone }: { viewer: Promis
                 <form action={switchAccount}>
                   <input type="hidden" name="org" value={account.orgId} />
                   <button type="submit" aria-current={account.active ? "true" : undefined} className="flex min-h-11 w-full items-center gap-3 rounded-nav px-3 py-2 text-left hover:bg-paper">
-                    <Avatar text={initials(account.name)} className="size-8 text-caption font-bold tracking-normal" />
+                    <Avatar text={initials(account.name)} className="size-8 text-caption font-semibold tracking-normal" />
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-body-sm">{account.name}</span>
                       <span className="block truncate text-caption font-medium tracking-normal text-ink-3">{account.label}</span>
@@ -271,7 +271,7 @@ export function ShellTopBar({ config, viewer, title, greeting }: TopBarProps) {
             <Greeting viewer={viewer} greeting={greeting} />
           </Suspense>
         ) : (
-          <h1 className="min-w-0 shrink truncate text-title-2 font-extrabold tracking-close text-ink">{title}</h1>
+          <h1 className="min-w-0 shrink truncate text-title-2 font-semibold tracking-close text-ink">{title}</h1>
         )}
         {/* Fix 2a: the search pill shrinks first (240 px at least); narrower than that it is an icon button. */}
         <Link href={pageHref(config, "search")} aria-label={t.search} className="ml-auto grid size-11 shrink-0 place-items-center rounded-pill border border-line bg-paper text-ink-2 xl:hidden">
@@ -306,7 +306,7 @@ export function ShellTopBar({ config, viewer, title, greeting }: TopBarProps) {
             <Greeting viewer={viewer} greeting={greeting} phone />
           </Suspense>
         ) : (
-          <h1 className="min-w-0 flex-1 truncate text-lead leading-6 font-extrabold tracking-close text-ink">{title}</h1>
+          <h1 className="min-w-0 flex-1 truncate text-lead leading-6 font-semibold tracking-close text-ink">{title}</h1>
         )}
         <Suspense fallback={<Bell_ href={bell} unread={0} size="sm" />}>
           <UnreadBell viewer={viewer} href={bell} size="sm" />

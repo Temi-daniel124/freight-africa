@@ -24,7 +24,7 @@ export function Banner({ icon: Icon, title, children, className }: BannerProps) 
         <Icon className="size-5" strokeWidth={1.75} />
       </span>
       <div className="min-w-0">
-        <b className="block text-body font-bold text-ink">{title}</b>
+        <b className="block text-body font-semibold text-ink">{title}</b>
         {children ? <p className="mt-0.5 text-body-sm font-normal text-ink-2">{children}</p> : null}
       </div>
     </div>
@@ -44,4 +44,4 @@ export function Toast({ children, action, className }: ToastProps) {
 }
 
 export const toastClasses = "inline-flex items-center gap-4 rounded-pill bg-ink py-3 pr-3 pl-5 text-body-sm text-white shadow-toast";
-export const toastActionClasses = "rounded-pill px-2.5 py-1.5 text-body-sm font-bold text-green-300 hover:bg-white/10";
+export const toastActionClasses = "rounded-pill px-2.5 py-1.5 text-body-sm font-semibold text-green-300 hover:bg-white/10";

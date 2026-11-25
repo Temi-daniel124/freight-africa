@@ -44,7 +44,7 @@ async function Check({ purpose }: { purpose: CheckPurpose }) {
     <div className="flex flex-col gap-5">
       {latest?.status === "declined" ? (
         <p role="status" className="rounded-inner bg-warning-100 px-4 py-3 text-body-sm text-warning">
-          <b className="block font-bold">{t.declined.title}</b>
+          <b className="block font-semibold">{t.declined.title}</b>
           {t.declined.text.replace("{reason}", latest.decision_reason ?? "")}
         </p>
       ) : null}

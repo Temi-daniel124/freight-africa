@@ -48,7 +48,7 @@ function Details({ d }: { d: TrackData }) {
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <p className="text-caption text-white/60">{messages.trips.details}</p>
-          <p className="tabular text-title-2 font-extrabold whitespace-nowrap">
+          <p className="tabular text-title-2 font-semibold whitespace-nowrap">
             {d.ref}
           </p>
         </div>
@@ -91,7 +91,7 @@ function Details({ d }: { d: TrackData }) {
         <TruckGraphic kind={truckKind(d.truckTypeCode)} load={d.load} />
       </div>
       {d.heldKobo ? (
-        <p className="text-body font-bold text-green-300">
+        <p className="text-body font-semibold text-green-300">
           {t.held.replace("{amount}", formatNaira(d.heldKobo / 100))}
         </p>
       ) : null}
@@ -120,7 +120,7 @@ function DriverCard({ d }: { d: TrackData }) {
         size={44}
       />
       <div className="min-w-0 flex-1">
-        <p className="truncate text-body font-bold">{d.driver.firstName}</p>
+        <p className="truncate text-body font-semibold">{d.driver.firstName}</p>
         <p className="tabular truncate text-caption text-ink-3">{d.plate}</p>
       </div>
       <Sheet
@@ -141,7 +141,7 @@ function DriverCard({ d }: { d: TrackData }) {
             <>
               <a
                 href={`tel:${phone}`}
-                className="inline-flex h-12 w-full items-center justify-center rounded-button bg-green-700 px-5 font-bold text-white sm:w-auto"
+                className="inline-flex h-12 w-full items-center justify-center rounded-button bg-green-700 px-5 font-semibold text-white sm:w-auto"
               >
                 {t.callAction.replace("{phone}", shown)}
               </a>
@@ -167,7 +167,7 @@ function DriverCard({ d }: { d: TrackData }) {
         }
       >
         {shown ? (
-          <p className="tabular text-title-3 font-extrabold text-ink">
+          <p className="tabular text-title-3 font-semibold text-ink">
             {shown}
           </p>
         ) : null}

@@ -34,7 +34,7 @@ async function Receipt({ params }: { params: Promise<{ id: string }> }) {
       <header className="flex items-start justify-between gap-4 border-b border-line pb-5">
         <Logo variant="primary-green" className="h-8 w-auto" />
         <div className="text-right">
-          <h1 className="text-title-2 font-extrabold text-ink">{t.receiptTitle}</h1>
+          <h1 className="text-title-2 font-semibold text-ink">{t.receiptTitle}</h1>
           <p className="tabular text-body-sm text-ink-2">{data.id.slice(0, 8).toUpperCase()}</p>
         </div>
       </header>
@@ -60,8 +60,8 @@ async function Receipt({ params }: { params: Promise<{ id: string }> }) {
           </>
         ) : null}
         <div className="mt-1 flex justify-between border-t border-line pt-2 text-body">
-          <dt className="font-bold">{t.paid}</dt>
-          <dd className="tabular font-extrabold text-green-900">{naira(Number(data.received_kobo))}</dd>
+          <dt className="font-semibold">{t.paid}</dt>
+          <dd className="tabular font-semibold text-green-900">{naira(Number(data.received_kobo))}</dd>
         </div>
       </dl>
       <p className="mt-5 text-caption text-ink-3">{messages.booking.heldNote}</p>

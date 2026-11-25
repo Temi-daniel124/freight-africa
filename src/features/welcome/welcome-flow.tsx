@@ -87,7 +87,7 @@ export function WelcomeFlow() {
                 <Picture index={index} />
               </m.div>
               <div className="flex flex-col gap-2 pb-6" aria-live="polite">
-                <h1 className="text-[28px] leading-[34px] font-extrabold text-balance text-ink">{slide.title}</h1>
+                <h1 className="text-[28px] leading-[34px] font-semibold text-balance text-ink">{slide.title}</h1>
                 <p className="text-body text-ink-2">{slide.text}</p>
               </div>
             </m.div>
@@ -102,7 +102,7 @@ export function WelcomeFlow() {
           </div>
           {/* The shaped Next button: a deep green quarter-round block holding the number. */}
           <button type="button" onClick={() => go(index + 1)} aria-label={index === slides.length - 1 ? t.start : t.next} className="relative grid h-24 w-28 place-items-center rounded-tl-[56px] bg-green-900 text-white active:scale-press">
-            <span className="grid size-14 place-items-center overflow-hidden rounded-full bg-white text-title-2 font-extrabold text-green-900">
+            <span className="grid size-14 place-items-center overflow-hidden rounded-full bg-white text-title-2 font-semibold text-green-900">
               <AnimatePresence mode="popLayout" initial={false}>
                 <m.span key={index === slides.length - 1 ? "arrow" : index} initial={{ y: 18, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -18, opacity: 0 }} transition={{ duration: 0.18 }} className="block">
                   {index === slides.length - 1 ? <ArrowRight aria-hidden className="size-6" strokeWidth={2} /> : index + 1}
@@ -124,7 +124,7 @@ export function WelcomeScreen() {
         <header className="flex h-16 items-center">
           <Logo variant="primary-green" className="h-7 w-auto" priority />
         </header>
-        <h1 className="mt-2 text-[28px] leading-[34px] font-extrabold text-balance text-ink">{t.title}</h1>
+        <h1 className="mt-2 text-[28px] leading-[34px] font-semibold text-balance text-ink">{t.title}</h1>
         <div className="flex flex-1 items-center justify-center py-4">
           <SafeTripScene className="max-w-80" />
         </div>

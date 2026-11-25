@@ -15,7 +15,7 @@ function Groups({ base, page }: { base: string; page: StaffPage }) {
     <div className="flex flex-col gap-4">
       {staffNav.map((group, index) => (
         <div key={group.group ?? index}>
-          {group.group ? <p className="mb-1 px-3 text-caption font-bold tracking-caps text-ink-3 uppercase">{t.groups[group.group]}</p> : null}
+          {group.group ? <p className="mb-1 px-3 text-caption font-semibold tracking-caps text-ink-3 uppercase">{t.groups[group.group]}</p> : null}
           <SidebarLinks base={base} current={`${base}/${page}`} items={group.items.map((item) => ({ href: `${base}/${item.page}`, label: t.pages[item.page], icon: item.icon }))} />
         </div>
       ))}
@@ -52,7 +52,7 @@ export function StaffShell({ base, page, person, children }: StaffShellProps) {
           <button type="button" popoverTarget="staff-menu" aria-label={messages.site.nav.menu} className="grid size-10 place-items-center rounded-pill border border-line text-ink-2 lg:hidden">
             <Menu aria-hidden className="size-5" strokeWidth={1.75} />
           </button>
-          <h1 className="min-w-0 flex-1 truncate text-lead leading-6 font-extrabold tracking-close text-ink lg:flex-none lg:text-title-2 lg:font-extrabold">{t.pages[page]}</h1>
+          <h1 className="min-w-0 flex-1 truncate text-lead leading-6 font-semibold tracking-close text-ink lg:flex-none lg:text-title-2 lg:font-semibold">{t.pages[page]}</h1>
           <Link href={`${base}/overview`} className="mx-auto hidden h-11 max-w-130 flex-1 items-center gap-2.5 rounded-pill border border-line bg-paper px-4 text-body-sm font-normal text-ink-3 lg:flex">
             <Search aria-hidden className="size-5 shrink-0" strokeWidth={1.75} />
             <span className="truncate">{t.search}</span>

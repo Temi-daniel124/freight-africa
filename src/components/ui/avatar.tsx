@@ -11,7 +11,7 @@ export function initialsOf(name: string) {
 export function Avatar({ name, src, size = 40, className }: { name: string; src?: string | null; size?: number; className?: string }) {
   return (
     <span
-      className={cn("inline-grid shrink-0 place-items-center overflow-hidden rounded-full border border-line bg-green-50 font-bold text-green-800", className)}
+      className={cn("inline-grid shrink-0 place-items-center overflow-hidden rounded-full border border-line bg-green-50 font-semibold text-green-800", className)}
       style={{ width: size, height: size, fontSize: Math.round(size * 0.38) }}
     >
       {src ? (

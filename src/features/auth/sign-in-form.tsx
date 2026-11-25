@@ -139,7 +139,7 @@ export function SignInForm({ t, options, next, googleFailed, turnstileSiteKey, p
         {turnstile.field}
         <Button
           type="submit"
-          className="mt-4 w-full text-control font-bold"
+          className="mt-4 w-full text-control font-semibold"
           disabled={!online}
           loading={pending || turnstile.holding || preview?.sending}
           loadingLabel={t.sending}

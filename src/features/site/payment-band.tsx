@@ -27,7 +27,7 @@ export function PaymentBand() {
 
         <div aria-hidden className="rounded-card bg-surface p-5 text-ink lg:p-7">
           <div className="mb-2 flex items-center justify-between border-b border-line pb-5">
-            <b className="text-control leading-5.25 font-bold">{t.card}</b>
+            <b className="text-control leading-5.25 font-semibold">{t.card}</b>
             <span className="inline-flex h-6.5 items-center rounded-pill bg-info-100 px-2.5 text-caption font-semibold tracking-normal text-info">{t.status}</span>
           </div>
           {t.stops.map((stop, index) => {
@@ -40,7 +40,7 @@ export function PaymentBand() {
                   <Icon className="size-5" strokeWidth={1.75} />
                 </span>
                 <div>
-                  <h3 className="flex items-center gap-2.5 text-control leading-5.5 font-bold">
+                  <h3 className="flex items-center gap-2.5 text-control leading-5.5 font-semibold">
                     {stop.stop}
                     <span className={cn("rounded-pill px-2.5 py-0.75 text-caption leading-5.5 font-semibold tracking-normal", next ? "bg-paper text-ink-2" : "bg-green-50 text-green-700")}>
                       {stop.label}

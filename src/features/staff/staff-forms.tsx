@@ -141,7 +141,7 @@ function BackupCodes({ codes }: { codes: string[] }) {
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-col gap-2 border-t border-line pt-5">
-        <p className="text-caption font-bold tracking-caps text-ink-3 uppercase">{t.setup.codesStep}</p>
+        <p className="text-caption font-semibold tracking-caps text-ink-3 uppercase">{t.setup.codesStep}</p>
         <h2 ref={titleRef} tabIndex={-1} className="text-title-2 text-ink outline-none">
           {t.setup.codesTitle}
         </h2>

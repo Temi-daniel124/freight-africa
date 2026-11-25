@@ -64,7 +64,7 @@ export function LoadBoardList({
         >
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <p className="truncate text-body font-extrabold whitespace-nowrap text-ink">
+              <p className="truncate text-body font-semibold whitespace-nowrap text-ink">
                 {l.from} → {l.to}
               </p>
               <p className="truncate text-body-sm text-ink-2">
@@ -75,7 +75,7 @@ export function LoadBoardList({
               </p>
             </div>
             <div className="shrink-0 text-right">
-              <p className="tabular text-body-lg font-extrabold text-green-900">
+              <p className="tabular text-body-lg font-semibold text-green-900">
                 {naira(l.payout)}
               </p>
               <p className="text-caption text-ink-3">{t.after}</p>

@@ -69,8 +69,8 @@ export async function DriverTrip() {
         plate={data.plate}
       />
       <section className="flex flex-col gap-1 rounded-tile bg-surface p-5 shadow-raised lg:rounded-card">
-        <p className="tabular text-body-sm font-bold text-ink-3">{data.ref}</p>
-        <p className="truncate text-title-2 font-extrabold whitespace-nowrap text-ink">
+        <p className="tabular text-body-sm font-semibold text-ink-3">{data.ref}</p>
+        <p className="truncate text-title-2 font-semibold whitespace-nowrap text-ink">
           {data.from.name} → {data.to.name}
         </p>
         <p className="text-body text-ink-2">

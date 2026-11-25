@@ -5,7 +5,7 @@ type ListRowProps = { icon: LucideIcon; title: string; detail?: string; action?:
 
 export function ListRow({ icon: Icon, title, detail, action }: ListRowProps) {
   return (
-    <div className="flex items-center gap-3 rounded-inner py-2">
+    <div data-list-row className="flex items-center gap-3 rounded-inner py-2">
       <span className="flex size-10 shrink-0 items-center justify-center rounded-pill bg-green-50 text-green-500">
         <Icon aria-hidden className="size-5" strokeWidth={1.75} />
       </span>

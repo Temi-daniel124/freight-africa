@@ -41,7 +41,7 @@ function Section({
   return (
     <section className="flex flex-col gap-3 border-t border-line pt-5 first:border-t-0 first:pt-0">
       <div>
-        <h2 className="text-body-lg font-extrabold tracking-close text-ink">
+        <h2 className="text-body-lg font-semibold tracking-close text-ink">
           {title}
         </h2>
         {help ? <p className="text-body-sm text-ink-2">{help}</p> : null}
@@ -281,7 +281,7 @@ export function AddTruckForm({
                 key={paper.code}
                 className="flex flex-col gap-3 rounded-inner border border-line p-4"
               >
-                <p className="flex items-center gap-2 text-body font-bold text-ink">
+                <p className="flex items-center gap-2 text-body font-semibold text-ink">
                   {paper.name}
                   {paper.required ? null : (
                     <span className="rounded-pill bg-paper px-2 py-0.5 text-micro font-semibold text-ink-3">

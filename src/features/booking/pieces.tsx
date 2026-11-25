@@ -128,7 +128,7 @@ export function TripRow({ row, href }: { row: LoadRow; href: string }) {
         </span>
         <span className="min-w-0 flex-1">
           <span className="flex items-center gap-2">
-            <span className="tabular shrink-0 text-body-sm font-bold whitespace-nowrap text-ink">
+            <span className="tabular shrink-0 text-body-sm font-semibold whitespace-nowrap text-ink">
               {row.ref}
             </span>
             <span className="truncate text-body-sm text-ink-2">
@@ -155,7 +155,7 @@ export function CurrentTripCard({ row, href }: { row: LoadRow; href: string }) {
     >
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="tabular text-title-3 font-extrabold whitespace-nowrap text-ink">
+          <p className="tabular text-title-3 font-semibold whitespace-nowrap text-ink">
             {row.ref}
           </p>
           <p className="truncate text-body-sm text-ink-2">

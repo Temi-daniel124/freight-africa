@@ -16,7 +16,7 @@ export function HowItWorks() {
             return (
               <li key={step.title} className="flex flex-col rounded-card bg-paper p-2 pb-6">
                 <Illustration />
-                <span className="tabular mx-4 mt-5 text-label leading-4 font-bold tracking-plate text-green-500">{String(index + 1).padStart(2, "0")}</span>
+                <span className="tabular mx-4 mt-5 text-label leading-4 font-semibold tracking-plate text-green-500">{String(index + 1).padStart(2, "0")}</span>
                 <h3 className="mx-4 mt-2 text-title-2 text-ink">{step.title}</h3>
                 <p className="mx-4 mt-2 text-body text-wrap text-ink-2">{step.text}</p>
               </li>

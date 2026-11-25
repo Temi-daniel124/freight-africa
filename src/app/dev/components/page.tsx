@@ -27,7 +27,7 @@ const s = t.sheet;
 function Block({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="mt-9">
-      <h2 className="mb-3 text-label font-bold tracking-caps text-ink-3 uppercase">{title}</h2>
+      <h2 className="mb-3 text-label font-semibold tracking-caps text-ink-3 uppercase">{title}</h2>
       {children}
     </section>
   );
