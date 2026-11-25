@@ -52,56 +52,59 @@ select throws_ok(
 
 -- ROLES-AND-PERMISSIONS §2 and §3: each role's exact set of actions, so every row is tested allowed and
 -- denied at once. Rows for tables that don't exist yet (bookings, trucks, payouts) use these same checks.
+-- D044: these sessions have passed the fresh check (team changes need it).
+insert into private.fresh_checks (session_id, user_id) select id, id from public.profiles;
+
 set local role authenticated;
 
-select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000001", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000001", "role": "authenticated", "session_id": "aaaaaaaa-0000-4000-8000-000000000001"}', true);
 select is(public.org_permissions('bbbbbbbb-0000-4000-8000-000000000001'),
   array['book', 'cancel_any_booking', 'cancel_own_booking', 'decide_offers', 'edit_business', 'manage_team', 'pay', 'report_and_rate', 'see_codes', 'see_money', 'see_trip_phones', 'view_business', 'view_trips'],
   '§2 shipper owner: everything');
 
-select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000002", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000002", "role": "authenticated", "session_id": "aaaaaaaa-0000-4000-8000-000000000002"}', true);
 select is(public.org_permissions('bbbbbbbb-0000-4000-8000-000000000001'),
   array['book', 'cancel_any_booking', 'cancel_own_booking', 'decide_offers', 'edit_business', 'manage_team', 'pay', 'report_and_rate', 'see_codes', 'see_money', 'see_trip_phones', 'view_business', 'view_trips'],
   '§2 shipper admin: everything (removing the owner is refused separately)');
 
-select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000003", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000003", "role": "authenticated", "session_id": "aaaaaaaa-0000-4000-8000-000000000003"}', true);
 select is(public.org_permissions('bbbbbbbb-0000-4000-8000-000000000001'),
   array['book', 'cancel_own_booking', 'decide_offers', 'pay', 'report_and_rate', 'see_codes', 'see_trip_phones', 'view_business', 'view_trips'],
   '§2 booker: books, pays, decides, cancels own bookings, codes, phones, reports; no money pages, team or business profile');
 
-select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000004", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000004", "role": "authenticated", "session_id": "aaaaaaaa-0000-4000-8000-000000000004"}', true);
 select is(public.org_permissions('bbbbbbbb-0000-4000-8000-000000000001'),
   array['pay', 'see_money', 'view_business', 'view_trips'],
   '§2 finance: pays and sees money pages; cannot book, cancel, see codes or phones');
 
-select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000005", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000005", "role": "authenticated", "session_id": "aaaaaaaa-0000-4000-8000-000000000005"}', true);
 select is(public.org_permissions('bbbbbbbb-0000-4000-8000-000000000001'),
   array['view_business', 'view_trips'],
   '§2 viewer: views trips only');
 
-select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000011", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000011", "role": "authenticated", "session_id": "aaaaaaaa-0000-4000-8000-000000000011"}', true);
 select is(public.org_permissions('bbbbbbbb-0000-4000-8000-000000000002'),
   array['assign', 'bank_account', 'edit_business', 'load_board', 'manage_drivers', 'manage_managers', 'manage_trucks', 'rate_sender', 'respond_disputes', 'see_money', 'view_business', 'view_trips'],
   '§3 transporter owner: everything but the driver screens; never the codes');
 
-select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000012", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000012", "role": "authenticated", "session_id": "aaaaaaaa-0000-4000-8000-000000000012"}', true);
 select is(public.org_permissions('bbbbbbbb-0000-4000-8000-000000000002'),
   array['assign', 'load_board', 'manage_drivers', 'manage_trucks', 'rate_sender', 'respond_disputes', 'see_money', 'view_business', 'view_trips'],
   '§3 manager: no bank account, no managers, business details view only');
 
-select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000013", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000013", "role": "authenticated", "session_id": "aaaaaaaa-0000-4000-8000-000000000013"}', true);
 select is(public.org_permissions('bbbbbbbb-0000-4000-8000-000000000002'),
   array['confirm_trip', 'own_licence', 'run_trip', 'suggest_load', 'view_trips'],
   '§3 driver: runs and confirms own trips, own licence, suggests return loads; never money (D003)');
 select is(public.can_in_org('bbbbbbbb-0000-4000-8000-000000000002', 'see_money'), false, '§3 a driver never sees freight, payouts or earnings');
 
-select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000014", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000014", "role": "authenticated", "session_id": "aaaaaaaa-0000-4000-8000-000000000014"}', true);
 select is(public.org_permissions('bbbbbbbb-0000-4000-8000-000000000003'),
   array['assign', 'bank_account', 'confirm_trip', 'edit_business', 'load_board', 'manage_drivers', 'manage_managers', 'manage_trucks', 'own_licence', 'rate_sender', 'respond_disputes', 'run_trip', 'see_money', 'view_business', 'view_trips'],
   '§3 owner-driver: owner rights plus the driver screens (runs and confirms own trips)');
 select is(public.can_in_org('bbbbbbbb-0000-4000-8000-000000000003', 'see_codes'), false, '§3 nobody on the transporter side sees loading or delivery codes');
 
-select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000021", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000021", "role": "authenticated", "session_id": "aaaaaaaa-0000-4000-8000-000000000021"}', true);
 select is(public.org_permissions('bbbbbbbb-0000-4000-8000-000000000001'), '{}'::text[], 'someone outside the organisation can do nothing in it');
 select is(public.member_role('bbbbbbbb-0000-4000-8000-000000000001'), null, 'and has no role there');
 
@@ -110,11 +113,11 @@ select is((select count(*)::int from public.organizations), 0, 'an outsider sees
 select throws_ok($$select public.create_invite('bbbbbbbb-0000-4000-8000-000000000002', 'booker', null, 'x@example.com')$$, '42501', null, 'an outsider cannot invite, and learns nothing about the organisation');
 select is((select count(*)::int from public.organization_members), 0, 'and no members');
 
-select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000001", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000001", "role": "authenticated", "session_id": "aaaaaaaa-0000-4000-8000-000000000001"}', true);
 select is((select array_agg(name) from public.organizations), array['Okafor Foods Ltd'], 'the shipper owner sees only her own organisation');
 select is((select count(*)::int from public.organization_members), 5, 'and its five members');
 
-select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000013", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000013", "role": "authenticated", "session_id": "aaaaaaaa-0000-4000-8000-000000000013"}', true);
 select is((select count(*)::int from public.organization_members), 3, 'a driver sees the people in his own transporter');
 
 select throws_ok($$insert into public.organizations (kind, name) values ('shipper', 'Fake Ltd')$$, '42501', null, 'organisations cannot be inserted directly');
@@ -131,13 +134,13 @@ reset role;
 -- Invites (S-20): who may invite whom.
 set local role authenticated;
 
-select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000005", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000005", "role": "authenticated", "session_id": "aaaaaaaa-0000-4000-8000-000000000005"}', true);
 select throws_ok($$select public.create_invite('bbbbbbbb-0000-4000-8000-000000000001', 'booker', null, 'yemi@example.com')$$, '42501', null, 'a viewer cannot invite');
 
-select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000003", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000003", "role": "authenticated", "session_id": "aaaaaaaa-0000-4000-8000-000000000003"}', true);
 select throws_ok($$select public.create_invite('bbbbbbbb-0000-4000-8000-000000000001', 'viewer', null, 'yemi@example.com')$$, '42501', null, 'a booker cannot invite');
 
-select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000002", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000002", "role": "authenticated", "session_id": "aaaaaaaa-0000-4000-8000-000000000002"}', true);
 select throws_ok($$select public.create_invite('bbbbbbbb-0000-4000-8000-000000000001', 'owner', null, 'yemi@example.com')$$, '42501', null, 'an admin cannot make someone an owner');
 select throws_ok($$select public.create_invite('bbbbbbbb-0000-4000-8000-000000000001', 'driver', null, 'yemi@example.com')$$, '22023', null, 'a transporter role does not exist in a shipper organisation');
 select is(char_length(set_config('test.token', public.create_invite('bbbbbbbb-0000-4000-8000-000000000001', 'booker', null, ' Yemi@Example.com '), true)), 32, 'an admin invites a booker and gets a link token');
@@ -155,10 +158,10 @@ reset role;
 -- before it expires.
 update auth.users set email_confirmed_at = now() where id in ('aaaaaaaa-0000-4000-8000-000000000021', 'aaaaaaaa-0000-4000-8000-000000000022');
 set local role authenticated;
-select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000021", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000021", "role": "authenticated", "session_id": "aaaaaaaa-0000-4000-8000-000000000021"}', true);
 select throws_ok(format('select public.accept_invite(%L)', current_setting('test.token')), '42501', null, 'a forwarded link does not work for someone else');
 
-select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000022", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000022", "role": "authenticated", "session_id": "aaaaaaaa-0000-4000-8000-000000000022"}', true);
 reset role;
 update auth.users set email_confirmed_at = null where id = 'aaaaaaaa-0000-4000-8000-000000000022';
 set local role authenticated;
@@ -175,11 +178,11 @@ reset role;
 insert into public.invites (kind, org_id, email, role_payload, token_hash, expires_at)
 values ('team_member', 'bbbbbbbb-0000-4000-8000-000000000001', 'ngozi@example.com', '{"shipper_role": "viewer"}', encode(extensions.digest('expired-invite-token-000000000000', 'sha256'), 'hex'), now() - interval '1 minute');
 set local role authenticated;
-select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000021", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000021", "role": "authenticated", "session_id": "aaaaaaaa-0000-4000-8000-000000000021"}', true);
 select throws_ok($$select public.accept_invite('expired-invite-token-000000000000')$$, 'P0002', null, 'an expired invite is refused');
 
 -- Transporter invites (§3): managers add drivers; only the owner adds managers; drivers add nobody.
-select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000012", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000012", "role": "authenticated", "session_id": "aaaaaaaa-0000-4000-8000-000000000012"}', true);
 select is(char_length(public.create_invite('bbbbbbbb-0000-4000-8000-000000000002', 'driver', '+2348031110010', null)), 32, 'a manager invites a driver');
 select throws_ok($$select public.create_invite('bbbbbbbb-0000-4000-8000-000000000002', 'manager', '+2348031110011', null)$$, '42501', null, 'a manager cannot add another manager');
 reset role;
@@ -187,31 +190,31 @@ insert into public.invites (kind, org_id, phone, role_payload, token_hash)
 values ('team_member', 'bbbbbbbb-0000-4000-8000-000000000002', '+2348031110013', '{"transporter_role": "manager"}', encode(extensions.digest('manager-invite-token-00000000000', 'sha256'), 'hex'));
 set local role authenticated;
 select is((select count(*)::int from public.invites where org_id = 'bbbbbbbb-0000-4000-8000-000000000002'), 1, 'a manager sees the driver invite but not an invite for a new manager');
-select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000013", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000013", "role": "authenticated", "session_id": "aaaaaaaa-0000-4000-8000-000000000013"}', true);
 select throws_ok($$select public.create_invite('bbbbbbbb-0000-4000-8000-000000000002', 'driver', '+2348031110012', null)$$, '42501', null, 'a driver cannot add drivers');
 
 -- Changing roles and removing people (S-20, T-16).
-select set_config('request.jwt.claims', format('{"sub": "%s", "role": "authenticated", "amr": [{"method": "otp", "timestamp": %s}]}', 'aaaaaaaa-0000-4000-8000-000000000002', extract(epoch from now())::bigint), true);
+select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000002", "role": "authenticated", "session_id": "aaaaaaaa-0000-4000-8000-000000000002"}', true);
 select lives_ok($$select public.change_member_role('bbbbbbbb-0000-4000-8000-000000000001', 'aaaaaaaa-0000-4000-8000-000000000003', 'finance')$$, 'an admin changes a booker to finance');
 select throws_ok($$select public.change_member_role('bbbbbbbb-0000-4000-8000-000000000001', 'aaaaaaaa-0000-4000-8000-000000000001', 'viewer')$$, '42501', null, 'an admin cannot change the owner''s role');
 select throws_ok($$select public.remove_member('bbbbbbbb-0000-4000-8000-000000000001', 'aaaaaaaa-0000-4000-8000-000000000001')$$, '42501', null, 'an admin cannot remove the owner');
 select lives_ok($$select public.remove_member('bbbbbbbb-0000-4000-8000-000000000001', 'aaaaaaaa-0000-4000-8000-000000000005')$$, 'an admin removes a viewer');
 
-select set_config('request.jwt.claims', format('{"sub": "%s", "role": "authenticated", "amr": [{"method": "otp", "timestamp": %s}]}', 'aaaaaaaa-0000-4000-8000-000000000001', extract(epoch from now())::bigint), true);
+select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000001", "role": "authenticated", "session_id": "aaaaaaaa-0000-4000-8000-000000000001"}', true);
 select throws_ok($$select public.remove_member('bbbbbbbb-0000-4000-8000-000000000001', 'aaaaaaaa-0000-4000-8000-000000000001')$$, '23514', null, 'the last owner cannot leave');
 select throws_ok($$select public.change_member_role('bbbbbbbb-0000-4000-8000-000000000001', 'aaaaaaaa-0000-4000-8000-000000000001', 'admin')$$, '23514', null, 'or step down without another owner');
 
-select set_config('request.jwt.claims', format('{"sub": "%s", "role": "authenticated", "amr": [{"method": "otp", "timestamp": %s}]}', 'aaaaaaaa-0000-4000-8000-000000000011', extract(epoch from now())::bigint), true);
+select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000011", "role": "authenticated", "session_id": "aaaaaaaa-0000-4000-8000-000000000011"}', true);
 select throws_ok($$select public.change_member_role('bbbbbbbb-0000-4000-8000-000000000002', 'aaaaaaaa-0000-4000-8000-000000000013', 'manager')$$, '22023', null, 'a driver is not turned into a manager by a role change');
 
 -- The team list: names for everyone, contact details only for the people who manage the team.
-select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000003", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000003", "role": "authenticated", "session_id": "aaaaaaaa-0000-4000-8000-000000000003"}', true);
 select is((select email from public.team_members('bbbbbbbb-0000-4000-8000-000000000001') where full_name = 'Adaeze Okafor'), null, 'a team member without team rights does not see others'' contact details');
-select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000001", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000001", "role": "authenticated", "session_id": "aaaaaaaa-0000-4000-8000-000000000001"}', true);
 select is((select email from public.team_members('bbbbbbbb-0000-4000-8000-000000000001') where full_name = 'Chioma Eze'), 'chioma@okaforfoods.ng', 'the owner sees them, to manage the team');
 
 -- Creating an organisation and switching accounts (A-04, A-09).
-select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000021", "role": "authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub": "aaaaaaaa-0000-4000-8000-000000000021", "role": "authenticated", "session_id": "aaaaaaaa-0000-4000-8000-000000000021"}', true);
 select set_config('test.org', public.create_organization('shipper', '  Obi Ventures  ')::text, true);
 select is(public.member_role(current_setting('test.org')::uuid), 'owner', 'whoever creates an organisation owns it');
 select is((select name from public.my_accounts() where is_active), 'Obi Ventures', 'it becomes the active account, with its name trimmed');

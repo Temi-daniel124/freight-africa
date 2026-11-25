@@ -43,8 +43,15 @@ export async function confirmFresh(code: string): Promise<{ status: "ok" | "wron
     const { data: factors } = await supabase.auth.mfa.listFactors();
     const factor = factors?.totp.find((f) => f.status === "verified");
     if (!factor) return { status: "error" };
+    const { data: me } = await supabase.auth.getClaims();
+    const userId = me?.claims?.sub;
+    if (!userId) return { status: "error" };
+    // Five wrong authenticator codes an hour lock the fresh check (security review).
+    const { data: allowed } = await supabaseAdmin().rpc("fresh_try", { p_user: userId });
+    if (allowed !== true) return { status: "locked" };
     const { error } = await supabase.auth.mfa.challengeAndVerify({ factorId: factor.id, code });
-    return { status: error ? "wrong" : "ok" };
+    if (error) return { status: "wrong" };
+    return (await record()) ? { status: "ok" } : { status: "error" };
   }
   if (method !== "email") return { status: "error" };
   const { data } = await supabase.auth.getClaims();
@@ -60,5 +67,14 @@ export async function confirmFresh(code: string): Promise<{ status: "ok" | "wron
   // The email code opened a new session; the app was already open (checked above), so it stays open on it.
   const { data: fresh } = await supabase.auth.getClaims();
   if (fresh?.claims && typeof fresh.claims.session_id === "string") await markUnlocked(fresh.claims.sub, fresh.claims.session_id);
-  return { status: "ok" };
+  return (await record()) ? { status: "ok" } : { status: "error" };
+}
+
+/** The server records the passed check for this session; the database reads it (fresh_ok). */
+async function record(): Promise<boolean> {
+  const { data } = await (await supabaseServer()).auth.getClaims();
+  const claims = data?.claims;
+  if (!claims || typeof claims.session_id !== "string") return false;
+  const { error } = await supabaseAdmin().rpc("record_fresh_check", { p_user: claims.sub, p_session: claims.session_id });
+  return !error;
 }
