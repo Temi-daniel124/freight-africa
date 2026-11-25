@@ -4,11 +4,11 @@ import { revalidatePath } from "next/cache";
 import { assertUnlocked } from "@/features/auth/unlock";
 import { supabaseServer } from "@/lib/supabase/server";
 
-export async function saveTracker(truckId: string, device: string): Promise<{ status: "ok" | "invalid" | "taken" | "error" }> {
+export async function saveTracker(truckId: string, device: string): Promise<{ status: "ok"; key: string | null } | { status: "invalid" | "taken" | "error" }> {
   await assertUnlocked();
-  const { error } = await (await supabaseServer()).rpc("set_truck_tracker", { p_truck: truckId, p_device: device });
+  const { data, error } = await (await supabaseServer()).rpc("set_truck_tracker", { p_truck: truckId, p_device: device });
   revalidatePath(`/app/haul/trucks/${truckId}`);
-  if (!error) return { status: "ok" };
+  if (!error) return { status: "ok", key: (data as string | null) ?? null };
   return { status: error.code === "22023" ? "invalid" : error.code === "23505" ? "taken" : "error" };
 }
 
