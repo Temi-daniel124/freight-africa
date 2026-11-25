@@ -26,6 +26,7 @@ export function PhotoField({
   bucket,
   compact = false,
   onUploaded,
+  onPicked,
 }: {
   name: string;
   label: string;
@@ -35,6 +36,8 @@ export function PhotoField({
   bucket: string;
   compact?: boolean;
   onUploaded?: (path: string) => void;
+  /** The shrunk photo, for reading a plate or a date from it on the phone. */
+  onPicked?: (image: Blob) => void;
 }) {
   const [preview, setPreview] = useState<string | null>(null);
   const [path, setPath] = useState("");
@@ -54,6 +57,7 @@ export function PhotoField({
     try {
       const blob = await shrinkImage(file);
       setPreview(URL.createObjectURL(blob));
+      onPicked?.(blob);
       const t1 = await ticket();
       if (t1.status !== "ok") throw new Error("ticket");
       const { error: uploadError } = await supabaseBrowser()

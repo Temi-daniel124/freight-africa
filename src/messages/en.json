@@ -2110,5 +2110,8 @@
       "held": "Held",
       "reversed": "Reversed"
     }
+  },
+  "ocr": {
+    "check": "Read from the photo. Check it before you save."
   }
 }

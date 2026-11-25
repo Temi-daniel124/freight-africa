@@ -2,7 +2,7 @@
 
 import { CircleCheck, TriangleAlert } from "lucide-react";
 import Link from "next/link";
-import { useActionState, useState, type ReactNode } from "react";
+import { useActionState, useRef, useState, type ReactNode } from "react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
   FieldShell,
@@ -10,6 +10,8 @@ import {
   inputErrorClasses,
   TextField,
 } from "@/components/ui/field";
+import { findExpiry, findPlate, readText } from "@/lib/ocr";
+import { formatPlate } from "@/lib/plate";
 import { cn } from "@/lib/utils";
 import messages from "@/messages/en.json";
 import { addTruck, fleetUploadTicket, type AddTruckState } from "./actions";
@@ -92,6 +94,8 @@ export function AddTruckForm({
     errors: {},
   } satisfies AddTruckState);
   const [typeId, setTypeId] = useState("");
+  const plateRef = useRef<HTMLInputElement>(null);
+  const [plateRead, setPlateRead] = useState(false);
   const type = types.find((item) => item.id === typeId);
   const [capacity, setCapacity] = useState<number | null>(null);
   const [excluded, setExcluded] = useState<string[]>([]);
@@ -119,6 +123,21 @@ export function AddTruckForm({
     );
   }
 
+  // Plate and expiry dates are read from the photos on the phone and only prefill the fields; the person
+  // checks them, and what they confirm is saved (founder brief, section 4).
+  async function prefillPlate(image: Blob) {
+    const plate = findPlate(await readText(image));
+    if (plate && plateRef.current && !plateRef.current.value) {
+      plateRef.current.value = formatPlate(plate);
+      setPlateRead(true);
+    }
+  }
+  async function prefillExpiry(image: Blob, inputId: string) {
+    const date = findExpiry(await readText(image));
+    const input = document.getElementById(inputId) as HTMLInputElement | null;
+    if (date && input && !input.value) input.value = date;
+  }
+
   return (
     <form action={action} className="flex flex-col gap-5" noValidate>
       <Section title={t.back}>
@@ -129,12 +148,14 @@ export function AddTruckForm({
           ticket={fleetUploadTicket}
           bucket="fleet"
           error={e.back ? t.errors.back : undefined}
+          onPicked={(image) => void prefillPlate(image)}
         />
         <TextField
+          ref={plateRef}
           id="truck-plate"
           name="plate"
           label={t.plate}
-          helper={t.plateHelp}
+          helper={plateRead ? messages.ocr.check : t.plateHelp}
           autoCapitalize="characters"
           spellCheck={false}
           autoComplete="off"
@@ -277,6 +298,7 @@ export function AddTruckForm({
                   ticket={fleetUploadTicket}
                   bucket="fleet"
                   compact
+                  onPicked={(image) => void prefillExpiry(image, `expires-${paper.code}`)}
                 />
                 <FieldShell
                   id={`expires-${paper.code}`}

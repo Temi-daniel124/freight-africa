@@ -1,5 +1,5 @@
 import { TriangleAlert } from "lucide-react";
-import type { InputHTMLAttributes, ReactNode } from "react";
+import type { Ref, InputHTMLAttributes, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 export const inputClasses =
@@ -39,6 +39,7 @@ export function FieldShell({ id, label, helper, error, children }: FieldShellPro
 }
 
 type TextFieldProps = InputHTMLAttributes<HTMLInputElement> & {
+  ref?: Ref<HTMLInputElement>;
   id: string;
   label: string;
   helper?: string;

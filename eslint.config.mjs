@@ -7,6 +7,8 @@ const eslintConfig = defineConfig([
   ...nextTs,
   // Override default ignores of eslint-config-next.
   globalIgnores([
+    // Third-party OCR files served as they come (tesseract.js, Apache-2.0).
+    "public/tesseract/**",
     // Default ignores of eslint-config-next:
     ".next/**",
     "out/**",
