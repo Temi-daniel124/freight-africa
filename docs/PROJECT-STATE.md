@@ -4,7 +4,7 @@
 start of every session and updates it at the end (`CLAUDE.md` §2). It records facts about progress; it
 never overrides a higher document.
 
-**Last updated:** 25 Nov 2026, by Claude Code (founder brief sections 0–5 built; #73 and #74 wait for the founder to merge).
+**Last updated:** 25 Nov 2026 afternoon, by Claude Code (combined brief slices 1–3 merged and live; next slice 4, design foundation).
 
 ---
 
@@ -42,20 +42,21 @@ The phases are defined in `BUILD.md` §3. Update this table as work progresses.
 
 **Unblocked (24 Nov 2026):** GitHub Actions had stopped starting jobs on the private repository (billing); the founder had the repository made public (D040). It goes back to private when production is complete.
 
-**Founder brief of 24 Nov 2026 (sections 0 to 5).** State on 25 Nov 2026, 02:15 Lagos:
+**Founder's combined brief of 25 Nov 2026 ("the mockups are now the design", sections 0–9, slices 1–12).** One branch and PR per slice. Resume with "continue the combined prompt".
 
-- **Merged and live:** #61 decisions D043–D046 and docs; #62 account types; #63/#64 PIN sign-in (email code once per device, PIN, optional two-step, app lock for every role, phone invites, PIN links); #65 the new look shared pieces and layout fixes 2a–2i with `npm run check:layout`; #66/#67 Phase 3 database and screens part 1; #68 Homes, Track a trip, trip tracking map, truck detail; #69 types; #70 finance staff views; #71/#72 D044 fresh check (team role change, admin and money-role invites, removing someone; payouts can't be approved by whoever released them); #72 Drivers page and Choose your picture in setup. Every money, auth and RLS change had an independent review and its findings fixed. Migrations applied through `migrate.yml` up to 20261125170000.
-- **Waiting for the founder to merge (green, reviewed; the permission check blocked merges from this session):**
-  - #73 plate and expiry reading from photos (Tesseract.js, served from /tesseract). No migration.
-  - #74 GPS tracker registration (T-18, keyed trackers, OsmAnd endpoint) and truck inspection tasks for field agents; Phase 2 acceptance updated. After merge: run `migrate.yml` (migration 20261125180000), then `npx supabase gen types typescript --project-id czlowhaycaivpgimcefk --schema public > src/lib/supabase/database.types.ts`. #74 also adds the `ocr` message key that #73 adds: rebase #74 after #73 and keep one.
-- **Demo:** `npm run demo:seed` (people, PINs from `.env.founder.local`), `npm run demo:trips` (loads in every state, six trucks). Known limit: `seed-demo.mjs --remove` cannot delete demo loads with ledger postings (append-only ledger); decide the pre-launch cleanup in Phase 8.
+- **Slice 1, merges and types: done.** #73 merged; #74 rebased on main (one copy of the `ocr` message) and merged as #76; #75 merged; `migrate.yml` run (20261125180000); types regenerated and the casts around `find_trip`, `fleet` and `truck_signal` removed (#77).
+- **Slice 2, authenticator lock: done and live (#78, #79).** Five wrong authenticator codes in a row (sign-in, staff console or fresh check) lock two-step sign-in until an email code is confirmed at sign-in; the locking code sends the security email with the lock link; X00j at `/auth/two-step/locked`. pgTAP `240_two_step_lock` (19), unit `two-step-lock.test.ts` (6). Independent review: staff console path added, only answered wrong codes count, a lock landing during a right code ends that session. Follow-up #79 (automated review): `my_staff_role()` keeps meaning "staff" while locked; instead every database aal2 check now reads `private.session_aal()`, which says `aal1` while locked (verified on the live database: 0 functions read the raw claim, 8 rewritten). **Residual risk** (SECURITY.md §3): Supabase's MFA Verification hook, which would also count codes sent straight to Supabase Auth, needs the Teams plan; revisit before launch (Phase 8). X00j is drawn with the current auth layout; the staff-console look (deep-green left panel) comes with slice 8.
+- **Slice 3, decisions: done (#80).** D047 offers, D048 Bachs hosted checkout, D049 drafts, D050 mockups first (added to the D028 order and AGENT.md), D051 driver messages, D052 install detection, D053 agents, D054 staff two-step and 12-hour sessions, D055 availability and several goods. The five mockup folders are committed.
+- **Blocker for slice 6 (owner):** `docs/design/reference/owner-mockups` holds only the v1.1 files (O19d, O19e, O22, OD11, OD11b). Its README says "unzip over v1", but the v1 owner screens were never put in the repository. Ask the founder for the v1 owner-mockups folder before slice 6.
 
-**Next task, in this order:**
-1. Merge #73, then rebase and merge #74; migrate; regenerate types.
-2. `npm run check:layout` against the latest preview (`BASE_URL=<preview> SHARE_URL=<vercel share link> npm run check:layout`); fix anything it finds on the new Phase 3 screens (Book, trip page, load board, Homes, tracking, truck detail, finance views); screenshots at 375 and 1440 with the preview links recorded here.
-3. PageSpeed at the end of the phase (app sign-in and the sender Home).
-4. Phase 3 gaps (`docs/acceptance/phase-3.md`): payout/refund failure retries (1, 5, 15, 60 min), the no-truck-after-24-hours decision screen, batch payment, waiting charges (Phase 5), the 06:00 reconciliation run, the "loaded" and "delivered" steps through Phase 4's codes instead of the demo buttons.
-5. Then Phase 4 (the trip): load alerts, driver flow with codes and photos, live pings (tracker and phone), receiver pages.
+**Next task: slice 4, design foundation (combined brief §4), on branch `feat/foundation-mockups`:**
+1. `src/app/globals.css`: add `--breakpoint-md: 48rem` beside sm 600, lg 1024, xl 1440; a unit test that the theme defines sm, md, lg and xl; a `check:layout` rule (from 768 px no button or text block wider than 560 px unless inside a table, map or list row).
+2. Port `docs/design/reference/sender-mockups/assets/fa.css`, plus the console section of `admin-mockups/assets/fa.css`, into Tailwind tokens (colours with the blue, amber, green, grey and red status pairs; paper #F5F5F1, deep #083826, primary #0C5034; radii with cards 24 px and the 56 px pill button; shadows; spacing; type scale with weights 500 and 600 only). Update DESIGN_SYSTEM.md to match the mockups.
+3. Shared components matching the mockups, each in `/dev/components` with every state: buttons (primary pill, secondary, small, red SOS), cards, status pills, filter chips, segmented control, underline tabs, fields with focus ring, switches; the phone tab bars (sender with the raised Book circle, owner, driver, agent with the raised Invite circle), bottom sheet; the app desktop sidebar and top bar, and the staff console sidebar and top bar (grouped, folding, role-filtered); centred dialog, toast; PIN boxes and docked keypad; KPI tiles, dense table, success check, empty states.
+4. Motion with `motion`: sheet and dialog in and out, the success check pop-and-draw, the SOS 2 s hold ring, number changes, the list "new" pill; all honour prefers-reduced-motion.
+5. Font: fix the gap before commas and full stops in headings (check the comma glyph in JakartaFA.woff2 and the negative heading letter-spacing); weights 500 and 600 only.
+6. Slides and Welcome: one fixed illustration box; on desktop the illustration on the left half and the text or card on the right (max 440 px); keypad screens become a centred card (max 420 px) on desktop with the physical keyboard working.
+Then slices 5–12 in the brief's order (sender: onboarding and auth, booking and offers, Bachs and drafts, trips, account and settings, PDFs; owner; driver; staff console; agent; messaging; Phase 3 finish; check:mockups).
 
 **Founder's standing instructions (24 Nov 2026):** no more design gates; the founder reviews each phase once at the end with the demo accounts. Stop only at the end of a phase (with a "try it" walkthrough) or when truly blocked. Merge on green CI after the independent review for money, auth and RLS. Screenshots at 375 and 1440 px only, as a sanity look; PageSpeed at the end of each phase. Update this file after every merged slice.
 
@@ -103,6 +104,7 @@ for these at the moment they're needed, with exact steps.
 
 Add one line per session, newest first: date · what was done · what's next.
 
+- 25 Nov 2026 (afternoon) · Combined brief slices 1–3: #73, #76 (replacing #74), #75 merged, migrations applied, types regenerated (#77); authenticator lock with X00j, independently reviewed, plus the session_aal follow-up (#78, #79); decisions D047–D055 and the mockup folders (#80) · slice 4, design foundation (owner v1 mockups needed before slice 6).
 - 25 Nov 2026 · New look, Phase 3 booking and money (database, 31 money tests, screens, Homes, tracking, finance views), D044 fresh check, Drivers page, plate and expiry reading, trackers and inspections (#65–#74); each money/auth/RLS change independently reviewed · founder merges #73 and #74; layout sweep; Phase 4.
 
 - 24 Nov 2026 (evening) · Founder brief D043–D046: decisions and docs (#61); account types, "I drive my own truck" switch, Admin label (#62); sign-in with an email code once per device then a PIN, optional two-step, app lock for every role, phone invites and PIN links (#63), each independently reviewed with findings fixed; migrations applied; demo PIN seeded · the new look, then Phase 3.
