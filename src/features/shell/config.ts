@@ -156,7 +156,7 @@ export type StaffPage = keyof typeof messages.shell.staff.pages;
 type StaffGroup = { group?: keyof typeof messages.shell.staff.groups; items: { page: StaffPage; icon: ShellIcon }[] };
 
 export const staffNav: StaffGroup[] = [
-  { items: [{ page: "work", icon: "approvals" }, { page: "overview", icon: "dashboard" }] },
+  { items: [{ page: "work", icon: "approvals" }, { page: "tasks", icon: "approvals" }, { page: "overview", icon: "dashboard" }] },
   { group: "operations", items: [{ page: "map", icon: "map" }, { page: "sos", icon: "sos" }, { page: "trips", icon: "trips" }, { page: "loads", icon: "loads" }] },
   { group: "trust", items: [{ page: "verification", icon: "trust" }, { page: "disputes", icon: "disputes" }, { page: "fraud", icon: "sos" }] },
   { group: "people", items: [{ page: "users", icon: "people" }, { page: "agents", icon: "user" }, { page: "support", icon: "inbox" }] },
