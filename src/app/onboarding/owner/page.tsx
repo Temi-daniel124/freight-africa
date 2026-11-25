@@ -6,6 +6,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { RoadLine } from "@/components/ui/road-line";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AboutForm, BankForm } from "@/features/onboarding/owner-forms";
+import { AvatarPicker } from "@/features/settings/avatar-picker";
 import { onboardingSession } from "@/features/onboarding/session";
 import { paymentProvider } from "@/lib/payments/provider";
 import { supabaseServer } from "@/lib/supabase/server";
@@ -50,6 +51,11 @@ async function Step({ searchParams }: { searchParams: Params }) {
           corridors={corridors ?? []}
           defaults={{ name: name ?? "", companyName: "", drives: owned?.is_driver ?? false, base: org?.home_city_id ?? "", routes: org?.corridor_ids ?? [], hasOrg: !!owned }}
         />
+        {/* D045: Choose your picture (optional, also in Settings). */}
+        <section className="mt-8 flex flex-col gap-3 border-t border-line pt-6">
+          <h2 className="text-title-3 text-ink">{messages.settings.picture.title}</h2>
+          <AvatarPicker name={name ?? ""} current={null} />
+        </section>
       </>
     );
   }
