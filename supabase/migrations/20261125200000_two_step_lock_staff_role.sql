@@ -27,7 +27,9 @@ begin
     select p.oid, n.nspname, p.proname
     from pg_proc p join pg_namespace n on n.oid = p.pronamespace
     where n.nspname in ('public', 'private')
+      and p.prokind = 'f'
       and p.proname <> 'session_aal'
+      and not exists (select 1 from pg_depend d where d.objid = p.oid and d.deptype = 'e')
       and pg_get_functiondef(p.oid) like '%auth.jwt() ->> ''aal''%'
   loop
     v_def := pg_get_functiondef(f.oid);
