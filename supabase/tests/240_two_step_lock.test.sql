@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(17);
+select plan(19);
 
 insert into auth.users (id, instance_id, aud, role, email, email_confirmed_at, raw_user_meta_data, created_at, updated_at) values
   ('24242424-0000-4000-8000-000000000001', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'kemi@freight-africa.com', now(), '{"full_name": "Kemi Adeyemi"}', now(), now()),
@@ -31,8 +31,10 @@ insert into public.staff_members (user_id, role) values ('24242424-0000-4000-800
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub": "24242424-0000-4000-8000-000000000001", "role": "authenticated", "aal": "aal2"}', true);
 select is(public.is_staff(), false, 'a locked account is not staff');
-select is(public.my_staff_role(), null, 'and has no staff role for the money and trip checks');
+select is(public.my_staff_role(), 'operations'::public.staff_role, 'but is still known as staff, so user-only paths stay closed to them (review)');
+select throws_ok($$select public.new_backup_codes()$$, '42501', null, 'so no new backup codes while locked');
 reset role;
+select is(private.session_aal(), 'aal1', 'the locked session counts as aal1 for every aal2 check');
 
 -- Only a confirmed email code clears it.
 select lives_ok($$select public.clear_two_step_lock('24242424-0000-4000-8000-000000000001')$$, 'an email code clears the lock');
