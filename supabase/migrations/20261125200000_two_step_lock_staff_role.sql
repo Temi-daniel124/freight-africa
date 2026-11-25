@@ -30,7 +30,7 @@ begin
       and p.prokind = 'f'
       and p.proname <> 'session_aal'
       and not exists (select 1 from pg_depend d where d.objid = p.oid and d.deptype = 'e')
-      and pg_get_functiondef(p.oid) like '%auth.jwt() ->> ''aal''%'
+      and case when p.prokind = 'f' then pg_get_functiondef(p.oid) like '%auth.jwt() ->> ''aal''%' else false end
   loop
     v_def := pg_get_functiondef(f.oid);
     v_def := replace(v_def, 'coalesce((select auth.jwt() ->> ''aal''), '''')', '(select private.session_aal())');
