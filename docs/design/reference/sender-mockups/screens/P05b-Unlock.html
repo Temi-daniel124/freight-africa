@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Unlock with PIN</title>
+
+<link rel="stylesheet" href="../assets/fa.css">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>body{margin:0;background:#F5F5F1}a{color:#0C5034}</style>
+</helmet>
+<div class="ph" style="height:844px">
+<div class="col" style="align-items:center;padding-top:70px">
+  <img src="../assets/adaeze.webp" alt="" style="width:76px;height:76px;border-radius:50%;background:#EEF5F0">
+  <h1 class="h2" style="margin-top:16px">Welcome back, Adaeze</h1>
+  <p class="m" style="margin:6px 0 0">Enter your PIN to open Freight Africa</p>
+  <div class="dots" style="margin-top:30px"><i class="f"></i><i class="f"></i><i></i><i></i><i></i><i></i></div>
+  <a href="P03-SignIn.html" class="btnl" style="margin-top:14px;font-size:14px">Forgot PIN?</a>
+</div>
+<div class="sheet" style="padding:16px 24px 30px">
+  <div class="kp">
+    <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span>
+    <span style="font-size:13px;font-weight:600;color:#0C5034">Not you?</span><span>0</span><span aria-label="Delete"><svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F1A14" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex:none"><path d="m15 18-6-6 6-6"/></svg></span>
+  </div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

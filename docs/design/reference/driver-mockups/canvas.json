@@ -1,0 +1,538 @@
+{
+ "v": 3,
+ "attachments": {},
+ "boards": {
+  "DV01-Invite.dc.html": {
+   "h": 844,
+   "page": "d-setup",
+   "radius": 44,
+   "title": "Driver invite",
+   "w": 390,
+   "x": 0,
+   "y": 0
+  },
+  "DV02-Welcome.dc.html": {
+   "h": 844,
+   "page": "d-setup",
+   "radius": 44,
+   "title": "Driver welcome",
+   "w": 390,
+   "x": 470,
+   "y": 0
+  },
+  "DV03-ID.dc.html": {
+   "h": 844,
+   "page": "d-setup",
+   "radius": 44,
+   "title": "Driver ID check",
+   "w": 390,
+   "x": 940,
+   "y": 0
+  },
+  "DV04-Licence.dc.html": {
+   "h": 844,
+   "page": "d-setup",
+   "radius": 44,
+   "title": "Driver's licence",
+   "w": 390,
+   "x": 1410,
+   "y": 0
+  },
+  "DV05-Phone.dc.html": {
+   "x": 1880,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Install the app",
+   "page": "d-setup",
+   "radius": 44
+  },
+  "DV06-GPS.dc.html": {
+   "h": 844,
+   "page": "d-setup",
+   "radius": 44,
+   "title": "Test GPS",
+   "w": 390,
+   "x": 2350,
+   "y": 0
+  },
+  "DV07-PIN.dc.html": {
+   "h": 844,
+   "page": "d-setup",
+   "radius": 44,
+   "title": "Driver PIN",
+   "w": 390,
+   "x": 2820,
+   "y": 0
+  },
+  "DV08-Ready.dc.html": {
+   "h": 844,
+   "page": "d-setup",
+   "radius": 44,
+   "title": "Waiting for approval",
+   "w": 390,
+   "x": 3290,
+   "y": 0
+  },
+  "DV10-NoTrip.dc.html": {
+   "h": 844,
+   "page": "d-trip",
+   "radius": 44,
+   "title": "Trip tab \u00b7 no trip",
+   "w": 390,
+   "x": 0,
+   "y": 0
+  },
+  "DV11-NewTrip.dc.html": {
+   "h": 844,
+   "page": "d-trip",
+   "radius": 44,
+   "title": "New trip to confirm",
+   "w": 390,
+   "x": 470,
+   "y": 0
+  },
+  "DV11b-CantDo.dc.html": {
+   "h": 844,
+   "page": "d-trip",
+   "radius": 44,
+   "title": "Can't do this trip",
+   "w": 390,
+   "x": 940,
+   "y": 0
+  },
+  "DV12-Upcoming.dc.html": {
+   "h": 844,
+   "page": "d-trip",
+   "radius": 44,
+   "title": "Upcoming trip",
+   "w": 390,
+   "x": 1410,
+   "y": 0
+  },
+  "DV13-ToPickup.dc.html": {
+   "h": 844,
+   "page": "d-trip",
+   "radius": 44,
+   "title": "Driving to pickup",
+   "w": 390,
+   "x": 2350,
+   "y": 0
+  },
+  "DV14-AtPickup.dc.html": {
+   "h": 844,
+   "page": "d-trip",
+   "radius": 44,
+   "title": "At pickup",
+   "w": 390,
+   "x": 2820,
+   "y": 0
+  },
+  "DV15-Loading.dc.html": {
+   "h": 900,
+   "page": "d-trip",
+   "radius": 44,
+   "title": "Loading photos",
+   "w": 390,
+   "x": 3290,
+   "y": 0
+  },
+  "DV15d-Details.dc.html": {
+   "h": 844,
+   "page": "d-trip",
+   "radius": 44,
+   "title": "Trip details",
+   "w": 390,
+   "x": 1880,
+   "y": 0
+  },
+  "DV16-LoadCode.dc.html": {
+   "h": 844,
+   "page": "d-trip",
+   "radius": 44,
+   "title": "Enter loading code",
+   "w": 390,
+   "x": 0,
+   "y": 1060
+  },
+  "DV16b-Confirmed.dc.html": {
+   "h": 844,
+   "page": "d-trip",
+   "radius": 44,
+   "title": "Loading confirmed",
+   "w": 390,
+   "x": 470,
+   "y": 1060
+  },
+  "DV17-OnRoad.dc.html": {
+   "h": 844,
+   "page": "d-trip",
+   "radius": 44,
+   "title": "On the road \u00b7 night look",
+   "w": 390,
+   "x": 940,
+   "y": 1060
+  },
+  "DV17b-RestStops.dc.html": {
+   "h": 844,
+   "page": "d-trip",
+   "radius": 44,
+   "title": "Rest stops",
+   "w": 390,
+   "x": 1410,
+   "y": 1060
+  },
+  "DV18-Arrived.dc.html": {
+   "h": 844,
+   "page": "d-trip",
+   "radius": 44,
+   "title": "Arrived at drop-off",
+   "w": 390,
+   "x": 1880,
+   "y": 1060
+  },
+  "DV19-DeliveryCode.dc.html": {
+   "h": 844,
+   "page": "d-trip",
+   "radius": 44,
+   "title": "Enter delivery code",
+   "w": 390,
+   "x": 2350,
+   "y": 1060
+  },
+  "DV19b-AnyProblem.dc.html": {
+   "h": 844,
+   "page": "d-trip",
+   "radius": 44,
+   "title": "Delivery confirmed \u00b7 any problem",
+   "w": 390,
+   "x": 2820,
+   "y": 1060
+  },
+  "DV20-Complete.dc.html": {
+   "h": 844,
+   "page": "d-trip",
+   "radius": 44,
+   "title": "Trip complete",
+   "w": 390,
+   "x": 3290,
+   "y": 1060
+  },
+  "DV21-Problem.dc.html": {
+   "h": 900,
+   "page": "d-trouble",
+   "radius": 44,
+   "title": "Report a problem \u00b7 driver",
+   "w": 390,
+   "x": 0,
+   "y": 0
+  },
+  "DV22-SOS.dc.html": {
+   "h": 844,
+   "page": "d-trouble",
+   "radius": 44,
+   "title": "SOS \u00b7 hold",
+   "w": 390,
+   "x": 470,
+   "y": 0
+  },
+  "DV22b-SOSActive.dc.html": {
+   "h": 844,
+   "page": "d-trouble",
+   "radius": 44,
+   "title": "SOS \u00b7 help coming",
+   "w": 390,
+   "x": 940,
+   "y": 0
+  },
+  "DV23-Cancelled.dc.html": {
+   "h": 844,
+   "page": "d-trouble",
+   "radius": 44,
+   "title": "Trip cancelled",
+   "w": 390,
+   "x": 1410,
+   "y": 0
+  },
+  "DV30-NextLoad.dc.html": {
+   "h": 900,
+   "page": "d-other",
+   "radius": 44,
+   "title": "Next load",
+   "w": 390,
+   "x": 0,
+   "y": 0
+  },
+  "DV31-History.dc.html": {
+   "h": 844,
+   "page": "d-other",
+   "radius": 44,
+   "title": "History",
+   "w": 390,
+   "x": 470,
+   "y": 0
+  },
+  "DV31b-PastTrip.dc.html": {
+   "h": 1000,
+   "page": "d-other",
+   "radius": 44,
+   "title": "Past trip",
+   "w": 390,
+   "x": 940,
+   "y": 0
+  },
+  "DV32-Me.dc.html": {
+   "x": 1410,
+   "y": 0,
+   "w": 390,
+   "h": 1160,
+   "title": "Me",
+   "page": "d-other",
+   "radius": 44
+  },
+  "DV33-Notifications.dc.html": {
+   "h": 844,
+   "page": "d-other",
+   "radius": 44,
+   "title": "Notifications \u00b7 driver",
+   "w": 390,
+   "x": 1880,
+   "y": 0
+  },
+  "DV34-Help.dc.html": {
+   "h": 900,
+   "page": "d-other",
+   "radius": 44,
+   "title": "Help \u00b7 driver",
+   "w": 390,
+   "x": 2350,
+   "y": 0
+  },
+  "DVD01-Trip.dc.html": {
+   "expand": "fill",
+   "h": 900,
+   "page": "d-desktop",
+   "radius": 16,
+   "title": "Trip \u00b7 driver \u00b7 desktop",
+   "w": 1440,
+   "x": 0,
+   "y": 0
+  },
+  "DVD02-History.dc.html": {
+   "expand": "fill",
+   "h": 900,
+   "page": "d-desktop",
+   "radius": 16,
+   "title": "History \u00b7 driver \u00b7 desktop",
+   "w": 1440,
+   "x": 1520,
+   "y": 0
+  },
+  "DV05b-Waiting.dc.html": {
+   "x": 1880,
+   "y": 1060,
+   "w": 390,
+   "h": 844,
+   "title": "Waiting for the install",
+   "page": "d-setup",
+   "radius": 44
+  },
+  "DV05c-NotInstalled.dc.html": {
+   "x": 2350,
+   "y": 1060,
+   "w": 390,
+   "h": 844,
+   "title": "Not installed yet",
+   "page": "d-setup",
+   "radius": 44
+  },
+  "DV05d-iPhone.dc.html": {
+   "x": 2820,
+   "y": 1060,
+   "w": 390,
+   "h": 844,
+   "title": "Install on iPhone",
+   "page": "d-setup",
+   "radius": 44
+  },
+  "DV05e-Installed.dc.html": {
+   "x": 3290,
+   "y": 1060,
+   "w": 390,
+   "h": 844,
+   "title": "App installed (inside the app)",
+   "page": "d-setup",
+   "radius": 44
+  },
+  "DV32b-Message.dc.html": {
+   "x": 1410,
+   "y": 1320,
+   "w": 390,
+   "h": 844,
+   "title": "Message your owner",
+   "page": "d-other",
+   "radius": 44
+  },
+  "DV32c-Sent.dc.html": {
+   "x": 1880,
+   "y": 1320,
+   "w": 390,
+   "h": 844,
+   "title": "Message sent",
+   "page": "d-other",
+   "radius": 44
+  }
+ },
+ "createdOnFiles": {
+  "at": "2026-11-25T08:05:44Z",
+  "v": 1
+ },
+ "designSystems": [],
+ "launch": {
+  "page": "d-trip",
+  "view": "canvas"
+ },
+ "noteOrder": [
+  "t-d-setup",
+  "t-d-trip",
+  "t-d-trouble",
+  "t-d-other",
+  "t-d-desktop",
+  "s1",
+  "n-install",
+  "n-msg"
+ ],
+ "notes": {
+  "s1": {
+   "x": 3880,
+   "y": 0,
+   "w": 460,
+   "fill": "green",
+   "page": "d-trip",
+   "text": "Driving rules: 17 px body, 26\u201334 px titles, one 68 px main button above the tab bar, big icon buttons, SOS (hold 2 s) on every live step, dark screen at night after sunset (DV17). No money anywhere. The driver never holds a code: Chidi (loading) and Ibrahim (receiver) give them. The driver can call the pickup and receiver contacts on a live trip; the owner is reached by message (no phone number shown). Live chat comes in Launch 2. Typing is disabled while moving; voice notes still work."
+  },
+  "t-d-desktop": {
+   "x": 0,
+   "y": -300,
+   "text": "Driver \u00b7 Desktop (view only)",
+   "kind": "title1",
+   "maxW": 2960,
+   "page": "d-desktop"
+  },
+  "t-d-other": {
+   "x": 0,
+   "y": -300,
+   "text": "Driver \u00b7 Phone \u00b7 next load, history and me",
+   "kind": "title1",
+   "maxW": 2740,
+   "page": "d-other"
+  },
+  "t-d-setup": {
+   "x": 0,
+   "y": -300,
+   "text": "Driver \u00b7 Phone \u00b7 joining",
+   "kind": "title1",
+   "maxW": 3680,
+   "page": "d-setup"
+  },
+  "t-d-trip": {
+   "x": 0,
+   "y": -300,
+   "text": "Driver \u00b7 Phone \u00b7 the trip, step by step",
+   "kind": "title1",
+   "maxW": 3680,
+   "page": "d-trip"
+  },
+  "t-d-trouble": {
+   "x": 0,
+   "y": -300,
+   "text": "Driver \u00b7 Phone \u00b7 problems and safety",
+   "kind": "title1",
+   "maxW": 1800,
+   "page": "d-trouble"
+  },
+  "n-install": {
+   "x": 1880,
+   "y": 1960,
+   "text": "Installed = the app is actually running from the home screen on this phone (display-mode: standalone, or navigator.standalone on iPhone), and that installed app has checked in with our server. Tapping Install, or the browser saying 'accepted', only moves to Waiting. Network drop or cancel \u2192 Not installed yet. The iPhone home-screen app starts with no sign-in, so it asks for the one-time setup code.",
+   "page": "d-setup",
+   "w": 860,
+   "fill": "green"
+  },
+  "n-msg": {
+   "x": 2350,
+   "y": 1320,
+   "text": "Drivers never see the owner's phone number. Message, not call: one message plus an optional voice note, delivered to the owner's app. Replies arrive in Notifications; they aren't instant. This is not live chat (still Launch 2). Emergencies on a trip use SOS.",
+   "page": "d-other",
+   "w": 420,
+   "fill": "green"
+  }
+ },
+ "order": [
+  "DV01-Invite.dc.html",
+  "DV02-Welcome.dc.html",
+  "DV03-ID.dc.html",
+  "DV04-Licence.dc.html",
+  "DV05-Phone.dc.html",
+  "DV05b-Waiting.dc.html",
+  "DV05c-NotInstalled.dc.html",
+  "DV05d-iPhone.dc.html",
+  "DV05e-Installed.dc.html",
+  "DV06-GPS.dc.html",
+  "DV07-PIN.dc.html",
+  "DV08-Ready.dc.html",
+  "DV10-NoTrip.dc.html",
+  "DV11-NewTrip.dc.html",
+  "DV11b-CantDo.dc.html",
+  "DV12-Upcoming.dc.html",
+  "DV15d-Details.dc.html",
+  "DV13-ToPickup.dc.html",
+  "DV14-AtPickup.dc.html",
+  "DV15-Loading.dc.html",
+  "DV16-LoadCode.dc.html",
+  "DV16b-Confirmed.dc.html",
+  "DV17-OnRoad.dc.html",
+  "DV17b-RestStops.dc.html",
+  "DV18-Arrived.dc.html",
+  "DV19-DeliveryCode.dc.html",
+  "DV19b-AnyProblem.dc.html",
+  "DV20-Complete.dc.html",
+  "DV21-Problem.dc.html",
+  "DV22-SOS.dc.html",
+  "DV22b-SOSActive.dc.html",
+  "DV23-Cancelled.dc.html",
+  "DV30-NextLoad.dc.html",
+  "DV31-History.dc.html",
+  "DV31b-PastTrip.dc.html",
+  "DV32-Me.dc.html",
+  "DV32b-Message.dc.html",
+  "DV32c-Sent.dc.html",
+  "DV33-Notifications.dc.html",
+  "DV34-Help.dc.html",
+  "DVD01-Trip.dc.html",
+  "DVD02-History.dc.html"
+ ],
+ "pages": [
+  {
+   "id": "d-setup",
+   "name": "Phone \u00b7 joining"
+  },
+  {
+   "id": "d-trip",
+   "name": "Phone \u00b7 the trip, step by step"
+  },
+  {
+   "id": "d-trouble",
+   "name": "Phone \u00b7 problems and safety"
+  },
+  {
+   "id": "d-other",
+   "name": "Phone \u00b7 next load, history and me"
+  },
+  {
+   "id": "d-desktop",
+   "name": "Desktop (view only)"
+  }
+ ],
+ "title": "Freight Africa \u2014 Driver screens"
+}

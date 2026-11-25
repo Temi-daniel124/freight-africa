@@ -1,0 +1,799 @@
+{
+ "v": 3,
+ "createdOnFiles": {
+  "v": 1,
+  "at": "2026-11-25T10:56:43Z"
+ },
+ "title": "Freight Africa \u2014 Admin and staff console",
+ "launch": {
+  "view": "canvas",
+  "page": "x-shift"
+ },
+ "pages": [
+  {
+   "id": "x-in",
+   "name": "Getting in"
+  },
+  {
+   "id": "x-shift",
+   "name": "Starting a shift"
+  },
+  {
+   "id": "x-ops",
+   "name": "Operations"
+  },
+  {
+   "id": "x-trust",
+   "name": "Trust"
+  },
+  {
+   "id": "x-people",
+   "name": "People and support"
+  },
+  {
+   "id": "x-money",
+   "name": "Money"
+  },
+  {
+   "id": "x-setup",
+   "name": "Setup"
+  },
+  {
+   "id": "x-admin",
+   "name": "Insights and admin"
+  },
+  {
+   "id": "x-field",
+   "name": "Field agent (phone)"
+  }
+ ],
+ "boards": {
+  "X00a-Welcome.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 1440,
+   "h": 900,
+   "title": "Staff invite welcome",
+   "page": "x-in",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X00b-Code.dc.html": {
+   "x": 1520,
+   "y": 0,
+   "w": 1440,
+   "h": 900,
+   "title": "Email code",
+   "page": "x-in",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X00c-PIN.dc.html": {
+   "x": 3040,
+   "y": 0,
+   "w": 1440,
+   "h": 900,
+   "title": "Choose a PIN",
+   "page": "x-in",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X00d-TwoStep.dc.html": {
+   "x": 0,
+   "y": 1020,
+   "w": 1440,
+   "h": 900,
+   "title": "Two-step sign-in setup",
+   "page": "x-in",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X00e-Backup.dc.html": {
+   "x": 1520,
+   "y": 1020,
+   "w": 1440,
+   "h": 900,
+   "title": "Backup codes",
+   "page": "x-in",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X00f-StaffCode.dc.html": {
+   "x": 3040,
+   "y": 1020,
+   "w": 1440,
+   "h": 960,
+   "title": "Staff code",
+   "page": "x-in",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X00g-Playbooks.dc.html": {
+   "x": 0,
+   "y": 2100,
+   "w": 1440,
+   "h": 900,
+   "title": "Your playbooks",
+   "page": "x-in",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X00i-SignIn.dc.html": {
+   "x": 1520,
+   "y": 2100,
+   "w": 1440,
+   "h": 900,
+   "title": "Sign in \u00b7 staff",
+   "page": "x-in",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X00j-Locked.dc.html": {
+   "x": 3040,
+   "y": 2100,
+   "w": 1440,
+   "h": 900,
+   "title": "Two-step locked",
+   "page": "x-in",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X00k-NoAccess.dc.html": {
+   "x": 0,
+   "y": 3120,
+   "w": 1440,
+   "h": 900,
+   "title": "No access",
+   "page": "x-in",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X00h-Install.dc.html": {
+   "x": 0,
+   "y": 4220,
+   "w": 390,
+   "h": 844,
+   "title": "Install and SOS alerts \u00b7 phone",
+   "page": "x-in",
+   "radius": 44
+  },
+  "X26-MyWork.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 1440,
+   "h": 1000,
+   "title": "My work \u00b7 operations",
+   "page": "x-shift",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X27-Notifications.dc.html": {
+   "x": 1520,
+   "y": 0,
+   "w": 1440,
+   "h": 1000,
+   "title": "Notifications panel",
+   "page": "x-shift",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X01-Overview.dc.html": {
+   "x": 3040,
+   "y": 0,
+   "w": 1440,
+   "h": 1180,
+   "title": "Overview",
+   "page": "x-shift",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X29-Profile.dc.html": {
+   "x": 0,
+   "y": 1300,
+   "w": 1440,
+   "h": 1100,
+   "title": "My profile",
+   "page": "x-shift",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X26p-MyWork.dc.html": {
+   "x": 0,
+   "y": 2600,
+   "w": 390,
+   "h": 844,
+   "title": "My work \u00b7 phone",
+   "page": "x-shift",
+   "radius": 44
+  },
+  "X01p-Overview.dc.html": {
+   "x": 470,
+   "y": 2600,
+   "w": 390,
+   "h": 844,
+   "title": "Overview \u00b7 phone",
+   "page": "x-shift",
+   "radius": 44
+  },
+  "X02-LiveMap.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 1440,
+   "h": 1000,
+   "title": "Live map with trip drawer",
+   "page": "x-ops",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X05-SOS.dc.html": {
+   "x": 1520,
+   "y": 0,
+   "w": 1440,
+   "h": 1000,
+   "title": "SOS",
+   "page": "x-ops",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X05b-Resolve.dc.html": {
+   "x": 3040,
+   "y": 0,
+   "w": 1440,
+   "h": 1000,
+   "title": "Resolve SOS dialog",
+   "page": "x-ops",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X03-Trips.dc.html": {
+   "x": 0,
+   "y": 1120,
+   "w": 1440,
+   "h": 1000,
+   "title": "Trips list",
+   "page": "x-ops",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X03b-Trip.dc.html": {
+   "x": 1520,
+   "y": 1120,
+   "w": 1440,
+   "h": 1000,
+   "title": "Trip page",
+   "page": "x-ops",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X03c-NewCode.dc.html": {
+   "x": 3040,
+   "y": 1120,
+   "w": 1440,
+   "h": 1000,
+   "title": "Issue a new code dialog",
+   "page": "x-ops",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X03d-Cancel.dc.html": {
+   "x": 0,
+   "y": 2240,
+   "w": 1440,
+   "h": 1000,
+   "title": "Cancel trip dialog",
+   "page": "x-ops",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X04-Loads.dc.html": {
+   "x": 1520,
+   "y": 2240,
+   "w": 1440,
+   "h": 1060,
+   "title": "Loads and matching",
+   "page": "x-ops",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X02p-LiveMap.dc.html": {
+   "x": 0,
+   "y": 3500,
+   "w": 390,
+   "h": 844,
+   "title": "Live map \u00b7 phone",
+   "page": "x-ops",
+   "radius": 44
+  },
+  "X05p-SOS.dc.html": {
+   "x": 470,
+   "y": 3500,
+   "w": 390,
+   "h": 844,
+   "title": "SOS \u00b7 phone",
+   "page": "x-ops",
+   "radius": 44
+  },
+  "X03p-Trip.dc.html": {
+   "x": 940,
+   "y": 3500,
+   "w": 390,
+   "h": 844,
+   "title": "Trip \u00b7 phone",
+   "page": "x-ops",
+   "radius": 44
+  },
+  "X07-Verification.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 1440,
+   "h": 1000,
+   "title": "Verification queue",
+   "page": "x-trust",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X07b-Review.dc.html": {
+   "x": 1520,
+   "y": 0,
+   "w": 1440,
+   "h": 1000,
+   "title": "Review a truck",
+   "page": "x-trust",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X07c-Reject.dc.html": {
+   "x": 3040,
+   "y": 0,
+   "w": 1440,
+   "h": 1000,
+   "title": "Reject dialog",
+   "page": "x-trust",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X08-Disputes.dc.html": {
+   "x": 0,
+   "y": 1120,
+   "w": 1440,
+   "h": 900,
+   "title": "Disputes list",
+   "page": "x-trust",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X08b-Dispute.dc.html": {
+   "x": 1520,
+   "y": 1120,
+   "w": 1440,
+   "h": 1000,
+   "title": "Dispute page",
+   "page": "x-trust",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X14-Fraud.dc.html": {
+   "x": 3040,
+   "y": 1120,
+   "w": 1440,
+   "h": 960,
+   "title": "Fraud and risk",
+   "page": "x-trust",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X07p-Review.dc.html": {
+   "x": 0,
+   "y": 2320,
+   "w": 390,
+   "h": 1000,
+   "title": "Review \u00b7 phone",
+   "page": "x-trust",
+   "radius": 44
+  },
+  "X06-Company.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 1440,
+   "h": 1060,
+   "title": "Company page",
+   "page": "x-people",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X13-Inbox.dc.html": {
+   "x": 1520,
+   "y": 0,
+   "w": 1440,
+   "h": 1000,
+   "title": "Support inbox",
+   "page": "x-people",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X19-Agents.dc.html": {
+   "x": 3040,
+   "y": 0,
+   "w": 1440,
+   "h": 960,
+   "title": "Agents",
+   "page": "x-people",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X13p-Inbox.dc.html": {
+   "x": 0,
+   "y": 1260,
+   "w": 390,
+   "h": 844,
+   "title": "Support inbox \u00b7 phone",
+   "page": "x-people",
+   "radius": 44
+  },
+  "X09-Escrow.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 1440,
+   "h": 900,
+   "title": "Escrow",
+   "page": "x-money",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X10-Payouts.dc.html": {
+   "x": 1520,
+   "y": 0,
+   "w": 1440,
+   "h": 900,
+   "title": "Payouts",
+   "page": "x-money",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X11-Refunds.dc.html": {
+   "x": 3040,
+   "y": 0,
+   "w": 1440,
+   "h": 900,
+   "title": "Refunds and charges",
+   "page": "x-money",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X12-Reconciliation.dc.html": {
+   "x": 0,
+   "y": 1020,
+   "w": 1440,
+   "h": 900,
+   "title": "Reconciliation",
+   "page": "x-money",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X17-Approvals.dc.html": {
+   "x": 1520,
+   "y": 1020,
+   "w": 1440,
+   "h": 900,
+   "title": "Approvals",
+   "page": "x-money",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X17p-Approve.dc.html": {
+   "x": 0,
+   "y": 2120,
+   "w": 390,
+   "h": 844,
+   "title": "Approve \u00b7 phone",
+   "page": "x-money",
+   "radius": 44
+  },
+  "X15-Catalogue.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 1440,
+   "h": 1120,
+   "title": "Catalogue",
+   "page": "x-setup",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X16-Lanes.dc.html": {
+   "x": 1520,
+   "y": 0,
+   "w": 1440,
+   "h": 1080,
+   "title": "Corridors and prices",
+   "page": "x-setup",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X18-Fees.dc.html": {
+   "x": 3040,
+   "y": 0,
+   "w": 1440,
+   "h": 1120,
+   "title": "Fees and offers",
+   "page": "x-setup",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X20-Messages.dc.html": {
+   "x": 0,
+   "y": 1240,
+   "w": 1440,
+   "h": 1120,
+   "title": "Messages",
+   "page": "x-setup",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X22-Website.dc.html": {
+   "x": 1520,
+   "y": 1240,
+   "w": 1440,
+   "h": 1120,
+   "title": "Website content",
+   "page": "x-setup",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X21-Settings.dc.html": {
+   "x": 3040,
+   "y": 1240,
+   "w": 1440,
+   "h": 1120,
+   "title": "Settings",
+   "page": "x-setup",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X23-Reports.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 1440,
+   "h": 1120,
+   "title": "Reports",
+   "page": "x-admin",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X24-Staff.dc.html": {
+   "x": 1520,
+   "y": 0,
+   "w": 1440,
+   "h": 1120,
+   "title": "Staff and on-call",
+   "page": "x-admin",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X25-Audit.dc.html": {
+   "x": 3040,
+   "y": 0,
+   "w": 1440,
+   "h": 1120,
+   "title": "Audit log",
+   "page": "x-admin",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X28-Playbooks.dc.html": {
+   "x": 0,
+   "y": 1240,
+   "w": 1440,
+   "h": 1000,
+   "title": "Playbooks",
+   "page": "x-admin",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "X30a-Tasks.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 900,
+   "title": "Field agent \u00b7 tasks",
+   "page": "x-field",
+   "radius": 44
+  },
+  "X30b-Inspect.dc.html": {
+   "x": 470,
+   "y": 0,
+   "w": 390,
+   "h": 900,
+   "title": "Field agent \u00b7 inspect truck",
+   "page": "x-field",
+   "radius": 44
+  },
+  "X30d-Onboard.dc.html": {
+   "x": 940,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Field agent \u00b7 onboard owner",
+   "page": "x-field",
+   "radius": 44
+  },
+  "X30e-Park.dc.html": {
+   "x": 1410,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Field agent \u00b7 add a park",
+   "page": "x-field",
+   "radius": 44
+  },
+  "X30f-Me.dc.html": {
+   "x": 1880,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Field agent \u00b7 me",
+   "page": "x-field",
+   "radius": 44
+  }
+ },
+ "order": [
+  "X00a-Welcome.dc.html",
+  "X00b-Code.dc.html",
+  "X00c-PIN.dc.html",
+  "X00d-TwoStep.dc.html",
+  "X00e-Backup.dc.html",
+  "X00f-StaffCode.dc.html",
+  "X00g-Playbooks.dc.html",
+  "X00i-SignIn.dc.html",
+  "X00j-Locked.dc.html",
+  "X00k-NoAccess.dc.html",
+  "X00h-Install.dc.html",
+  "X26-MyWork.dc.html",
+  "X27-Notifications.dc.html",
+  "X01-Overview.dc.html",
+  "X29-Profile.dc.html",
+  "X26p-MyWork.dc.html",
+  "X01p-Overview.dc.html",
+  "X02-LiveMap.dc.html",
+  "X05-SOS.dc.html",
+  "X05b-Resolve.dc.html",
+  "X03-Trips.dc.html",
+  "X03b-Trip.dc.html",
+  "X03c-NewCode.dc.html",
+  "X03d-Cancel.dc.html",
+  "X04-Loads.dc.html",
+  "X02p-LiveMap.dc.html",
+  "X05p-SOS.dc.html",
+  "X03p-Trip.dc.html",
+  "X07-Verification.dc.html",
+  "X07b-Review.dc.html",
+  "X07c-Reject.dc.html",
+  "X08-Disputes.dc.html",
+  "X08b-Dispute.dc.html",
+  "X14-Fraud.dc.html",
+  "X07p-Review.dc.html",
+  "X06-Company.dc.html",
+  "X13-Inbox.dc.html",
+  "X19-Agents.dc.html",
+  "X13p-Inbox.dc.html",
+  "X09-Escrow.dc.html",
+  "X10-Payouts.dc.html",
+  "X11-Refunds.dc.html",
+  "X12-Reconciliation.dc.html",
+  "X17-Approvals.dc.html",
+  "X17p-Approve.dc.html",
+  "X15-Catalogue.dc.html",
+  "X16-Lanes.dc.html",
+  "X18-Fees.dc.html",
+  "X20-Messages.dc.html",
+  "X22-Website.dc.html",
+  "X21-Settings.dc.html",
+  "X23-Reports.dc.html",
+  "X24-Staff.dc.html",
+  "X25-Audit.dc.html",
+  "X28-Playbooks.dc.html",
+  "X30a-Tasks.dc.html",
+  "X30b-Inspect.dc.html",
+  "X30d-Onboard.dc.html",
+  "X30e-Park.dc.html",
+  "X30f-Me.dc.html"
+ ],
+ "notes": {
+  "t-x-in": {
+   "x": 0,
+   "y": -300,
+   "text": "Staff console \u00b7 Getting in",
+   "kind": "title1",
+   "maxW": 4480,
+   "page": "x-in"
+  },
+  "t-x-shift": {
+   "x": 0,
+   "y": -300,
+   "text": "Staff console \u00b7 Starting a shift",
+   "kind": "title1",
+   "maxW": 4480,
+   "page": "x-shift"
+  },
+  "t-x-ops": {
+   "x": 0,
+   "y": -300,
+   "text": "Staff console \u00b7 Operations",
+   "kind": "title1",
+   "maxW": 4480,
+   "page": "x-ops"
+  },
+  "t-x-trust": {
+   "x": 0,
+   "y": -300,
+   "text": "Staff console \u00b7 Trust",
+   "kind": "title1",
+   "maxW": 4480,
+   "page": "x-trust"
+  },
+  "t-x-people": {
+   "x": 0,
+   "y": -300,
+   "text": "Staff console \u00b7 People and support",
+   "kind": "title1",
+   "maxW": 4480,
+   "page": "x-people"
+  },
+  "t-x-money": {
+   "x": 0,
+   "y": -300,
+   "text": "Staff console \u00b7 Money",
+   "kind": "title1",
+   "maxW": 4480,
+   "page": "x-money"
+  },
+  "t-x-setup": {
+   "x": 0,
+   "y": -300,
+   "text": "Staff console \u00b7 Setup",
+   "kind": "title1",
+   "maxW": 4480,
+   "page": "x-setup"
+  },
+  "t-x-admin": {
+   "x": 0,
+   "y": -300,
+   "text": "Staff console \u00b7 Insights and admin",
+   "kind": "title1",
+   "maxW": 4480,
+   "page": "x-admin"
+  },
+  "t-x-field": {
+   "x": 0,
+   "y": -300,
+   "text": "Staff console \u00b7 Field agent (phone)",
+   "kind": "title1",
+   "maxW": 2300,
+   "page": "x-field"
+  },
+  "s-rules": {
+   "x": 4480,
+   "y": 0,
+   "w": 520,
+   "fill": "green",
+   "page": "x-shift",
+   "text": "Console rules: desktop first (248 px sidebar, grouped; Setup, Insights and Admin fold unless open). Each role sees only its items (ux-admin 1.5). Top bar: search ( / ), SOS indicator (red with count when open, hidden for verification and finance), bell, Approvals (finance and super admin). Lists: filters, saved views, export (logged), 50 rows, live with a \"new\" pill instead of reshuffling. Every money, status or access change opens a dialog with the effect in one sentence, a required reason, and a second approval when it applies. Staff see phone numbers; opening ID images is logged."
+  },
+  "s-in": {
+   "x": 4480,
+   "y": 0,
+   "w": 520,
+   "fill": "green",
+   "page": "x-in",
+   "text": "Staff sign-in follows D044, stricter: email code on first sign-in, a 6-digit PIN, then two-step sign-in is REQUIRED (authenticator + 10 backup codes). Later: email + PIN + authenticator code; sessions last 12 h. 5 wrong authenticator codes lock two-step sign-in until an email code (X00j). Google sign-in is off. A two-step reset needs a second super admin."
+  },
+  "s-wa": {
+   "x": 4480,
+   "y": 0,
+   "w": 520,
+   "fill": "green",
+   "page": "x-people",
+   "text": "WhatsApp is off for now, so the support inbox shows email, in-app help and the contact form. When WhatsApp is connected, it joins the same list with the 24-hour reply window countdown, and outside the window only approved templates can be sent."
+  }
+ },
+ "designSystems": []
+}

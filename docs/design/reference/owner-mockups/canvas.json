@@ -1,0 +1,765 @@
+{
+ "v": 3,
+ "createdOnFiles": {
+  "v": 1,
+  "at": "2026-11-25T07:46:31Z"
+ },
+ "title": "Freight Africa \u2014 Truck owner screens",
+ "launch": {
+  "view": "canvas",
+  "page": "o-setup"
+ },
+ "pages": [
+  {
+   "id": "o-setup",
+   "name": "Phone \u00b7 getting set up"
+  },
+  {
+   "id": "o-work",
+   "name": "Phone \u00b7 home and loads"
+  },
+  {
+   "id": "o-trips",
+   "name": "Phone \u00b7 trips and driving"
+  },
+  {
+   "id": "o-fleet",
+   "name": "Phone \u00b7 money, fleet and account"
+  },
+  {
+   "id": "o-desktop",
+   "name": "Desktop"
+  },
+  {
+   "id": "o-docs",
+   "name": "PDF documents"
+  }
+ ],
+ "boards": {
+  "O01-Start.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "What you'll need",
+   "page": "o-setup",
+   "radius": 44
+  },
+  "O02-About.dc.html": {
+   "x": 470,
+   "y": 0,
+   "w": 390,
+   "h": 1040,
+   "title": "About you and your business",
+   "page": "o-setup",
+   "radius": 44
+  },
+  "O03-ID.dc.html": {
+   "x": 940,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Identity check",
+   "page": "o-setup",
+   "radius": 44
+  },
+  "O03b-IDReview.dc.html": {
+   "x": 1410,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "ID being checked",
+   "page": "o-setup",
+   "radius": 44
+  },
+  "O04-Bank.dc.html": {
+   "x": 1880,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Bank account",
+   "page": "o-setup",
+   "radius": 44
+  },
+  "O05-TruckPlate.dc.html": {
+   "x": 2350,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Add a truck \u00b7 plate photo",
+   "page": "o-setup",
+   "radius": 44
+  },
+  "O05b-TruckType.dc.html": {
+   "x": 2820,
+   "y": 0,
+   "w": 390,
+   "h": 960,
+   "title": "Add a truck \u00b7 type and goods",
+   "page": "o-setup",
+   "radius": 44
+  },
+  "O05c-TruckPapers.dc.html": {
+   "x": 3290,
+   "y": 0,
+   "w": 390,
+   "h": 900,
+   "title": "Add a truck \u00b7 papers",
+   "page": "o-setup",
+   "radius": 44
+  },
+  "O05d-TruckCheck.dc.html": {
+   "x": 3760,
+   "y": 0,
+   "w": 390,
+   "h": 900,
+   "title": "Add a truck \u00b7 check and send",
+   "page": "o-setup",
+   "radius": 44
+  },
+  "O06-Drivers.dc.html": {
+   "x": 0,
+   "y": 1200,
+   "w": 390,
+   "h": 844,
+   "title": "Who drives each truck",
+   "page": "o-setup",
+   "radius": 44
+  },
+  "O07-Done.dc.html": {
+   "x": 470,
+   "y": 1200,
+   "w": 390,
+   "h": 844,
+   "title": "You're set up",
+   "page": "o-setup",
+   "radius": 44
+  },
+  "O10-Home.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 1500,
+   "title": "Home \u00b7 truck owner",
+   "page": "o-work",
+   "radius": 44
+  },
+  "O10b-HomeSetup.dc.html": {
+   "x": 470,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Home \u00b7 setup not finished",
+   "page": "o-work",
+   "radius": 44
+  },
+  "O10c-HomeDriver.dc.html": {
+   "x": 940,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Home \u00b7 owner who drives",
+   "page": "o-work",
+   "radius": 44
+  },
+  "O11-Notifications.dc.html": {
+   "x": 1410,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Notifications \u00b7 owner",
+   "page": "o-work",
+   "radius": 44
+  },
+  "O12-Loads.dc.html": {
+   "x": 1880,
+   "y": 0,
+   "w": 390,
+   "h": 1120,
+   "title": "Load board",
+   "page": "o-work",
+   "radius": 44
+  },
+  "O12b-LoadsLocked.dc.html": {
+   "x": 2350,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Load board \u00b7 setup not finished",
+   "page": "o-work",
+   "radius": 44
+  },
+  "O13-Load.dc.html": {
+   "x": 2820,
+   "y": 0,
+   "w": 390,
+   "h": 1500,
+   "title": "Load detail",
+   "page": "o-work",
+   "radius": 44
+  },
+  "O13b-Accept.dc.html": {
+   "x": 3290,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Confirm accept",
+   "page": "o-work",
+   "radius": 44
+  },
+  "O13c-Accepted.dc.html": {
+   "x": 3760,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Load accepted",
+   "page": "o-work",
+   "radius": 44
+  },
+  "O13d-OfferPrice.dc.html": {
+   "x": 0,
+   "y": 1660,
+   "w": 390,
+   "h": 844,
+   "title": "Offer a different price",
+   "page": "o-work",
+   "radius": 44
+  },
+  "O13e-SenderOffer.dc.html": {
+   "x": 470,
+   "y": 1660,
+   "w": 390,
+   "h": 1000,
+   "title": "Load with a sender's offer",
+   "page": "o-work",
+   "radius": 44
+  },
+  "O13f-Reply.dc.html": {
+   "x": 940,
+   "y": 1660,
+   "w": 390,
+   "h": 1000,
+   "title": "Reply to a sender's offer",
+   "page": "o-work",
+   "radius": 44
+  },
+  "O14-Trips.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Trips \u00b7 owner",
+   "page": "o-trips",
+   "radius": 44
+  },
+  "O15-Trip.dc.html": {
+   "x": 470,
+   "y": 0,
+   "w": 390,
+   "h": 1560,
+   "title": "Trip detail \u00b7 owner",
+   "page": "o-trips",
+   "radius": 44
+  },
+  "O15b-ChangeDriver.dc.html": {
+   "x": 940,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Change driver",
+   "page": "o-trips",
+   "radius": 44
+  },
+  "O15c-Respond.dc.html": {
+   "x": 1410,
+   "y": 0,
+   "w": 390,
+   "h": 1150,
+   "title": "Respond to a problem",
+   "page": "o-trips",
+   "radius": 44
+  },
+  "O15d-Report.dc.html": {
+   "x": 1880,
+   "y": 0,
+   "w": 390,
+   "h": 900,
+   "title": "Report a problem \u00b7 owner",
+   "page": "o-trips",
+   "radius": 44
+  },
+  "O15e-Cancel.dc.html": {
+   "x": 2350,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Cancel trip \u00b7 owner",
+   "page": "o-trips",
+   "radius": 44
+  },
+  "O15f-Rate.dc.html": {
+   "x": 2820,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Delivered \u00b7 rate the sender",
+   "page": "o-trips",
+   "radius": 44
+  },
+  "O30-Drive.dc.html": {
+   "x": 3290,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Drive \u00b7 owner who drives",
+   "page": "o-trips",
+   "radius": 44
+  },
+  "O17-Earnings.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 1180,
+   "title": "Earnings",
+   "page": "o-fleet",
+   "radius": 44
+  },
+  "O17b-Payout.dc.html": {
+   "x": 470,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Payout detail",
+   "page": "o-fleet",
+   "radius": 44
+  },
+  "O17c-Bank.dc.html": {
+   "x": 940,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Change bank account",
+   "page": "o-fleet",
+   "radius": 44
+  },
+  "O18-Trucks.dc.html": {
+   "x": 1410,
+   "y": 0,
+   "w": 390,
+   "h": 900,
+   "title": "Trucks",
+   "page": "o-fleet",
+   "radius": 44
+  },
+  "O18b-Truck.dc.html": {
+   "x": 1880,
+   "y": 0,
+   "w": 390,
+   "h": 1260,
+   "title": "Truck detail",
+   "page": "o-fleet",
+   "radius": 44
+  },
+  "O18c-Tracker.dc.html": {
+   "x": 2350,
+   "y": 0,
+   "w": 390,
+   "h": 900,
+   "title": "Connect a GPS tracker",
+   "page": "o-fleet",
+   "radius": 44
+  },
+  "O19-Drivers.dc.html": {
+   "x": 2820,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Drivers",
+   "page": "o-fleet",
+   "radius": 44
+  },
+  "O19b-AddDriver.dc.html": {
+   "x": 3290,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Invite a driver",
+   "page": "o-fleet",
+   "radius": 44
+  },
+  "O19c-Driver.dc.html": {
+   "x": 3760,
+   "y": 0,
+   "w": 390,
+   "h": 900,
+   "title": "Driver detail",
+   "page": "o-fleet",
+   "radius": 44
+  },
+  "O20-Papers.dc.html": {
+   "x": 0,
+   "y": 1420,
+   "w": 390,
+   "h": 900,
+   "title": "Papers",
+   "page": "o-fleet",
+   "radius": 44
+  },
+  "O20b-Replace.dc.html": {
+   "x": 470,
+   "y": 1420,
+   "w": 390,
+   "h": 844,
+   "title": "Replace a paper",
+   "page": "o-fleet",
+   "radius": 44
+  },
+  "O21-Record.dc.html": {
+   "x": 940,
+   "y": 1420,
+   "w": 390,
+   "h": 1120,
+   "title": "Track record",
+   "page": "o-fleet",
+   "radius": 44
+  },
+  "O22-More.dc.html": {
+   "x": 1410,
+   "y": 1420,
+   "w": 390,
+   "h": 1140,
+   "title": "More \u00b7 owner",
+   "page": "o-fleet",
+   "radius": 44
+  },
+  "O22b-Team.dc.html": {
+   "x": 1880,
+   "y": 1420,
+   "w": 390,
+   "h": 900,
+   "title": "Business and team",
+   "page": "o-fleet",
+   "radius": 44
+  },
+  "O22c-Alerts.dc.html": {
+   "x": 2350,
+   "y": 1420,
+   "w": 390,
+   "h": 844,
+   "title": "Load alerts",
+   "page": "o-fleet",
+   "radius": 44
+  },
+  "OD00-Setup.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 1440,
+   "h": 900,
+   "title": "Setup \u00b7 owner \u00b7 desktop",
+   "page": "o-desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "OD01-Home.dc.html": {
+   "x": 1520,
+   "y": 0,
+   "w": 1440,
+   "h": 1000,
+   "title": "Home \u00b7 owner \u00b7 desktop",
+   "page": "o-desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "OD02-Loads.dc.html": {
+   "x": 3040,
+   "y": 0,
+   "w": 1440,
+   "h": 1000,
+   "title": "Load board \u00b7 desktop",
+   "page": "o-desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "OD03-Accept.dc.html": {
+   "x": 4560,
+   "y": 0,
+   "w": 1440,
+   "h": 1000,
+   "title": "Confirm accept \u00b7 desktop",
+   "page": "o-desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "OD04-Trips.dc.html": {
+   "x": 0,
+   "y": 1160,
+   "w": 1440,
+   "h": 900,
+   "title": "Trips \u00b7 owner \u00b7 desktop",
+   "page": "o-desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "OD05-Trip.dc.html": {
+   "x": 1520,
+   "y": 1160,
+   "w": 1440,
+   "h": 1000,
+   "title": "Trip detail \u00b7 owner \u00b7 desktop",
+   "page": "o-desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "OD06-Earnings.dc.html": {
+   "x": 3040,
+   "y": 1160,
+   "w": 1440,
+   "h": 960,
+   "title": "Earnings \u00b7 desktop",
+   "page": "o-desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "OD08-Trucks.dc.html": {
+   "x": 4560,
+   "y": 1160,
+   "w": 1440,
+   "h": 900,
+   "title": "Trucks \u00b7 desktop",
+   "page": "o-desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "OD11-Drivers.dc.html": {
+   "x": 0,
+   "y": 2320,
+   "w": 1440,
+   "h": 900,
+   "title": "Drivers \u00b7 desktop",
+   "page": "o-desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "OD12-Papers.dc.html": {
+   "x": 1520,
+   "y": 2320,
+   "w": 1440,
+   "h": 900,
+   "title": "Papers \u00b7 desktop",
+   "page": "o-desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "OD13-Record.dc.html": {
+   "x": 3040,
+   "y": 2320,
+   "w": 1440,
+   "h": 900,
+   "title": "Track record \u00b7 desktop",
+   "page": "o-desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "OD15-Team.dc.html": {
+   "x": 4560,
+   "y": 2320,
+   "w": 1440,
+   "h": 900,
+   "title": "Business and team \u00b7 desktop",
+   "page": "o-desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "OD16-Settings.dc.html": {
+   "x": 0,
+   "y": 3380,
+   "w": 1440,
+   "h": 900,
+   "title": "Settings \u00b7 owner \u00b7 desktop",
+   "page": "o-desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "ODOC-Statement.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 794,
+   "h": 1123,
+   "title": "Payout statement PDF",
+   "page": "o-docs",
+   "print": "flow",
+   "paper": "a4"
+  },
+  "ODOC-Advice.dc.html": {
+   "x": 874,
+   "y": 0,
+   "w": 794,
+   "h": 1123,
+   "title": "Payout advice PDF",
+   "page": "o-docs",
+   "print": "flow",
+   "paper": "a4"
+  },
+  "O19d-Messages.dc.html": {
+   "x": 2820,
+   "y": 1420,
+   "w": 390,
+   "h": 844,
+   "title": "Messages from drivers",
+   "page": "o-fleet",
+   "radius": 44
+  },
+  "O19e-Message.dc.html": {
+   "x": 3290,
+   "y": 1420,
+   "w": 390,
+   "h": 844,
+   "title": "Reply to a driver",
+   "page": "o-fleet",
+   "radius": 44
+  },
+  "OD11b-Messages.dc.html": {
+   "x": 0,
+   "y": 4540,
+   "w": 1440,
+   "h": 900,
+   "title": "Messages from drivers \u00b7 desktop",
+   "page": "o-desktop",
+   "radius": 16,
+   "expand": "fill"
+  }
+ },
+ "order": [
+  "O01-Start.dc.html",
+  "O02-About.dc.html",
+  "O03-ID.dc.html",
+  "O03b-IDReview.dc.html",
+  "O04-Bank.dc.html",
+  "O05-TruckPlate.dc.html",
+  "O05b-TruckType.dc.html",
+  "O05c-TruckPapers.dc.html",
+  "O05d-TruckCheck.dc.html",
+  "O06-Drivers.dc.html",
+  "O07-Done.dc.html",
+  "O10-Home.dc.html",
+  "O10b-HomeSetup.dc.html",
+  "O10c-HomeDriver.dc.html",
+  "O11-Notifications.dc.html",
+  "O12-Loads.dc.html",
+  "O12b-LoadsLocked.dc.html",
+  "O13-Load.dc.html",
+  "O13b-Accept.dc.html",
+  "O13c-Accepted.dc.html",
+  "O13d-OfferPrice.dc.html",
+  "O13e-SenderOffer.dc.html",
+  "O13f-Reply.dc.html",
+  "O14-Trips.dc.html",
+  "O15-Trip.dc.html",
+  "O15b-ChangeDriver.dc.html",
+  "O15c-Respond.dc.html",
+  "O15d-Report.dc.html",
+  "O15e-Cancel.dc.html",
+  "O15f-Rate.dc.html",
+  "O30-Drive.dc.html",
+  "O17-Earnings.dc.html",
+  "O17b-Payout.dc.html",
+  "O17c-Bank.dc.html",
+  "O18-Trucks.dc.html",
+  "O18b-Truck.dc.html",
+  "O18c-Tracker.dc.html",
+  "O19-Drivers.dc.html",
+  "O19b-AddDriver.dc.html",
+  "O19c-Driver.dc.html",
+  "O19d-Messages.dc.html",
+  "O19e-Message.dc.html",
+  "O20-Papers.dc.html",
+  "O20b-Replace.dc.html",
+  "O21-Record.dc.html",
+  "O22-More.dc.html",
+  "O22b-Team.dc.html",
+  "O22c-Alerts.dc.html",
+  "OD00-Setup.dc.html",
+  "OD01-Home.dc.html",
+  "OD02-Loads.dc.html",
+  "OD03-Accept.dc.html",
+  "OD04-Trips.dc.html",
+  "OD05-Trip.dc.html",
+  "OD06-Earnings.dc.html",
+  "OD08-Trucks.dc.html",
+  "OD11-Drivers.dc.html",
+  "OD11b-Messages.dc.html",
+  "OD12-Papers.dc.html",
+  "OD13-Record.dc.html",
+  "OD15-Team.dc.html",
+  "OD16-Settings.dc.html",
+  "ODOC-Statement.dc.html",
+  "ODOC-Advice.dc.html"
+ ],
+ "notes": {
+  "t-o-setup": {
+   "x": 0,
+   "y": -300,
+   "text": "Truck owner \u00b7 Phone \u00b7 getting set up",
+   "kind": "title1",
+   "maxW": 4150,
+   "page": "o-setup"
+  },
+  "t-o-work": {
+   "x": 0,
+   "y": -300,
+   "text": "Truck owner \u00b7 Phone \u00b7 home and loads",
+   "kind": "title1",
+   "maxW": 4150,
+   "page": "o-work"
+  },
+  "t-o-trips": {
+   "x": 0,
+   "y": -300,
+   "text": "Truck owner \u00b7 Phone \u00b7 trips and driving",
+   "kind": "title1",
+   "maxW": 3680,
+   "page": "o-trips"
+  },
+  "t-o-fleet": {
+   "x": 0,
+   "y": -300,
+   "text": "Truck owner \u00b7 Phone \u00b7 money, fleet and account",
+   "kind": "title1",
+   "maxW": 4150,
+   "page": "o-fleet"
+  },
+  "t-o-desktop": {
+   "x": 0,
+   "y": -300,
+   "text": "Truck owner \u00b7 Desktop",
+   "kind": "title1",
+   "maxW": 6000,
+   "page": "o-desktop"
+  },
+  "t-o-docs": {
+   "x": 0,
+   "y": -300,
+   "text": "Truck owner \u00b7 PDF documents",
+   "kind": "title1",
+   "maxW": 1800,
+   "page": "o-docs"
+  },
+  "s1": {
+   "x": 4350,
+   "y": 0,
+   "w": 460,
+   "fill": "green",
+   "page": "o-setup",
+   "text": "Same look and shared fa.css as the sender canvas. Sign-in, PIN, slides and the role picker are the sender screens (P01\u2013P06) with 'I own trucks' picked; not repeated here.\n\nPersona: Musa Danladi, Musa Haulage Ltd, Kano, Gold (50% advance, 4% commission). Trucks: KJA 482 XA (Musa Ibrahim), KAN 219 BT (Sani Bello), KAN 774 RD (Bello Yusuf), KAN 108 MD (Musa drives it himself)."
+  },
+  "s2": {
+   "x": 5760,
+   "y": 0,
+   "w": 460,
+   "fill": "orange",
+   "page": "o-work",
+   "text": "Sender offers (D047): a load can carry 'Sender's offer'. The owner accepts it, or replies once with their price (2 h window). The sender pays the difference if they accept.\n\nLoad display (D046): '93% full \u00b7 28 t of 30 t' on every truck, load and trip card."
+  }
+ },
+ "designSystems": []
+}

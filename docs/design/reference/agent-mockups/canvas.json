@@ -1,0 +1,458 @@
+{
+ "v": 3,
+ "createdOnFiles": {
+  "v": 1,
+  "at": "2026-11-25T11:09:21Z"
+ },
+ "title": "Freight Africa \u2014 Agent screens",
+ "launch": {
+  "view": "canvas",
+  "page": "g-home"
+ },
+ "pages": [
+  {
+   "id": "g-join",
+   "name": "Joining"
+  },
+  {
+   "id": "g-home",
+   "name": "Home and invite"
+  },
+  {
+   "id": "g-people",
+   "name": "People and booking for senders"
+  },
+  {
+   "id": "g-earn",
+   "name": "Earnings, help and Me"
+  },
+  {
+   "id": "g-desktop",
+   "name": "Desktop"
+  },
+  {
+   "id": "g-docs",
+   "name": "Statement PDF"
+  }
+ ],
+ "boards": {
+  "GI01-Invite.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Agent invite",
+   "page": "g-join",
+   "radius": 44
+  },
+  "GI02-PIN.dc.html": {
+   "x": 470,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Choose a PIN",
+   "page": "g-join",
+   "radius": 44
+  },
+  "GON01-About.dc.html": {
+   "x": 940,
+   "y": 0,
+   "w": 390,
+   "h": 1000,
+   "title": "About you",
+   "page": "g-join",
+   "radius": 44
+  },
+  "GON02-Earn.dc.html": {
+   "x": 1410,
+   "y": 0,
+   "w": 390,
+   "h": 1000,
+   "title": "How you earn",
+   "page": "g-join",
+   "radius": 44
+  },
+  "GON03-ID.dc.html": {
+   "x": 1880,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Identity check",
+   "page": "g-join",
+   "radius": 44
+  },
+  "GON04-Bank.dc.html": {
+   "x": 2350,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Bank account",
+   "page": "g-join",
+   "radius": 44
+  },
+  "GON05-Ready.dc.html": {
+   "x": 2820,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Ready",
+   "page": "g-join",
+   "radius": 44
+  },
+  "G01-Home.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 1180,
+   "title": "Home",
+   "page": "g-home",
+   "radius": 44
+  },
+  "G01b-HomeFirst.dc.html": {
+   "x": 470,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Home \u00b7 first visit",
+   "page": "g-home",
+   "radius": 44
+  },
+  "G01c-Suspended.dc.html": {
+   "x": 940,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Home \u00b7 account paused",
+   "page": "g-home",
+   "radius": 44
+  },
+  "N01-Notifications.dc.html": {
+   "x": 1410,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Notifications",
+   "page": "g-home",
+   "radius": 44
+  },
+  "G02-Invite.dc.html": {
+   "x": 1880,
+   "y": 0,
+   "w": 390,
+   "h": 1000,
+   "title": "Invite",
+   "page": "g-home",
+   "radius": 44
+  },
+  "G02b-Exists.dc.html": {
+   "x": 2350,
+   "y": 0,
+   "w": 390,
+   "h": 1000,
+   "title": "Invite \u00b7 already on Freight Africa",
+   "page": "g-home",
+   "radius": 44
+  },
+  "G02a-QR.dc.html": {
+   "x": 2820,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "QR code",
+   "page": "g-home",
+   "radius": 44
+  },
+  "G03-People.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 1000,
+   "title": "People",
+   "page": "g-people",
+   "radius": 44
+  },
+  "G04-Person.dc.html": {
+   "x": 470,
+   "y": 0,
+   "w": 390,
+   "h": 900,
+   "title": "Person \u00b7 truck owner stuck",
+   "page": "g-people",
+   "radius": 44
+  },
+  "G04c-Reminded.dc.html": {
+   "x": 940,
+   "y": 0,
+   "w": 390,
+   "h": 900,
+   "title": "Reminder sent",
+   "page": "g-people",
+   "radius": 44
+  },
+  "G04b-Sender.dc.html": {
+   "x": 1410,
+   "y": 0,
+   "w": 390,
+   "h": 1000,
+   "title": "Person \u00b7 sender",
+   "page": "g-people",
+   "radius": 44
+  },
+  "G06a-BookWhere.dc.html": {
+   "x": 1880,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Book for a sender \u00b7 where",
+   "page": "g-people",
+   "radius": 44
+  },
+  "G06b-Send.dc.html": {
+   "x": 2350,
+   "y": 0,
+   "w": 390,
+   "h": 900,
+   "title": "Book for a sender \u00b7 send to check and pay",
+   "page": "g-people",
+   "radius": 44
+  },
+  "G06c-Bookings.dc.html": {
+   "x": 2820,
+   "y": 0,
+   "w": 390,
+   "h": 900,
+   "title": "Bookings for senders",
+   "page": "g-people",
+   "radius": 44
+  },
+  "G05-Earnings.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 390,
+   "h": 1080,
+   "title": "Earnings",
+   "page": "g-earn",
+   "radius": 44
+  },
+  "G05b-Payments.dc.html": {
+   "x": 470,
+   "y": 0,
+   "w": 390,
+   "h": 900,
+   "title": "Earnings \u00b7 payments",
+   "page": "g-earn",
+   "radius": 44
+  },
+  "G08-Share.dc.html": {
+   "x": 940,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Share detail",
+   "page": "g-earn",
+   "radius": 44
+  },
+  "G07-Me.dc.html": {
+   "x": 1410,
+   "y": 0,
+   "w": 390,
+   "h": 1240,
+   "title": "Me",
+   "page": "g-earn",
+   "radius": 44
+  },
+  "G07b-Stop.dc.html": {
+   "x": 1880,
+   "y": 0,
+   "w": 390,
+   "h": 1240,
+   "title": "Stop being an agent",
+   "page": "g-earn",
+   "radius": 44
+  },
+  "G09-Help.dc.html": {
+   "x": 2350,
+   "y": 0,
+   "w": 390,
+   "h": 900,
+   "title": "Help",
+   "page": "g-earn",
+   "radius": 44
+  },
+  "G10-Support.dc.html": {
+   "x": 2820,
+   "y": 0,
+   "w": 390,
+   "h": 844,
+   "title": "Support conversation",
+   "page": "g-earn",
+   "radius": 44
+  },
+  "GD01-Home.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 1440,
+   "h": 960,
+   "title": "Home \u00b7 desktop",
+   "page": "g-desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "GD02-Invite.dc.html": {
+   "x": 1520,
+   "y": 0,
+   "w": 1440,
+   "h": 960,
+   "title": "Invite \u00b7 desktop",
+   "page": "g-desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "GD03-People.dc.html": {
+   "x": 3040,
+   "y": 0,
+   "w": 1440,
+   "h": 900,
+   "title": "People \u00b7 desktop",
+   "page": "g-desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "GD04-Earnings.dc.html": {
+   "x": 0,
+   "y": 1080,
+   "w": 1440,
+   "h": 960,
+   "title": "Earnings \u00b7 desktop",
+   "page": "g-desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "GD05-Bookings.dc.html": {
+   "x": 1520,
+   "y": 1080,
+   "w": 1440,
+   "h": 900,
+   "title": "Bookings for senders \u00b7 desktop",
+   "page": "g-desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "GD06-Settings.dc.html": {
+   "x": 3040,
+   "y": 1080,
+   "w": 1440,
+   "h": 900,
+   "title": "Settings \u00b7 desktop",
+   "page": "g-desktop",
+   "radius": 16,
+   "expand": "fill"
+  },
+  "GDOC-Statement.dc.html": {
+   "x": 0,
+   "y": 0,
+   "w": 794,
+   "h": 1123,
+   "title": "Agent statement PDF",
+   "page": "g-docs",
+   "print": "flow",
+   "paper": "a4"
+  }
+ },
+ "order": [
+  "GI01-Invite.dc.html",
+  "GI02-PIN.dc.html",
+  "GON01-About.dc.html",
+  "GON02-Earn.dc.html",
+  "GON03-ID.dc.html",
+  "GON04-Bank.dc.html",
+  "GON05-Ready.dc.html",
+  "G01-Home.dc.html",
+  "G01b-HomeFirst.dc.html",
+  "G01c-Suspended.dc.html",
+  "N01-Notifications.dc.html",
+  "G02-Invite.dc.html",
+  "G02b-Exists.dc.html",
+  "G02a-QR.dc.html",
+  "G03-People.dc.html",
+  "G04-Person.dc.html",
+  "G04c-Reminded.dc.html",
+  "G04b-Sender.dc.html",
+  "G06a-BookWhere.dc.html",
+  "G06b-Send.dc.html",
+  "G06c-Bookings.dc.html",
+  "G05-Earnings.dc.html",
+  "G05b-Payments.dc.html",
+  "G08-Share.dc.html",
+  "G07-Me.dc.html",
+  "G07b-Stop.dc.html",
+  "G09-Help.dc.html",
+  "G10-Support.dc.html",
+  "GD01-Home.dc.html",
+  "GD02-Invite.dc.html",
+  "GD03-People.dc.html",
+  "GD04-Earnings.dc.html",
+  "GD05-Bookings.dc.html",
+  "GD06-Settings.dc.html",
+  "GDOC-Statement.dc.html"
+ ],
+ "notes": {
+  "t-g-join": {
+   "x": 0,
+   "y": -300,
+   "text": "Agent \u00b7 Joining",
+   "kind": "title1",
+   "maxW": 3210,
+   "page": "g-join"
+  },
+  "t-g-home": {
+   "x": 0,
+   "y": -300,
+   "text": "Agent \u00b7 Home and invite",
+   "kind": "title1",
+   "maxW": 3210,
+   "page": "g-home"
+  },
+  "t-g-people": {
+   "x": 0,
+   "y": -300,
+   "text": "Agent \u00b7 People and booking for senders",
+   "kind": "title1",
+   "maxW": 3210,
+   "page": "g-people"
+  },
+  "t-g-earn": {
+   "x": 0,
+   "y": -300,
+   "text": "Agent \u00b7 Earnings, help and Me",
+   "kind": "title1",
+   "maxW": 3210,
+   "page": "g-earn"
+  },
+  "t-g-desktop": {
+   "x": 0,
+   "y": -300,
+   "text": "Agent \u00b7 Desktop",
+   "kind": "title1",
+   "maxW": 4480,
+   "page": "g-desktop"
+  },
+  "t-g-docs": {
+   "x": 0,
+   "y": -300,
+   "text": "Agent \u00b7 Statement PDF",
+   "kind": "title1",
+   "maxW": 1600,
+   "page": "g-docs"
+  },
+  "s-rules": {
+   "x": 3400,
+   "y": 0,
+   "w": 520,
+   "fill": "green",
+   "page": "g-home",
+   "text": "Agent rules: agents join only by a link Freight Africa staff send (D043), then choose a PIN (phone + PIN sign-in, D044). Inviting works before ID and bank are done; earnings wait. The share rate and length (1%, 6 months here) come from settings, never hard-coded. Agents see names, status, trip counts and their own shares only: never prices, payments, codes, or drivers' and receivers' numbers. WhatsApp is off: 'Share on WhatsApp' uses the agent's own phone share sheet; invites by number and reminders are sent by Freight Africa by SMS (1 a day, 3 per step). Booking for a sender: the sender checks, edits and pays through Bachs; nothing is booked until they pay; expires after 7 days."
+  }
+ },
+ "designSystems": []
+}
