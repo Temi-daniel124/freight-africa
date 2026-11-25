@@ -5,7 +5,9 @@
 //   - text wider than its box without an ellipsis;
 //   - a child more than 1 px outside its card;
 //   - touch targets under 44 px below 1024 px (an invisible ::before hit area counts);
-//   - nav labels that wrap.
+//   - nav labels that wrap;
+//   - from 768 px, a button or text block wider than 560 px, unless it sits in a table, a map or a list row
+//     (combined brief §4: on wider screens nothing stretches edge to edge).
 // Usage: BASE_URL=http://localhost:3100 node --env-file=.env.founder.local scripts/check-layout.mjs
 // The demo PIN comes from the git-ignored .env.founder.local (DEMO_PIN); it is never printed.
 import { chromium } from "@playwright/test";
@@ -89,6 +91,16 @@ function audit(width) {
       // A link inside running text is not a tap target of its own.
       if (el.tagName === "A" && getComputedStyle(el).display === "inline") continue;
       if (w < 43.5 || h < 43.5) problems.push(`touch target ${Math.round(w)}×${Math.round(h)}: ${name(el)}`);
+    }
+  }
+  if (width >= 768) {
+    const wide = "table, [role=table], [role=grid], [role=row], [data-map], .maplibregl-map, [data-list-row], li, [data-layout-wide]";
+    for (const el of document.querySelectorAll("button, [role=button], a[href], p, h1, h2, h3, h4, blockquote")) {
+      if (!visible(el) || el.closest("[data-layout-ignore]") || el.closest(wide)) continue;
+      // Only buttons styled as buttons: a link counts when it is a block (a button-looking link).
+      if (el.tagName === "A" && getComputedStyle(el).display.startsWith("inline") && !el.matches("[class*=rounded-button]")) continue;
+      const w = el.getBoundingClientRect().width;
+      if (w > 560.5) problems.push(`wider than 560 px (${Math.round(w)}px): ${name(el)}`);
     }
   }
   for (const link of document.querySelectorAll("nav a")) {

@@ -87,7 +87,7 @@ export function InstallCard() {
         >
           {iphoneSteps ? (
             <div className="flex flex-col gap-4">
-              <p className="text-body font-bold text-ink">{t.iphoneTitle}</p>
+              <p className="text-body font-semibold text-ink">{t.iphoneTitle}</p>
               <ol className="grid grid-cols-3 gap-2 text-center">
                 {[
                   { icon: <Share aria-hidden className="size-6" strokeWidth={1.75} />, text: t.iphone1 },
@@ -110,7 +110,7 @@ export function InstallCard() {
             <div className="flex items-center gap-3">
               <Image src="/brand/png/app-icon-1024.png" alt="" width={48} height={48} className="size-12 shrink-0 rounded-[14px]" />
               <div className="min-w-0 flex-1">
-                <p className="text-body font-bold text-ink">{t.title}</p>
+                <p className="text-body font-semibold text-ink">{t.title}</p>
                 <p className="text-label font-normal text-ink-2">{t.text}</p>
               </div>
               <div className="flex shrink-0 flex-col items-stretch gap-1">

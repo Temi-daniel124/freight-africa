@@ -20,7 +20,7 @@ export function Routes() {
             return (
               <li key={corridor.slug} className="flex flex-col gap-5 rounded-tile border border-line bg-surface p-5 lg:rounded-card lg:p-6">
                 <div className="flex items-center justify-between">
-                  <span className="tabular text-label leading-4 font-bold tracking-plate text-green-500">{String(index + 1).padStart(2, "0")}</span>
+                  <span className="tabular text-label leading-4 font-semibold tracking-plate text-green-500">{String(index + 1).padStart(2, "0")}</span>
                   <span className="inline-flex h-6.5 items-center rounded-pill border border-line bg-paper px-2.5 text-caption font-semibold tracking-normal text-ink-2">{t.status}</span>
                 </div>
                 {/* The stops, read in order; the dots and dashes between them are decoration. */}
@@ -34,7 +34,7 @@ export function Routes() {
                             <b className="dash-v h-full w-0.5" />
                           </li>
                         ) : null}
-                        <li className="flex items-center gap-3 text-body leading-6 font-bold tracking-close lg:text-body-lg lg:leading-6 lg:font-bold">
+                        <li className="flex items-center gap-3 text-body leading-6 font-semibold tracking-close lg:text-body-lg lg:leading-6 lg:font-semibold">
                           <span className="flex w-4 justify-center">
                             <i aria-hidden className={end ? "size-3 rounded-pill border-2 border-green-700 bg-green-700" : "size-3 rounded-pill border-2 border-green-700 bg-surface"} />
                           </span>

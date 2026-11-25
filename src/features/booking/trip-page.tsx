@@ -114,7 +114,7 @@ export async function SenderTripPage({ id }: { id: string }) {
         <section className="rounded-tile bg-surface p-5 shadow-raised lg:rounded-card lg:p-6">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <h1 className="tabular text-title-2 font-extrabold whitespace-nowrap text-ink">
+              <h1 className="tabular text-title-2 font-semibold whitespace-nowrap text-ink">
                 {load.ref}
               </h1>
               <p className="truncate text-body-sm whitespace-nowrap text-ink-2">
@@ -223,7 +223,7 @@ export async function SenderTripPage({ id }: { id: string }) {
           </dl>
           {showPay ? (
             <>
-              <h3 className="text-body font-bold text-ink">{t.pay.title}</h3>
+              <h3 className="text-body font-semibold text-ink">{t.pay.title}</h3>
               <p className="text-label font-normal text-ink-2">{t.pay.lead}</p>
               <PayPanel
                 loadId={load.id}

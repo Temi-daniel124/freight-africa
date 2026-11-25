@@ -13,7 +13,7 @@ function Shot({ children }: { children: React.ReactNode }) {
   );
 }
 
-const Title = ({ children }: { children: string }) => <div className="text-control leading-5.25 font-bold tracking-close">{children}</div>;
+const Title = ({ children }: { children: string }) => <div className="text-control leading-5.25 font-semibold tracking-close">{children}</div>;
 
 function KeyValue({ label, value }: { label: string; value?: string }) {
   return (
@@ -73,7 +73,7 @@ export function AcceptIllustration() {
       </div>
       <Rule />
       <div className="flex items-center gap-2 text-label leading-4.5 font-semibold">
-        <span className="grid size-7 place-items-center rounded-pill bg-green-100 text-micro font-bold text-green-700">MI</span>
+        <span className="grid size-7 place-items-center rounded-pill bg-green-100 text-micro font-semibold text-green-700">MI</span>
         {t.acceptDriver}
         <span className="inline-flex items-center gap-0.75 text-caption font-semibold tracking-normal text-green-700">
           <ShieldCheck className="size-3.25" strokeWidth={1.75} />
@@ -111,7 +111,7 @@ export function CodeIllustration() {
       <KeyValue label={t.codeLabel} />
       <div className="grid grid-cols-6 gap-1">
         {t.code.split("").map((digit, index) => (
-          <span key={index} className="tabular grid h-9 place-items-center rounded-digit border border-success-200 bg-success-100 text-control font-bold text-success">
+          <span key={index} className="tabular grid h-9 place-items-center rounded-digit border border-success-200 bg-success-100 text-control font-semibold text-success">
             {digit}
           </span>
         ))}

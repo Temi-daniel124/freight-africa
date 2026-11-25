@@ -52,7 +52,7 @@ export function Hero() {
                 <Icon aria-hidden className="size-5" strokeWidth={1.75} />
               </span>
               <span>
-                <b className="block text-body leading-5 font-bold text-ink">{item.title}</b>
+                <b className="block text-body leading-5 font-semibold text-ink">{item.title}</b>
                 <span className="mt-0.5 block text-body-sm leading-5 font-normal text-wrap text-ink-2">{item.text}</span>
               </span>
             </li>

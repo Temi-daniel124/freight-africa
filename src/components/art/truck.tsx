@@ -153,16 +153,16 @@ export function TruckGraphic({ kind, load, className, plateLabel }: { kind: Truc
         >
           {load.kind === "weight" ? (
             <>
-              <span className="text-[clamp(14px,4.2cqw,22px)] leading-tight font-extrabold text-green-900 tabular">{load.percent}% full</span>
+              <span className="text-[clamp(14px,4.2cqw,22px)] leading-tight font-semibold text-green-900 tabular">{load.percent}% full</span>
               <span className="truncate text-[clamp(10px,2.6cqw,13px)] font-semibold text-ink-2 tabular">{load.line}</span>
             </>
           ) : load.kind === "amount" ? (
             <>
-              <span className="w-full truncate text-[clamp(12px,3.4cqw,17px)] leading-tight font-bold text-green-900">{load.goods}</span>
+              <span className="w-full truncate text-[clamp(12px,3.4cqw,17px)] leading-tight font-semibold text-green-900">{load.goods}</span>
               {load.amount ? <span className="w-full truncate text-[clamp(10px,2.6cqw,13px)] font-semibold text-ink-2">{load.amount}</span> : null}
             </>
           ) : (
-            <span className="w-full truncate text-[clamp(12px,3.4cqw,17px)] leading-tight font-bold text-green-900">{load.text}</span>
+            <span className="w-full truncate text-[clamp(12px,3.4cqw,17px)] leading-tight font-semibold text-green-900">{load.text}</span>
           )}
         </div>
       ) : null}

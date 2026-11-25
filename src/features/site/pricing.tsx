@@ -58,7 +58,7 @@ export function Pricing({ label, t }: PricingProps) {
                 </li>
               ))}
             </ul>
-            <p className="mt-7 inline-flex min-h-10 items-center gap-2 rounded-pill bg-road-yellow-100 px-3.5 py-2 text-body-sm font-bold text-ink lg:px-4 lg:py-0 lg:text-body lg:font-bold">
+            <p className="mt-7 inline-flex min-h-10 items-center gap-2 rounded-pill bg-road-yellow-100 px-3.5 py-2 text-body-sm font-semibold text-ink lg:px-4 lg:py-0 lg:text-body lg:font-semibold">
               <Gift aria-hidden className="size-4.5 shrink-0" strokeWidth={1.75} />
               {t.offer}
             </p>

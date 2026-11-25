@@ -15,7 +15,7 @@ async function Code() {
       <ul className="flex flex-col gap-4">
         {t.points.map((point) => (
           <li key={point.title} className="flex flex-col gap-0.5 border-l-2 border-green-700 pl-4">
-            <b className="text-body font-bold text-ink">{point.title}</b>
+            <b className="text-body font-semibold text-ink">{point.title}</b>
             <span className="text-body-sm text-ink-2">{point.text}</span>
           </li>
         ))}

@@ -39,7 +39,7 @@ export function FinalBand() {
           <p className="mt-4 max-w-110 text-lead text-wrap text-white/86">{t.text}</p>
           <Link
             href="/waitlist"
-            className="mt-8 inline-flex h-13 items-center justify-center gap-2 rounded-button bg-surface px-6 text-body font-bold text-green-700 transition-colors hover:bg-green-50 max-lg:w-full lg:self-start"
+            className="mt-8 inline-flex h-13 items-center justify-center gap-2 rounded-button bg-surface px-6 text-body font-semibold text-green-700 transition-colors hover:bg-green-50 max-lg:w-full lg:self-start"
           >
             {t.action}
             <ArrowRight aria-hidden className="size-4.5" strokeWidth={1.75} />

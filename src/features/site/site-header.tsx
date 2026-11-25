@@ -86,7 +86,7 @@ export function SiteHeader({ nav, homeLabel, showJoin = true, signInHref }: Site
         {showJoin ? (
           <Link
             href={signInHref ?? "/waitlist"}
-            className="inline-flex h-11 shrink-0 items-center rounded-pill bg-green-700 px-4 text-body-sm font-bold text-white transition-colors hover:bg-green-800 max-[22.5rem]:px-3.5 lg:h-12 lg:px-5.5 lg:text-body lg:font-bold"
+            className="inline-flex h-11 shrink-0 items-center rounded-pill bg-green-700 px-4 text-body-sm font-semibold text-white transition-colors hover:bg-green-800 max-[22.5rem]:px-3.5 lg:h-12 lg:px-5.5 lg:text-body lg:font-semibold"
           >
             {signInHref ? nav.getStarted : nav.join}
           </Link>

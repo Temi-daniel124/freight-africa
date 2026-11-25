@@ -123,7 +123,7 @@ export async function TruckDetail({
         <section className="flex flex-col gap-4 rounded-tile bg-surface p-5 shadow-raised lg:rounded-card lg:p-6">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <h1 className="tabular text-title-2 font-extrabold whitespace-nowrap text-ink">
+              <h1 className="tabular text-title-2 font-semibold whitespace-nowrap text-ink">
                 {x.plate}
               </h1>
               <p className="truncate text-body-sm text-ink-2">{x.truck_type}</p>
@@ -147,7 +147,7 @@ export async function TruckDetail({
           <Card title={t.currentTrip}>
             <Link
               href={`/app/haul/trips/${x.trip_id}`}
-              className="tabular text-body font-bold text-green-700"
+              className="tabular text-body font-semibold text-green-700"
             >
               {x.trip_ref}
             </Link>
@@ -197,7 +197,7 @@ export async function TruckDetail({
                         {r.load?.goods?.name} · {r.driver?.full_name ?? "—"}
                       </span>
                     </span>
-                    <span className="tabular shrink-0 text-body-sm font-bold text-ink">
+                    <span className="tabular shrink-0 text-body-sm font-semibold text-ink">
                       {earned.get(r.id) ? naira(earned.get(r.id) ?? 0) : "—"}
                     </span>
                   </Link>
@@ -219,7 +219,7 @@ export async function TruckDetail({
                 size={48}
               />
               <div className="min-w-0">
-                <p className="truncate text-body font-bold text-ink">
+                <p className="truncate text-body font-semibold text-ink">
                   {x.driver_name}
                 </p>
                 <p className="tabular truncate text-caption text-ink-3">

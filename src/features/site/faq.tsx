@@ -29,7 +29,7 @@ export function Faq() {
         <div>
           {t.groups.map((group, groupIndex) => (
             <div key={group.title} className="mb-7">
-              <h3 className="mb-2 text-caption leading-3.75 font-bold tracking-caps text-ink-3 uppercase">{group.title}</h3>
+              <h3 className="mb-2 text-caption leading-3.75 font-semibold tracking-caps text-ink-3 uppercase">{group.title}</h3>
               {group.items.map((item, itemIndex) => (
                 <details key={item.q} open={groupIndex === 0 && itemIndex === 0} className="group border-b border-line">
                   <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-4.5 text-left text-control font-semibold text-ink lg:text-body-lg lg:leading-6 lg:font-semibold [&::-webkit-details-marker]:hidden">

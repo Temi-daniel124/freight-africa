@@ -86,7 +86,7 @@ export function PayPanel({
       <dl className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-4 gap-y-1 rounded-inner bg-paper p-4 text-body-sm">
         <dt className="text-ink-2">{t.pay.account}</dt>
         <dd className="flex items-center justify-between gap-2">
-          <span className="tabular text-title-3 font-extrabold tracking-[0.06em] text-ink">
+          <span className="tabular text-title-3 font-semibold tracking-[0.06em] text-ink">
             {payment.account}
           </span>
           <CopyText text={payment.account} />
@@ -94,7 +94,7 @@ export function PayPanel({
         <dt className="text-ink-2">{t.pay.bank}</dt>
         <dd className="truncate font-semibold text-ink">{payment.bank}</dd>
         <dt className="text-ink-2">{t.pay.amount}</dt>
-        <dd className="tabular font-extrabold text-green-900">
+        <dd className="tabular font-semibold text-green-900">
           {payment.amount}
         </dd>
       </dl>
@@ -143,7 +143,7 @@ export function CounterCard({
   const [pending, start] = useTransition();
   return (
     <section className="flex flex-col gap-3 rounded-tile border border-warning/30 bg-warning-100 p-4">
-      <h2 className="text-body font-bold text-ink">{t.counter.title}</h2>
+      <h2 className="text-body font-semibold text-ink">{t.counter.title}</h2>
       <p className="text-body-sm text-ink-2">{text}</p>
       <div className="flex flex-wrap gap-2">
         <Button

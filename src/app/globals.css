@@ -2,7 +2,8 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-/* Every design value lives here (DESIGN_SYSTEM.md sections 1 to 5, 12 and 20). Light theme only (D022). */
+/* Every design value lives here (DESIGN_SYSTEM.md sections 1 to 5, 12 and 20). Light theme only (D022).
+   D050: the values follow the approved mockups, docs/design/reference/<role>-mockups/assets/fa.css. */
 /* Short screens (a 1366x768 laptop shows about 600 px of page): sign-in tightens its spacing (Gate 1). */
 @custom-variant short (@media (height < 50rem));
 
@@ -25,25 +26,41 @@
   --color-ink: #0f1a14;
   --color-ink-2: #4a5a51;
   --color-ink-3: #64716a;
-  --color-line: #e2e8e3;
-  --color-line-strong: #c9d3cc;
-  --color-paper: #f6f8f5;
+  /* Mockup lines: card edge, field and secondary-button edge, row divider, checkbox edge. */
+  --color-line: #e6e8e3;
+  --color-line-field: #e1e5e0;
+  --color-line-soft: #f0f2ee;
+  --color-line-strong: #c9d0cb;
+  /* Off switch, segmented-control track, progress track, sheet grab handle, placeholder, table head. */
+  --color-control-off: #d5dbd6;
+  --color-seg: #eceeea;
+  --color-track: #eef1ec;
+  --color-grab: #d9ded9;
+  --color-placeholder: #8a968f;
+  --color-table-head: #fafaf8;
+  /* Console navigation text (admin and agent mockups). */
+  --color-ink-nav: #3a4a41;
+  --color-paper: #f5f5f1;
   --color-surface: #ffffff;
   --color-info: #1e5fbf;
   --color-info-100: #e5eefb;
   --color-warning: #b4530b;
   --color-warning-100: #fdeedc;
   --color-danger: #b42318;
-  --color-danger-100: #fde7e5;
+  --color-danger-100: #feeceb;
+  /* Console urgent card, and the solid red of SOS and count badges. */
+  --color-danger-50: #fef3f2;
+  --color-danger-200: #fbd5d0;
+  --color-sos: #d92d20;
   --color-success: #157347;
   --color-success-100: #e3f4ea;
   --color-success-200: #bfe2cc;
-  --color-scrim: rgba(15, 26, 20, 0.32);
+  --color-scrim: rgba(10, 22, 16, 0.48);
   --color-frost: rgba(255, 255, 255, 0.72);
   --color-on-green: rgba(255, 255, 255, 0.8);
 
   /* Names shadcn components expect, mapped to the tokens above. */
-  --color-background: #f6f8f5;
+  --color-background: #f5f5f1;
   --color-foreground: #0f1a14;
   --color-card: #ffffff;
   --color-card-foreground: #0f1a14;
@@ -58,37 +75,50 @@
   --color-accent: #dcebe2;
   --color-accent-foreground: #0c5034;
   --color-destructive: #b42318;
-  --color-border: #e2e8e3;
-  --color-input: #c9d3cc;
+  --color-border: #e6e8e3;
+  --color-input: #e1e5e0;
   --color-ring: #2f7a57;
 
   --text-*: initial;
-  --text-display: 2.125rem;
-  --text-display--line-height: 2.5rem;
-  --text-display--font-weight: 800;
-  --text-display--letter-spacing: -0.02em;
-  --text-title-1: 1.625rem;
-  --text-title-1--line-height: 2rem;
-  --text-title-1--font-weight: 700;
-  --text-title-1--letter-spacing: -0.012em;
-  --text-title-2: 1.25rem;
-  --text-title-2--line-height: 1.625rem;
-  --text-title-2--font-weight: 700;
-  --text-title-2--letter-spacing: -0.012em;
+  /* Mockup type (fa.css .hx .h1 .h2 .h3 and the console .xh1): weight 600, tracked tighter as they grow. */
+  --text-display: 2.25rem;
+  --text-display--line-height: 1.08;
+  --text-display--font-weight: 600;
+  --text-display--letter-spacing: -0.04em;
+  --text-title-1: 1.875rem;
+  --text-title-1--line-height: 1.12;
+  --text-title-1--font-weight: 600;
+  --text-title-1--letter-spacing: -0.035em;
+  --text-console-title: 1.75rem;
+  --text-console-title--line-height: 1.15;
+  --text-console-title--font-weight: 600;
+  --text-console-title--letter-spacing: -0.03em;
+  --text-title-2: 1.375rem;
+  --text-title-2--line-height: 1.2;
+  --text-title-2--font-weight: 600;
+  --text-title-2--letter-spacing: -0.025em;
+  --text-title-3: 1.125rem;
+  --text-title-3--line-height: 1.25;
+  --text-title-3--font-weight: 600;
+  --text-title-3--letter-spacing: -0.015em;
   --text-body-lg: 1.0625rem;
   --text-body-lg--line-height: 1.625rem;
   --text-body-lg--font-weight: 500;
   --text-body: 0.9375rem;
-  --text-body--line-height: 1.375rem;
+  --text-body--line-height: 1.5;
   --text-body--font-weight: 400;
   --text-label: 0.8125rem;
   --text-label--line-height: 1.125rem;
   --text-label--font-weight: 600;
   --text-label--letter-spacing: 0.005em;
+  /* Mockup .m: secondary lines under a title. */
+  --text-meta: 0.8125rem;
+  --text-meta--line-height: 1.45;
+  --text-meta--font-weight: 400;
   /* Gate 1 sign-in (docs/design/targets/gate-1): 16 px inputs and buttons, 14 px card text, 11 px step labels. */
   --text-control: 1rem;
   --text-control--line-height: 1.5rem;
-  --text-control--font-weight: 400;
+  --text-control--font-weight: 500;
   --text-body-sm: 0.875rem;
   --text-body-sm--line-height: 1.125rem;
   --text-body-sm--font-weight: 600;
@@ -97,28 +127,35 @@
   --text-lead--line-height: 1.75rem;
   --text-lead--font-weight: 400;
   /* Gate 4: a big count in a small card ("4 trips booked in November"). */
-  --text-stat: 1.75rem;
-  --text-stat--line-height: 1;
-  --text-stat--font-weight: 800;
+  --text-stat: 1.5rem;
+  --text-stat--line-height: 1.15;
+  --text-stat--font-weight: 600;
   --text-stat--letter-spacing: -0.02em;
   /* Gate 3: the plate number in the small "Truck accepted" card. */
   --text-plate: 1.125rem;
   --text-plate--line-height: 1.4375rem;
-  --text-plate--font-weight: 800;
+  --text-plate--font-weight: 600;
   --text-micro: 0.6875rem;
   --text-micro--line-height: 0.875rem;
   --text-micro--font-weight: 600;
   --text-caption: 0.75rem;
-  --text-caption--line-height: 1rem;
+  --text-caption--line-height: 1.4;
   --text-caption--font-weight: 500;
   --text-caption--letter-spacing: 0.005em;
 
   --radius-*: initial;
   --radius-button: 45px;
   --radius-pill: 999px;
-  --radius-input: 16px;
+  --radius-input: 18px;
   --radius-inner: 16px;
-  --radius-nav: 12px;
+  --radius-nav: 14px;
+  /* Console nav rows, small icon boxes, checkboxes, the keypad keys, soft callouts and dialogs. */
+  --radius-nav-dense: 11px;
+  --radius-icon: 12px;
+  --radius-check: 8px;
+  --radius-key: 18px;
+  --radius-callout: 18px;
+  --radius-dialog: 28px;
   --radius-map: 20px;
   --radius-tile: 20px;
   --radius-card: 24px;
@@ -140,19 +177,30 @@
   --shadow-panel-card: 0 1px 2px rgba(8, 56, 38, 0.08), 0 24px 48px -16px rgba(8, 56, 38, 0.45);
   --shadow-pill: 0 1px 2px rgb(8 56 38 / 0.06), 0 8px 24px -12px rgb(8 56 38 / 0.18);
   /* Gate 4: the floating phone tabs, the raised centre action, and toasts. */
-  --shadow-tabs: 0 2px 4px rgba(15, 26, 20, 0.06), 0 16px 40px -12px rgba(15, 26, 20, 0.28);
-  --shadow-fab: 0 10px 24px -8px rgba(8, 56, 38, 0.55);
-  --shadow-toast: 0 1px 2px rgba(15, 26, 20, 0.06), 0 12px 32px -12px rgba(15, 26, 20, 0.22);
+  /* Mockup shadows (fa.css). */
+  --shadow-tabs: 0 16px 40px -18px rgba(15, 26, 20, 0.35);
+  --shadow-fab: 0 12px 24px -10px rgba(12, 80, 52, 0.7);
+  --shadow-toast: 0 20px 40px -20px rgba(0, 0, 0, 0.6);
+  --shadow-button: 0 12px 24px -12px rgba(12, 80, 52, 0.6);
+  --shadow-button-sos: 0 12px 24px -12px rgba(217, 45, 32, 0.6);
+  --shadow-seg: 0 2px 6px -2px rgba(15, 26, 20, 0.2);
+  --shadow-sheet: 0 -20px 50px -30px rgba(0, 0, 0, 0.4);
+  --shadow-dialog: 0 40px 80px -30px rgba(0, 0, 0, 0.45);
+  --shadow-panel: -30px 0 60px -40px rgba(15, 26, 20, 0.35);
+  --shadow-focus: 0 0 0 4px #dcebe2;
+  --shadow-knob: 0 1px 3px rgba(0, 0, 0, 0.2);
   --shadow-pill-scrolled: 0 1px 2px rgb(8 56 38 / 0.06), 0 12px 32px -12px rgb(8 56 38 / 0.22);
 
   --spacing-helper: 6px;
 
   --breakpoint-*: initial;
   --breakpoint-sm: 37.5rem;
+  /* From 768 px buttons and text blocks stop stretching (check:layout, 560 px at most). */
+  --breakpoint-md: 48rem;
   --breakpoint-lg: 64rem;
   --breakpoint-xl: 90rem;
 
-  --tracking-caps: 0.06em;
+  --tracking-caps: 0.05em;
   --tracking-plate: 0.04em;
   --tracking-kv: 0.02em;
   --tracking-close: -0.01em;
@@ -229,7 +277,7 @@
 @utility type-hero {
   font-size: 2.5rem;
   line-height: 2.75rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: -0.025em;
   @media (width >= 64rem) {
     font-size: 4rem;
@@ -239,7 +287,7 @@
 @utility type-h2 {
   font-size: 1.75rem;
   line-height: 2.125rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: -0.02em;
   @media (width >= 64rem) {
     font-size: 2.5rem;
@@ -249,7 +297,7 @@
 @utility type-h3 {
   font-size: 1.25rem;
   line-height: 1.625rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: -0.012em;
   @media (width >= 64rem) {
     font-size: 1.5rem;
@@ -320,7 +368,7 @@
 @utility type-hero-xl {
   font-size: 2.375rem;
   line-height: 2.625rem;
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: -0.03em;
   @media (width < 22.5rem) {
     font-size: 2.125rem;
@@ -351,7 +399,7 @@
 @utility type-section {
   font-size: 2.125rem;
   line-height: 2.5rem;
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: -0.03em;
   @media (width >= 64rem) {
     font-size: 3rem;
@@ -371,13 +419,13 @@
 @utility type-card-title {
   font-size: 1.375rem;
   line-height: 1.75rem;
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: -0.015em;
 }
 @utility type-plan-title {
   font-size: 1.375rem;
   line-height: 1.75rem;
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: -0.02em;
   @media (width >= 64rem) {
     font-size: 1.625rem;
@@ -397,7 +445,7 @@
 @utility type-final {
   font-size: 2.375rem;
   line-height: 2.625rem;
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: -0.03em;
   @media (width >= 64rem) {
     font-size: 3.5rem;
@@ -450,7 +498,7 @@
 @utility type-signin {
   font-size: 1.75rem;
   line-height: 2.125rem;
-  font-weight: 800;
+  font-weight: 600;
   letter-spacing: -0.025em;
   @media (width >= 64rem) {
     font-size: 2.25rem;
@@ -461,7 +509,7 @@
 @utility type-code-digit {
   font-size: 1.5rem;
   line-height: 2rem;
-  font-weight: 700;
+  font-weight: 600;
   @media (width >= 64rem) {
     font-size: 1.75rem;
     line-height: 2.25rem;

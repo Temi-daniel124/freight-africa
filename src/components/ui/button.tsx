@@ -19,9 +19,9 @@ export const buttonVariants = cva(
       },
       size: {
         lg: "h-14 px-8 text-body-lg",
-        md: "h-12 px-5 text-body font-bold [&_svg]:size-4.5",
-        sm: "h-9 px-3.5 text-label font-bold [&_svg]:size-4 before:absolute before:-inset-y-1 before:inset-x-0 before:content-['']",
-        text: "min-h-12 px-2 text-body font-bold",
+        md: "h-12 px-5 text-body font-semibold [&_svg]:size-4.5",
+        sm: "h-9 px-3.5 text-label font-semibold [&_svg]:size-4 before:absolute before:-inset-y-1 before:inset-x-0 before:content-['']",
+        text: "min-h-12 px-2 text-body font-semibold",
         icon: "size-12",
       },
     },

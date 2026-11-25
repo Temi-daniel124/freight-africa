@@ -50,7 +50,7 @@ export async function FleetQueue() {
           </div>
           <div className="flex flex-col gap-4">
             <div>
-              <p className="text-caption font-bold tracking-caps text-ink-3 uppercase">{orgName.get(truck.org_id)}</p>
+              <p className="text-caption font-semibold tracking-caps text-ink-3 uppercase">{orgName.get(truck.org_id)}</p>
               <h2 className="text-title-2 tracking-kv text-ink tabular">{formatPlate(truck.plate_number)}</h2>
               <p className="text-body-sm text-ink-2">
                 {typeName.get(truck.truck_type_id)} · {messages.trucks.list.capacity.replace("{tonnes}", String(truck.capacity_kg / 1000))}
@@ -67,7 +67,7 @@ export async function FleetQueue() {
           <img src={url.get(doc.file_path) ?? undefined} alt="" className="aspect-[3/2] w-full rounded-inner border border-line bg-paper object-contain" />
           <div className="flex flex-col gap-4">
             <div>
-              <p className="text-caption font-bold tracking-caps text-ink-3 uppercase">{t.paper}</p>
+              <p className="text-caption font-semibold tracking-caps text-ink-3 uppercase">{t.paper}</p>
               <h2 className="text-title-2 text-ink">{docName.get(doc.doc_type_id)}</h2>
               <p className="text-body-sm text-ink-2">
                 {t.truckOf.replace("{plate}", formatPlate(plateOf.get(doc.subject_id) ?? "")).replace("{org}", orgName.get(doc.org_id) ?? "")}

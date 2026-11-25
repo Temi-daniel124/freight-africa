@@ -7,7 +7,7 @@ export function Eyebrow({ children, tone = "default", className }: EyebrowProps)
   return (
     <span
       className={cn(
-        "inline-flex h-7 items-center gap-2 self-start rounded-pill pr-3 pl-2.5 text-caption font-bold tracking-caps uppercase",
+        "inline-flex h-7 items-center gap-2 self-start rounded-pill pr-3 pl-2.5 text-caption font-semibold tracking-caps uppercase",
         tone === "inverse" ? "bg-white/10 text-white" : "bg-green-50 text-green-700",
         className,
       )}

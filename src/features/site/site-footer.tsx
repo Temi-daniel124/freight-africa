@@ -18,7 +18,7 @@ export function SiteFooter() {
             <p className="mt-4 max-w-80 text-body text-wrap text-ink-2">{messages.home.hero.lead}</p>
           </div>
           <div>
-            <h2 className="mb-4 text-label leading-4 font-bold tracking-normal text-ink">{t.footer.routes}</h2>
+            <h2 className="mb-4 text-label leading-4 font-semibold tracking-normal text-ink">{t.footer.routes}</h2>
             <ul>
               {t.corridors.map((corridor) => (
                 <li key={corridor.slug} className={linkClass}>
@@ -28,7 +28,7 @@ export function SiteFooter() {
             </ul>
           </div>
           <div>
-            <h2 className="mb-4 text-label leading-4 font-bold tracking-normal text-ink">{t.footer.legal}</h2>
+            <h2 className="mb-4 text-label leading-4 font-semibold tracking-normal text-ink">{t.footer.legal}</h2>
             <Link href="/legal/privacy" className={linkClass}>
               {t.footer.privacy}
             </Link>
@@ -37,7 +37,7 @@ export function SiteFooter() {
             </Link>
           </div>
           <div>
-            <h2 className="mb-4 text-label leading-4 font-bold tracking-normal text-ink">{t.footer.contact}</h2>
+            <h2 className="mb-4 text-label leading-4 font-semibold tracking-normal text-ink">{t.footer.contact}</h2>
             <a href={`mailto:${t.contactEmail}`} className={linkClass}>
               {t.contactEmail}
             </a>

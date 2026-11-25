@@ -24,10 +24,10 @@ export function EmptyState({ title, art = <TruckArt />, offer, action, points, s
   return (
     <div className={cn("flex w-full flex-col items-center gap-2.5 px-6 py-10 text-center", className)}>
       {art}
-      <h2 className="text-title-2 font-extrabold tracking-close text-ink">{title}</h2>
+      <h2 className="text-title-2 font-semibold tracking-close text-ink">{title}</h2>
       {children ? <p className="max-w-90 text-body text-ink-2">{children}</p> : null}
       {offer ? (
-        <span className="inline-flex h-8 items-center gap-2 rounded-pill bg-success-100 px-3 text-label font-bold tracking-normal text-success">
+        <span className="inline-flex h-8 items-center gap-2 rounded-pill bg-success-100 px-3 text-label font-semibold tracking-normal text-success">
           <Check aria-hidden className="size-4" strokeWidth={1.75} />
           {offer}
         </span>

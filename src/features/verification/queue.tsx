@@ -45,7 +45,7 @@ export async function VerificationQueue() {
             )}
             <div className="flex flex-col gap-4">
               <div>
-                <p className="text-caption font-bold tracking-caps text-ink-3 uppercase">{t.purposes[s.purpose as keyof typeof t.purposes]}</p>
+                <p className="text-caption font-semibold tracking-caps text-ink-3 uppercase">{t.purposes[s.purpose as keyof typeof t.purposes]}</p>
                 <h2 className="text-title-2 text-ink">{name}</h2>
                 <p className="text-body-sm text-ink-3">{t.submitted.replace("{when}", when.format(new Date(s.created_at)))}</p>
               </div>

@@ -33,7 +33,7 @@ function TripCard() {
         <span className="tabular text-caption font-semibold tracking-plate text-ink-2">{p.plate}</span>
       </div>
       <div className="flex items-center gap-3">
-        <div className="text-body-lg leading-5.5 font-bold tracking-tight lg:text-title-2 lg:leading-6.5">
+        <div className="text-body-lg leading-5.5 font-semibold tracking-tight lg:text-title-2 lg:leading-6.5">
           {p.from}
           <small className="block text-caption text-ink-3">{p.fromCity}</small>
         </div>
@@ -48,14 +48,14 @@ function TripCard() {
             <Truck className="size-4" strokeWidth={2} />
           </span>
         </div>
-        <div className="text-right text-body-lg leading-5.5 font-bold tracking-tight lg:text-title-2 lg:leading-6.5">
+        <div className="text-right text-body-lg leading-5.5 font-semibold tracking-tight lg:text-title-2 lg:leading-6.5">
           {p.to}
           <small className="block text-caption text-ink-3">{p.toCity}</small>
         </div>
       </div>
       <div className="mt-5 hidden items-center justify-between border-t border-line pt-4 lg:flex">
         <div className="flex items-center gap-2.5 text-body-sm leading-4.75">
-          <span className="grid size-8 place-items-center rounded-pill bg-green-100 text-caption font-bold text-green-700">{p.initials}</span>
+          <span className="grid size-8 place-items-center rounded-pill bg-green-100 text-caption font-semibold text-green-700">{p.initials}</span>
           <div>
             {p.owner}
             <span className="flex h-4.75 items-center gap-1 text-caption font-semibold text-green-700">
@@ -66,7 +66,7 @@ function TripCard() {
         </div>
         <div className="tabular text-right text-caption leading-4.75 font-medium text-ink-2">
           {p.expected}
-          <b className="block text-body-sm leading-4.5 font-bold text-ink">{p.eta}</b>
+          <b className="block text-body-sm leading-4.5 font-semibold text-ink">{p.eta}</b>
         </div>
       </div>
     </div>
@@ -82,7 +82,7 @@ function MoneyCard() {
           <Lock className="size-5" strokeWidth={1.75} />
         </span>
         <div>
-          <div className="text-body-sm font-bold">{p.held}</div>
+          <div className="text-body-sm font-semibold">{p.held}</div>
           <div className="text-caption leading-4 text-ink-2">{p.released}</div>
         </div>
       </div>

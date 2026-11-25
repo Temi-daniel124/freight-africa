@@ -144,7 +144,7 @@ export function BankForm({ banks }: { banks: { code: string; name: string }[] })
         {checking ? <p className="text-body-sm text-ink-3">{t.bank.checking}</p> : null}
         {lookup?.status === "found" ? (
           <div className={cn("rounded-inner px-4 py-3", lookup.matches === true ? "bg-success-100" : lookup.matches === false ? "bg-warning-100" : "bg-paper")}>
-            <p className="font-bold text-ink">{lookup.name}</p>
+            <p className="font-semibold text-ink">{lookup.name}</p>
             <p className={cn("mt-0.5 flex items-center gap-1.5 text-body-sm", lookup.matches === true ? "text-success" : lookup.matches === false ? "text-warning" : "text-ink-2")}>
               {lookup.matches === true ? <CircleCheck aria-hidden className="size-4" strokeWidth={2} /> : lookup.matches === false ? <TriangleAlert aria-hidden className="size-4" strokeWidth={2} /> : null}
               {lookup.matches === true ? t.bank.match : lookup.matches === false ? t.bank.noMatch : t.bank.unchecked}

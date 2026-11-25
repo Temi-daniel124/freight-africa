@@ -18,7 +18,7 @@ type Params = Promise<Record<string, string | string[] | undefined>>;
 function Heading({ step, title, lead }: { step?: number; title: string; lead?: string }) {
   return (
     <div className="flex flex-col gap-2">
-      {step ? <p className="text-caption font-bold tracking-caps text-ink-3 uppercase">{t.step.replace("{n}", String(step))}</p> : null}
+      {step ? <p className="text-caption font-semibold tracking-caps text-ink-3 uppercase">{t.step.replace("{n}", String(step))}</p> : null}
       <h1 className="text-title-1 text-ink">{title}</h1>
       {lead ? <p className="text-body text-ink-2">{lead}</p> : null}
     </div>

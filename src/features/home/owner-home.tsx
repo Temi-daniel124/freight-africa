@@ -90,7 +90,7 @@ export function TruckCard({ x }: { x: FleetTruck }) {
       <TruckGraphic kind={truckKind(x.truck_type_code)} load={fleetLoad(x)} />
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0">
-          <p className="tabular text-body font-extrabold whitespace-nowrap text-ink">
+          <p className="tabular text-body font-semibold whitespace-nowrap text-ink">
             {x.plate}
           </p>
           <p className="truncate text-caption text-ink-3">{x.truck_type}</p>
@@ -128,7 +128,7 @@ function Section({
   return (
     <section className="flex min-w-0 flex-col gap-3">
       <div className="flex items-center justify-between gap-3">
-        <h2 className="text-body-lg font-extrabold text-ink">{title}</h2>
+        <h2 className="text-body-lg font-semibold text-ink">{title}</h2>
         {action}
       </div>
       {children}
@@ -242,14 +242,14 @@ export async function OwnerHome({
                 className="flex min-h-14 items-center gap-3 border-t border-line px-4 py-3 first:border-t-0 hover:bg-paper"
               >
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate text-body-sm font-bold whitespace-nowrap text-ink">
+                  <span className="block truncate text-body-sm font-semibold whitespace-nowrap text-ink">
                     {l.from_city} → {l.to_city}
                   </span>
                   <span className="block truncate text-caption text-ink-3">
                     {l.goods} · {l.truck_type}
                   </span>
                 </span>
-                <span className="tabular shrink-0 text-body-sm font-extrabold text-green-900">
+                <span className="tabular shrink-0 text-body-sm font-semibold text-green-900">
                   {naira(Number(l.payout_kobo))}
                 </span>
               </Link>
@@ -316,7 +316,7 @@ export async function OwnerHome({
               href="/app/haul/earnings"
               className="block rounded-tile bg-green-900 p-5 text-white shadow-raised lg:rounded-card"
             >
-              <p className="tabular text-[28px] leading-9 font-extrabold">
+              <p className="tabular text-[28px] leading-9 font-semibold">
                 {naira(earnings)}
               </p>
             </Link>

@@ -75,7 +75,7 @@ export async function TrucksPage() {
               <Truck className="size-5" strokeWidth={1.75} />
             </span>
             <span className="min-w-0 flex-1">
-              <span className="block text-body font-bold tracking-kv text-ink tabular">
+              <span className="block text-body font-semibold tracking-kv text-ink tabular">
                 {formatPlate(truck.plate_number)}
               </span>
               <span className="block truncate text-body-sm text-ink-2">

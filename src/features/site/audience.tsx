@@ -35,7 +35,7 @@ export function Audience() {
                       <Check className="size-3.75" strokeWidth={2.25} />
                     </span>
                     <div>
-                      <b className="block text-control leading-5.5 font-bold">{benefit.title}</b>
+                      <b className="block text-control leading-5.5 font-semibold">{benefit.title}</b>
                       <p className="mt-0.75 text-body text-wrap text-ink-2">{benefit.text}</p>
                     </div>
                   </li>
@@ -44,7 +44,7 @@ export function Audience() {
               <Link
                 href={`/waitlist?role=${key}`}
                 className={cn(
-                  "mt-auto inline-flex h-13 items-center justify-center gap-2 rounded-button px-6 text-body font-bold transition-colors max-lg:w-full lg:self-start",
+                  "mt-auto inline-flex h-13 items-center justify-center gap-2 rounded-button px-6 text-body font-semibold transition-colors max-lg:w-full lg:self-start",
                   key === "shipper" ? "bg-green-700 text-white hover:bg-green-800" : "border border-line-strong bg-surface text-ink hover:bg-green-50",
                 )}
               >

@@ -24,7 +24,7 @@ export async function BankQueue() {
       {accounts.map((account) => (
         <li key={account.id} className="grid gap-4 rounded-tile bg-surface p-5 shadow-raised lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)] lg:rounded-card lg:p-6">
           <div>
-            <p className="text-caption font-bold tracking-caps text-ink-3 uppercase">{orgName.get(account.org_id)}</p>
+            <p className="text-caption font-semibold tracking-caps text-ink-3 uppercase">{orgName.get(account.org_id)}</p>
             <h2 className="text-title-2 text-ink">{account.resolved_name}</h2>
             <p className="text-body-sm text-ink-2">
               {t.bankLine.replace("{bank}", account.bank_name).replace("{last4}", account.account_last4).replace("{score}", String(account.name_match_score))}

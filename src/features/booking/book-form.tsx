@@ -312,8 +312,8 @@ export function BookForm({
                 </dd>
               </div>
               <div className="flex justify-between gap-3 border-t border-line pt-2 text-body">
-                <dt className="font-bold text-ink">{t.total}</dt>
-                <dd className="tabular font-extrabold text-green-900">
+                <dt className="font-semibold text-ink">{t.total}</dt>
+                <dd className="tabular font-semibold text-green-900">
                   {formatNaira(quote.total / 100)}
                 </dd>
               </div>
