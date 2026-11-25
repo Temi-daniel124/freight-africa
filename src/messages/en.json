@@ -1729,14 +1729,16 @@
       "emptyText": "Invite your drivers. They check their own ID and licence on their phone.",
       "status": {
         "pending": "Checking ID and licence",
-        "active": "Can drive",
+        "active": "Free",
         "paused": "Paused by you",
         "suspended": "Suspended",
-        "invited": "Invited"
+        "invited": "Invited",
+        "onTrip": "On a trip"
       },
       "licence": "Licence until {date}",
       "pause": "Pause",
-      "resume": "Let drive"
+      "resume": "Let drive",
+      "onTrip": "On a trip: {plate} · {ref}"
     },
     "pinLink": {
       "button": "Send a new PIN link",

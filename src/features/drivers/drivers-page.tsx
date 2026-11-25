@@ -5,6 +5,7 @@ import { StatusChip, type StatusTone } from "@/components/ui/chip";
 import { EmptyState } from "@/components/ui/empty-state";
 import { supabaseServer } from "@/lib/supabase/server";
 import messages from "@/messages/en.json";
+import { Avatar } from "@/components/ui/avatar";
 import { PinLinkButton } from "@/features/auth/pin-link-button";
 import { PauseDriverButton } from "./pause-button";
 
@@ -29,7 +30,13 @@ export async function DriversPage({ orgId }: { orgId: string | null }) {
     );
   }
   const supabase = await supabaseServer();
-  const [{ data: members }, { data: drivers }] = await Promise.all([supabase.rpc("team_members", { p_org: orgId }), supabase.from("drivers").select("user_id, status, paused, licence_expires_on")]);
+  const [{ data: members }, { data: drivers }, { data: live }] = await Promise.all([
+    supabase.rpc("team_members", { p_org: orgId }),
+    supabase.from("drivers").select("user_id, status, paused, licence_expires_on"),
+    // D045: each driver's current truck and whether they're on a trip.
+    supabase.from("trips").select("driver_id, ref, truck:trucks(plate_number)").eq("transporter_org_id", orgId).in("status", ["assigned", "to_pickup", "at_pickup", "loading", "loaded", "in_transit", "arrived"]),
+  ]);
+  const onTrip = new Map((live ?? []).map((r) => [r.driver_id, { ref: r.ref, plate: (r.truck as unknown as { plate_number: string } | null)?.plate_number ?? "" }]));
   const list = (members ?? []).filter((m) => m.is_driver && !m.is_me);
   const byId = new Map((drivers ?? []).map((d) => [d.user_id, d]));
   if (!list.length) {
@@ -47,12 +54,18 @@ export async function DriversPage({ orgId }: { orgId: string | null }) {
       <ul className="overflow-hidden rounded-tile bg-surface shadow-raised lg:rounded-card">
         {list.map((member) => {
           const driver = byId.get(member.user_id);
-          const key: keyof typeof t.status = member.status === "pending" ? "invited" : driver?.status === "suspended" ? "suspended" : driver?.paused ? "paused" : driver?.status === "active" ? "active" : "pending";
-          const tone: StatusTone = key === "active" ? "success" : key === "suspended" ? "danger" : key === "paused" ? "neutral" : "warning";
+          const key: keyof typeof t.status = member.status === "pending" ? "invited" : driver?.status === "suspended" ? "suspended" : driver?.paused ? "paused" : onTrip.has(member.user_id) ? "onTrip" : driver?.status === "active" ? "active" : "pending";
+          const tone: StatusTone = key === "active" ? "success" : key === "onTrip" ? "info" : key === "suspended" ? "danger" : key === "paused" ? "neutral" : "warning";
           return (
             <li key={member.user_id} className="flex flex-wrap items-center gap-3 border-t border-line px-4 py-3.5 first:border-t-0 lg:px-6">
+              <Avatar name={member.full_name ?? ""} size={40} />
               <span className="min-w-0 flex-1">
                 <span className="block truncate text-body font-bold text-ink">{member.full_name}</span>
+                {onTrip.get(member.user_id) ? (
+                  <span className="tabular block truncate text-body-sm text-ink-2">
+                    {t.onTrip.replace("{plate}", onTrip.get(member.user_id)?.plate ?? "").replace("{ref}", onTrip.get(member.user_id)?.ref ?? "")}
+                  </span>
+                ) : null}
                 {driver?.licence_expires_on ? <span className="block text-body-sm text-ink-2">{t.licence.replace("{date}", date.format(new Date(driver.licence_expires_on)))}</span> : null}
               </span>
               <StatusChip tone={tone}>{t.status[key]}</StatusChip>

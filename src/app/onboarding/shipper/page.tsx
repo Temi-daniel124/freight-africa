@@ -4,6 +4,7 @@ import { RoadLine } from "@/components/ui/road-line";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getMyJoining } from "@/features/onboarding/setup";
 import { onboardingSession } from "@/features/onboarding/session";
+import { AvatarPicker } from "@/features/settings/avatar-picker";
 import { ShipperForm } from "@/features/onboarding/shipper-form";
 import messages from "@/messages/en.json";
 
@@ -14,7 +15,16 @@ async function Setup() {
   if (!agreed) redirect("/onboarding/role?role=shipper");
   // Already a sender: nothing to set up here.
   if ((await getMyJoining()).kinds.shipper) redirect("/app/ship");
-  return <ShipperForm name={name ?? ""} />;
+  return (
+    <>
+      <ShipperForm name={name ?? ""} />
+      {/* D045: Choose your picture (optional, also in Settings). */}
+      <section className="mt-8 flex flex-col gap-3 border-t border-line pt-6">
+        <h2 className="text-title-3 text-ink">{messages.settings.picture.title}</h2>
+        <AvatarPicker name={name ?? ""} current={null} />
+      </section>
+    </>
+  );
 }
 
 // A-04 Set up as a shipper (ux-shipper.md): one screen, then booking.
