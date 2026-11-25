@@ -2111,8 +2111,6 @@
       "held": "Held",
       "reversed": "Reversed"
     }
-<<<<<<< Updated upstream
-=======
   },
   "ocr": {
     "check": "Read from the photo. Check it before you save."
@@ -2159,6 +2157,5 @@
     "send": "Send a field agent",
     "agent": "Field agent",
     "sent": "Inspection sent."
->>>>>>> Stashed changes
   }
 }
