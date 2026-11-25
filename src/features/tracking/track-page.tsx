@@ -34,7 +34,7 @@ export async function TrackPage({
       await supabaseServer()
     ).rpc("find_trip", { p_org: orgId, p_ref: refQuery });
     if (loadId)
-      redirect(`/app/ship/trips/${loadId as unknown as string}/track`);
+      redirect(`/app/ship/trips/${loadId}/track`);
     notFoundText = t.notFound.replace("{org}", account);
   }
   const live = orgId

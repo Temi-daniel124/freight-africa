@@ -15,6 +15,6 @@ export async function saveTracker(truckId: string, device: string): Promise<{ st
 export async function trackerSignal(truckId: string): Promise<{ at: string; lat: number; lng: number } | null> {
   await assertUnlocked();
   const { data } = await (await supabaseServer()).rpc("truck_signal", { p_truck: truckId });
-  const row = (data as unknown as { at: string | null; lat: number | null; lng: number | null }[] | null)?.[0];
+  const row = data?.[0];
   return row?.at && row.lat !== null && row.lng !== null ? { at: row.at, lat: row.lat, lng: row.lng } : null;
 }

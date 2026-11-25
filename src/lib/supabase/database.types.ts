@@ -14,12 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      field_tasks: {
-        Row: { id: string; kind: string; subject_id: string; assigned_to: string; created_by: string | null; due_at: string; status: string; result: Json | null; photos: string[]; created_at: string; done_at: string | null }
-        Insert: { id?: string; kind?: string; subject_id?: string; assigned_to?: string; created_by?: string | null; due_at?: string; status?: string; result?: Json | null; photos?: string[]; created_at?: string; done_at?: string | null }
-        Update: { id?: string; kind?: string; subject_id?: string; assigned_to?: string; created_by?: string | null; due_at?: string; status?: string; result?: Json | null; photos?: string[]; created_at?: string; done_at?: string | null }
-        Relationships: []
-      }
       approvals: {
         Row: {
           approved_by: string | null
@@ -457,6 +451,63 @@ export type Database = {
             foreignKeyName: "drivers_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      field_tasks: {
+        Row: {
+          assigned_to: string
+          created_at: string
+          created_by: string | null
+          done_at: string | null
+          due_at: string
+          id: string
+          kind: string
+          photos: string[]
+          result: Json | null
+          status: string
+          subject_id: string
+        }
+        Insert: {
+          assigned_to: string
+          created_at?: string
+          created_by?: string | null
+          done_at?: string | null
+          due_at: string
+          id?: string
+          kind: string
+          photos?: string[]
+          result?: Json | null
+          status?: string
+          subject_id: string
+        }
+        Update: {
+          assigned_to?: string
+          created_at?: string
+          created_by?: string | null
+          done_at?: string | null
+          due_at?: string
+          id?: string
+          kind?: string
+          photos?: string[]
+          result?: Json | null
+          status?: string
+          subject_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "field_tasks_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "field_tasks_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
@@ -1474,6 +1525,7 @@ export type Database = {
           org_id: string
           paid_at: string | null
           provider_ref: string | null
+          requested_by: string | null
           status: Database["public"]["Enums"]["payout_status"]
           trip_id: string | null
         }
@@ -1491,6 +1543,7 @@ export type Database = {
           org_id: string
           paid_at?: string | null
           provider_ref?: string | null
+          requested_by?: string | null
           status?: Database["public"]["Enums"]["payout_status"]
           trip_id?: string | null
         }
@@ -1508,6 +1561,7 @@ export type Database = {
           org_id?: string
           paid_at?: string | null
           provider_ref?: string | null
+          requested_by?: string | null
           status?: Database["public"]["Enums"]["payout_status"]
           trip_id?: string | null
         }
@@ -1538,6 +1592,13 @@ export type Database = {
             columns: ["org_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payouts_requested_by_fkey"
+            columns: ["requested_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
           {
@@ -2108,6 +2169,7 @@ export type Database = {
           reviewed_by: string | null
           status: Database["public"]["Enums"]["truck_status"]
           tracker_device_id: string | null
+          tracker_key_hash: string | null
           truck_type_id: string
           unavailable_until: string | null
           updated_at: string
@@ -2132,6 +2194,7 @@ export type Database = {
           reviewed_by?: string | null
           status?: Database["public"]["Enums"]["truck_status"]
           tracker_device_id?: string | null
+          tracker_key_hash?: string | null
           truck_type_id: string
           unavailable_until?: string | null
           updated_at?: string
@@ -2156,6 +2219,7 @@ export type Database = {
           reviewed_by?: string | null
           status?: Database["public"]["Enums"]["truck_status"]
           tracker_device_id?: string | null
+          tracker_key_hash?: string | null
           truck_type_id?: string
           unavailable_until?: string | null
           updated_at?: string
@@ -2434,6 +2498,16 @@ export type Database = {
           to_phone: string
         }[]
       }
+      complete_inspection: {
+        Args: {
+          p_checks: Json
+          p_note?: string
+          p_pass: boolean
+          p_photos: string[]
+          p_task: string
+        }
+        Returns: undefined
+      }
       confirm_payment: {
         Args: {
           p_amount_kobo: number
@@ -2449,6 +2523,10 @@ export type Database = {
           p_load: string
           p_truck: string
         }
+        Returns: string
+      }
+      create_inspection: {
+        Args: { p_agent: string; p_due: string; p_truck: string }
         Returns: string
       }
       create_invite: {
@@ -2555,6 +2633,7 @@ export type Database = {
           weight_kg: number
         }[]
       }
+      fresh_try: { Args: { p_user: string }; Returns: boolean }
       give_onboarding_consents: {
         Args: {
           p_ip_key?: string
@@ -2718,6 +2797,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      record_fresh_check: {
+        Args: { p_session: string; p_user: string }
+        Returns: undefined
+      }
       refund_paid: {
         Args: { p_provider_ref: string; p_refund: string }
         Returns: undefined
@@ -2743,13 +2826,6 @@ export type Database = {
       }
       set_active_org: { Args: { p_org: string }; Returns: undefined }
       set_app_pin: { Args: { p_pin: string }; Returns: undefined }
-      record_fresh_check: { Args: { p_session: string; p_user: string }; Returns: undefined }
-      fresh_try: { Args: { p_user: string }; Returns: boolean }
-      tracker_ping: { Args: { p_at: string; p_key: string; p_lat: number; p_lng: number }; Returns: boolean }
-      set_truck_tracker: { Args: { p_device: string; p_truck: string }; Returns: string }
-      truck_signal: { Args: { p_truck: string }; Returns: { at: string; lat: number; lng: number }[] }
-      create_inspection: { Args: { p_agent: string; p_due: string; p_truck: string }; Returns: string }
-      complete_inspection: { Args: { p_checks: Json; p_note?: string; p_pass: boolean; p_photos: string[]; p_task: string }; Returns: undefined }
       set_driver_paused: {
         Args: { p_driver: string; p_paused: boolean }
         Returns: undefined
@@ -2769,6 +2845,10 @@ export type Database = {
       set_truck_paused: {
         Args: { p_paused: boolean; p_truck: string }
         Returns: undefined
+      }
+      set_truck_tracker: {
+        Args: { p_device: string; p_truck: string }
+        Returns: string
       }
       staff_backup_codes_left: { Args: never; Returns: number }
       staff_invite_details: {
@@ -2813,6 +2893,10 @@ export type Database = {
           user_id: string
         }[]
       }
+      tracker_ping: {
+        Args: { p_at: string; p_key: string; p_lat: number; p_lng: number }
+        Returns: boolean
+      }
       trip_map: {
         Args: { p_trip: string }
         Returns: {
@@ -2853,6 +2937,14 @@ export type Database = {
           balance_kobo: number
           commission_kobo: number
           freight_kobo: number
+        }[]
+      }
+      truck_signal: {
+        Args: { p_truck: string }
+        Returns: {
+          at: string
+          lat: number
+          lng: number
         }[]
       }
       update_organization: {

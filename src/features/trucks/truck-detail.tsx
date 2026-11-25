@@ -78,7 +78,7 @@ export async function TruckDetail({
         .limit(20),
       supabase.rpc("team_members", { p_org: orgId }),
     ]);
-  const x = ((fleet ?? []) as unknown as FleetTruck[]).find(
+  const x = ((fleet ?? []) satisfies FleetTruck[]).find(
     (row) => row.truck_id === id,
   );
   if (!x) notFound();
