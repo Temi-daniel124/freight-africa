@@ -2128,13 +2128,14 @@
     "copied": "Copied",
     "save": "Save",
     "test": "Test connection",
-    "saved": "Tracker saved. Use Test connection to check it.",
+    "saved": "Tracker saved. Set this address on the tracker now: it is shown only once.",
     "invalid": "A tracker ID is 6 to 32 letters and numbers.",
     "taken": "That tracker is connected to another truck.",
     "waiting": "Waiting for a signal (up to 5 minutes)…",
     "received": "Signal received at {time}, near {lat}, {lng}.",
     "noSignal": "No signal yet. Check the server address on the tracker and that it has power and data.",
-    "connect": "Connect a GPS tracker"
+    "connect": "Connect a GPS tracker",
+    "saveFirst": "Save the tracker ID to get its address"
   },
   "tasks": {
     "title": "My tasks",

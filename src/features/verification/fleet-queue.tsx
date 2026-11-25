@@ -31,7 +31,7 @@ export async function FleetQueue() {
   ]);
   const orgName = new Map((orgs ?? []).map((o) => [o.id, o.name]));
   // Field agents verification can send to look at a truck in person (X-30).
-  const { data: staff } = await supabase.from("staff_members").select("user_id, role, profile:profiles(full_name)").eq("role", "field_agent");
+  const { data: staff } = await supabase.from("staff_members").select("user_id, role, profile:profiles(full_name)").eq("role", "field_agent").eq("active", true);
   const agents = (staff ?? []).map((m) => ({ id: m.user_id, name: (m.profile as unknown as { full_name: string | null } | null)?.full_name ?? "" }));
   const plateOf = new Map([...(trucks ?? []), ...(docTrucks ?? [])].map((x) => [x.id, x.plate_number]));
   const url = new Map((links ?? []).map((l) => [l.path, l.signedUrl]));
