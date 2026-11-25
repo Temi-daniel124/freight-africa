@@ -40,7 +40,7 @@ select set_config('request.jwt.claims', '{"sub": "23232323-0000-4000-8000-000000
 select throws_ok($$select public.complete_inspection((select id from task_ids), '{}', '{}', false, '')$$, '22023', null, 'a problem needs a reason');
 select lives_ok($$select public.complete_inspection((select id from task_ids), '{"plate_matches": true, "roadworthy": false}', '{}', false, 'Front tyres worn')$$, 'the agent reports a problem');
 reset role;
-select like((select review_note from public.trucks where id = '23232323-0000-4000-8000-0000000000c1'), 'Field inspection: Front tyres worn', 'verification sees it on the truck');
+select is((select review_note from public.trucks where id = '23232323-0000-4000-8000-0000000000c1'), 'Field inspection: Front tyres worn', 'verification sees it on the truck');
 
 select * from finish();
 rollback;
