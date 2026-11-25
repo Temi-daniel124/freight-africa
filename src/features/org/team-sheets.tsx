@@ -1,11 +1,12 @@
 "use client";
 
 import { Copy, MessageCircle, Plus, TriangleAlert } from "lucide-react";
-import { useActionState, useState } from "react";
+import { useActionState, useRef, useState } from "react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { TextField } from "@/components/ui/field";
 import { Sheet } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import { FreshCheck } from "@/features/auth/fresh-check";
 import messages from "@/messages/en.json";
 import { roleWithArticle } from "./role-words";
 import {
@@ -216,6 +217,7 @@ export function MemberSheet({
     FormData
   >(removeMember, { status: "idle" });
   const [choice, setChoice] = useState<Role>(role);
+  const roleForm = useRef<HTMLFormElement>(null);
   const changeable =
     role !== "driver" &&
     roles.filter((r) => r !== "driver").length > 1 &&
@@ -235,7 +237,7 @@ export function MemberSheet({
       }
     >
       {changeable ? (
-        <form action={roleAction} className="mb-4 flex flex-col gap-3">
+        <form ref={roleForm} action={roleAction} className="mb-4 flex flex-col gap-3">
           <input type="hidden" name="org" value={orgId} />
           <input type="hidden" name="user" value={userId} />
           <RoleChoice
@@ -245,6 +247,7 @@ export function MemberSheet({
             name="role"
           />
           <ErrorLine message={roleState.message} />
+          {roleState.status === "fresh" ? <FreshCheck onDone={() => roleForm.current?.requestSubmit()} /> : null}
           <Button
             type="submit"
             size="md"

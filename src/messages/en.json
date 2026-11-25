@@ -845,6 +845,18 @@
       "lead": "Hi {name}. Choose a new PIN for signing in with your phone number.",
       "usedTitle": "This PIN link has expired",
       "used": "This link has expired or was used. Ask your truck owner or an admin for a new one."
+    },
+    "fresh": {
+      "title": "Confirm it’s you",
+      "totp": "Enter the code from your authenticator app.",
+      "email": "We’ll email you a code to confirm this change.",
+      "emailSent": "Enter the 6-digit code we just emailed you.",
+      "send": "Email me a code",
+      "label": "6-digit code",
+      "wrong": "That code isn’t right.",
+      "locked": "Too many tries. Try again in an hour.",
+      "failed": "Something went wrong. Try again.",
+      "none": "Ask the business owner to make this change."
     }
   },
   "fonts": {
