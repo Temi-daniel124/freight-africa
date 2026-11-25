@@ -4,7 +4,7 @@
 start of every session and updates it at the end (`CLAUDE.md` §2). It records facts about progress; it
 never overrides a higher document.
 
-**Last updated:** 24 Nov 2026 evening, by Claude Code (D043–D046; account types and PIN sign-in live).
+**Last updated:** 25 Nov 2026, by Claude Code (founder brief sections 0–5 built; #73 and #74 wait for the founder to merge).
 
 ---
 
@@ -30,8 +30,8 @@ The phases are defined in `BUILD.md` §3. Update this table as work progresses.
 | 0 | Bootstrap: repo, scaffold, accounts linked, CI green | Done | |
 | 0L | Launch page: pre-launch home, waitlist, privacy and terms (D030) | **Accepted** 15 Nov 2026 | PageSpeed Insights mobile 98 (LCP 2.5 s, TBT 40 ms), desktop 100; real phone sign-up and confirmation email delivered |
 | 1 | Foundations: auth, organisations, roles, RLS, tokens, ledger, settings, audit | **Accepted** 24 Nov 2026 | `docs/acceptance/phase-1.md`; slices 1–9, staff two-step sign-in (#42), demo accounts (#43), 297 pgTAP tests |
-| 2 | Supply: owner and driver onboarding, Didit, trucks, documents, catalogue, verification queue | **Built, awaiting founder review** 24 Nov 2026 | `docs/acceptance/phase-2.md`; demo verification provider until Didit (D039); still to build: plate reading, tracker registration (T-18), truck inspection tasks |
-| 3 | Booking and money: quotes, loads, payments, escrow, releases, refunds, receipts | **In progress** 24 Nov 2026 | Database and money rules live (#66); screens #67, #68; demo payment provider until Bachs (D039); ledger postings real |
+| 2 | Supply: owner and driver onboarding, Didit, trucks, documents, catalogue, verification queue | **Built** 25 Nov 2026 (last items in #73, #74); Didit demo until account | `docs/acceptance/phase-2.md`; demo verification provider until Didit (D039); still to build: plate reading, tracker registration (T-18), truck inspection tasks |
+| 3 | Booking and money: quotes, loads, payments, escrow, releases, refunds, receipts | **Built, awaiting founder review** 25 Nov 2026 | Database and money rules live (#66); screens #67, #68; demo payment provider until Bachs (D039); ledger postings real |
 | 4 | The trip: load board, offers, trips, driver flow, trip mode, codes, receiver pages, notifications, live map | Not started | In-app and email instead of WhatsApp until Meta (D039) |
 | 5 | Problems: disputes, SOS, cancellations, waiting, breakdowns, fraud flags, strikes | Not started | |
 | 6 | Growth: return loads, agents, discounts, offers, ratings, tiers | Not started | |
@@ -42,21 +42,20 @@ The phases are defined in `BUILD.md` §3. Update this table as work progresses.
 
 **Unblocked (24 Nov 2026):** GitHub Actions had stopped starting jobs on the private repository (billing); the founder had the repository made public (D040). It goes back to private when production is complete.
 
-**Founder brief of 24 Nov 2026 (sections 0 to 5, one long run; stop only when all merged and live, or truly blocked).** Progress:
+**Founder brief of 24 Nov 2026 (sections 0 to 5).** State on 25 Nov 2026, 02:15 Lagos:
 
-- **Done and live:** section 0 decisions D043–D046 and all docs (#61); D043 account types (#62, migration applied); D044 sign-in (#63, migration applied, demo accounts reseeded with `DEMO_PIN` from the git-ignored `.env.founder.local`, phone-only demo driver 0803 000 0101). Live test: the phone driver signs in with phone + PIN and lands on /app/drive.
-- **Merged and live since:** keypad fix (#64); the new look shared pieces and fixes 2a–2i (#65; check:layout passed at 320–1440 px on the preview); Phase 3 database (#66: lane prices, loads with D046 amounts, offers and counters, payments into escrow, trips, releases, cancellations, refunds, payouts; 31 pgTAP money tests; two independent reviews, all findings fixed); Phase 3 screens part 1 (#67: Book a truck, Trips, trip page with the demo bank transfer, counters, cancel, receipts, Payments, load board with accept and counter, owner Trips and Earnings, money-out worker on the minute dispatcher; demo money settles demo accounts only). Demo data: `npm run demo:trips` (scripts/seed-demo-trips.mjs, resumable) gave the demo sender loads in every state and Musa Haulage six trucks across all states (cattle on a livestock truck, rice with the weight unknown).
-- **In review:** #68 Homes and tracking (sender Home, Track a trip, trip tracking map with Call, truck owner Home, driver Trip tab; migration 20261125140000 trip_map, find_trip, fleet). After merge: run `migrate.yml`, then `npx supabase gen types typescript --project-id czlowhaycaivpgimcefk --schema public > src/lib/supabase/database.types.ts` and remove the `as never` / `as unknown as` casts around `trip_map`, `find_trip` and `fleet`.
-- **Known limit:** `seed-demo.mjs --remove` cannot delete demo loads that have ledger postings (the ledger is append-only by design). Before launch, the demo cleanup must archive or mark them instead (decide in Phase 8).
+- **Merged and live:** #61 decisions D043–D046 and docs; #62 account types; #63/#64 PIN sign-in (email code once per device, PIN, optional two-step, app lock for every role, phone invites, PIN links); #65 the new look shared pieces and layout fixes 2a–2i with `npm run check:layout`; #66/#67 Phase 3 database and screens part 1; #68 Homes, Track a trip, trip tracking map, truck detail; #69 types; #70 finance staff views; #71/#72 D044 fresh check (team role change, admin and money-role invites, removing someone; payouts can't be approved by whoever released them); #72 Drivers page and Choose your picture in setup. Every money, auth and RLS change had an independent review and its findings fixed. Migrations applied through `migrate.yml` up to 20261125170000.
+- **Waiting for the founder to merge (green, reviewed; the permission check blocked merges from this session):**
+  - #73 plate and expiry reading from photos (Tesseract.js, served from /tesseract). No migration.
+  - #74 GPS tracker registration (T-18, keyed trackers, OsmAnd endpoint) and truck inspection tasks for field agents; Phase 2 acceptance updated. After merge: run `migrate.yml` (migration 20261125180000), then `npx supabase gen types typescript --project-id czlowhaycaivpgimcefk --schema public > src/lib/supabase/database.types.ts`. #74 also adds the `ocr` message key that #73 adds: rebase #74 after #73 and keep one.
+- **Demo:** `npm run demo:seed` (people, PINs from `.env.founder.local`), `npm run demo:trips` (loads in every state, six trucks). Known limit: `seed-demo.mjs --remove` cannot delete demo loads with ledger postings (append-only ledger); decide the pre-launch cleanup in Phase 8.
 
 **Next task, in this order:**
-1. Merge #68 (after its review) and regenerate types.
-2. Truck detail (`/app/haul/trucks/[id]`: big truck graphic with load, current trip, driver with phone and licence status and trips done, sender and what it pays, papers with expiry, trip history with amounts, Assign driver and Pause truck) and the Drivers page (avatar, status on a trip / free / paused, current truck; driver detail).
-3. D044 fresh check for sensitive actions (authenticator code if two-step is on, otherwise an email code) on team role change; bank change and payouts screens use the same helper when built.
-4. Finance staff views in the console: refunds and payouts waiting for approval (approve_money_out, second person), queued and paid lists.
-5. Choose your picture in setup (Settings has it).
-6. Section 4: Tesseract.js plate and expiry reading (prefill, the person confirms; typed value saved), GPS tracker registration (T-18), truck inspection tasks for field agents, docs/acceptance/phase-2.md with Didit "demo until account".
-7. Final: check:layout sweep on the latest preview, screenshots at 375 and 1440 with preview links written here, phase-3 acceptance record, the founder report with the "try it" table.
+1. Merge #73, then rebase and merge #74; migrate; regenerate types.
+2. `npm run check:layout` against the latest preview (`BASE_URL=<preview> SHARE_URL=<vercel share link> npm run check:layout`); fix anything it finds on the new Phase 3 screens (Book, trip page, load board, Homes, tracking, truck detail, finance views); screenshots at 375 and 1440 with the preview links recorded here.
+3. PageSpeed at the end of the phase (app sign-in and the sender Home).
+4. Phase 3 gaps (`docs/acceptance/phase-3.md`): payout/refund failure retries (1, 5, 15, 60 min), the no-truck-after-24-hours decision screen, batch payment, waiting charges (Phase 5), the 06:00 reconciliation run, the "loaded" and "delivered" steps through Phase 4's codes instead of the demo buttons.
+5. Then Phase 4 (the trip): load alerts, driver flow with codes and photos, live pings (tracker and phone), receiver pages.
 
 **Founder's standing instructions (24 Nov 2026):** no more design gates; the founder reviews each phase once at the end with the demo accounts. Stop only at the end of a phase (with a "try it" walkthrough) or when truly blocked. Merge on green CI after the independent review for money, auth and RLS. Screenshots at 375 and 1440 px only, as a sanity look; PageSpeed at the end of each phase. Update this file after every merged slice.
 
@@ -103,6 +102,8 @@ for these at the moment they're needed, with exact steps.
 ## 7. Session log
 
 Add one line per session, newest first: date · what was done · what's next.
+
+- 25 Nov 2026 · New look, Phase 3 booking and money (database, 31 money tests, screens, Homes, tracking, finance views), D044 fresh check, Drivers page, plate and expiry reading, trackers and inspections (#65–#74); each money/auth/RLS change independently reviewed · founder merges #73 and #74; layout sweep; Phase 4.
 
 - 24 Nov 2026 (evening) · Founder brief D043–D046: decisions and docs (#61); account types, "I drive my own truck" switch, Admin label (#62); sign-in with an email code once per device then a PIN, optional two-step, app lock for every role, phone invites and PIN links (#63), each independently reviewed with findings fixed; migrations applied; demo PIN seeded · the new look, then Phase 3.
 
