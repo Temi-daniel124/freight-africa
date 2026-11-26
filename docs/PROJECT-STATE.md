@@ -4,7 +4,7 @@
 start of every session and updates it at the end (`CLAUDE.md` §2). It records facts about progress; it
 never overrides a higher document.
 
-**Last updated:** 25 Nov 2026 afternoon, by Claude Code (combined brief slices 1–3 merged and live; next slice 4, design foundation).
+**Last updated:** 26 Nov 2026 evening, by Claude Code (combined brief slice 4 merged; next slice 5, sender).
 
 ---
 
@@ -49,14 +49,10 @@ The phases are defined in `BUILD.md` §3. Update this table as work progresses.
 - **Slice 3, decisions: done (#80).** D047 offers, D048 Bachs hosted checkout, D049 drafts, D050 mockups first (added to the D028 order and AGENT.md), D051 driver messages, D052 install detection, D053 agents, D054 staff two-step and 12-hour sessions, D055 availability and several goods. The five mockup folders are committed.
 - **Owner mockups complete (#PR):** the full owner set (64 screens, README with the v1.1 messages section, `assets/fa.css`, `pdf/`) is in `docs/design/reference/owner-mockups`; slice 6 is no longer blocked.
 
-**Next task: slice 4, design foundation (combined brief §4), on branch `feat/foundation-mockups`:**
-1. `src/app/globals.css`: add `--breakpoint-md: 48rem` beside sm 600, lg 1024, xl 1440; a unit test that the theme defines sm, md, lg and xl; a `check:layout` rule (from 768 px no button or text block wider than 560 px unless inside a table, map or list row).
-2. Port `docs/design/reference/sender-mockups/assets/fa.css`, plus the console section of `admin-mockups/assets/fa.css`, into Tailwind tokens (colours with the blue, amber, green, grey and red status pairs; paper #F5F5F1, deep #083826, primary #0C5034; radii with cards 24 px and the 56 px pill button; shadows; spacing; type scale with weights 500 and 600 only). Update DESIGN_SYSTEM.md to match the mockups.
-3. Shared components matching the mockups, each in `/dev/components` with every state: buttons (primary pill, secondary, small, red SOS), cards, status pills, filter chips, segmented control, underline tabs, fields with focus ring, switches; the phone tab bars (sender with the raised Book circle, owner, driver, agent with the raised Invite circle), bottom sheet; the app desktop sidebar and top bar, and the staff console sidebar and top bar (grouped, folding, role-filtered); centred dialog, toast; PIN boxes and docked keypad; KPI tiles, dense table, success check, empty states.
-4. Motion with `motion`: sheet and dialog in and out, the success check pop-and-draw, the SOS 2 s hold ring, number changes, the list "new" pill; all honour prefers-reduced-motion.
-5. Font: fix the gap before commas and full stops in headings (check the comma glyph in JakartaFA.woff2 and the negative heading letter-spacing); weights 500 and 600 only.
-6. Slides and Welcome: one fixed illustration box; on desktop the illustration on the left half and the text or card on the right (max 440 px); keypad screens become a centred card (max 420 px) on desktop with the physical keyboard working.
-Then slices 5–12 in the brief's order (sender: onboarding and auth, booking and offers, Bachs and drafts, trips, account and settings, PDFs; owner; driver; staff console; agent; messaging; Phase 3 finish; check:mockups).
+- **Slice 4, design foundation: done (#83).** Mockup tokens in `globals.css` (paper #F5F5F1, lines, status pairs, SOS red, radii, shadows, type at 500/600 with `font-bold` gone), the md breakpoint with `theme.test.ts`, the 560 px rule in `check:layout`; buttons, pills, chips, fields, choices, tabs, tab bars, sidebars (the staff console's filtered by role, `staffPageRoles`, pages outside the role are not found), dialog, keypad, KPI, table and progress in `/dev/components`; motion (success check, SOS hold, rolling numbers, New pill); the comma and full stop moved closer in JakartaFA (`scripts/fonts/tighten-punctuation.py`); welcome slides and Welcome with one fixed illustration box and the desktop split; DESIGN_SYSTEM §1–5 and §10 to the mockups. Checked on the preview at 1440 and 375 (a local dev server ran out of memory on the laptop).
+
+**Next task: slice 5, sender (combined brief), on branch `feat/sender-mockups`:** onboarding and auth, booking and offers, Bachs and drafts, trips, account and settings, PDFs, each screen against `docs/design/reference/sender-mockups` using the slice 4 components.
+Then slices 6–12 in the brief's order (owner; driver; staff console; agent; messaging; Phase 3 finish; check:mockups).
 
 **Founder's standing instructions (24 Nov 2026):** no more design gates; the founder reviews each phase once at the end with the demo accounts. Stop only at the end of a phase (with a "try it" walkthrough) or when truly blocked. Merge on green CI after the independent review for money, auth and RLS. Screenshots at 375 and 1440 px only, as a sanity look; PageSpeed at the end of each phase. Update this file after every merged slice.
 
@@ -104,6 +100,7 @@ for these at the moment they're needed, with exact steps.
 
 Add one line per session, newest first: date · what was done · what's next.
 
+- 26 Nov 2026 · Owner mockups complete (#82, slice 6 unblocked); combined brief slice 4, design foundation (#83): mockup tokens, components, motion, font punctuation, welcome layout · slice 5, sender.
 - 25 Nov 2026 (afternoon) · Combined brief slices 1–3: #73, #76 (replacing #74), #75 merged, migrations applied, types regenerated (#77); authenticator lock with X00j, independently reviewed, plus the session_aal follow-up (#78, #79); decisions D047–D055 and the mockup folders (#80) · slice 4, design foundation.
 - 25 Nov 2026 · New look, Phase 3 booking and money (database, 31 money tests, screens, Homes, tracking, finance views), D044 fresh check, Drivers page, plate and expiry reading, trackers and inspections (#65–#74); each money/auth/RLS change independently reviewed · founder merges #73 and #74; layout sweep; Phase 4.
 
