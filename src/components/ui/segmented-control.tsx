@@ -26,7 +26,7 @@ type SegmentedControlProps<T extends string> = {
 export function SegmentedControl<T extends string>({ options, value, onChange, label, className, stackOnPhone = false, appearance = "brand" }: SegmentedControlProps<T>) {
   if (appearance === "app") {
     return (
-      <div role="radiogroup" aria-label={label} className={cn("inline-flex max-w-full overflow-x-auto rounded-pill bg-green-50 p-1", className)}>
+      <div role="radiogroup" aria-label={label} className={cn("inline-flex max-w-full overflow-x-auto rounded-pill bg-seg p-1", className)}>
         {options.map((option) => {
           const active = option.value === value;
           return (
@@ -37,8 +37,8 @@ export function SegmentedControl<T extends string>({ options, value, onChange, l
               aria-checked={active}
               onClick={() => onChange(option.value)}
               className={cn(
-                "h-10 shrink-0 rounded-pill px-4 text-body-sm whitespace-nowrap transition motion-quick",
-                active ? "bg-surface text-ink shadow-raised" : "text-ink-2 hover:text-ink",
+                "h-9 shrink-0 rounded-pill px-3.5 text-body-sm whitespace-nowrap transition motion-quick",
+                active ? "bg-surface text-ink shadow-seg" : "text-ink-2 hover:text-ink",
               )}
             >
               {option.label}

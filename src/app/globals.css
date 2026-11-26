@@ -535,19 +535,20 @@
 @utility tabular {
   font-variant-numeric: tabular-nums;
 }
-/* Gate 4 (DESIGN_SYSTEM 10.1): the floating tabs sit 12 px above the bottom plus the safe area, and page
-   content keeps 120 px plus the safe area clear below it so nothing hides behind the pill. */
+/* Mockup tab bar: the floating tabs sit 14 px above the bottom plus the safe area, and page content keeps
+   120 px plus the safe area clear below it so nothing hides behind the pill. */
 @utility bottom-tabs {
-  bottom: calc(0.75rem + env(safe-area-inset-bottom));
+  bottom: calc(0.875rem + env(safe-area-inset-bottom));
 }
 @utility pb-tabs {
   padding-bottom: calc(7.5rem + env(safe-area-inset-bottom));
 }
+/* Mockup .side and .xs: both sidebars are 248 px. */
 @utility grid-cols-shell {
-  grid-template-columns: 15rem minmax(0, 1fr);
+  grid-template-columns: 15.5rem minmax(0, 1fr);
 }
 @utility grid-cols-staff {
-  grid-template-columns: 16.25rem minmax(0, 1fr);
+  grid-template-columns: 15.5rem minmax(0, 1fr);
 }
 @utility grid-cols-home {
   grid-template-columns: minmax(0, 1fr) 22.5rem;

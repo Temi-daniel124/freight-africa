@@ -184,3 +184,50 @@ export const staffNav: StaffGroup[] = [
   { group: "insights", items: [{ page: "reports", icon: "reports" }] },
   { group: "admin", items: [{ page: "staff", icon: "staff" }, { page: "audit", icon: "audit" }] },
 ];
+
+export type StaffRole = "super_admin" | "operations" | "verification" | "finance" | "support" | "field_agent";
+
+const ALL: StaffRole[] = ["super_admin", "operations", "verification", "finance", "support", "field_agent"];
+const OFFICE: StaffRole[] = ["super_admin", "operations", "verification", "finance", "support"];
+
+/**
+ * Who sees each console page in the sidebar (ROLES-AND-PERMISSIONS.md §7, "view" counts as seeing).
+ * The interface only hides: every read and action is checked again in the database.
+ */
+export const staffPageRoles: Record<StaffPage, readonly StaffRole[]> = {
+  work: OFFICE,
+  overview: OFFICE,
+  tasks: ["super_admin", "operations", "field_agent"],
+  map: ["super_admin", "operations", "support"],
+  sos: ["super_admin", "operations", "support"],
+  trips: OFFICE,
+  loads: OFFICE,
+  users: ALL,
+  verification: ["super_admin", "operations", "verification", "field_agent"],
+  disputes: ["super_admin", "operations", "finance", "support"],
+  fraud: ["super_admin", "operations", "verification", "finance"],
+  escrow: ["super_admin", "operations", "finance", "support"],
+  payouts: ["super_admin", "operations", "finance", "support"],
+  refunds: ["super_admin", "operations", "finance", "support"],
+  reconciliation: ["super_admin", "operations", "finance", "support"],
+  approvals: ["super_admin", "finance"],
+  support: ["super_admin", "operations", "support"],
+  agents: ["super_admin", "operations", "finance", "support"],
+  catalogue: ["super_admin", "operations"],
+  corridors: ["super_admin", "operations"],
+  fees: ["super_admin", "finance"],
+  messages: ["super_admin", "operations", "support"],
+  website: ["super_admin", "operations"],
+  reports: ["super_admin", "operations", "finance"],
+  settings: ["super_admin"],
+  staff: ["super_admin"],
+  audit: ["super_admin"],
+  playbooks: ALL,
+  help: ALL,
+};
+
+/** The sidebar for one staff role: groups keep their order, empty groups drop out. */
+export function staffNavFor(role: StaffRole | null): StaffGroup[] {
+  if (!role) return staffNav;
+  return staffNav.map((group) => ({ ...group, items: group.items.filter((item) => staffPageRoles[item.page].includes(role)) })).filter((group) => group.items.length);
+}

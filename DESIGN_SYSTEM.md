@@ -63,26 +63,40 @@ general dark theme. (Recorded as D022; the founders may remove the exception.)
 
 ### 1.1 Tokens
 
+Since D050 the values follow the approved mockups (`docs/design/reference/<role>-mockups/assets/fa.css`);
+`src/app/globals.css` holds them and `src/app/theme.test.ts` pins the key ones.
+
 | Token | Hex | Role |
 | --- | --- | --- |
-| `--green-900` | #083826 | Pressed state of primary buttons; headings on tinted backgrounds |
+| `--green-900` | #083826 | **Deep.** Chosen chips, the current desktop sidebar item, deep cards, pressed primary |
 | `--green-700` | **#0C5034** | **Freight Green.** Primary buttons, links, active tab, logo |
 | `--green-500` | #2F7A57 | Hover on links; icons on tinted surfaces |
-| `--green-100` | #DCEBE2 | Selected chips, active nav background, money-held banner |
-| `--green-50` | #EEF5F0 | Secondary button fill, subtle section backgrounds |
+| `--green-100` | #DCEBE2 | The 4 px focus ring round a field, the current tab icon's fill |
+| `--green-50` | #EEF5F0 | Green status pill, soft callouts, current console nav item |
 | `--road-yellow` | #F2C230 | Highlights only: offer badges, "new" pills, the moving dash on the progress line. Never text on white, never a button |
 | `--road-yellow-100` | #FDF3D0 | Background for offer badges |
 | `--ink` | #0F1A14 | Main text |
 | `--ink-2` | #4A5A51 | Secondary text, labels |
 | `--ink-3` | #64716A | Quiet text: placeholders, small labels, disabled text. 5.1:1 on white, 4.7:1 on paper (was #7A887F, 3.7:1, darkened 19 Nov 2026 for accessibility 100) |
-| `--line` | #E2E8E3 | Borders, dividers |
-| `--line-strong` | #C9D3CC | Input borders, focus base |
-| `--paper` | #F6F8F5 | App background behind cards |
+| `--line` | #E6E8E3 | Card edges, borders |
+| `--line-field` | #E1E5E0 | Field and secondary-button edges |
+| `--line-soft` | #F0F2EE | Row dividers; grey status pill background |
+| `--line-strong` | #C9D0CB | Checkbox and radio rings, empty PIN dots |
+| `--control-off`, `--seg`, `--track`, `--grab` | #D5DBD6, #ECEEEA, #EEF1EC, #D9DED9 | Off switch, segmented track, progress track, sheet handle |
+| `--placeholder` | #8A968F | Field placeholders only |
+| `--table-head` | #FAFAF8 | Table header row |
+| `--ink-nav` | #3A4A41 | Staff console navigation |
+| `--paper` | #F5F5F1 | App background behind cards |
 | `--surface` | #FFFFFF | Cards, sheets, inputs |
 | `--info` | #1E5FBF on #E5EEFB | In transit, information |
 | `--warning` | #B4530B on #FDEEDC | Waiting, needs attention, tracking paused |
-| `--danger` | #B42318 on #FDE7E5 | Problems, errors, SOS, destructive actions |
-| `--success` | #157347 on #E3F4EA | Done, paid, delivered (distinct from brand green: brighter and used with a check icon) |
+| `--danger` | #B42318 on #FEECEB | Problems, errors, red words on destructive buttons |
+| `--sos` | #D92D20 | Solid red: SOS, console count badges, solid destructive buttons; urgent cards #FEF3F2 with #FBD5D0 |
+| `--success` | #157347 on #E3F4EA | Older screens only; the mockups show done and paid with the green pill |
+
+**Status pills (mockup `.pill`):** blue #1E5FBF on #E5EEFB, amber #B4530B on #FDEEDC, green #0C5034 on
+#EEF5F0, grey #4A5A51 on #F0F2EE, red #B42318 on #FEECEB, mint #9FD5B6 on deep green. 12/600, 5 × 10 px
+padding, always with a word (`StatusChip tone`).
 
 Night look (driver trip screens only): background #0E1712, surface #16211B, text #E7EFE9, primary button
 stays #0C5034 with a #7FC4A2 outline for visibility.
@@ -109,8 +123,9 @@ including the naira sign and the Hausa, Yoruba and Igbo letters. No second typef
 `-apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif`, with
 `adjustFontFallback` so text doesn't jump when the font arrives.
 
-- Weights used: 400, 500, 600, 700. 800 only for the money hero. Never synthesise bold or italic
-  (`font-synthesis: none`).
+- Weights (mockups): **500 and 600** for headings, labels, buttons and emphasis; running text stays at
+  the regular 400 the mockups render. Nothing at 700 or 800 (`theme.test.ts` fails on a heavier token;
+  `font-bold` is not used). Never synthesise bold or italic (`font-synthesis: none`).
 - Emails can't load web fonts; they use the fallback stack.
 - Any new character in the interface must exist in the subset (see `src/app/fonts/README.md`).
 
@@ -121,16 +136,23 @@ any column of numbers.
 
 | Token | Size / line height | Weight | Use |
 | --- | --- | --- | --- |
-| `display` | 34 / 40 | 700 | Money hero (amount to pay, payout received) |
-| `title-1` | 26 / 32 | 700 | Screen titles |
-| `title-2` | 20 / 26 | 700 | Section and card titles |
+| `display` (.hx) | 36 / 1.08 | 600, −0.04em | Money hero (amount to pay, payout received) |
+| `title-1` (.h1) | 30 / 1.12 | 600, −0.035em | Screen titles |
+| `console-title` (.xh1) | 28 / 1.15 | 600, −0.03em | Staff console page titles |
+| `title-2` (.h2) | 22 / 1.2 | 600, −0.025em | Section titles, dialog titles |
+| `title-3` (.h3) | 18 / 1.25 | 600, −0.015em | Card titles |
 | `body-lg` | 17 / 26 | 500 | Driver screens, important lines |
-| `body` | 15 / 22 | 400 | Default text |
-| `label` | 13 / 18 | 600 | Field labels, chips, tab labels, table headers |
-| `caption` | 12 / 16 | 500 | Timestamps, helper text |
+| `body` (.b) | 15 / 1.5 | 400 | Default text |
+| `body-sm` (.fl) | 14 / 18 | 600 | Field labels, chips, small buttons |
+| `meta` (.m) | 13 / 1.45 | 400 | The quiet line under a title |
+| `label` | 13 / 18 | 600 | Older screens' labels |
+| `caption` (.s) | 12 / 1.4 | 500 | Timestamps, helper text, pills |
+| `micro` | 11 / 14 | 600 | Tab labels, table headers in the console |
+| `stat` (.kpi b) | 24 / 1.15 | 600, −0.02em | KPI figures |
+| `control` | 16 / 24 | 500 | Text in fields (16 px so iPhones don't zoom; the mockups draw 15) |
 
-- Letter spacing: `display` −0.02em; titles −0.012em; body 0; labels and captions +0.005em; all caps
-  only for very short labels, +0.06em.
+- Letter spacing: headings tracked −0.015 to −0.04em as above; body 0; uppercase labels (.lbl) 12/600
+  at +0.05em, only for very short labels.
 - Line length for reading text: 60 to 70 characters.
 - Headings use `text-wrap: balance`.
 - Never below 12 px. Text scales with the phone's text-size setting to at least 200% without breaking.
@@ -139,9 +161,9 @@ any column of numbers.
 
 | Token | Phone | Desktop | Weight |
 | --- | --- | --- | --- |
-| `hero` | 40 / 44 | 64 / 68 | 700, −0.025em |
-| `h2` | 28 / 34 | 40 / 46 | 700, −0.02em |
-| `h3` | 20 / 26 | 24 / 30 | 700 |
+| `hero` | 40 / 44 | 64 / 68 | 600, −0.025em |
+| `h2` | 28 / 34 | 40 / 46 | 600, −0.02em |
+| `h3` | 20 / 26 | 24 / 30 | 600 |
 | `lead` | 17 / 26 | 20 / 30 | 400 |
 | `body` | 16 / 26 | 17 / 28 | 400 |
 
@@ -151,9 +173,12 @@ any column of numbers.
 
 | Element | Radius | Note |
 | --- | --- | --- |
-| **Buttons (all sizes)** | **45 px** (renders as a full pill at every button height) | The founders' choice. Pills read as tappable and soften the interface |
+| **Buttons (all sizes)** | **45 px** (renders as a full pill at every button height) | The founders' choice. Mockup heights: 56 (main), 40 (small), 36 (console), 48 (text) |
 | Chips, segmented tabs, badges, toggles | 999 px (pill) | |
-| Inputs and selects | 16 px | Slightly squarer than buttons so fields don't look like buttons |
+| Inputs and selects | 18 px | 56 px tall; focus is a 1.5 px green edge with a 4 px #DCEBE2 ring |
+| Soft callouts, toasts, keypad keys | 18 px | |
+| Console nav rows, small icon boxes, checkboxes | 11, 12, 8 px | |
+| Desktop sidebar items | 14 px | |
 | Cards | 24 px | |
 | Small cards inside cards (list rows, inner tiles) | 16 px | **Nested radius rule:** inner radius = outer radius − padding (a 24 px card with 8 px padding gets 16 px inner corners) |
 | Bottom sheets | 28 px top corners | |
@@ -161,8 +186,8 @@ any column of numbers.
 | Images in cards | Same as the card's inner radius | |
 | Maps | 20 px when inside a card; square when full screen | |
 
-Borders are 1 px `--line` by default, 1.5 px `--line-strong` for inputs, 2 px `--green-700` for the
-selected state of a selectable card.
+Borders are 1 px `--line` by default, 1 px `--line-field` for inputs and secondary buttons, 2 px
+`--green-700` for the selected state of a selectable card.
 
 ---
 
@@ -176,6 +201,10 @@ Three levels only, so elevation means something:
 | 1 | raised | `0 1px 2px rgba(15,26,20,.06), 0 8px 24px -12px rgba(12,80,52,.18)` | The one card that matters most on a screen (money card, current trip), sticky bars |
 | 2 | floating | `0 12px 40px -8px rgba(15,26,20,.22)` | Sheets, dialogs, the raised centre tab, toasts |
 
+Mockup shadows (tokens `shadow-*`): `button` (the primary pill's green glow), `button-sos`, `tabs`, `fab`
+(the raised tab circle), `seg` (the chosen segment), `sheet`, `dialog`, `panel` (right-hand panels),
+`toast`, `focus`, `knob`.
+
 - The app background is `--paper`; cards are `--surface`. That small difference does most of the work,
   so shadows can stay light.
 - No glass, no blur panels in the app. On the website only, the navigation bar over the hero image may
@@ -186,9 +215,11 @@ Three levels only, so elevation means something:
 ## 5. Spacing, grid and breakpoints
 
 - **4-point scale:** 4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96.
-- Phone side padding 16; gap between cards 12; padding inside cards 16 (20 on desktop).
-- **Breakpoints:** phone below 600; tablet 600 to 1023; desktop 1024 and up; wide 1440 and up.
-- **App desktop:** sidebar 240 to 260, content up to 1200 wide, 12-column grid with 24 gutters;
+- Phone side padding 20 (mockup .px); gap between cards 12; padding inside cards 18 (.cp).
+- **Breakpoints:** `sm` 600, `md` 768, `lg` 1024, `xl` 1440 (tested in `theme.test.ts`). From 768 px no
+  button or text block is wider than 560 px unless it sits in a table, a map or a list row
+  (`npm run check:layout` fails otherwise).
+- **App desktop:** sidebar 248 (app and staff console), content up to 1080 wide, 12-column grid with 24 gutters;
   detail screens 8 + 4 columns (main + side panel).
 - **Website:** content up to 1200, text blocks up to 680; sections separated by 96 (desktop) or 64
   (phone).
@@ -324,19 +355,19 @@ No coloured stripes along card edges, no rainbow card colours, no shadows on eve
 
 ## 10. Navigation
 
-### 10.1 Phone bottom tabs (Gate 4, 19 Nov 2026)
+### 10.1 Phone bottom tabs (mockups, D050)
 
 One shell for every role, driven by a per-role config (`src/features/shell/config.ts`): only the tabs,
 the sidebar items and the main action change.
 
-- **A floating white pill**, not a bar: 68 px tall, 45 px radius, 12 px from the sides and 12 px above
-  the bottom plus the safe area, 1 px `--line` border, `--shadow-tabs`. Page content keeps 120 px plus
+- **A floating white pill**, not a bar: 68 px tall, fully round, 12 px from the sides and 14 px above
+  the bottom plus the safe area, white at 96%, 1 px `--line` border, `--shadow-tabs`. Page content keeps 120 px plus
   the safe area clear below it (`pb-tabs`), so nothing hides behind the pill.
-- Each tab: 22 px icon above a 12 px, 600 label. Current tab: Freight Green icon and label with a
-  56 × 30 px `--green-100` pill behind the icon. Others: `--ink-2`.
+- Each tab: 22 px icon (1.8 stroke) above an 11 px, 600 label. Current tab: Freight Green icon and
+  label, the icon filled with `--green-100`. Others: `--ink-3`.
 - **Raised centre action** where a role has one (Book for senders, Drive for truck owners who drive,
-  Invite for agents): a 60 px Freight Green circle with a 26 px white icon, 20 px above the pill,
-  `--shadow-fab`, at least 4 px clear of its label (checked at 320 px). It is always a link, never a
+  Invite for agents): a 56 px Freight Green circle with a 24 px white icon, raised 22 px, ringed with
+  5 px of `--paper`, `--shadow-fab`, its label below (checked at 320 px). It is always a link, never a
   toggle.
 - **Drivers:** 72 px pill, 28 px icons, 13 px labels, four tabs (Trip · Next load · History · Me).
 - Badges: a 9 px red dot (or count) outside the icon glyph at its top right, with a 2 px ring in the
@@ -347,12 +378,18 @@ the sidebar items and the main action change.
   History · Me; agent Home · People · **Invite** · Earnings · Me.
 - Tabs hide during booking, full-screen maps and the photo viewer, and slide back in on exit.
 
-### 10.2 Desktop sidebar and top bar (Gate 4)
+### 10.2 Desktop sidebar and top bar (mockups, D050)
 
-- Sidebar `--surface`, 240 px (staff console 260 px, grouped), 1 px right border. The role's main action
-  sits at the top as a 48 px primary button; then the items (44 px, 12 px radius, 20 px icon, 14 px 600;
-  current item `--green-100` with a Freight Green label); Settings and the signed-in person at the
-  bottom. Nav labels are one line ("Places", not "Saved places and receivers"); the footer shows the
+- Sidebar `--surface`, 248 px, 1 px right border. The role's main action sits at the top as a 48 px
+  primary pill; then the items (44 px, 14 px radius, words only, 15 px 600, `--ink-2`; current item
+  deep green `--green-900` with white words); the signed-in person at the bottom in a `--paper` card
+  (18 px radius).
+- **Staff console sidebar** (admin mockups `.xs`), 248 px: logo, "Staff console", then dense 32 px rows
+  (16 px icon, 13.5/500 `--ink-nav`; current `--green-50` with green 600 words), count badges (red
+  for SOS, amber for "soon", grey otherwise), groups under 11/600 uppercase labels that fold. Only the
+  pages the staff member's role may see are listed (`staffPageRoles`, from ROLES-AND-PERMISSIONS §7);
+  a page outside the role answers "not found". Console top bar 64 px with a 40 px search pill (max
+  460 px) and the bell; the page title (28/600) opens the content. Nav labels are one line ("Places", not "Saved places and receivers"); the footer shows the
   person's name and role ("Owner"), each on one line, truncated, and an **Install app** item.
 - Top bar `--surface`, 64 px (60 px on phones), 1 px bottom border, sticky. Desktop: page title (20 px,
   800), the search pill (44 px, `--paper`, "⌘K" hint), the bell (44 px circle) and the account switcher
