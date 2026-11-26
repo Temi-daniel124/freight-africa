@@ -516,7 +516,7 @@
       "feedback": "Feedback",
       "empty": "Empty state (first visit to Home)",
       "bottomSheet": "Bottom sheet",
-      "tabs": "Phone tabs for each role (floating pill, 45 px radius, 12 px from the edges)",
+      "tabs": "Phone tabs for each role (floating pill, 12 px from the sides, 14 px above the bottom)",
       "website": "Website and sign-in pieces",
       "book": "Book a truck",
       "review": "Review",
@@ -653,7 +653,8 @@
       "delete": "Delete",
       "sidebars": "Desktop sidebars",
       "appSidebar": "App sidebar (sender)",
-      "consoleSidebar": "Staff console sidebar (finance role)"
+      "consoleSidebar": "Staff console sidebar (finance role)",
+      "consoleAction": "Approve"
     }
   },
   "auth": {

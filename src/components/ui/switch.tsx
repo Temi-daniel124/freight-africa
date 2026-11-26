@@ -24,11 +24,11 @@ export function Switch({ id, name, label, help, defaultChecked = false, checked,
   return (
     <div className={cn("flex min-h-14 items-center justify-between gap-4", className)}>
       <span className="flex min-w-0 flex-col gap-0.5">
-        <label htmlFor={id} className="text-label text-ink">
+        <label htmlFor={id} className="text-body font-semibold text-ink">
           {label}
         </label>
         {help ? (
-          <span id={helpId} className="text-label font-normal text-ink-3">
+          <span id={helpId} className="text-meta text-ink-3">
             {help}
           </span>
         ) : null}

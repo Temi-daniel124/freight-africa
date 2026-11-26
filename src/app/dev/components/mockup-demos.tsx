@@ -31,7 +31,7 @@ export function ButtonsDemo() {
       <Button size="sm" variant="secondary">
         {t.small}
       </Button>
-      <Button size="xs">{t.console}</Button>
+      <Button size="xs">{t.consoleAction}</Button>
       <Button size="xs" variant="destructive">
         {t.sos}
       </Button>

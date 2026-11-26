@@ -11,10 +11,10 @@ export function Chip({ selected, dense = false, className, children, type = "but
       type={type}
       aria-pressed={selected}
       className={cn(
-        "relative inline-flex h-10 items-center gap-1.5 rounded-pill border px-4 text-left text-body-sm whitespace-nowrap transition motion-quick before:absolute before:inset-x-0 before:-inset-y-0.5 before:content-[''] active:scale-press",
+        "relative inline-flex min-h-10 items-center gap-1.5 rounded-pill border px-4 py-2 text-left text-body-sm transition motion-quick before:absolute before:inset-x-0 before:-inset-y-0.5 before:content-[''] active:scale-press",
         // Mockup .chip / .chip.on: white with a line, deep green when chosen.
         selected ? "border-green-900 bg-green-900 text-white" : "border-line bg-surface text-ink hover:bg-paper",
-        dense && "h-8.5 px-3 text-[13px]",
+        dense && "min-h-8.5 px-3 py-1.5 text-[13px]",
         dense && (selected ? "border-ink bg-ink" : "text-ink-nav"),
         className,
       )}
