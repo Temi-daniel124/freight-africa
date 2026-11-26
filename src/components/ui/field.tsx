@@ -3,9 +3,9 @@ import type { Ref, InputHTMLAttributes, ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 export const inputClasses =
-  "h-14 w-full rounded-input border border-line-strong bg-surface px-4 text-control text-ink transition outline-none motion-instant placeholder:text-ink-3 focus:border-green-700 focus:ring-4 focus:ring-green-500/16 disabled:border-line disabled:bg-paper disabled:text-ink-3";
+  "h-14 w-full rounded-input border border-line-field bg-surface px-4 text-control text-ink transition outline-none motion-instant placeholder:text-placeholder focus:border-green-700 focus:shadow-focus focus:outline-[0.5px] focus:outline-green-700 focus:outline-offset-0 disabled:border-line disabled:bg-paper disabled:text-ink-3";
 
-export const inputErrorClasses = "border-danger focus:border-danger focus:ring-danger/12";
+export const inputErrorClasses = "border-danger focus:border-danger focus:outline-danger focus:shadow-[0_0_0_4px_var(--color-danger-100)]";
 
 type FieldShellProps = {
   id: string;
@@ -18,7 +18,7 @@ type FieldShellProps = {
 export function FieldShell({ id, label, helper, error, children }: FieldShellProps) {
   return (
     <div className="flex flex-col gap-2">
-      <label htmlFor={id} className="text-label text-ink">
+      <label htmlFor={id} className="text-body-sm text-ink">
         {label}
       </label>
       <div className="flex flex-col gap-helper">

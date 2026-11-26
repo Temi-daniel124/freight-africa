@@ -50,14 +50,14 @@ export function Sheet({ trigger, title, description, children, actions, kind = "
         <Dialog.Portal>
           <Dialog.Overlay className="fixed inset-0 z-40 bg-scrim data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:animate-in data-[state=open]:fade-in-0 motion-reduce:animate-none" />
           {kind === "confirm" ? (
-            <Dialog.Content className="fixed top-1/2 left-1/2 z-50 w-[min(420px,calc(100vw-32px))] -translate-x-1/2 -translate-y-1/2 rounded-card bg-surface p-6 shadow-floating outline-none data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 motion-reduce:animate-none">
+            <Dialog.Content className="fixed top-1/2 left-1/2 z-50 w-[min(460px,calc(100vw-32px))] -translate-x-1/2 -translate-y-1/2 rounded-dialog bg-surface p-8 shadow-dialog outline-none data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-95 motion-reduce:animate-none">
               <Dialog.Title className="text-lead font-semibold text-ink">{title}</Dialog.Title>
               {description ? <Dialog.Description className="mt-1.5 text-body-sm text-ink-2">{description}</Dialog.Description> : <Dialog.Description className="sr-only">{title}</Dialog.Description>}
               <div className="mt-4 flex flex-col gap-2">{children}</div>
               {actions ? <div className="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">{actions}</div> : null}
             </Dialog.Content>
           ) : (
-            <Dialog.Content className="fixed inset-y-0 right-0 z-50 flex w-[clamp(440px,36vw,480px)] max-w-full flex-col bg-surface shadow-floating outline-none duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right data-[state=open]:animate-in data-[state=open]:slide-in-from-right motion-reduce:animate-none">
+            <Dialog.Content className="fixed inset-y-0 right-0 z-50 flex w-[clamp(440px,36vw,480px)] max-w-full flex-col border-l border-line bg-surface shadow-panel outline-none duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right data-[state=open]:animate-in data-[state=open]:slide-in-from-right motion-reduce:animate-none">
               <header className="flex min-h-18 items-center gap-3 border-b border-line px-6">
                 <Dialog.Title className="min-w-0 flex-1 truncate text-lead font-semibold text-ink">{title}</Dialog.Title>
                 <Dialog.Close className="grid size-11 shrink-0 place-items-center rounded-full text-ink-2 hover:bg-paper" aria-label={messages.shell.close}>
@@ -80,9 +80,9 @@ export function Sheet({ trigger, title, description, children, actions, kind = "
       {trigger ? <Drawer.Trigger asChild>{trigger}</Drawer.Trigger> : null}
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 z-40 bg-scrim" />
-        <Drawer.Content className="pb-safe fixed inset-x-0 bottom-0 z-50 mx-auto flex max-h-[92dvh] max-w-text flex-col rounded-t-sheet bg-surface shadow-floating outline-none">
-          <div className="overflow-y-auto px-5 pt-3 pb-6">
-            <div aria-hidden className="mx-auto mb-4 h-1.25 w-10 rounded-pill bg-line-strong" />
+        <Drawer.Content className="pb-safe fixed inset-x-0 bottom-0 z-50 mx-auto flex max-h-[92dvh] max-w-text flex-col rounded-t-sheet bg-surface shadow-sheet outline-none">
+          <div className="overflow-y-auto px-5 pt-2.5 pb-7.5">
+            <div aria-hidden className="mx-auto mb-4.5 h-1 w-10 rounded-pill bg-grab" />
             <Drawer.Title className="text-lead font-semibold text-ink">{title}</Drawer.Title>
             {description ? <Drawer.Description className="mt-1.5 mb-4 text-body-sm font-normal text-ink-2">{description}</Drawer.Description> : <Drawer.Description className="sr-only">{title}</Drawer.Description>}
             <div className="flex flex-col gap-1">{children}</div>
@@ -104,7 +104,7 @@ export function SheetPreview({ title, description, children }: Omit<SheetProps, 
   return (
     <div className="relative h-80 w-full overflow-hidden rounded-tile bg-scrim">
       <div className={cn("absolute inset-x-0 bottom-0 rounded-t-sheet bg-surface px-5 pt-3 pb-6")}>
-        <div aria-hidden className="mx-auto mb-4 h-1.25 w-10 rounded-pill bg-line-strong" />
+        <div aria-hidden className="mx-auto mb-4.5 h-1 w-10 rounded-pill bg-grab" />
         <p className="text-lead font-semibold text-ink">{title}</p>
         {description ? <p className="mt-1.5 mb-4 text-body-sm font-normal text-ink-2">{description}</p> : null}
         <div className="flex flex-col gap-1">{children}</div>

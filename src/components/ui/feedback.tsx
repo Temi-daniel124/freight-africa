@@ -19,7 +19,7 @@ type BannerProps = { icon: LucideIcon; title: string; children?: ReactNode; clas
 /** A calm heads-up about something happening now (a truck nearly at pickup). */
 export function Banner({ icon: Icon, title, children, className }: BannerProps) {
   return (
-    <div className={cn("flex w-full items-start gap-3.5 rounded-inner bg-info-100 p-4", className)}>
+    <div className={cn("flex w-full items-start gap-3.5 rounded-callout bg-info-100 p-4", className)}>
       <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-digit bg-surface text-info">
         <Icon className="size-5" strokeWidth={1.75} />
       </span>
@@ -43,5 +43,5 @@ export function Toast({ children, action, className }: ToastProps) {
   );
 }
 
-export const toastClasses = "inline-flex items-center gap-4 rounded-pill bg-ink py-3 pr-3 pl-5 text-body-sm text-white shadow-toast";
+export const toastClasses = "flex items-center gap-3 rounded-callout bg-ink px-4 py-3.5 text-body-sm font-medium text-white shadow-toast";
 export const toastActionClasses = "rounded-pill px-2.5 py-1.5 text-body-sm font-semibold text-green-300 hover:bg-white/10";

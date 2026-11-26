@@ -1,5 +1,5 @@
 import { notFound, redirect } from "next/navigation";
-import { staffNav, type StaffPage } from "@/features/shell/config";
+import { staffNav, staffPageRoles, type StaffPage } from "@/features/shell/config";
 import { StaffShell } from "@/features/shell/staff-shell";
 import { staffGate } from "@/features/staff/gate";
 import { EscrowView, PayoutsView, RefundsView } from "@/features/money/finance-views";
@@ -21,6 +21,8 @@ async function Console({ params }: { params: Promise<{ page: string }> }) {
   if (!PAGES.has(page)) notFound();
   const gate = await staffGate(`/admin/${page}`);
   if (gate.step !== "ready") redirect("/admin");
+  // A page outside the role's sidebar is not shown at all (the database refuses its data anyway).
+  if (gate.role && !staffPageRoles[page as StaffPage].includes(gate.role)) notFound();
   const role = gate.role ? messages.auth.staff.roles[gate.role] : "";
   // Pages with their own content so far; the rest show the console's placeholder until their slice.
   const v = messages.shell.staff.verification;
@@ -50,7 +52,7 @@ async function Console({ params }: { params: Promise<{ page: string }> }) {
       <RefundsView />
     ) : undefined;
   return (
-    <StaffShell base="/admin" page={page as StaffPage} person={{ name: gate.name, role }}>
+    <StaffShell base="/admin" page={page as StaffPage} person={{ name: gate.name, role }} staffRole={gate.role}>
       {content}
     </StaffShell>
   );

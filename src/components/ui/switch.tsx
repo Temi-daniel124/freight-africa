@@ -47,15 +47,15 @@ export function Switch({ id, name, label, help, defaultChecked = false, checked,
           onChange?.(next);
         }}
         className={cn(
-          "relative inline-flex h-8 w-13 shrink-0 cursor-pointer items-center rounded-pill border transition-colors duration-150 before:absolute before:-inset-2 before:content-[''] disabled:cursor-not-allowed disabled:opacity-50",
-          on ? "border-green-700 bg-green-700" : "border-line-strong bg-paper",
+          "relative inline-flex h-7 w-12 shrink-0 cursor-pointer items-center rounded-pill transition-colors duration-150 before:absolute before:-inset-2 before:content-[''] disabled:cursor-not-allowed disabled:opacity-50",
+          on ? "bg-green-700" : "bg-control-off",
         )}
       >
         <span
           aria-hidden
           className={cn(
-            "inline-block size-6 rounded-full bg-surface shadow-sm transition-transform duration-150 motion-reduce:transition-none",
-            on ? "translate-x-[22px]" : "translate-x-[3px]",
+            "inline-block size-5.5 rounded-full bg-surface shadow-knob transition-transform duration-150 motion-reduce:transition-none",
+            on ? "translate-x-[23px]" : "translate-x-[3px]",
           )}
         />
       </button>

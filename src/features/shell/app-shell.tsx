@@ -44,11 +44,11 @@ function Avatar({ text, src, className }: { text: string; src?: string | null; c
 async function Person({ viewer }: { viewer: Promise<Viewer> }) {
   const v = await viewer;
   return (
-    <div className="flex items-center gap-2.5 px-3 py-2 text-body-sm">
+    <div className="flex items-center gap-2.5 rounded-callout bg-paper p-3">
       <Avatar text={initials(v.fullName)} src={v.avatar} />
-      <span className="min-w-0">
-        <span className="block truncate">{v.fullName}</span>
-        <small className="block truncate text-caption font-medium tracking-normal text-ink-3">{v.roleName}</small>
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-body-sm font-semibold">{v.fullName}</span>
+        <small className="block truncate text-caption text-ink-3">{v.roleName}</small>
       </span>
     </div>
   );
@@ -83,20 +83,21 @@ export function AppShell({ config, viewer, children, homeBadge = false, current 
   const ActionIcon = action ? shellIcons[action.icon] : null;
   return (
     <div className="min-h-dvh bg-paper lg:grid lg:grid-cols-shell">
-      <aside className="sticky top-0 hidden h-dvh flex-col gap-5 border-r border-line bg-surface px-4 py-5 lg:flex">
-        <Link href={config.base} aria-label={messages.site.homeLabel} className="mx-2 my-1 self-start rounded-nav">
-          <Logo variant="primary-green" alt="" className="h-8.5" />
+      <aside className="sticky top-0 hidden h-dvh flex-col gap-1 border-r border-line bg-surface px-4 py-6 lg:flex">
+        <Link href={config.base} aria-label={messages.site.homeLabel} className="mx-2 mt-1 mb-6 self-start rounded-nav">
+          <Logo variant="primary-green" alt="" className="h-7" />
         </Link>
         {action && ActionIcon ? (
-          <Link href={pageHref(config, action.page)} className={cn(buttonVariants({ size: "md" }), "w-full")}>
-            <ActionIcon aria-hidden strokeWidth={1.75} />
+          // Mockup .side: the role's main action is a 48 px pill above the links.
+          <Link href={pageHref(config, action.page)} className={cn(buttonVariants({ size: "md" }), "mb-4 h-12 w-full text-body [&_svg]:size-4.5")}>
+            <ActionIcon aria-hidden strokeWidth={2.2} />
             {t.pages[action.page].title}
           </Link>
         ) : null}
         <nav aria-label={t.mainNav} className="min-h-0 overflow-y-auto">
           <SidebarLinks items={links(config, config.sidebar)} base={config.base} current={current} />
         </nav>
-        <div className="mt-auto flex flex-col gap-0.5 border-t border-line pt-3">
+        <div className="mt-auto flex flex-col gap-1 pt-3">
           <SidebarLinks items={links(config, config.footer)} base={config.base} current={current} />
           <InstallAppLink />
           <Suspense fallback={<Skeleton className="mx-3 my-2 h-9" />}>

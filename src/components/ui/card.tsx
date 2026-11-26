@@ -7,7 +7,7 @@ export function Card({ level = 0, className, ...props }: CardProps) {
   return (
     <div
       className={cn(
-        "rounded-card bg-surface p-4 lg:p-5",
+        "rounded-card bg-surface p-4.5",
         level === 0 && "border border-line",
         level === 1 && "shadow-raised",
         level === 2 && "shadow-floating",
