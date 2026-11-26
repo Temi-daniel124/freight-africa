@@ -256,7 +256,7 @@ export default function ComponentsGalleryPage() {
         <Block title={s.bottomSheet}>
           <Panel>
             <SheetPreview title={s.sheetTitle} description={s.sheetText}>
-              <Button size="md" variant="destructive" className="w-full">
+              <Button size="md" variant="danger" className="w-full">
                 {s.cancelBooking}
               </Button>
               <Button size="md" variant="tertiary" className="w-full">
@@ -306,7 +306,7 @@ export default function ComponentsGalleryPage() {
               <CodeInputDemo label={t.codeLabel} />
             </Panel>
             <Panel className="flex-col items-stretch">
-              <Card className="flex flex-col gap-1">
+              <Card className="flex w-full min-w-0 flex-col gap-1">
                 <ListRow icon={Truck} title={t.rowTitle} detail={t.rowDetail} action={<Button variant="secondary" size="sm">{t.rowAction}</Button>} />
                 <ListRow icon={Route} title={t.rowLongTitle} detail={t.rowLongDetail} />
               </Card>

@@ -10,6 +10,9 @@ modified version, so the family inside the file is named "Plus Jakarta Sans FA".
 - Added by us, because the original lacks them: `ɓ ɗ ƙ Ɓ Ɗ Ƙ ǹ Ǹ`. They are built by the script from the
   font's own b d k B D K n N at both ends of the weight range, so they thicken with the rest. The
   lowercase letters are sound; the three capitals deserve a type designer's eye before Hausa ships.
+- Comma and full stop: moved 40 units (of 1000) closer to the letter before them, with the space after
+  unchanged, because headings are tracked tight and the original left a visible gap before them
+  (`scripts/fonts/tighten-punctuation.py`, run by the build).
 - OpenType features kept: kern, liga, calt, ccmp, locl, mark, mkmk, tnum, pnum, case.
 
 Rebuild (Python fonttools; the original is `ofl/plusjakartasans/PlusJakartaSans[wght].ttf` in

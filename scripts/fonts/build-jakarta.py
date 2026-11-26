@@ -11,7 +11,9 @@ What this does, in order:
      "Plus Jakarta Sans FA", since it is a modified version.
 The naira sign is the designer's own and is untouched.
 """
+import importlib.util
 import sys
+from pathlib import Path
 
 from fontTools import subset
 from fontTools.pens.recordingPen import DecomposingRecordingPen
@@ -269,6 +271,11 @@ def main(source, target):
     variable.flavor = "woff2"
     variable.save(target)
     print("saved", target)
+    # Combined brief §4: the comma and full stop sit too far from the letter before them in headings.
+    spec = importlib.util.spec_from_file_location("tighten", Path(__file__).with_name("tighten-punctuation.py"))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    module.tighten(target)
 
 
 if __name__ == "__main__":
