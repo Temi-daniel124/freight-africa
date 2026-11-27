@@ -61,9 +61,6 @@ begin
   elsif not exists (select 1 from storage.objects where bucket_id = 'driver-voice' and name = p_voice_path) then
     raise exception 'that voice note didn''t upload; record it again' using errcode = '22023';
   end if;
-  if p_voice_path is not null and split_part(p_voice_path, '/', 1) <> p_org::text or (p_voice_path is not null and split_part(p_voice_path, '/', 2) <> v_user::text) then
-    raise exception 'that voice note isn''t yours' using errcode = '42501';
-  end if;
   -- One send at a time per driver, so the daily limit can't be raced past (review).
   perform pg_advisory_xact_lock(hashtext('driver-message:' || v_user::text));
   if (select count(*) from public.driver_messages where driver_id = v_user and created_at > now() - interval '1 day') >= 20 then
