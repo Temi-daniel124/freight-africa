@@ -37,7 +37,7 @@ export function GpsTest({ next, name = "", phone = "" }: { next: string; name?: 
     start(async () => {
       const r = await saveEmergencyContact(contact.name, contact.phone);
       if (r.status === "ok") return router.push(next);
-      setError(r.status === "phone" ? t.phoneError : t.error);
+      setError(r.status === "phone" ? t.phoneError : r.status === "name" ? t.nameError : t.error);
     });
 
   const failed = gps.state === "denied" || gps.state === "weak";
