@@ -11,10 +11,11 @@ import { shellPages, shells, type PageKey, type ShellConfig, type ShellRole } fr
 import { TeamPage } from "@/features/org/team-page";
 import { BookPage, LoadsPage, PaymentsPage, TripsPage } from "@/features/booking/sections";
 import { OwnerTripsPage } from "@/features/booking/owner-trips";
-import { DriverTrip } from "@/features/home/driver-trip";
 import { OwnerHome } from "@/features/owner/owner-home";
 import { OwnerMore } from "@/features/owner/more";
 import { DriverMe } from "@/features/driver/me";
+import { DriverHelp, DriverHistory, DriverNotifications } from "@/features/driver/history";
+import { DriverTrip, DriverTripDesk } from "@/features/driver/trip";
 import { OwnerEarnings } from "@/features/owner/earnings";
 import { OwnerPapers, OwnerTrucks } from "@/features/owner/fleet";
 import { SenderHome } from "@/features/home/sender-home";
@@ -110,7 +111,14 @@ async function HomeContent({ role }: { role: ShellRole }) {
       ) : resolved === "owner" || resolved === "ownerDriver" ? (
         <OwnerHome viewer={getViewer(config)} drives={resolved === "ownerDriver"} />
       ) : resolved === "driver" ? (
-        <DriverTrip />
+        <>
+          <div className="lg:hidden">
+            <DriverTrip viewer={getViewer(config)} />
+          </div>
+          <div className="hidden lg:block">
+            <DriverTripDesk viewer={getViewer(config)} />
+          </div>
+        </>
       ) : (
         <PlaceholderPage config={config} page={config.home} />
       )}
@@ -199,7 +207,11 @@ async function sectionBody(page: PageKey, config: ShellConfig, viewer: Promise<V
     case "places":
       return shipper ? <SenderPlaces viewer={viewer} /> : <PlaceholderPage config={config} page={page} />;
     case "help":
-      return shipper ? <SenderHelp /> : <PlaceholderPage config={config} page={page} />;
+      return shipper ? <SenderHelp /> : config.role === "driver" ? <DriverHelp /> : <PlaceholderPage config={config} page={page} />;
+    case "history":
+      return config.role === "driver" ? <DriverHistory viewer={viewer} /> : <PlaceholderPage config={config} page={page} />;
+    case "notifications":
+      return config.role === "driver" ? <DriverNotifications viewer={viewer} /> : <PlaceholderPage config={config} page={page} />;
     case "loads":
     case "findLoads":
       return <LoadsPage viewer={viewer} />;
