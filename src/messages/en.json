@@ -3086,7 +3086,8 @@
     "advanceAtLoading": "Advance when loaded",
     "paidDone": "Paid in full",
     "noTrips": "No trips here",
-    "noTripsText": "Trips you take show here."
+    "noTripsText": "Trips you take show here.",
+    "recordOne": "{tier} · 1 trip"
   },
   "ownerLoad": {
     "pickup": "Pick up · area only until you accept",

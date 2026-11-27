@@ -1,3 +1,4 @@
+import { Check } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
 import { PillTabs } from "@/features/account/account-client";
@@ -119,7 +120,7 @@ export async function OwnerTripsPage({ viewer }: { viewer: Promise<Viewer> }) {
         <Link href={`/app/haul/trips/${r.id}`} className="block rounded-card border border-line bg-surface px-5 pt-4.5 pb-4 hover:border-green-700/40">
           <div className="flex items-center justify-between gap-3">
             <p className="tabular truncate text-caption font-semibold tracking-caps text-ink-3 uppercase">
-              {r.ref.replace(/-T\d+$/, "")} · {r.truck?.plate_number}
+              {r.ref.replace(/-T\d+$/, "")} · {r.truck?.plate_number.replace(/^([A-Z]{3})(\d{3})([A-Z]{2})$/, "$1 $2 $3")}
             </p>
             <StatusChip tone={g === "active" ? "info" : g === "upcoming" ? "success" : g === "cancelled" ? "danger" : "success"}>
               {g === "upcoming" ? o.upcoming : (messages.trips.status[r.status as keyof typeof messages.trips.status] ?? r.status)}
@@ -131,7 +132,9 @@ export async function OwnerTripsPage({ viewer }: { viewer: Promise<Viewer> }) {
           <p className="truncate text-meta text-ink-3">{[r.driver?.full_name, g === "upcoming" ? when : null, fillLine].filter(Boolean).join(" · ")}</p>
           {m && g !== "cancelled" ? (
             <div className="mt-3 flex items-center justify-between border-t border-line-soft pt-3 text-meta">
-              <span className="text-ink-3">{g === "done" ? o.paidDone : advanceDone(r.id) ? o.advancePaid.replace("{amount}", "").trim() : o.advanceAtLoading}</span>
+              <span className="flex items-center gap-1.5 text-ink-3">
+                {advanceDone(r.id) && g !== "done" ? <Check aria-hidden className="size-4 text-green-700" strokeWidth={2} /> : null}
+                {g === "done" ? o.paidDone : advanceDone(r.id) ? o.advancePaid.replace("{amount}", "").trim() : o.advanceAtLoading}</span>
               <span className="tabular font-semibold text-ink">
                 {g === "done" ? naira(m.advance + m.balance) : advanceDone(r.id) ? o.onDelivery.replace("{amount}", naira(m.balance)) : naira(m.advance)}
               </span>
