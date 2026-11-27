@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(8);
+select plan(12);
 
 -- Musa Haulage (owner Musa, drivers Sani and Bello) has a trip assigned to Sani; Emeka's owner is a stranger.
 insert into auth.users (id, instance_id, aud, role, email, email_confirmed_at, raw_user_meta_data, created_at, updated_at) values
@@ -58,6 +58,13 @@ select throws_ok($$select public.staff_trip_action('33033033-0000-4000-8000-0000
 select lives_ok($$select public.staff_trip_note('33033033-0000-4000-8000-0000000000e1', 'Called Musa: truck leaves at 6 am')$$, 'operations adds a note');
 select set_config('request.jwt.claims', '{"sub": "33033033-0000-4000-8000-0000000000f2", "role": "authenticated", "aal": "aal2"}', true);
 select throws_ok($$select public.staff_trip_note('33033033-0000-4000-8000-0000000000e1', 'A note')$$, '42501', null, 'verification staff cannot add trip notes');
+select set_config('request.jwt.claims', '{"sub": "33033033-0000-4000-8000-0000000000f1", "role": "authenticated", "aal": "aal2"}', true);
+select throws_ok($$select public.staff_trip_action('33033033-0000-4000-8000-0000000000e9', 'delivered', 'Receiver confirmed by phone')$$, 'P0002', null, 'an unknown trip');
+select throws_ok($$select public.staff_trip_action('33033033-0000-4000-8000-0000000000e1', 'delivered', 'Receiver confirmed by phone')$$, '22023', null, 'not delivered before it is loaded');
+select is((select count(*)::int from public.trip_events where type = 'staff.note'), 1, 'staff read the note');
+-- The sender and the owner see the trip, but not staff notes (review).
+select set_config('request.jwt.claims', '{"sub": "33033033-0000-4000-8000-000000000005", "role": "authenticated"}', true);
+select is((select count(*)::int from public.trip_events where trip_id = '33033033-0000-4000-8000-0000000000e1' and type like 'staff.%'), 0, 'the sender never sees staff notes');
 reset role;
 select is((select payload ->> 'note' from public.trip_events where trip_id = '33033033-0000-4000-8000-0000000000e1' and type = 'staff.note'), 'Called Musa: truck leaves at 6 am', 'the note is on the trip');
 
