@@ -20,17 +20,30 @@ async function me() {
   return { supabase, id: (data?.claims?.sub as string) ?? "" };
 }
 
+// audit_log and approvals keep the user id without a link to profiles, so names are looked up apart (review).
+async function namesFor(supabase: Awaited<ReturnType<typeof supabaseServer>>, ids: (string | null)[]) {
+  const unique = [...new Set(ids.filter((v): v is string => !!v))];
+  if (!unique.length) return new Map<string, string>();
+  const { data } = await supabase.from("profiles").select("id, full_name").in("id", unique);
+  return new Map((data ?? []).map((p) => [p.id, p.full_name ?? ""]));
+}
+
 function Lead({ children }: { children: string }) {
   return <p className="-mt-4 mb-5 text-body text-ink-2">{children}</p>;
 }
 
 export async function StaffApprovals() {
   const { supabase, id } = await me();
-  const [{ data: changes }, { data: payouts }, { data: refunds }] = await Promise.all([
-    supabase.from("approvals").select("id, kind, subject_id, payload, note, created_at, requested_by, person:requested_by(full_name)").eq("status", "pending").order("created_at"),
+  const [{ data: changes }, { data: payouts }, { data: refunds }, { data: role }, { data: soleAdmin }] = await Promise.all([
+    supabase.from("approvals").select("id, kind, subject_id, payload, note, created_at, requested_by").eq("status", "pending").order("created_at"),
     supabase.from("payouts").select("id, amount_kobo, kind, created_at, requested_by, org:org_id(name)").eq("status", "awaiting_approval").order("created_at"),
     supabase.from("refunds").select("id, amount_kobo, created_at, requested_by, reason").eq("status", "awaiting_approval").order("created_at"),
+    supabase.rpc("my_staff_role"),
+    supabase.rpc("can_self_approve"),
   ]);
+  const names = await namesFor(supabase, (changes ?? []).map((a) => a.requested_by));
+  // Setting changes are decided by super admins only; the only super admin may decide their own after a fresh code.
+  const canDecide = (requester: string) => role === "super_admin" && (requester !== id || soleAdmin === true);
   const money = [
     ...(payouts ?? []).map((p) => ({ id: p.id, kind: "payout" as const, amount: p.amount_kobo, at: p.created_at, mine: p.requested_by === id, who: (p.org as { name?: string } | null)?.name ?? "" })),
     ...(refunds ?? []).map((r) => ({ id: r.id, kind: "refund" as const, amount: r.amount_kobo, at: r.created_at, mine: r.requested_by === id, who: r.reason ?? "" })),
@@ -50,9 +63,9 @@ export async function StaffApprovals() {
                   <p className="mt-1 text-body-sm text-ink-2">
                     {t.approvals.from} <code className="text-ink">{json(payload?.from)}</code> {t.approvals.to} <code className="text-ink">{json(payload?.to)}</code>
                   </p>
-                  <p className="mt-1 text-meta text-ink-3">{[t.approvals.by.replace("{name}", (a.person as { full_name?: string } | null)?.full_name ?? "").replace("{when}", when(a.created_at)), a.note].filter(Boolean).join(" · ")}</p>
+                  <p className="mt-1 text-meta text-ink-3">{[t.approvals.by.replace("{name}", names.get(a.requested_by) ?? "").replace("{when}", when(a.created_at)), a.note].filter(Boolean).join(" · ")}</p>
                 </div>
-                {a.requested_by === id ? <p className="text-meta text-ink-3">{t.approvals.yours}</p> : <DecideButtons id={a.id} />}
+                {canDecide(a.requested_by) ? <DecideButtons id={a.id} /> : <p className="text-meta text-ink-3">{a.requested_by === id ? t.approvals.yours : t.approvals.superOnly}</p>}
               </article>
             );
           })
@@ -138,7 +151,8 @@ export function StaffFees() {
 
 export async function StaffAudit() {
   const { supabase } = await me();
-  const { data: rows } = await supabase.from("audit_log").select("id, actor_role, action, table_name, row_id, new, created_at, person:actor_user_id(full_name)").order("created_at", { ascending: false }).limit(50);
+  const { data: rows } = await supabase.from("audit_log").select("id, actor_user_id, actor_role, action, table_name, row_id, new, created_at").order("created_at", { ascending: false }).limit(50);
+  const names = await namesFor(supabase, (rows ?? []).map((r) => r.actor_user_id));
   return (
     <div className="flex flex-col">
       <Lead>{t.audit.lead}</Lead>
@@ -160,7 +174,7 @@ export async function StaffAudit() {
                   <tr key={r.id} className="border-b border-line-soft last:border-b-0">
                     <td className="px-4 py-3 whitespace-nowrap text-ink-2">{when(r.created_at)}</td>
                     <td className="px-4 py-3 text-ink">
-                      {(r.person as { full_name?: string } | null)?.full_name ?? t.audit.system}
+                      {(r.actor_user_id && names.get(r.actor_user_id)) || t.audit.system}
                       <span className="block text-caption text-ink-3">{r.actor_role}</span>
                     </td>
                     <td className="px-4 py-3 font-mono text-ink">{r.action}</td>

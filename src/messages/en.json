@@ -3742,7 +3742,8 @@
       "rejectEffect": "The setting stays as it is.",
       "payout": "Payout",
       "refund": "Refund",
-      "moneyEffect": "It's paid out from the money held."
+      "moneyEffect": "It's paid out from the money held.",
+      "superOnly": "A super admin decides this"
     },
     "settings": {
       "lead": "How the platform runs. Money settings need a second super admin.",
@@ -3782,7 +3783,8 @@
       "sent": "Invite sent. The link works for 48 hours.",
       "badEmail": "Check the email address.",
       "codeAgreed": "Staff code agreed",
-      "codeNot": "Staff code not agreed yet"
+      "codeNot": "Staff code not agreed yet",
+      "notSent": "The invite was made but the email didn't send. Invite them again to send a new link."
     },
     "messages": {
       "lead": "What we send by email, SMS, push and in the app. WhatsApp is off until it's connected.",
@@ -3792,6 +3794,7 @@
       "onHold": "On hold",
       "live": "Live",
       "whatsappNote": "WhatsApp templates stay on hold until WhatsApp is connected; then they join with the 24-hour reply window."
-    }
+    },
+    "fresh": "Enter your authenticator code again, then try once more."
   }
 }

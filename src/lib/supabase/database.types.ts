@@ -2816,7 +2816,7 @@ export type Database = {
         Returns: string
       }
       approve_money_out: {
-        Args: { p_id: string; p_kind: string }
+        Args: { p_id: string; p_kind: string; p_note: string }
         Returns: undefined
       }
       assign_truck_driver: {
@@ -2895,6 +2895,10 @@ export type Database = {
       }
       change_setting: {
         Args: { p_key: string; p_note?: string; p_value: Json }
+        Returns: string
+      }
+      change_setting_reasoned: {
+        Args: { p_key: string; p_note: string; p_value: Json }
         Returns: string
       }
       change_trip_driver: {
@@ -3101,6 +3105,13 @@ export type Database = {
           role: string
           state: string
         }[]
+      }
+      invite_staff: {
+        Args: {
+          p_email: string
+          p_role: Database["public"]["Enums"]["staff_role"]
+        }
+        Returns: string
       }
       is_current_driver: {
         Args: { p_org: string; p_user: string }
