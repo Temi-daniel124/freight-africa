@@ -10,11 +10,12 @@ import { AppShell, ShellContent, ShellTopBar } from "./app-shell";
 import { shellPages, shells, type PageKey, type ShellConfig, type ShellRole } from "./config";
 import { TeamPage } from "@/features/org/team-page";
 import { TrucksPage } from "@/features/trucks/trucks-page";
-import { BookPage, EarningsPage, LoadsPage, PaymentsPage, TripsPage } from "@/features/booking/sections";
+import { BookPage, LoadsPage, PaymentsPage, TripsPage } from "@/features/booking/sections";
 import { OwnerTripsPage } from "@/features/booking/owner-trips";
 import { DriverTrip } from "@/features/home/driver-trip";
 import { OwnerHome } from "@/features/owner/owner-home";
 import { OwnerMore } from "@/features/owner/more";
+import { OwnerEarnings } from "@/features/owner/earnings";
 import { SenderHome } from "@/features/home/sender-home";
 import { SettingsPage } from "@/features/settings/settings-page";
 import { DriversPage } from "@/features/drivers/drivers-page";
@@ -200,7 +201,7 @@ async function sectionBody(page: PageKey, config: ShellConfig, viewer: Promise<V
     case "findLoads":
       return <LoadsPage viewer={viewer} />;
     case "earnings":
-      return config.role === "agent" ? <PlaceholderPage config={config} page={page} /> : <EarningsPage viewer={viewer} />;
+      return config.role === "agent" ? <PlaceholderPage config={config} page={page} /> : <OwnerEarnings viewer={viewer} />;
     default:
       return <PlaceholderPage config={config} page={page} />;
   }
