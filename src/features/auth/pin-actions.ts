@@ -97,7 +97,8 @@ export async function chooseNewPin(pin: string, next: string): Promise<SetPinRes
   // Fails closed: if we can't tell whether a PIN exists, treat it as existing.
   if (has !== false && !(await hasCodeProof(claims.sub, claims.session_id))) return { status: "fresh" };
   if (!(await secondStepDone())) return { status: "error" };
-  const { error } = await supabase.rpc("set_app_pin", { p_pin: pin });
+  // Only the server sets a PIN; the checks above are its guard (review of #93).
+  const { error } = await supabaseAdmin().rpc("set_app_pin_for", { p_user: claims.sub, p_pin: pin });
   if (error) return { status: error.code === "22023" ? "weak" : error.code === "28000" ? "fresh" : "error" };
   await markUnlocked(claims.sub, claims.session_id);
   (await cookies()).delete({ name: NEW_PIN_COOKIE, path: "/auth" });

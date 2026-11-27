@@ -54,9 +54,10 @@ export async function acceptPhoneInvite(token: string, name: string, pin: string
   }
   const supabase = await supabaseServer();
   await supabase.from("profiles").update({ full_name: fullName }).eq("id", session.userId);
-  const { error: pinError } = await supabase.rpc("set_app_pin", { p_pin: pin });
+  // The invite token is the guard; only the server sets a PIN (review of #93).
+  const { error: pinError } = await admin.rpc("set_app_pin_for", { p_user: session.userId, p_pin: pin });
   if (pinError) {
-    console.error("set_app_pin for a phone invite failed", pinError.code);
+    console.error("set_app_pin_for for a phone invite failed", pinError.code);
     await supabase.auth.signOut({ scope: "local" });
     await undo();
     return { status: pinError.code === "22023" ? "weak" : "error" };

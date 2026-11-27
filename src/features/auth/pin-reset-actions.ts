@@ -40,8 +40,8 @@ export async function resetPinWithLink(token: string, pin: string): Promise<Rese
   const session = await openSessionFor(row.email);
   if (!session) return { status: "error" };
   const supabase = await supabaseServer();
-  // A fresh sign-in, so set_app_pin replaces the old PIN and clears the lockout.
-  const { error: pinError } = await supabase.rpc("set_app_pin", { p_pin: pin });
+  // The link's one-time token is the guard; the new PIN replaces the old one and clears the lockout.
+  const { error: pinError } = await admin.rpc("set_app_pin_for", { p_user: session.userId, p_pin: pin });
   if (pinError) {
     await supabase.auth.signOut({ scope: "local" });
     return { status: pinError.code === "22023" ? "weak" : "error" };
