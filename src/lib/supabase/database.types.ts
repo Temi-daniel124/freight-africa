@@ -1484,13 +1484,73 @@ export type Database = {
           },
         ]
       }
+      payment_batches: {
+        Row: {
+          amount_kobo: number
+          checkout_url: string | null
+          created_at: string
+          created_by: string | null
+          expires_at: string
+          id: string
+          provider: string | null
+          provider_ref: string | null
+          received_kobo: number
+          shipper_org_id: string
+          status: Database["public"]["Enums"]["payment_status"]
+        }
+        Insert: {
+          amount_kobo: number
+          checkout_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          expires_at: string
+          id?: string
+          provider?: string | null
+          provider_ref?: string | null
+          received_kobo?: number
+          shipper_org_id: string
+          status?: Database["public"]["Enums"]["payment_status"]
+        }
+        Update: {
+          amount_kobo?: number
+          checkout_url?: string | null
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string
+          id?: string
+          provider?: string | null
+          provider_ref?: string | null
+          received_kobo?: number
+          shipper_org_id?: string
+          status?: Database["public"]["Enums"]["payment_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_batches_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_batches_shipper_org_id_fkey"
+            columns: ["shipper_org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payments: {
         Row: {
           amount_kobo: number
           applied_at: string | null
+          batch_id: string | null
+          checkout_url: string | null
           created_at: string
           created_by: string | null
           expires_at: string
+          failed_at: string | null
           id: string
           load_id: string
           offer_id: string | null
@@ -1509,9 +1569,12 @@ export type Database = {
         Insert: {
           amount_kobo: number
           applied_at?: string | null
+          batch_id?: string | null
+          checkout_url?: string | null
           created_at?: string
           created_by?: string | null
           expires_at: string
+          failed_at?: string | null
           id?: string
           load_id: string
           offer_id?: string | null
@@ -1530,9 +1593,12 @@ export type Database = {
         Update: {
           amount_kobo?: number
           applied_at?: string | null
+          batch_id?: string | null
+          checkout_url?: string | null
           created_at?: string
           created_by?: string | null
           expires_at?: string
+          failed_at?: string | null
           id?: string
           load_id?: string
           offer_id?: string | null
@@ -1549,6 +1615,13 @@ export type Database = {
           virtual_account_number?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "payments_batch_id_fkey"
+            columns: ["batch_id"]
+            isOneToOne: false
+            referencedRelation: "payment_batches"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "payments_created_by_fkey"
             columns: ["created_by"]
@@ -2508,6 +2581,24 @@ export type Database = {
         Args: { p_driver: string; p_truck: string }
         Returns: undefined
       }
+      attach_batch_checkout: {
+        Args: {
+          p_batch: string
+          p_provider: string
+          p_ref: string
+          p_url: string
+        }
+        Returns: undefined
+      }
+      attach_checkout: {
+        Args: {
+          p_payment: string
+          p_provider: string
+          p_ref: string
+          p_url: string
+        }
+        Returns: undefined
+      }
       attach_collection: {
         Args: {
           p_account: string
@@ -2585,6 +2676,14 @@ export type Database = {
           p_task: string
         }
         Returns: undefined
+      }
+      confirm_batch_payment: {
+        Args: {
+          p_amount_kobo: number
+          p_event_id: string
+          p_provider_ref: string
+        }
+        Returns: string
       }
       confirm_payment: {
         Args: {
@@ -2679,6 +2778,7 @@ export type Database = {
         Returns: undefined
       }
       decline_counter: { Args: { p_offer: string }; Returns: undefined }
+      fail_payment: { Args: { p_provider_ref: string }; Returns: string }
       find_trip: { Args: { p_org: string; p_ref: string }; Returns: string }
       finish_notification: {
         Args: {
@@ -2798,6 +2898,7 @@ export type Database = {
         }[]
       }
       load_carrier_sees: { Args: { p_load: string }; Returns: boolean }
+      load_pay_total: { Args: { p_load: string }; Returns: number }
       load_sender_sees: { Args: { p_load: string }; Returns: boolean }
       lock_account: { Args: { p_user: string }; Returns: undefined }
       log_identity_photo_view: {
@@ -2927,8 +3028,10 @@ export type Database = {
         Args: { p_counter: string; p_total_kobo: number }
         Returns: number
       }
+      request_batch_payment: { Args: { p_loads: string[] }; Returns: string }
       request_load_payment: { Args: { p_load: string }; Returns: string }
       revoke_invite: { Args: { p_invite: string }; Returns: undefined }
+      save_as_draft: { Args: { p_load: string }; Returns: undefined }
       save_transporter_profile: {
         Args: {
           p_corridors: string[]
