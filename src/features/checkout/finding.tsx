@@ -275,7 +275,7 @@ function ReplyCard({ reply, first, offeredKobo, loadId, openAgain = false }: { r
           <TierPill tier={reply.tier} />
         </p>
         <p className="flex items-center gap-1 text-meta text-ink-3">
-          <Star aria-hidden className="size-3.5 text-warning" strokeWidth={1.8} />
+          {/^\d\.\d/.test(reply.truck) ? <Star aria-hidden className="size-3.5 text-warning" strokeWidth={1.8} /> : null}
           {reply.truck}
         </p>
       </div>
