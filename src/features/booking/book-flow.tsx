@@ -435,7 +435,7 @@ export function BookFlow({ orgId, myName, cities, truckTypes, goods, defaultFrom
   );
 
   return (
-    <div className="bg-paper max-lg:fixed max-lg:inset-0 max-lg:z-40 max-lg:overflow-y-auto lg:grid lg:min-h-dvh lg:grid-cols-[minmax(0,1fr)_440px]">
+    <div data-full-screen className="bg-paper lg:grid lg:min-h-dvh lg:grid-cols-[minmax(0,1fr)_440px]">
       {/* ---- the form ---- */}
       <div className="flex min-h-dvh flex-col lg:min-h-0 lg:px-10 lg:pt-8 lg:pb-12">
         <header className="sticky top-0 z-10 bg-paper px-4 pt-3.5 pb-3 lg:static lg:mx-auto lg:w-full lg:max-w-170 lg:p-0">
