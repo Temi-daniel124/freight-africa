@@ -130,9 +130,9 @@ select throws_ok($$select public.answer_reoffer((select id from ids where name =
 
 select set_config('request.jwt.claims', '{"sub": "25252525-0000-4000-8000-000000000002", "role": "authenticated"}', true);
 insert into ids select 'topup', public.answer_reoffer((select id from ids where name = 'reoffer'), true);
+reset role;
 select is((select amount_kobo from public.payments where id = (select id from ids where name = 'topup')), (select v from n where name = 'quote'), 'the difference asked is exactly what the screen showed');
 
-reset role;
 set local role service_role;
 do $$ begin perform public.attach_collection((select id from ids where name = 'topup'), 'demo', 'demo-topup-1', '9912345671', 'Demo Bank'); end $$;
 select is(public.confirm_payment('demo-topup-1', 'evt-topup-1', (select v from n where name = 'quote') - 100000), 'partial', 'part of the difference waits');
