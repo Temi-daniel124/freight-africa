@@ -1,5 +1,6 @@
 import "server-only";
 import { block, C, finish, header, label, naira, newDocument, PAGE, px } from "@/lib/pdf/document";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 import { supabaseServer } from "@/lib/supabase/server";
 import { monthRange, receiptLines, statementTotals, type StatementLoad } from "./pdf-models";
 
@@ -23,19 +24,24 @@ export async function receiptPdf(paymentId: string): Promise<{ bytes: Buffer; na
   const [{ data: load }, { data: payments }, { data: refunds }] = await Promise.all([
     supabase
       .from("loads")
-      .select("ref, freight_kobo, shipper_org_id, from:cities!loads_from_city_id_fkey(name), to:cities!loads_to_city_id_fkey(name), goods:goods_categories(name), weight_kg, truck_type:truck_types(name), trips(status, loaded_at, delivered_at, transporter:organizations(name), truck:trucks(plate_number))")
+      .select("ref, freight_kobo, shipper_org_id, is_demo, from:cities!loads_from_city_id_fkey(name), to:cities!loads_to_city_id_fkey(name), goods:goods_categories(name), weight_kg, truck_type:truck_types(name), trips(status, loaded_at, delivered_at, transporter:organizations(name), truck:trucks(plate_number))")
       .eq("id", payment.load_id)
       .maybeSingle(),
-    supabase.from("payments").select("received_kobo, received_at").eq("load_id", payment.load_id),
-    supabase.from("refunds").select("amount_kobo").eq("load_id", payment.load_id),
+    supabase.from("payments").select("purpose, received_kobo, received_at").eq("load_id", payment.load_id),
+    // Refunds are read for this one load with the service key: the person has already shown they may
+    // read its payments (RLS above), and a booker can't read refunds, which would overstate the total (review).
+    supabaseAdmin().from("refunds").select("amount_kobo").eq("load_id", payment.load_id),
   ]);
   if (!load) return null;
   const { data: org } = await supabase.from("organizations").select("name, cac_number, receipt_address, receipt_email").eq("id", load.shipper_org_id).maybeSingle();
   type Trip = { status: string; loaded_at: string | null; delivered_at: string | null; transporter: { name: string } | null; truck: { plate_number: string } | null };
   const trip = ((load.trips as unknown as Trip[] | null) ?? []).find((t) => t.status !== "cancelled") ?? null;
   const name = (x: unknown) => (x as { name: string } | null)?.name ?? "";
+  const trip_ = ["load", "top_up", "raise"];
+  const extraLabel: Record<string, string> = { waiting_charge: "Waiting charge", cancellation_fee: "Cancellation fee" };
   const lines = receiptLines({
-    paid: (payments ?? []).map((p) => ({ kobo: Number(p.received_kobo) })),
+    paid: (payments ?? []).filter((p) => trip_.includes(p.purpose)).map((p) => ({ kobo: Number(p.received_kobo) })),
+    extras: (payments ?? []).filter((p) => extraLabel[p.purpose]).map((p) => ({ label: extraLabel[p.purpose], kobo: Number(p.received_kobo) })),
     refunded: (refunds ?? []).map((r) => ({ kobo: Number(r.amount_kobo) })),
     freightKobo: Number(load.freight_kobo),
   });
@@ -54,7 +60,7 @@ export async function receiptPdf(paymentId: string): Promise<{ bytes: Buffer; na
     tripRef: load.ref,
     truckLine: truck,
     lines,
-    provider: payment.provider,
+    provider: load.is_demo || payment.provider !== "bachs" ? "demo" : "bachs",
     providerRef: payment.provider_ref,
     deliveredAt: trip?.delivered_at ?? null,
   });
@@ -101,9 +107,10 @@ export async function renderReceipt(m: ReceiptModel): Promise<{ bytes: Buffer; n
   y += px(44);
   const rows: [string, number][] = [
     [`Truck and driver · ${m.truckLine}`, lines.freightKobo],
+    ...lines.extras.map((e): [string, number] => [e.label, e.kobo]),
     ["Service fee", lines.feeKobo],
   ];
-  if (lines.refundedKobo > 0) rows.push(["Refunded to you", -lines.refundedKobo]);
+  if (lines.refundedKobo > 0) rows.push(["Refund to you", -lines.refundedKobo]);
   for (const [text, kobo] of rows) {
     doc.font("r").fontSize(px(14)).fillColor(C.ink).text(text, PAGE.x + px(16), y + px(17), { width: width * 0.7, lineBreak: false });
     doc.text(kobo < 0 ? `−${naira(-kobo)}` : naira(kobo), PAGE.x, y + px(17), { width: width - px(16), align: "right", lineBreak: false });

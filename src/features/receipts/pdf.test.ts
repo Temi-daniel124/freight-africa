@@ -14,15 +14,22 @@ describe("receipt amounts (combined brief section 7)", () => {
     expect(l.feeKobo).toBe(4_300_000);
   });
 
-  it("a top-up and a part refund still add up exactly", () => {
+  it("a top-up and a part refund: the lines add up to what was paid, less the refund to the total", () => {
     const l = receiptLines({ paid: [{ kobo: 170_000_000 }, { kobo: 8_000_000 }], refunded: [{ kobo: 500_000 }], freightKobo: 171_000_000 });
     expect(l.netKobo).toBe(177_500_000);
-    expect(l.freightKobo + l.feeKobo).toBe(l.netKobo);
+    expect(l.freightKobo + l.feeKobo - l.refundedKobo).toBe(l.netKobo);
   });
 
-  it("never prints more freight than was kept (a full refund leaves nothing)", () => {
+  it("a waiting charge is its own line, never inside the service fee", () => {
+    const l = receiptLines({ paid: [{ kobo: 124_000_000 }], refunded: [], freightKobo: 119_700_000, extras: [{ label: "Waiting charge", kobo: 1_500_000 }] });
+    expect(l.feeKobo).toBe(4_300_000);
+    expect(l.freightKobo + l.feeKobo + l.extras[0].kobo).toBe(l.netKobo);
+  });
+
+  it("a full refund leaves nothing kept, and the lines still add up", () => {
     const l = receiptLines({ paid: [{ kobo: 100_000_000 }], refunded: [{ kobo: 100_000_000 }], freightKobo: 95_000_000 });
-    expect(l).toMatchObject({ netKobo: 0, freightKobo: 0, feeKobo: 0 });
+    expect(l.netKobo).toBe(0);
+    expect(l.freightKobo + l.feeKobo - l.refundedKobo).toBe(0);
   });
 });
 
