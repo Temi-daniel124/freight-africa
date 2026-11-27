@@ -1,7 +1,12 @@
 -- Slice 8b (admin-mockups X03b): every staff change to a trip opens a dialog with a required reason that
 -- goes to the audit log (combined brief 5d). staff_trip_action is the reasoned form of staff_trip_step
 -- for the console (operations and super admins, two-step sign-in), and staff_trip_note adds a line to
--- the trip's activity. Staff never see or set loading or delivery codes here.
+-- the trip's activity. Staff never see or set loading or delivery codes here. Staff entries on a trip's
+-- timeline (type staff.*) are read by staff only (review).
+
+drop policy "trip events: as the trip" on public.trip_events;
+create policy "trip events: as the trip" on public.trip_events for select to authenticated
+  using (exists (select 1 from public.trips t where t.id = trip_events.trip_id) and (type not like 'staff.%' or (select public.is_staff())));
 
 create function public.staff_trip_action(p_trip uuid, p_step text, p_reason text, p_weight_kg int default null, p_quantity int default null) returns void
 language plpgsql security definer set search_path = '' as $$
