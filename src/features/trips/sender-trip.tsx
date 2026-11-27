@@ -338,7 +338,7 @@ export function SenderTrip({ v }: { v: TripView }) {
 
   if (v.delivered) {
     return (
-      <div className="bg-paper max-lg:fixed max-lg:inset-0 max-lg:z-30 max-lg:overflow-y-auto max-lg:pb-10 lg:mx-auto lg:max-w-[720px]">
+      <div data-full-screen className="min-h-dvh bg-paper lg:px-10 lg:py-8 max-lg:pb-10 lg:mx-auto lg:max-w-[720px]">
         {header}
         <div className="flex flex-col gap-3.5 px-5 pt-5 lg:px-0 lg:pt-0">
           {title}
@@ -371,7 +371,7 @@ export function SenderTrip({ v }: { v: TripView }) {
   }
 
   return (
-    <div className="bg-paper max-lg:fixed max-lg:inset-0 max-lg:z-30 max-lg:overflow-y-auto max-lg:pb-10 lg:mx-auto lg:grid lg:max-w-[1080px] lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-6">
+    <div data-full-screen className="min-h-dvh bg-paper lg:px-10 lg:py-8 max-lg:pb-10 lg:mx-auto lg:grid lg:max-w-[1080px] lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-6">
       {header}
       <div className="flex min-w-0 flex-col gap-3.5 px-5 pt-5 lg:gap-5 lg:px-0 lg:pt-0">
         <Link href="/app/ship/trips" className="hidden items-center gap-1 text-body-sm text-ink-2 lg:inline-flex">

@@ -491,7 +491,7 @@ export function FindingView(p: FindingProps) {
   }
 
   return (
-    <div className="bg-paper max-lg:fixed max-lg:inset-0 max-lg:z-30 max-lg:overflow-y-auto max-lg:pb-40 lg:mx-auto lg:grid lg:max-w-[1080px] lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-6">
+    <div data-full-screen className="min-h-dvh bg-paper lg:px-10 lg:py-8 max-lg:pb-40 lg:mx-auto lg:grid lg:max-w-[1080px] lg:grid-cols-[minmax(0,1fr)_380px] lg:gap-6">
       <TopBar pill={pill.text} tone={pill.tone} />
       <div className="min-w-0">
         {/* desktop header (D08) */}
