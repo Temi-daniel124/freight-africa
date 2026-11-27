@@ -70,8 +70,8 @@ select is((select list_freight_kobo from public.loads where id = (select id from
 select throws_ok($$select public.create_load('25252525-0000-4000-8000-0000000000a1', (select id from ids where name = 'flatbed'), now() + interval '1 day', now() + interval '2 days', pg_temp.stops(), '[]'::jsonb)$$,
   '22023', 'one to ten items', 'a booking has at least one item');
 select throws_ok($$select public.create_load('25252525-0000-4000-8000-0000000000a1', (select id from ids where name = 'flatbed'), now() + interval '1 day', now() + interval '2 days', pg_temp.stops(),
-  jsonb_build_array(jsonb_build_object('goods', (select id from ids where name = 'rice'), 'description', 'Rice', 'quantity', 40, 'unit', 'tonnes')))$$,
-  '22023', 'too heavy for that truck type', 'forty tonnes never goes on a flatbed');
+  jsonb_build_array(jsonb_build_object('goods', (select id from ids where name = 'rice'), 'description', 'Rice', 'quantity', 70, 'unit', 'tonnes')))$$,
+  '22023', 'too heavy for that truck type', 'seventy tonnes never goes on a flatbed');
 
 -- ---- Offers (D047) -----------------------------------------------------------------------------------
 reset role;
@@ -95,14 +95,16 @@ do $$ begin perform public.attach_collection((select id from ids where name = 'o
 select is(public.confirm_payment('demo-offer-1', 'evt-offer-1', (select v from n where name = 'offer')), 'funded', 'the offer is paid and held');
 reset role;
 select is(pg_temp.escrow('offer'), (select v from n where name = 'offer'), 'escrow holds exactly the offer');
+-- Owners can't read an unmatched load row (RLS), so the amounts they type are worked out here.
+insert into n select 'list_freight', list_freight_kobo from public.loads where id = (select id from ids where name = 'offer');
 
 -- ---- An owner replies; the sender offers again once ------------------------------------------------
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub": "25252525-0000-4000-8000-000000000002", "role": "authenticated"}', true);
-select throws_ok($$select public.counter_load((select id from ids where name = 'offer'), '25252525-0000-4000-8000-0000000000c1', (select list_freight_kobo * 13 / 10 from public.loads where id = (select id from ids where name = 'offer')))$$,
+select throws_ok($$select public.counter_load((select id from ids where name = 'offer'), '25252525-0000-4000-8000-0000000000c1', (select v * 13 / 10 from n where name = 'list_freight'))$$,
   '22023', null, 'a reply is at most 20 percent over our price');
-insert into ids select 'counter', public.counter_load((select id from ids where name = 'offer'), '25252525-0000-4000-8000-0000000000c1', (select list_freight_kobo from public.loads where id = (select id from ids where name = 'offer')));
-select is((select amount_kobo from public.offers where id = (select id from ids where name = 'counter')), (select list_freight_kobo from public.loads where id = (select id from ids where name = 'offer')), 'the owner asks for our price');
+insert into ids select 'counter', public.counter_load((select id from ids where name = 'offer'), '25252525-0000-4000-8000-0000000000c1', (select v from n where name = 'list_freight'));
+select is((select amount_kobo from public.offers where id = (select id from ids where name = 'counter')), (select v from n where name = 'list_freight'), 'the owner asks for our price');
 select throws_ok($$select public.reoffer_counter((select id from ids where name = 'counter'), 200000000)$$, '42501', null, 'only the sender offers again');
 
 reset role;
@@ -175,9 +177,10 @@ select is(public.confirm_payment('demo-raise-1', 'evt-raise-3', 50000), 'funded'
 reset role;
 select is(pg_temp.escrow('atprice'), (select v from n where name = 'raised'), 'is refunded, never a second raise');
 
+insert into n select 'atprice_freight', freight_kobo from public.loads where id = (select id from ids where name = 'atprice');
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub": "25252525-0000-4000-8000-000000000002", "role": "authenticated"}', true);
-insert into ids select 'counter2', public.counter_load((select id from ids where name = 'atprice'), '25252525-0000-4000-8000-0000000000c2', (select freight_kobo + 10000000 from public.loads where id = (select id from ids where name = 'atprice')));
+insert into ids select 'counter2', public.counter_load((select id from ids where name = 'atprice'), '25252525-0000-4000-8000-0000000000c2', (select v + 10000000 from n where name = 'atprice_freight'));
 select set_config('request.jwt.claims', '{"sub": "25252525-0000-4000-8000-000000000001", "role": "authenticated"}', true);
 select lives_ok($$select public.change_load_day((select id from ids where name = 'atprice'), now() + interval '2 days', now() + interval '2 days 6 hours')$$, 'the sender moves the day');
 select is((select status::text from public.offers where id = (select id from ids where name = 'counter2')), 'expired', 'replies for the old day close');
