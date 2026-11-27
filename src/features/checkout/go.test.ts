@@ -8,6 +8,6 @@ describe("safeCheckoutUrl (D048 review)", () => {
   });
 
   it("refuses protocol-relative paths and other schemes", () => {
-    for (const url of ["//evil.example/pay", "/\evil.example", "http://evil.example", "javascript:alert(1)", "https:///x"]) expect(safeCheckoutUrl(url)).toBe(false);
+    for (const url of ["//evil.example/pay", "/\\evil.example", "http://evil.example", "javascript:alert(1)", "https:///x"]) expect(safeCheckoutUrl(url)).toBe(false);
   });
 });
