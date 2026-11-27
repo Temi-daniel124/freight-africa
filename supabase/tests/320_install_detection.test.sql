@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(12);
+select plan(15);
 
 -- Sani (a driver, signed up by phone) and Bisi (someone else).
 insert into auth.users (id, instance_id, aud, role, email, phone, email_confirmed_at, raw_user_meta_data, created_at, updated_at) values
@@ -33,6 +33,8 @@ select throws_ok($$select public.redeem_install_code('+2348031230001', (select t
 reset role;
 set local role service_role;
 select is(public.redeem_install_code('+2348031230001', '00000a'), null::uuid, 'a wrong code gives nothing');
+select is(public.redeem_install_code('+2348031230001', null), null::uuid, 'a missing code gives nothing (review)');
+select is(public.redeem_install_code('+2348039999999', '123456'), null::uuid, 'an unknown number gives nothing');
 select is(public.redeem_install_code('+2348031230001', (select t from v where name = 'code')), '32323232-0000-4000-8000-000000000001'::uuid, 'the right code, with the phone number, signs the app in once');
 select is(public.redeem_install_code('+2348031230001', (select t from v where name = 'code')), null::uuid, 'and never again');
 reset role;
@@ -46,6 +48,8 @@ do $$ begin
   for i in 1..5 loop perform public.redeem_install_code('+2348031230001', '99999x'); end loop;
 end $$;
 select is(public.redeem_install_code('+2348031230001', (select t from v where name = 'code2')), null::uuid, 'after five wrong tries even the right code is refused');
+reset role;
+select is((select count(*)::int from private.install_redeem_attempts where phone = '+2348031230001') <= 10, true, 'tries are counted per number');
 
 select * from finish();
 rollback;
