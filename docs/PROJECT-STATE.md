@@ -4,7 +4,7 @@
 start of every session and updates it at the end (`CLAUDE.md` §2). It records facts about progress; it
 never overrides a higher document.
 
-**Last updated:** 26 Nov 2026 evening, by Claude Code (combined brief slice 4 merged; next slice 5, sender).
+**Last updated:** 27 Nov 2026, by Claude Code (combined brief slice 5a merged; next 5b, booking and offers).
 
 ---
 
@@ -51,10 +51,12 @@ The phases are defined in `BUILD.md` §3. Update this table as work progresses.
 
 - **Slice 4, design foundation: done (#83).** Mockup tokens in `globals.css` (paper #F5F5F1, lines, status pairs, SOS red, radii, shadows, type at 500/600 with `font-bold` gone), the md breakpoint with `theme.test.ts`, the 560 px rule in `check:layout`; buttons, pills, chips, fields, choices, tabs, tab bars, sidebars (the staff console's filtered by role, `staffPageRoles`, pages outside the role are not found), dialog, keypad, KPI, table and progress in `/dev/components`; motion (success check, SOS hold, rolling numbers, New pill); the comma and full stop moved closer in JakartaFA (`scripts/fonts/tighten-punctuation.py`); welcome slides and Welcome with one fixed illustration box and the desktop split; DESIGN_SYSTEM §1–5 and §10 to the mockups. Checked on the preview at 1440 and 375 (a local dev server ran out of memory on the laptop).
 
-**Next task: slice 5, sender (combined brief), on branch `feat/sender-mockups`:** onboarding and auth, booking and offers, Bachs and drafts, trips, account and settings, PDFs, each screen against `docs/design/reference/sender-mockups` using the slice 4 components.
+- **Slice 5a, sender onboarding and auth: done (#85).** P01–P06c, D01, D01b: welcome slides and Welcome with the mockup art; the auth frame (paper page, Back header, button docked at the bottom; courier-and-van panel from 1024 px); code boxes; PIN screens and the locked screen (P05c); role cards (the F-10 agreements stay under them); setup with the avatar row; the install sheet restyled (placed on Finding your truck in 5c). Checked side by side at 390 and 1440 with `scripts/compare-mockups.mjs` (pairs in `scripts/mockup-pairs/sender.json`) on the preview. Deliberate differences: the code screen shows the logo mark instead of "Step 1 of 3" (it also serves returning people on a new device); Choose a PIN has no Back (the email code is behind it); the keypad keeps the Delete icon where two mockups draw a chevron; the route arrow is Plus Jakarta's own (the mockup's thin arrow is a system fallback). **UI not shown, backend Phase 4:** P06b's phone number (a profile phone must be verified, which needs WhatsApp codes); each booking still asks for its own contacts.
+
+**Next task: slice 5b, sender booking and offers (combined brief)**, then 5c Bachs and drafts, 5d trips (with Home), 5e account and settings, 5f PDFs; one PR each, each screen against `docs/design/reference/sender-mockups` at 390 and 1440 before merging. Money sub-slices (booking, offers, drafts, payments): ledger in kobo, idempotent, pgTAP, independent money review before merging. Anything whose backend is a later phase: hidden in production and listed as "UI built, backend Phase N".
 Then slices 6–12 in the brief's order (owner; driver; staff console; agent; messaging; Phase 3 finish; check:mockups).
 
-**Founder's standing instructions (24 Nov 2026):** no more design gates; the founder reviews each phase once at the end with the demo accounts. Stop only at the end of a phase (with a "try it" walkthrough) or when truly blocked. Merge on green CI after the independent review for money, auth and RLS. Screenshots at 375 and 1440 px only, as a sanity look; PageSpeed at the end of each phase. Update this file after every merged slice.
+**Founder's standing instructions (24 Nov 2026):** no more design gates; the founder reviews each phase once at the end with the demo accounts. Stop only at the end of a phase (with a "try it" walkthrough) or when truly blocked. Merge on green CI after the independent review for money, auth and RLS. Check every screen at 375, 768, 1024 and 1440 px (320 for overflow); the full six-width check:layout and check:mockups run in slice 12. If the laptop is short of memory, use the Vercel preview share link for visual checks and run tests with fewer workers; never stop programs this session didn't start. PageSpeed at the end of each phase. Update this file after every merged slice.
 
 **Merging stacked or rebased PRs:** force-pushing a PR branch is blocked on this laptop; push the rebased commits under a new branch name and open a replacement PR (as #37 and #40 replaced #28 and #30).
 
@@ -99,6 +101,8 @@ for these at the moment they're needed, with exact steps.
 ## 7. Session log
 
 Add one line per session, newest first: date · what was done · what's next.
+
+- 27 Nov 2026 · Combined brief slice 5a, sender onboarding and auth (#85), checked side by side with the new compare-mockups script on the preview; standing check widths now 375, 768, 1024, 1440 (320 for overflow); JakartaFA.woff2 confirmed 20,492 bytes, nothing to fix · 5b, booking and offers.
 
 - 26 Nov 2026 · Owner mockups complete (#82, slice 6 unblocked); combined brief slice 4, design foundation (#83): mockup tokens, components, motion, font punctuation, welcome layout · slice 5, sender.
 - 25 Nov 2026 (afternoon) · Combined brief slices 1–3: #73, #76 (replacing #74), #75 merged, migrations applied, types regenerated (#77); authenticator lock with X00j, independently reviewed, plus the session_aal follow-up (#78, #79); decisions D047–D055 and the mockup folders (#80) · slice 4, design foundation.
