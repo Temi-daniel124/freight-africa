@@ -14,6 +14,12 @@ export type PaymentProvider = {
   resolveAccount: (input: { bankCode: string; accountNumber: string; demoName: string }) => Promise<string | null>;
   /** A one-time account number the sender pays into (SYSTEM-LOGIC §4.1); the provider confirms the money by webhook. */
   createCollection: (input: { paymentId: string; amountKobo: number; expiresAt: string }) => Promise<Collection>;
+  /**
+   * D048: the provider's own hosted payment page for a payment or a batch. The sender is sent there and
+   * comes back to returnPath; the money is confirmed only by the provider (webhook, or the demo page's
+   * server action), never by the return itself.
+   */
+  createCheckout: (input: { id: string; amountKobo: number; returnPath: string; label: string }) => Promise<Checkout>;
   /** Money out to an owner's bank account; resolves with the provider's reference once it has left. */
   sendPayout: (input: { payoutId: string; amountKobo: number; bankAccountId: string | null }) => Promise<string>;
   /** Money back to the sender (one refund per payment, §7.5). */
@@ -21,6 +27,7 @@ export type PaymentProvider = {
 };
 
 export type Collection = { ref: string; accountNumber: string; bank: string };
+export type Checkout = { ref: string; url: string };
 
 // Common Nigerian banks and their CBN codes, for the demo. Bachs's own bank list replaces it.
 const DEMO_BANKS: Bank[] = [
@@ -65,6 +72,12 @@ const demo: PaymentProvider = {
     accountNumber: `99${BigInt(`0x${paymentId.replace(/-/g, "").slice(0, 12)}`).toString().slice(-8).padStart(8, "0")}`,
     bank: "Demo Bank (no real money)",
   }),
+  // D039 + D048: the demo checkout is our own page, clearly labelled as a demo (never drawn like Bachs),
+  // with Pay and Make it fail. It lives in the app so it works on previews without any keys.
+  createCheckout: async ({ id, returnPath }) => {
+    const ref = `demo-co-${id}`;
+    return { ref, url: `/app/pay/demo/${ref}?back=${encodeURIComponent(returnPath)}` };
+  },
   sendPayout: async ({ payoutId }) => `demo-payout-${payoutId}`,
   sendRefund: async ({ refundId }) => `demo-refund-${refundId}`,
 };
