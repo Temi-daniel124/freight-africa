@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 import { CodeForm, type CodePreview } from "@/features/auth/code-form";
 import { SignInForm } from "@/features/auth/sign-in-form";
 import { AuthArt } from "@/features/auth/auth-frame";
@@ -103,12 +103,25 @@ function Single({ state }: { state: string }) {
 
 // Every state of A-01 and A-02 on one page, for design review (DESIGN_SYSTEM.md section 20); ?state=… shows
 // one screen full page.
-export default async function SignInStatesPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+type Params = Promise<Record<string, string | string[] | undefined>>;
+
+async function Chosen({ searchParams, all }: { searchParams: Params; all: ReactNode }) {
+  const state = (await searchParams).state;
+  return typeof state === "string" ? <Single state={state} /> : all;
+}
+
+export default function SignInStatesPage({ searchParams }: { searchParams: Params }) {
   // Development and preview only, like the component gallery.
   const allowed = process.env.NODE_ENV === "development" || process.env.VERCEL_ENV === "preview";
   if (!allowed) notFound();
-  const state = (await searchParams).state;
-  if (typeof state === "string") return <Single state={state} />;
+  return (
+    <Suspense>
+      <Chosen searchParams={searchParams} all={<AllStates />} />
+    </Suspense>
+  );
+}
+
+function AllStates() {
 
   return (
     <main className="mx-auto flex max-w-6xl flex-col gap-10 px-4 py-10 lg:px-8">
