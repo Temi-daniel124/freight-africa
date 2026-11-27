@@ -49,17 +49,19 @@ reset role;
 update public.profiles set kyc_status = 'approved' where id = 'a7a7a7a7-0000-4000-8000-000000000002';
 select is((select status::text || ' ' || paused::text from public.drivers where user_id = 'a7a7a7a7-0000-4000-8000-000000000002'), 'active true', 'a paused driver stays paused, apart from any staff suspension');
 
--- The app-lock PIN (D042).
+-- The app-lock PIN (D042): set only by our server (set_app_pin_for, review of #93).
+set local role service_role;
+select throws_ok($$select public.set_app_pin_for('a7a7a7a7-0000-4000-8000-000000000002', '111111')$$, '22023', null, 'an easy PIN is refused');
+select lives_ok($$select public.set_app_pin_for('a7a7a7a7-0000-4000-8000-000000000002', '480259')$$, 'the driver sets a PIN');
+reset role;
 set local role authenticated;
 select set_config('request.jwt.claims', format('{"sub": "a7a7a7a7-0000-4000-8000-000000000002", "role": "authenticated", "amr": [{"method": "otp", "timestamp": %s}]}', extract(epoch from now())::bigint - 60), true);
-select throws_ok($$select public.set_app_pin('111111')$$, '22023', null, 'an easy PIN is refused');
-select lives_ok($$select public.set_app_pin('480259')$$, 'the driver sets a PIN');
 select is(public.check_app_pin('480259'), 'ok', 'the right PIN opens the app');
 select is(public.check_app_pin('000000'), 'wrong', 'a wrong PIN does not');
 select is((select public.check_app_pin('000001') || public.check_app_pin('000002') || public.check_app_pin('000003') || public.check_app_pin('000004')), 'wrongwrongwronglocked', 'the fifth wrong PIN locks it');
 select is(public.check_app_pin('480259'), 'locked', 'and then even the right one waits for a new sign-in');
 select set_config('request.jwt.claims', format('{"sub": "a7a7a7a7-0000-4000-8000-000000000002", "role": "authenticated", "amr": [{"method": "otp", "timestamp": %s}]}', extract(epoch from now())::bigint - 7200), true);
-select throws_ok($$select public.set_app_pin('735190')$$, '28000', null, 'changing the PIN needs a fresh sign-in');
+select throws_ok($$select public.set_app_pin('735190')$$, '42501', null, 'the browser cannot set a PIN, even just after signing in');
 
 reset role;
 delete from public.organization_members where user_id = 'a7a7a7a7-0000-4000-8000-000000000002';
