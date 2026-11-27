@@ -16,7 +16,10 @@ begin
     or (public.can_in_org(v_load.shipper_org_id, 'cancel_own_booking') and v_load.created_by = v_user)) then
     raise exception 'not allowed' using errcode = '42501';
   end if;
-  v_held := coalesce(private.ledger_balance(private.ledger_account('escrow', null, p_load)), 0);
+  -- Look the escrow up without creating it (ledger_account creates one; a quote must not write, review).
+  select coalesce(private.ledger_balance(a.id), 0) into v_held from public.ledger_accounts a
+  where a.kind = 'escrow' and a.org_id is null and a.load_id = p_load;
+  v_held := coalesce(v_held, 0);
   allowed := true;
   owner_fee_kobo := 0;
   service_kobo := 0;
@@ -29,13 +32,15 @@ begin
   if v_load.status <> 'matched' then
     return;
   end if;
-  select * into v_trip from public.trips where load_id = p_load and status not in ('cancelled', 'closed');
-  if v_trip.status in ('loaded', 'in_transit', 'arrived', 'delivered', 'delivered_with_exception') then
+  -- The same structure as cancel_load: after loading it refuses; before pickup everything comes back;
+  -- every other live status keeps the service fee and the owner's fee (review).
+  select * into v_trip from public.trips where load_id = p_load and status not in ('cancelled', 'closed') order by created_at desc limit 1;
+  if v_trip.id is null or v_trip.status in ('loaded', 'in_transit', 'arrived', 'delivered', 'delivered_with_exception') then
     allowed := false;
     refund_kobo := 0;
     return;
   end if;
-  if v_trip.status in ('at_pickup', 'loading') then
+  if v_trip.status not in ('assigned', 'to_pickup') then
     service_kobo := least(v_held, private.fee_due(p_load, v_trip.freight_kobo));
     owner_fee_kobo := greatest(0, least((private.setting('cancellation_fee_kobo'))::bigint, v_held - service_kobo));
     refund_kobo := v_held - service_kobo - owner_fee_kobo;
