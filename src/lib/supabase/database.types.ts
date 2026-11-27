@@ -872,7 +872,22 @@ export type Database = {
           unit_weight_kg?: number | null
           weight_kg?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "load_items_goods_category_id_fkey"
+            columns: ["goods_category_id"]
+            isOneToOne: false
+            referencedRelation: "goods_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "load_items_load_id_fkey"
+            columns: ["load_id"]
+            isOneToOne: false
+            referencedRelation: "loads"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       load_stops: {
         Row: {
@@ -930,8 +945,6 @@ export type Database = {
       }
       loads: {
         Row: {
-          list_freight_kobo: number | null
-          offer_total_kobo: number | null
           cancelled_reason: string | null
           corridor_id: string | null
           created_at: string
@@ -946,9 +959,11 @@ export type Database = {
           goods_description: string | null
           id: string
           is_demo: boolean
+          list_freight_kobo: number | null
           matched_at: string | null
           no_truck_decision_due_at: string | null
           notes_for_driver: string | null
+          offer_total_kobo: number | null
           pickup_from: string
           pickup_until: string
           quantity: number | null
@@ -963,8 +978,6 @@ export type Database = {
           weight_kg: number | null
         }
         Insert: {
-          list_freight_kobo?: number | null
-          offer_total_kobo?: number | null
           cancelled_reason?: string | null
           corridor_id?: string | null
           created_at?: string
@@ -979,9 +992,11 @@ export type Database = {
           goods_description?: string | null
           id?: string
           is_demo?: boolean
+          list_freight_kobo?: number | null
           matched_at?: string | null
           no_truck_decision_due_at?: string | null
           notes_for_driver?: string | null
+          offer_total_kobo?: number | null
           pickup_from: string
           pickup_until: string
           quantity?: number | null
@@ -996,8 +1011,6 @@ export type Database = {
           weight_kg?: number | null
         }
         Update: {
-          list_freight_kobo?: number | null
-          offer_total_kobo?: number | null
           cancelled_reason?: string | null
           corridor_id?: string | null
           created_at?: string
@@ -1012,9 +1025,11 @@ export type Database = {
           goods_description?: string | null
           id?: string
           is_demo?: boolean
+          list_freight_kobo?: number | null
           matched_at?: string | null
           no_truck_decision_due_at?: string | null
           notes_for_driver?: string | null
+          offer_total_kobo?: number | null
           pickup_from?: string
           pickup_until?: string
           quantity?: number | null
@@ -1471,10 +1486,8 @@ export type Database = {
       }
       payments: {
         Row: {
-          applied_at: string | null
-          raise_fee_kobo: number | null
-          raise_freight_kobo: number | null
           amount_kobo: number
+          applied_at: string | null
           created_at: string
           created_by: string | null
           expires_at: string
@@ -1484,6 +1497,8 @@ export type Database = {
           provider: string | null
           provider_ref: string | null
           purpose: Database["public"]["Enums"]["payment_purpose"]
+          raise_fee_kobo: number | null
+          raise_freight_kobo: number | null
           received_at: string | null
           received_kobo: number
           shipper_org_id: string
@@ -1492,10 +1507,8 @@ export type Database = {
           virtual_account_number: string | null
         }
         Insert: {
-          applied_at?: string | null
-          raise_fee_kobo?: number | null
-          raise_freight_kobo?: number | null
           amount_kobo: number
+          applied_at?: string | null
           created_at?: string
           created_by?: string | null
           expires_at: string
@@ -1505,6 +1518,8 @@ export type Database = {
           provider?: string | null
           provider_ref?: string | null
           purpose: Database["public"]["Enums"]["payment_purpose"]
+          raise_fee_kobo?: number | null
+          raise_freight_kobo?: number | null
           received_at?: string | null
           received_kobo?: number
           shipper_org_id: string
@@ -1513,10 +1528,8 @@ export type Database = {
           virtual_account_number?: string | null
         }
         Update: {
-          applied_at?: string | null
-          raise_fee_kobo?: number | null
-          raise_freight_kobo?: number | null
           amount_kobo?: number
+          applied_at?: string | null
           created_at?: string
           created_by?: string | null
           expires_at?: string
@@ -1526,6 +1539,8 @@ export type Database = {
           provider?: string | null
           provider_ref?: string | null
           purpose?: Database["public"]["Enums"]["payment_purpose"]
+          raise_fee_kobo?: number | null
+          raise_freight_kobo?: number | null
           received_at?: string | null
           received_kobo?: number
           shipper_org_id?: string
@@ -2481,6 +2496,10 @@ export type Database = {
         Returns: string
       }
       am_i_demo: { Args: never; Returns: boolean }
+      answer_reoffer: {
+        Args: { p_accept: boolean; p_offer: string }
+        Returns: string
+      }
       approve_money_out: {
         Args: { p_id: string; p_kind: string }
         Returns: undefined
@@ -2528,6 +2547,10 @@ export type Database = {
       change_app_pin: {
         Args: { p_new: string; p_old: string }
         Returns: string
+      }
+      change_load_day: {
+        Args: { p_load: string; p_pickup_from: string; p_pickup_until: string }
+        Returns: undefined
       }
       change_member_role: {
         Args: { p_org: string; p_role: string; p_user: string }
@@ -2593,16 +2616,6 @@ export type Database = {
         }
         Returns: string
       }
-      answer_reoffer: { Args: { p_accept: boolean; p_offer: string }; Returns: string }
-      change_load_day: { Args: { p_load: string; p_pickup_from: string; p_pickup_until: string }; Returns: undefined }
-      day_availability: {
-        Args: { p_days?: number; p_from: string; p_org: string; p_to: string }
-        Returns: { day: string; free: number; truck_type_id: string }[]
-      }
-      keep_waiting: { Args: { p_load: string }; Returns: undefined }
-      raise_load_price: { Args: { p_load: string; p_total_kobo: number }; Returns: string }
-      reoffer_counter: { Args: { p_counter: string; p_total_kobo: number }; Returns: string }
-      reoffer_quote: { Args: { p_counter: string; p_total_kobo: number }; Returns: number }
       create_load: {
         Args: {
           p_items: Json
@@ -2636,6 +2649,14 @@ export type Database = {
           p_role: Database["public"]["Enums"]["staff_role"]
         }
         Returns: string
+      }
+      day_availability: {
+        Args: { p_days?: number; p_from: string; p_org: string; p_to: string }
+        Returns: {
+          day: string
+          free: number
+          truck_type_id: string
+        }[]
       }
       decide_approval: {
         Args: { p_approval: string; p_approve: boolean; p_note?: string }
@@ -2745,6 +2766,7 @@ export type Database = {
         }
         Returns: string
       }
+      keep_waiting: { Args: { p_load: string }; Returns: undefined }
       ledger_account_balances: {
         Args: never
         Returns: {
@@ -2872,6 +2894,10 @@ export type Database = {
           total_kobo: number
         }[]
       }
+      raise_load_price: {
+        Args: { p_load: string; p_total_kobo: number }
+        Returns: string
+      }
       record_device: {
         Args: {
           p_city: string
@@ -2892,6 +2918,14 @@ export type Database = {
       remove_member: {
         Args: { p_org: string; p_user: string }
         Returns: undefined
+      }
+      reoffer_counter: {
+        Args: { p_counter: string; p_total_kobo: number }
+        Returns: string
+      }
+      reoffer_quote: {
+        Args: { p_counter: string; p_total_kobo: number }
+        Returns: number
       }
       request_load_payment: { Args: { p_load: string }; Returns: string }
       revoke_invite: { Args: { p_invite: string }; Returns: undefined }
@@ -3106,7 +3140,12 @@ export type Database = {
         | "withdrawn"
       org_kind: "shipper" | "transporter"
       owner_tier: "new" | "established" | "gold"
-      payment_purpose: "load" | "top_up" | "waiting_charge" | "cancellation_fee" | "raise"
+      payment_purpose:
+        | "load"
+        | "top_up"
+        | "waiting_charge"
+        | "cancellation_fee"
+        | "raise"
       payment_status:
         | "pending"
         | "received"
@@ -3359,7 +3398,13 @@ export const Constants = {
       ],
       org_kind: ["shipper", "transporter"],
       owner_tier: ["new", "established", "gold"],
-      payment_purpose: ["load", "top_up", "waiting_charge", "cancellation_fee", "raise"],
+      payment_purpose: [
+        "load",
+        "top_up",
+        "waiting_charge",
+        "cancellation_fee",
+        "raise",
+      ],
       payment_status: [
         "pending",
         "received",
