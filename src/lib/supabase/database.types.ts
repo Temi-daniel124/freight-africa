@@ -1420,6 +1420,8 @@ export type Database = {
           kind: Database["public"]["Enums"]["org_kind"]
           logo_path: string | null
           name: string
+          receipt_address: string | null
+          receipt_email: string | null
           status: Database["public"]["Enums"]["account_status"]
           tier: Database["public"]["Enums"]["owner_tier"] | null
           updated_at: string
@@ -1438,6 +1440,8 @@ export type Database = {
           kind: Database["public"]["Enums"]["org_kind"]
           logo_path?: string | null
           name: string
+          receipt_address?: string | null
+          receipt_email?: string | null
           status?: Database["public"]["Enums"]["account_status"]
           tier?: Database["public"]["Enums"]["owner_tier"] | null
           updated_at?: string
@@ -1456,6 +1460,8 @@ export type Database = {
           kind?: Database["public"]["Enums"]["org_kind"]
           logo_path?: string | null
           name?: string
+          receipt_address?: string | null
+          receipt_email?: string | null
           status?: Database["public"]["Enums"]["account_status"]
           tier?: Database["public"]["Enums"]["owner_tier"] | null
           updated_at?: string
@@ -1951,6 +1957,124 @@ export type Database = {
           {
             foreignKeyName: "refunds_shipper_org_id_fkey"
             columns: ["shipper_org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      saved_places: {
+        Row: {
+          address_text: string
+          city_id: string
+          created_at: string
+          created_by: string | null
+          default_contact_name: string | null
+          default_contact_phone: string | null
+          id: string
+          label: string
+          landmark: string | null
+          org_id: string
+          updated_at: string
+          use_count: number
+        }
+        Insert: {
+          address_text: string
+          city_id: string
+          created_at?: string
+          created_by?: string | null
+          default_contact_name?: string | null
+          default_contact_phone?: string | null
+          id?: string
+          label: string
+          landmark?: string | null
+          org_id: string
+          updated_at?: string
+          use_count?: number
+        }
+        Update: {
+          address_text?: string
+          city_id?: string
+          created_at?: string
+          created_by?: string | null
+          default_contact_name?: string | null
+          default_contact_phone?: string | null
+          id?: string
+          label?: string
+          landmark?: string | null
+          org_id?: string
+          updated_at?: string
+          use_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_places_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "cities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "saved_places_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "saved_places_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      saved_receivers: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          email: string | null
+          id: string
+          name: string
+          org_id: string
+          phone: string
+          updated_at: string
+          use_count: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          id?: string
+          name: string
+          org_id: string
+          phone: string
+          updated_at?: string
+          use_count?: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          email?: string | null
+          id?: string
+          name?: string
+          org_id?: string
+          phone?: string
+          updated_at?: string
+          use_count?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_receivers_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "saved_receivers_org_id_fkey"
+            columns: ["org_id"]
             isOneToOne: false
             referencedRelation: "organizations"
             referencedColumns: ["id"]
@@ -2782,6 +2906,10 @@ export type Database = {
         Returns: undefined
       }
       decline_counter: { Args: { p_offer: string }; Returns: undefined }
+      delete_saved: {
+        Args: { p_id: string; p_kind: string }
+        Returns: undefined
+      }
       fail_payment: { Args: { p_provider_ref: string }; Returns: string }
       find_trip: { Args: { p_org: string; p_ref: string }; Returns: string }
       finish_notification: {
@@ -3036,6 +3164,29 @@ export type Database = {
       request_load_payment: { Args: { p_load: string }; Returns: string }
       revoke_invite: { Args: { p_invite: string }; Returns: undefined }
       save_as_draft: { Args: { p_load: string }; Returns: undefined }
+      save_place: {
+        Args: {
+          p_address: string
+          p_city: string
+          p_contact_name?: string
+          p_contact_phone?: string
+          p_id: string
+          p_label: string
+          p_landmark?: string
+          p_org: string
+        }
+        Returns: string
+      }
+      save_receiver: {
+        Args: {
+          p_email?: string
+          p_id: string
+          p_name: string
+          p_org: string
+          p_phone: string
+        }
+        Returns: string
+      }
       save_transporter_profile: {
         Args: {
           p_corridors: string[]
@@ -3177,6 +3328,16 @@ export type Database = {
         }[]
       }
       two_step_locked: { Args: { p_user: string }; Returns: boolean }
+      update_business_profile: {
+        Args: {
+          p_cac_number: string
+          p_name: string
+          p_org: string
+          p_receipt_address: string
+          p_receipt_email: string
+        }
+        Returns: undefined
+      }
       update_organization: {
         Args: { p_cac_number?: string; p_name: string; p_org: string }
         Returns: undefined

@@ -21,6 +21,7 @@ import { requireUnlocked } from "@/features/auth/unlock";
 import { getMyJoining, type SetupRole } from "@/features/onboarding/setup";
 import { SetupChecklist } from "@/features/onboarding/setup-checklist";
 import { PlaceholderPage } from "./placeholder-page";
+import { SenderHelp, SenderMore, SenderPayments, SenderPlaces, SenderSettings } from "@/features/account/account";
 import { ShipperHomeFirstVisit } from "./shipper-home";
 import { getViewer, greetingFor, type Viewer } from "./viewer";
 
@@ -173,6 +174,7 @@ async function sectionBody(page: PageKey, config: ShellConfig, viewer: Promise<V
     case "drivers":
       return <DriversPage orgId={(await viewer).orgId} />;
     case "settings":
+      return shipper ? <SenderSettings viewer={viewer} /> : <SettingsPage viewer={viewer} base={config.base} />;
     case "me":
       return <SettingsPage viewer={viewer} base={config.base} />;
     case "book":
@@ -180,7 +182,13 @@ async function sectionBody(page: PageKey, config: ShellConfig, viewer: Promise<V
     case "trips":
       return shipper ? <TripsPage viewer={viewer} /> : <OwnerTripsPage viewer={viewer} />;
     case "payments":
-      return <PaymentsPage viewer={viewer} />;
+      return shipper ? <SenderPayments viewer={viewer} /> : <PaymentsPage viewer={viewer} />;
+    case "more":
+      return shipper ? <SenderMore viewer={viewer} /> : <PlaceholderPage config={config} page={page} />;
+    case "places":
+      return shipper ? <SenderPlaces viewer={viewer} /> : <PlaceholderPage config={config} page={page} />;
+    case "help":
+      return shipper ? <SenderHelp /> : <PlaceholderPage config={config} page={page} />;
     case "loads":
     case "findLoads":
       return <LoadsPage viewer={viewer} />;
