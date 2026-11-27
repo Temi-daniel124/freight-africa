@@ -3623,5 +3623,93 @@
       "text": "{page} is for {roles}. Ask a super admin if you need it.",
       "back": "Back to My work"
     }
+  },
+  "staffTrips": {
+    "lead": "Every trip, its full story, and what you can do about it",
+    "views": {
+      "live": "All live",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled",
+      "all": "All"
+    },
+    "search": "Trip reference",
+    "find": "Find",
+    "cols": {
+      "ref": "Ref",
+      "status": "Status",
+      "route": "Route",
+      "sender": "Sender",
+      "owner": "Owner",
+      "truck": "Truck · driver",
+      "pickup": "Pickup",
+      "paid": "Sender paid"
+    },
+    "showing": "Showing {n} · 50 per page",
+    "none": "No trips here",
+    "noneText": "Trips show here as soon as a truck is confirmed.",
+    "status": {
+      "assigned": "Assigned",
+      "to_pickup": "To pickup",
+      "at_pickup": "At pickup",
+      "loading": "Loading",
+      "loaded": "Loaded",
+      "in_transit": "On the road",
+      "arrived": "Arrived",
+      "delivered": "Delivered",
+      "delivered_with_exception": "Delivered with a problem",
+      "closed": "Closed",
+      "cancelled": "Cancelled",
+      "transloading": "Transloading"
+    },
+    "back": "Trips",
+    "booked": "booked by {name}",
+    "timeline": "Timeline",
+    "money": "Money",
+    "senderPaid": "Sender paid",
+    "advance": "Advance",
+    "balance": "Balance",
+    "fees": "Service fee",
+    "notYet": "not yet",
+    "people": "People on this trip",
+    "sender": "Sender",
+    "owner": "Owner",
+    "driver": "Driver",
+    "activity": "Activity",
+    "addNote": "Add note",
+    "notePlaceholder": "What happened, who you spoke to",
+    "noteSave": "Save note",
+    "codes": "Codes",
+    "codesText": "Loading and delivery codes go to the pickup contact and the receiver. Staff never see them.",
+    "action": "Take action",
+    "steps": {
+      "loaded": "Mark loaded",
+      "delivered": "Mark delivered",
+      "release": "Release the balance"
+    },
+    "effects": {
+      "loaded": "The goods count as loaded and the owner's advance is paid from the money held.",
+      "delivered": "The trip counts as delivered; the balance is released after the waiting time unless the sender reports a problem.",
+      "release": "The owner's balance is paid now from the money held."
+    },
+    "reason": "Reason (saved to the audit log)",
+    "reasonHint": "At least 5 characters: what you checked and with whom.",
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "done": "Done. It's in the audit log.",
+    "failed": "That didn't go through. The trip may have moved on: reload and check.",
+    "weight": "Loaded weight (t)",
+    "quantity": "Count",
+    "events": {
+      "created": "Truck confirmed",
+      "driver_changed": "Driver changed",
+      "loaded": "Loaded",
+      "delivered": "Delivered",
+      "released": "Balance released",
+      "staff.loaded": "Marked loaded by staff",
+      "staff.delivered": "Marked delivered by staff",
+      "staff.release": "Balance released by staff",
+      "staff.note": "Note"
+    },
+    "wait": "The balance waits for the sender's problem window to end. It's released then by itself."
   }
 }
