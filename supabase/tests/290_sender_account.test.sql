@@ -35,7 +35,7 @@ select throws_ok($$select public.save_receiver('29292929-0000-4000-8000-00000000
 
 -- A viewer reads but can't change.
 select set_config('request.jwt.claims', '{"sub": "29292929-0000-4000-8000-000000000003", "role": "authenticated"}', true);
-select is((select count(*)::int from public.saved_places), 1, 'a viewer sees the business''s places');
+select is((select count(*)::int from public.saved_receivers), 0, 'a viewer doesn''t see saved phone numbers');
 select throws_ok($$select public.save_place('29292929-0000-4000-8000-0000000000a1', null, 'X', (select id from ids where name = 'lagos'), 'Somewhere road')$$, '42501', null, 'a viewer can''t add one');
 select throws_ok($$select public.delete_saved('place', (select id from ids where name = 'place'))$$, '42501', null, 'or delete one');
 

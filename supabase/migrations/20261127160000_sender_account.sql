@@ -1,6 +1,7 @@
 -- Combined brief slice 5e: saved places and receivers (DATA-MODEL §5, sender P16d / D11) and the business
--- profile's receipt details (P16g). Everyone in the business can read; bookers and up change places and
--- receivers; owners and admins change the business profile (ROLES-AND-PERMISSIONS §2). Writes go through
+-- profile's receipt details (P16g). Bookers and up change places and
+-- receivers; owners and admins change the business profile (ROLES-AND-PERMISSIONS §2). Bookers and up read
+-- them (they hold phone numbers). Writes go through
 -- functions only.
 
 create table public.saved_places (
@@ -38,8 +39,10 @@ create trigger saved_receivers_touch before update on public.saved_receivers for
 
 alter table public.saved_places enable row level security;
 alter table public.saved_receivers enable row level security;
-create policy "saved places: the business" on public.saved_places for select to authenticated using ((select public.can_in_org(org_id, 'view_business')));
-create policy "saved receivers: the business" on public.saved_receivers for select to authenticated using ((select public.can_in_org(org_id, 'view_business')));
+-- Saved contacts carry phone numbers: only those who may see contact phones read them (owner, admin,
+-- booker; ROLES-AND-PERMISSIONS §2, review).
+create policy "saved places: bookers" on public.saved_places for select to authenticated using ((select public.can_in_org(org_id, 'see_trip_phones')));
+create policy "saved receivers: bookers" on public.saved_receivers for select to authenticated using ((select public.can_in_org(org_id, 'see_trip_phones')));
 revoke all on public.saved_places, public.saved_receivers from anon, authenticated;
 grant select on public.saved_places, public.saved_receivers to authenticated;
 grant select, insert, update, delete on public.saved_places, public.saved_receivers to service_role;
@@ -88,7 +91,8 @@ begin
     raise exception 'not allowed' using errcode = '42501';
   end if;
   if p_id is null then
-    if (select count(*) from public.saved_receivers where org_id = p_org) >= 200 then
+    if (select count(*) from public.saved_receivers where org_id = p_org) >= 200
+      and not exists (select 1 from public.saved_receivers where org_id = p_org and phone = btrim(p_phone)) then
       raise exception 'up to 200 saved receivers' using errcode = '22023';
     end if;
     insert into public.saved_receivers (org_id, name, phone, email, created_by)
