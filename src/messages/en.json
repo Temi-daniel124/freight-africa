@@ -3547,5 +3547,10 @@
     "wrongCode": "That code isn't right. {n} tries left.",
     "delete": "Delete",
     "confirm": "Confirm"
+  },
+  "driverNext": {
+    "from": "From {org}",
+    "empty": "No next trip yet",
+    "emptyText": "When your owner gives you another trip, it shows here."
   }
 }
