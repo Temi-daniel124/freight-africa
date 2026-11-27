@@ -2635,6 +2635,10 @@ export type Database = {
         Args: { p_load: string; p_reason?: string }
         Returns: string
       }
+      cancel_quote: {
+        Args: { p_load: string }
+        Returns: Record<string, unknown>
+      }
       change_app_pin: {
         Args: { p_new: string; p_old: string }
         Returns: string

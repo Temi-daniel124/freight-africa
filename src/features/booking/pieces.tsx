@@ -1,4 +1,4 @@
-import { ArrowRight, Truck } from "lucide-react";
+import { ArrowRight, ShieldCheck, Truck } from "lucide-react";
 import Link from "next/link";
 import { StatusChip, type StatusTone } from "@/components/ui/chip";
 import { formatNaira } from "@/lib/money";
@@ -193,5 +193,38 @@ export function CurrentTripCard({ row, href }: { row: LoadRow; href: string }) {
         </div>
       </div>
     </Link>
+  );
+}
+
+/** P12 Trips card: reference and goods, status, route, what's next, and a progress bar or the money held. */
+export function TripCard({ row, href, next }: { row: LoadRow; href: string; next: string }) {
+  const status = statusOf(row);
+  const step = progressStep(row.status, row.trip?.status);
+  const goods = [row.goods, loadLine(row)].filter(Boolean).join(", ");
+  return (
+    <li>
+      <Link href={href} className="block rounded-card border border-line bg-surface px-5 pt-4.5 pb-4 hover:border-green-700/40">
+        <div className="flex items-center justify-between gap-3">
+          <p className="truncate text-caption font-semibold tracking-caps text-ink-3 uppercase">
+            {row.ref} · {goods}
+          </p>
+          <StatusChip tone={status.tone}>{status.label}</StatusChip>
+        </div>
+        <p className="mt-1.5 text-title-3 text-ink">
+          {row.from} → {row.to}
+        </p>
+        <p className="truncate text-meta text-ink-3">{next}</p>
+        {row.trip ? (
+          <span aria-hidden className="mt-3.5 block h-1.5 overflow-hidden rounded-pill bg-line">
+            <span className="block h-full rounded-pill bg-green-700" style={{ width: `${Math.max(8, ((step + 0.6) / 4) * 100)}%` }} />
+          </span>
+        ) : row.status === "funded" ? (
+          <p className="mt-3.5 flex items-center gap-2 border-t border-line-soft pt-3 text-body-sm text-green-900">
+            <ShieldCheck aria-hidden className="size-4 text-green-700" strokeWidth={1.8} />
+            {t.held.replace("{amount}", naira(row.totalKobo))}
+          </p>
+        ) : null}
+      </Link>
+    </li>
   );
 }

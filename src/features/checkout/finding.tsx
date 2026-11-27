@@ -8,7 +8,7 @@ import { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Sheet } from "@/components/ui/sheet";
-import { CancelButton } from "@/features/booking/trip-controls";
+import { CancelTrip } from "@/features/trips/sender-trip";
 import { formatNaira } from "@/lib/money";
 import { cn } from "@/lib/utils";
 import messages from "@/messages/en.json";
@@ -376,7 +376,7 @@ export function FindingView(p: FindingProps) {
       toast(f.kept);
       router.refresh();
     });
-  const cancel = p.canCancel ? <CancelButton loadId={p.loadId} atPickup={false} label={p.due ? f.refund : f.cancel} className="mx-auto text-danger" /> : null;
+  const cancel = p.canCancel ? <CancelTrip loadId={p.loadId} label={p.due ? f.refund : f.cancel} className="mx-auto" /> : null;
   const raiseBy = (bps: number) => Math.ceil((p.totalKobo * (10000 + bps)) / 10000 / 100000) * 100000 - p.totalKobo;
 
   let main: React.ReactNode;
