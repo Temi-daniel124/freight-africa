@@ -3398,7 +3398,8 @@
       "wrong": "That code didn't work. Check it, or make a new one in Safari.",
       "error": "Something went wrong. Try again.",
       "link": "Have a setup code?"
-    }
+    },
+    "back": "Back"
   },
   "driverGps": {
     "title": "Test your GPS",
