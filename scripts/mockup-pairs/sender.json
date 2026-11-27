@@ -49,5 +49,10 @@
   {"mock": "D04-Pay", "path": "/dev/checkout?state=pay"},
   {"mock": "D04b-Draft", "path": "/dev/checkout?state=draft"},
   {"mock": "D04c-Confirming", "path": "/dev/checkout?state=confirming"},
-  {"mock": "D08-Finding", "path": "/dev/checkout?state=replies"}
+  {"mock": "D08-Finding", "path": "/dev/checkout?state=replies"},
+  {"mock": "P14b-Trip", "path": "/dev/trips?state=trip"},
+  {"mock": "P14c-Delivered", "path": "/dev/trips?state=delivered"},
+  {"mock": "P14d-Report", "path": "/dev/trips?state=report"},
+  {"mock": "P14e-Cancel", "path": "/dev/trips?state=cancel"},
+  {"mock": "D09-Trip", "path": "/dev/trips?state=trip"}
 ]

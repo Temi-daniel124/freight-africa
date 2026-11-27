@@ -11,7 +11,7 @@ import messages from "@/messages/en.json";
 import { BookFlow } from "./book-flow";
 import { shipperLoads } from "./data";
 import { LoadBoardList } from "./load-board";
-import { lagosDate, naira, TripRow } from "./pieces";
+import { lagosDate, naira, TripCard } from "./pieces";
 import { loadLine } from "./format";
 import { Suspense } from "react";
 
@@ -87,6 +87,13 @@ function draftCards(rows: Awaited<ReturnType<typeof shipperLoads>>) {
   return { drafts, days };
 }
 
+/** P12 the line under a trip's route: when it arrives or loads, and who drives. */
+function tripNext(row: Awaited<ReturnType<typeof shipperLoads>>[number]) {
+  if (row.trip?.deliveredAt) return messages.trips.nextDelivered.replace("{day}", dayLabel(row.trip.deliveredAt));
+  if (row.trip) return [messages.trips.nextPickup.replace("{day}", dayLabel(row.pickupFrom)), row.trip.driverName].filter(Boolean).join(" · ");
+  return messages.trips.nextPickup.replace("{day}", dayLabel(row.pickupFrom));
+}
+
 /** S-03 / P12 Trips: Active, Drafts (D049), Done, Cancelled. */
 export async function TripsPage({ viewer }: { viewer: Promise<Viewer> }) {
   const { orgId } = await viewer;
@@ -116,9 +123,9 @@ export async function TripsPage({ viewer }: { viewer: Promise<Viewer> }) {
   };
   const list = (items: typeof rows) =>
     items.length ? (
-      <ul className="overflow-hidden rounded-tile bg-surface shadow-raised lg:rounded-card">
+      <ul className="flex flex-col gap-3">
         {items.map((row) => (
-          <TripRow key={row.id} row={row} href={`/app/ship/trips/${row.id}`} />
+          <TripCard key={row.id} row={row} href={`/app/ship/trips/${row.id}`} next={tripNext(row)} />
         ))}
       </ul>
     ) : (

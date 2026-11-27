@@ -3,6 +3,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { SenderTripPage } from "@/features/booking/trip-page";
 import { findingProps } from "@/features/checkout/data";
 import { FindingView } from "@/features/checkout/finding";
+import { senderTripView } from "@/features/trips/data";
+import { SenderTrip } from "@/features/trips/sender-trip";
 import { shellMetadata, ShellSubpage } from "@/features/shell/routes";
 import messages from "@/messages/en.json";
 
@@ -13,6 +15,9 @@ async function Body({ params, searchParams }: { params: Promise<{ id: string }>;
   // P11 / D08: a paid booking still waiting for a truck opens on Finding your truck ("View trip" shows the rest).
   const finding = details ? null : await findingProps(id);
   if (finding) return <FindingView {...finding} />;
+  // P14b / P14c / D09: a booking with a truck.
+  const trip = details ? null : await senderTripView(id);
+  if (trip) return <SenderTrip v={trip} />;
   return <SenderTripPage id={id} />;
 }
 
