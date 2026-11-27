@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(17);
+select plan(16);
 
 -- Sani (a driver, signed up by phone) and Bisi (someone else).
 insert into auth.users (id, instance_id, aud, role, email, phone, email_confirmed_at, raw_user_meta_data, created_at, updated_at) values
