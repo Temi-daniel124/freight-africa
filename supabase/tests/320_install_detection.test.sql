@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(15);
+select plan(17);
 
 -- Sani (a driver, signed up by phone) and Bisi (someone else).
 insert into auth.users (id, instance_id, aud, role, email, phone, email_confirmed_at, raw_user_meta_data, created_at, updated_at) values
@@ -48,8 +48,28 @@ do $$ begin
   for i in 1..5 loop perform public.redeem_install_code('+2348031230001', '99999x'); end loop;
 end $$;
 select is(public.redeem_install_code('+2348031230001', (select t from v where name = 'code2')), null::uuid, 'after five wrong tries even the right code is refused');
+-- Ten tries on a number block it, even with the right code; the owner's new code lifts the block.
 reset role;
-select is((select count(*)::int from private.install_redeem_attempts where phone = '+2348031230001') <= 10, true, 'tries are counted per number');
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub": "32323232-0000-4000-8000-000000000001", "role": "authenticated"}', true);
+insert into v select 'code3', public.create_install_code();
+reset role;
+set local role service_role;
+do $$ begin
+  for i in 1..10 loop perform public.redeem_install_code('+2348031230001', null); end loop;
+end $$;
+reset role;
+update private.install_codes set tries = 0 where user_id = '32323232-0000-4000-8000-000000000001';
+set local role service_role;
+select is(public.redeem_install_code('+2348031230001', (select t from v where name = 'code3')), null::uuid, 'after ten tries on the number, even the right code waits');
+reset role;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub": "32323232-0000-4000-8000-000000000001", "role": "authenticated"}', true);
+insert into v select 'code4', public.create_install_code();
+reset role;
+set local role service_role;
+select is(public.redeem_install_code('+2348031230001', (select t from v where name = 'code4')), '32323232-0000-4000-8000-000000000001'::uuid, 'a new code from the owner lifts the block');
+reset role;
 
 select * from finish();
 rollback;

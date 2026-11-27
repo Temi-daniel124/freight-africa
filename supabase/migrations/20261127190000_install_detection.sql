@@ -90,6 +90,8 @@ begin
   insert into private.install_codes (user_id, code_hash, expires_at) values (v_user, extensions.crypt(v_code, extensions.gen_salt('bf', 8)), now() + interval '30 minutes')
   on conflict (user_id) do update set code_hash = excluded.code_hash, expires_at = excluded.expires_at, tries = 0, created_at = now();
   insert into private.install_code_issues (user_id) values (v_user);
+  delete from private.install_code_issues where created_at < now() - interval '1 day';
+  delete from private.install_redeem_attempts where phone = (select phone from public.profiles where id = v_user);
   return v_code;
 end;
 $$;
@@ -110,8 +112,15 @@ declare
   v_dummy constant text := '$2a$08$0123456789012345678901uJ6yq7Lq3fYc6QFz9i0m6kz2V7pJ6W1u';
   v_well_formed boolean := coalesce(p_code, '') ~ '^[0-9]{6}$';
 begin
+  -- Only real phone numbers are counted (nobody can fill the table with junk; review).
+  if coalesce(p_phone, '') !~ '^\+[1-9][0-9]{7,14}$' then
+    perform extensions.crypt(coalesce(p_code, ''), v_dummy);
+    return null;
+  end if;
   -- At most 10 tries for a number in 15 minutes, whoever makes them (the server also limits by address).
-  perform pg_advisory_xact_lock(hashtext('install-redeem:' || coalesce(p_phone, '')));
+  -- The owner making a new code clears them, so nobody can keep the owner locked out (review).
+  perform pg_advisory_xact_lock(hashtext('install-redeem:' || p_phone));
+  delete from private.install_redeem_attempts where created_at < now() - interval '1 hour';
   if (select count(*) from private.install_redeem_attempts where phone = coalesce(p_phone, '') and created_at > now() - interval '15 minutes') >= 10 then
     perform extensions.crypt(coalesce(p_code, ''), v_dummy);
     return null;
@@ -126,11 +135,12 @@ begin
     return null;
   end if;
   -- A missing or malformed code is a wrong code (crypt of NULL is NULL, which would otherwise pass; review).
-  if not v_well_formed or extensions.crypt(p_code, v_row.code_hash) is distinct from v_row.code_hash then
+  if extensions.crypt(case when v_well_formed then p_code else '' end, v_row.code_hash) is distinct from v_row.code_hash or not v_well_formed then
     update private.install_codes set tries = tries + 1 where user_id = v_user;
     return null;
   end if;
   delete from private.install_codes where user_id = v_user;
+  delete from private.install_redeem_attempts where phone = p_phone;
   return v_user;
 end;
 $$;
