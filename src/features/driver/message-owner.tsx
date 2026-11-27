@@ -10,6 +10,7 @@ import { sendDriverMessage } from "@/features/owner/actions";
 import { supabaseBrowser } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 import messages from "@/messages/en.json";
+import { useMoving } from "./use-moving";
 
 // DV32b Message your owner and DV32c Message sent (D051). A reason, a short text or a voice note; the
 // owner never shows their number, and replies arrive in Notifications. Not live chat; SOS for danger.
@@ -27,6 +28,7 @@ export function MessageOwner({ orgId, orgName, userId }: { orgId: string; orgNam
   const [pending, start] = useTransition();
   const recorder = useRef<MediaRecorder | null>(null);
   const startedAt = useRef(0);
+  const moving = useMoving(open && !sent);
 
   const holdStart = async () => {
     try {
@@ -105,7 +107,12 @@ export function MessageOwner({ orgId, orgName, userId }: { orgId: string; orgNam
           <label className="sr-only" htmlFor="driver-message">
             {t.placeholder}
           </label>
-          <textarea id="driver-message" rows={3} maxLength={1000} value={text} onChange={(e) => setText(e.target.value)} placeholder={t.placeholder} className="w-full rounded-card border border-line-field bg-surface px-4.5 py-4 text-[17px] text-ink outline-none focus:border-green-700" />
+          {moving ? (
+            <p role="status" className="rounded-callout bg-warning-100 px-4 py-3 text-body text-ink">
+              {t.moving}
+            </p>
+          ) : null}
+          <textarea id="driver-message" disabled={moving} rows={3} maxLength={1000} value={text} onChange={(e) => setText(e.target.value)} placeholder={t.placeholder} className="w-full rounded-card border border-line-field bg-surface px-4.5 py-4 text-[17px] text-ink outline-none focus:border-green-700 disabled:opacity-50" />
           {voice ? (
             <div className="flex items-center justify-between rounded-card bg-green-50 px-4.5 py-3.5 text-body font-semibold text-green-900">
               {t.recorded.replace("{d}", `${Math.floor(voice.seconds / 60)}:${String(voice.seconds % 60).padStart(2, "0")}`)}

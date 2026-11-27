@@ -9,6 +9,7 @@ import { requestOrigin } from "@/lib/ip-key";
 import { supabaseServer } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
 import messages from "@/messages/en.json";
+import { NightScreen } from "./night";
 import { Checklist, TripActions } from "./trip-client";
 
 // DV10 no trip, DV12 the current trip (read-only until the trip steps go live, Phase 4) and DVD01 on a
@@ -139,6 +140,7 @@ export async function DriverTrip({ viewer }: { viewer: Promise<Viewer> }) {
   const when = trip.status === "assigned" ? loadsIn(trip.pickupFrom) : null;
   return (
     <div className="mx-auto flex w-full max-w-[560px] flex-col gap-4">
+      <NightScreen />
       <div className="flex items-center justify-between gap-3">
         <p className="text-meta font-semibold tracking-[0.06em] text-ink-3 uppercase">{(trip.status === "assigned" ? t.next : t.now).replace("{ref}", trip.ref)}</p>
         <StatusChip tone="info">{when ?? t.status[trip.status as keyof typeof t.status] ?? trip.status}</StatusChip>

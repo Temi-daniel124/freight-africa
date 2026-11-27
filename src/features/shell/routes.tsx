@@ -208,6 +208,20 @@ async function sectionBody(page: PageKey, config: ShellConfig, viewer: Promise<V
       return shipper ? <SenderPlaces viewer={viewer} /> : <PlaceholderPage config={config} page={page} />;
     case "help":
       return shipper ? <SenderHelp /> : config.role === "driver" ? <DriverHelp /> : <PlaceholderPage config={config} page={page} />;
+    // O30: an owner who drives uses the driver's own trip screen (no money on it, D003).
+    case "drive":
+      return config.role === "ownerDriver" ? (
+        <>
+          <div className="lg:hidden">
+            <DriverTrip viewer={viewer} />
+          </div>
+          <div className="hidden lg:block">
+            <DriverTripDesk viewer={viewer} />
+          </div>
+        </>
+      ) : (
+        <PlaceholderPage config={config} page={page} />
+      );
     case "history":
       return config.role === "driver" ? <DriverHistory viewer={viewer} /> : <PlaceholderPage config={config} page={page} />;
     case "notifications":
