@@ -25,7 +25,9 @@ alter table public.loads
 alter table public.payments
   add column raise_freight_kobo bigint check (raise_freight_kobo is null or raise_freight_kobo > 0),
   add column raise_fee_kobo bigint check (raise_fee_kobo is null or raise_fee_kobo >= 0),
-  add constraint payments_raise_pair check ((raise_freight_kobo is null) = (raise_fee_kobo is null));
+  add constraint payments_raise_pair check ((raise_freight_kobo is null) = (raise_fee_kobo is null)),
+  -- When a top-up or raise took effect: from then its amount is kept and only money beyond it goes back.
+  add column applied_at timestamptz;
 
 -- ---------------------------------------------------------------------------------------------------
 -- Several goods per booking (D055). The load keeps the first item's category (matching, exclusions),
@@ -692,12 +694,13 @@ begin
   elsif v_pay.purpose = 'top_up' then
     if v_load.status <> 'funded' or v_pay.status <> 'pending' or not exists (select 1 from public.offers where id = v_pay.offer_id and status = 'awaiting_top_up') then
       -- Everything paid towards a closed top-up goes back once, earlier parts too (money review).
-      v_extra := least(v_held, v_received - private.payment_refunded(v_pay.id));
+      v_extra := least(v_held, v_received - case when v_pay.applied_at is not null then v_pay.amount_kobo else 0 end - private.payment_refunded(v_pay.id));
     elsif v_received < v_pay.amount_kobo then
       return 'partial';
     else
       begin
         perform private.accept_offer(v_pay.offer_id, null);
+        update public.payments set applied_at = now() where id = v_pay.id;
       exception when others then
         update public.offers set status = 'expired' where id = v_pay.offer_id;
         perform private.queue_refund(v_load.id, least(v_held, v_received), 'The offer could not go ahead', 'topup-failed:' || v_pay.id);
@@ -711,7 +714,7 @@ begin
     -- v_pay is read before this event: only a raise still pending, and still a rise, can apply (money
     -- review: a replaced raise paid late, or a raise already applied, is refunded in full instead).
     if v_load.status <> 'funded' or v_pay.status <> 'pending' or v_pay.raise_freight_kobo + v_pay.raise_fee_kobo <= v_load.total_kobo then
-      v_extra := least(v_held, v_received - private.payment_refunded(v_pay.id));
+      v_extra := least(v_held, v_received - case when v_pay.applied_at is not null then v_pay.amount_kobo else 0 end - private.payment_refunded(v_pay.id));
     elsif v_received < v_pay.amount_kobo then
       return 'partial';
     else
@@ -723,6 +726,7 @@ begin
       where id = v_load.id;
       -- Replies at or below the new price are no longer replies, even ones waiting for a top-up (money review).
       perform private.close_replies(v_load.id, v_pay.raise_freight_kobo);
+      update public.payments set applied_at = now() where id = v_pay.id;
       v_extra := v_received - v_pay.amount_kobo;
     end if;
   else

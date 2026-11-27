@@ -835,6 +835,45 @@ export type Database = {
           },
         ]
       }
+      load_items: {
+        Row: {
+          declared_value_kobo: number
+          description: string
+          goods_category_id: string
+          id: string
+          load_id: string
+          quantity: number | null
+          quantity_unit: string | null
+          seq: number
+          unit_weight_kg: number | null
+          weight_kg: number | null
+        }
+        Insert: {
+          declared_value_kobo?: number
+          description: string
+          goods_category_id: string
+          id?: string
+          load_id: string
+          quantity?: number | null
+          quantity_unit?: string | null
+          seq: number
+          unit_weight_kg?: number | null
+          weight_kg?: number | null
+        }
+        Update: {
+          declared_value_kobo?: number
+          description?: string
+          goods_category_id?: string
+          id?: string
+          load_id?: string
+          quantity?: number | null
+          quantity_unit?: string | null
+          seq?: number
+          unit_weight_kg?: number | null
+          weight_kg?: number | null
+        }
+        Relationships: []
+      }
       load_stops: {
         Row: {
           address_text: string
@@ -891,6 +930,8 @@ export type Database = {
       }
       loads: {
         Row: {
+          list_freight_kobo: number | null
+          offer_total_kobo: number | null
           cancelled_reason: string | null
           corridor_id: string | null
           created_at: string
@@ -922,6 +963,8 @@ export type Database = {
           weight_kg: number | null
         }
         Insert: {
+          list_freight_kobo?: number | null
+          offer_total_kobo?: number | null
           cancelled_reason?: string | null
           corridor_id?: string | null
           created_at?: string
@@ -953,6 +996,8 @@ export type Database = {
           weight_kg?: number | null
         }
         Update: {
+          list_freight_kobo?: number | null
+          offer_total_kobo?: number | null
           cancelled_reason?: string | null
           corridor_id?: string | null
           created_at?: string
@@ -1426,6 +1471,9 @@ export type Database = {
       }
       payments: {
         Row: {
+          applied_at: string | null
+          raise_fee_kobo: number | null
+          raise_freight_kobo: number | null
           amount_kobo: number
           created_at: string
           created_by: string | null
@@ -1444,6 +1492,9 @@ export type Database = {
           virtual_account_number: string | null
         }
         Insert: {
+          applied_at?: string | null
+          raise_fee_kobo?: number | null
+          raise_freight_kobo?: number | null
           amount_kobo: number
           created_at?: string
           created_by?: string | null
@@ -1462,6 +1513,9 @@ export type Database = {
           virtual_account_number?: string | null
         }
         Update: {
+          applied_at?: string | null
+          raise_fee_kobo?: number | null
+          raise_freight_kobo?: number | null
           amount_kobo?: number
           created_at?: string
           created_by?: string | null
@@ -2539,20 +2593,26 @@ export type Database = {
         }
         Returns: string
       }
+      answer_reoffer: { Args: { p_accept: boolean; p_offer: string }; Returns: string }
+      change_load_day: { Args: { p_load: string; p_pickup_from: string; p_pickup_until: string }; Returns: undefined }
+      day_availability: {
+        Args: { p_days?: number; p_from: string; p_org: string; p_to: string }
+        Returns: { day: string; free: number; truck_type_id: string }[]
+      }
+      keep_waiting: { Args: { p_load: string }; Returns: undefined }
+      raise_load_price: { Args: { p_load: string; p_total_kobo: number }; Returns: string }
+      reoffer_counter: { Args: { p_counter: string; p_total_kobo: number }; Returns: string }
+      reoffer_quote: { Args: { p_counter: string; p_total_kobo: number }; Returns: number }
       create_load: {
         Args: {
-          p_declared_value_kobo: number
-          p_description: string
-          p_goods: string
+          p_items: Json
           p_notes?: string
+          p_offer_total_kobo?: number
           p_org: string
           p_pickup_from: string
           p_pickup_until: string
-          p_quantity: number
-          p_quantity_unit: string
           p_stops: Json
           p_truck_type: string
-          p_weight_kg: number
         }
         Returns: string
       }
@@ -2775,6 +2835,27 @@ export type Database = {
       queue_test_notification: {
         Args: { p_reference: string; p_to_email: string }
         Returns: number
+      }
+      quote_booking: {
+        Args: {
+          p_dropoffs?: number
+          p_from: string
+          p_org: string
+          p_to: string
+          p_truck_type: string
+        }
+        Returns: {
+          accepted_from_kobo: number
+          distance_km: number
+          fee_bps: number
+          fee_kobo: number
+          freight_kobo: number
+          min_offer_kobo: number
+          total_kobo: number
+          typical_hours: number
+          usual_high_kobo: number
+          usual_low_kobo: number
+        }[]
       }
       quote_load: {
         Args: {
@@ -3015,7 +3096,7 @@ export type Database = {
         | "read"
         | "failed"
         | "skipped"
-      offer_kind: "accept" | "counter"
+      offer_kind: "accept" | "counter" | "reoffer"
       offer_status:
         | "pending"
         | "awaiting_top_up"
@@ -3025,7 +3106,7 @@ export type Database = {
         | "withdrawn"
       org_kind: "shipper" | "transporter"
       owner_tier: "new" | "established" | "gold"
-      payment_purpose: "load" | "top_up" | "waiting_charge" | "cancellation_fee"
+      payment_purpose: "load" | "top_up" | "waiting_charge" | "cancellation_fee" | "raise"
       payment_status:
         | "pending"
         | "received"
@@ -3267,7 +3348,7 @@ export const Constants = {
         "failed",
         "skipped",
       ],
-      offer_kind: ["accept", "counter"],
+      offer_kind: ["accept", "counter", "reoffer"],
       offer_status: [
         "pending",
         "awaiting_top_up",
@@ -3278,7 +3359,7 @@ export const Constants = {
       ],
       org_kind: ["shipper", "transporter"],
       owner_tier: ["new", "established", "gold"],
-      payment_purpose: ["load", "top_up", "waiting_charge", "cancellation_fee"],
+      payment_purpose: ["load", "top_up", "waiting_charge", "cancellation_fee", "raise"],
       payment_status: [
         "pending",
         "received",
