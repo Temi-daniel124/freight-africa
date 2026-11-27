@@ -60,6 +60,12 @@ export async function sendSecurityEmail(userId: string, email: string | null | u
  * person if it is a new one, and open the app (the PIN, or the email code, has just been given) unless
  * `unlock` is false because a new PIN has to be chosen first.
  */
+/** No PIN yet, PIN sign-in locked, or "Forgot PIN?": a new PIN is chosen before the app opens. */
+export async function mustChoosePin(supabase: Awaited<ReturnType<typeof supabaseServer>>, wantsNew: boolean) {
+  const [{ data: has }, { data: locked }] = await Promise.all([supabase.rpc("has_app_pin"), supabase.rpc("my_pin_locked")]);
+  return has !== true || locked === true || wantsNew;
+}
+
 export async function finishSignIn(userId: string, sessionId: string, email: string | null | undefined, unlock = true) {
   const id = await deviceId();
   const { label, city } = await deviceContext();

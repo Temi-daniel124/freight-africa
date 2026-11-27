@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { clearCodeProof, hasCodeProof } from "@/features/auth/code-proof-cookie";
 import { clearPendingCode, readPendingCode } from "@/features/auth/pending";
 import { NEW_PIN_COOKIE } from "@/features/auth/pin-cookies";
-import { finishSignIn } from "@/features/auth/pin-session";
+import { finishSignIn, mustChoosePin } from "@/features/auth/pin-session";
 import { requestHome } from "@/lib/ip-key";
 import { supabaseServer } from "@/lib/supabase/server";
 
@@ -30,9 +30,7 @@ export async function GET(request: NextRequest) {
   if (aal && aal.nextLevel === "aal2" && aal.currentLevel !== "aal2") {
     return NextResponse.redirect(new URL(`/auth/two-step?next=${encodeURIComponent(next)}`, request.nextUrl.origin));
   }
-  const [{ data: has }, { data: locked }] = await Promise.all([supabase.rpc("has_app_pin"), supabase.rpc("my_pin_locked")]);
-  const wantsNew = request.cookies.get(NEW_PIN_COOKIE)?.value === "1";
-  const choosePin = has !== true || locked === true || wantsNew;
+  const choosePin = await mustChoosePin(supabase, request.cookies.get(NEW_PIN_COOKIE)?.value === "1");
   await finishSignIn(claims.sub, sessionId, email, !choosePin);
   if (choosePin) {
     // The proof stays for Choose a PIN, which needs it to replace an existing PIN.

@@ -94,7 +94,8 @@ export async function chooseNewPin(pin: string, next: string): Promise<SetPinRes
   // (review of #85: a lockout alone was enough before). Otherwise Settings' Change PIN asks for the
   // current one.
   const { data: has } = await supabase.rpc("has_app_pin");
-  if (has === true && !(await hasCodeProof(claims.sub, claims.session_id))) return { status: "fresh" };
+  // Fails closed: if we can't tell whether a PIN exists, treat it as existing.
+  if (has !== false && !(await hasCodeProof(claims.sub, claims.session_id))) return { status: "fresh" };
   if (!(await secondStepDone())) return { status: "error" };
   const { error } = await supabase.rpc("set_app_pin", { p_pin: pin });
   if (error) return { status: error.code === "22023" ? "weak" : error.code === "28000" ? "fresh" : "error" };

@@ -6,8 +6,9 @@ import { requestHome } from "@/lib/ip-key";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { supabaseServer } from "@/lib/supabase/server";
 import { safeNext } from "./next-path";
-import { TWO_STEP_OFFERED_COOKIE } from "./pin-cookies";
-import { finishSignIn } from "./pin-session";
+import { clearCodeProof } from "./code-proof-cookie";
+import { NEW_PIN_COOKIE, TWO_STEP_OFFERED_COOKIE } from "./pin-cookies";
+import { finishSignIn, mustChoosePin } from "./pin-session";
 import { sendCodeTo } from "./code-issue";
 import { checkAuthenticatorCode, passedCheck, twoStepLocked } from "./two-step-lock";
 import { realEmail } from "./phone-account";
@@ -88,7 +89,7 @@ export async function verifyTwoStep(previous: CodeState, formData: FormData): Pr
   // The authenticator code was just given: that is also a fresh check for this session, and clears the
   // tries. If a lock landed while this code was in flight, the session is signed out (review).
   if (!(await passedCheck(supabase))) redirect(`/auth/two-step/locked?next=${encodeURIComponent(next)}`);
-  if (claims && typeof claims.session_id === "string") await finishSignIn(claims.sub, claims.session_id, typeof claims.email === "string" ? claims.email : null);
+  if (claims && typeof claims.session_id === "string") await afterSecondStep(supabase, claims.sub, claims.session_id, typeof claims.email === "string" ? claims.email : null, next);
   redirect(next);
 }
 
@@ -120,7 +121,7 @@ export async function spendTwoStepBackup(previous: BackupState, formData: FormDa
   await supabase.auth.refreshSession();
   const { data: fresh } = await supabase.auth.getClaims();
   const c = fresh?.claims;
-  if (c && typeof c.session_id === "string") await finishSignIn(c.sub, c.session_id, typeof c.email === "string" ? c.email : null);
+  if (c && typeof c.session_id === "string") await afterSecondStep(supabase, c.sub, c.session_id, typeof c.email === "string" ? c.email : null, next);
   redirect(next);
 }
 
@@ -138,4 +139,17 @@ export async function sendTwoStepUnlockCode(_previous: UnlockCodeState, formData
   const sent = await sendCodeTo(email, next);
   if (sent !== "ok") return { status: sent };
   redirect("/auth/code");
+}
+
+/**
+ * After the second step: the same choice /auth/done makes (review of #93). With no PIN, a locked PIN or
+ * "Forgot PIN?", the app stays shut and Choose a PIN follows (it needs the code proof, kept for it);
+ * otherwise the app opens and the proof is spent.
+ */
+async function afterSecondStep(supabase: Awaited<ReturnType<typeof supabaseServer>>, userId: string, sessionId: string, email: string | null, next: string) {
+  const wantsNew = (await cookies()).get(NEW_PIN_COOKIE)?.value === "1";
+  const choose = await mustChoosePin(supabase, wantsNew);
+  await finishSignIn(userId, sessionId, email, !choose);
+  if (choose) redirect(`/auth/pin/new?next=${encodeURIComponent(next)}`);
+  await clearCodeProof();
 }
