@@ -5,7 +5,7 @@ The full text of the combined prompt. Claude Code reads this file at the start o
 ```text
 Freight Africa only. Same rules as always (identity check, Supabase target check, no Docker, one dev server, don't touch the other session). Start with /clear done; read docs/PROJECT-STATE.md first.
 
-This is a big run. Work through it in the slice order at the end, one branch and PR per slice. If your context gets long, write "Next task" in PROJECT-STATE.md precisely and stop cleanly. I'll start a new session with "continue the combined prompt".
+This is a big run. Work through it in the slice order at the end, one branch and PR per slice.
 
 0. READ FIRST: THE MOCKUPS ARE NOW THE DESIGN
 The founder approved exact mockups for every role. They are in:
@@ -213,7 +213,7 @@ SLICE ORDER (one branch and PR per slice; merge when CI is green and the review 
 Working rules for speed (unchanged):
 - One branch and PR per slice; merge when CI is green and the review is done.
 - Update PROJECT-STATE.md after every merged slice.
-- Before your context gets long, write "Next task" precisely.
+- Keep "Next task" in PROJECT-STATE.md exact after every merged slice.
 - Don't start Phase 4.
 
 STOP when all slices are merged and live, or when truly blocked.
