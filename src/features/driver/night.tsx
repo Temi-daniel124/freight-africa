@@ -3,6 +3,7 @@
 import { useEffect, useSyncExternalStore } from "react";
 import { cn } from "@/lib/utils";
 import messages from "@/messages/en.json";
+import { saveNightLook } from "./actions";
 
 // DV32 / DV17 Dark screen at night: Auto (after sunset, 7 pm to 6 am in Lagos), Always or Never. Kept on
 // the phone; the driver shell reads it and sets data-night on the page.
@@ -39,6 +40,7 @@ export function NightChoice() {
   const set = (m: Mode) => {
     localStorage.setItem(KEY, m);
     listeners.forEach((fn) => fn());
+    void saveNightLook(m);
   };
   return (
     <div role="radiogroup" aria-label={messages.driverMe.night} className="grid grid-cols-3 gap-1 rounded-pill bg-[#E9EBE5] p-1">

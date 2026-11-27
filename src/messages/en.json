@@ -1081,7 +1081,7 @@
         "owner": "A few steps before you can take paid loads. You can stop and come back any time.",
         "ownerDriver": "A few steps before you can take paid loads and drive them. You can stop and come back any time.",
         "agent": "A few steps before you can start earning. You can stop and come back any time.",
-        "driver": "Three short steps before your first trip."
+        "driver": "Four short steps before your first trip."
       },
       "steps": {
         "details": "Your details",
@@ -1092,6 +1092,7 @@
         "drivers": "Add your drivers",
         "licence": "Your driver’s licence",
         "agreement": "How you earn",
+        "install": "Install the app",
         "pin": "Choose your PIN"
       },
       "done": "Done",
@@ -3335,5 +3336,88 @@
     "failed": "That didn't send. Check your connection and try again.",
     "tooMany": "You've sent a lot of messages today. Try again tomorrow, or call operations if it's urgent.",
     "noMic": "The microphone isn't available. Type your message instead."
+  },
+  "driverInstall": {
+    "step": "Step 3 of 4",
+    "app": "Freight Africa",
+    "appSub": "Driver app · about 2 MB",
+    "start": {
+      "title": "Install the app",
+      "lead": "Tracking only works well from the installed app. In a browser tab it stops when the screen locks.",
+      "chip": "Not installed",
+      "every": "For every trip",
+      "holder": "Phone in a dashboard holder",
+      "charger": "Charger plugged in",
+      "cta": "Install Freight Africa",
+      "note": "You move on by yourself once the app opens from your home screen."
+    },
+    "waiting": {
+      "title": "Finish installing",
+      "lead": "When the icon appears on your home screen, open it. Setup carries on there.",
+      "chip": "Waiting",
+      "s1": "Tap Install in the box your phone shows",
+      "s2": "Wait for the Freight Africa icon",
+      "s3": "Open it from your home screen",
+      "note": "Tapping Install isn't enough. We only mark the app installed when it actually opens on this phone.",
+      "again": "Nothing happened? Try again",
+      "iphone": "Using an iPhone?"
+    },
+    "failed": {
+      "title": "The app isn't installed yet",
+      "lead": "The install was cancelled or didn't finish. This often happens when the network drops.",
+      "signal": "Move to a spot with better signal",
+      "space": "Free a little space on your phone",
+      "browser": "Use Chrome on Android, Safari on iPhone",
+      "again": "Try installing again",
+      "help": "Get help"
+    },
+    "ios": {
+      "title": "Install on iPhone",
+      "lead": "iPhones don't show an install box. Do it from Safari:",
+      "s1": "Tap Share at the bottom of Safari",
+      "s2": "Tap Add to Home Screen, then Add",
+      "s3": "Open Freight Africa from your home screen",
+      "codeLabel": "The app will ask for this setup code",
+      "codeNote": "Works once, for 30 minutes",
+      "waiting": "Waiting for the app to open",
+      "limit": "You've made a lot of codes. Try again in an hour.",
+      "error": "We couldn't make a code. Check your connection and try again."
+    },
+    "done": {
+      "title": "App installed",
+      "lead": "You're in the Freight Africa app now. From here on, always open it from your home screen.",
+      "browserLead": "The app is on your phone. Open it from your home screen to carry on.",
+      "cta": "Next: test my GPS"
+    },
+    "code": {
+      "title": "Sign in to the app",
+      "lead": "Type your phone number and the 6-digit setup code from the install screen in Safari.",
+      "phone": "Phone number",
+      "code": "Setup code",
+      "cta": "Open the app",
+      "wrong": "That code didn't work. Check it, or make a new one in Safari.",
+      "error": "Something went wrong. Try again.",
+      "link": "Have a setup code?"
+    }
+  },
+  "driverGps": {
+    "title": "Test your GPS",
+    "lead": "We use your location only during trips, so the sender sees the truck and we can help you on the road.",
+    "test": "Test my GPS",
+    "testing": "Finding you…",
+    "working": "GPS working",
+    "accuracy": "Accurate to {m} m",
+    "denied": "Location is turned off for Freight Africa",
+    "deniedText": "Turn on location for this app in your phone's settings, then test again.",
+    "weak": "We couldn't find you yet",
+    "weakText": "Go outside or near a window, then test again.",
+    "again": "Test again",
+    "emergency": "Emergency contact",
+    "optional": "(optional)",
+    "name": "Their name",
+    "phone": "Their phone number",
+    "phoneError": "Check the number: 11 digits, starting 07, 08 or 09.",
+    "ready": "I'm ready",
+    "error": "That didn't save. Try again."
   }
 }

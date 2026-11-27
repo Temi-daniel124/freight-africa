@@ -79,7 +79,7 @@ export async function DriverMe({ viewer }: { viewer: Promise<Viewer> }) {
       <ul className="rounded-card border border-line bg-surface px-4.5">
         <Row icon={FileText} title={t.licence} sub={driver?.licence_expires_on ? t.ends.replace("{date}", date(driver.licence_expires_on)) : undefined} end={driver?.licence_expires_on ? <StatusChip tone={licenceOk ? "success" : "danger"}>{licenceOk ? t.ok : t.expired}</StatusChip> : undefined} />
         <Row href="/onboarding/install" icon={Navigation} title={t.phoneCheck} sub={installs?.length ? t.installed : t.notInstalled} />
-        <Row href="/app/drive/me" icon={Users} title={t.emergency} sub={profile?.emergency_contact_name ?? t.noEmergency} />
+        <Row href="/onboarding/gps" icon={Users} title={t.emergency} sub={profile?.emergency_contact_name ?? t.noEmergency} />
         <li className="border-t border-line-soft py-3.5">
           <div className="flex items-start gap-3.5">
             <span className="grid size-11 shrink-0 place-items-center rounded-icon bg-green-50 text-green-700">
