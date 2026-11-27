@@ -351,3 +351,19 @@ export function HelpQuestions() {
     </>
   );
 }
+
+/** D12 "Change avatar": the face, and the picker only when asked for. */
+export function AvatarChange({ avatar, children }: { avatar: ReactNode; children: ReactNode }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div>
+      <div className="mt-3 flex items-center gap-4">
+        {avatar}
+        <button type="button" aria-expanded={open} onClick={() => setOpen((o) => !o)} className="min-h-11 text-body-sm font-semibold text-green-700">
+          {a.changeAvatar}
+        </button>
+      </div>
+      {open ? <div className="mt-3">{children}</div> : null}
+    </div>
+  );
+}
