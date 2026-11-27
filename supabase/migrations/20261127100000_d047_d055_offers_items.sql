@@ -419,8 +419,10 @@ declare
   v_id uuid;
 begin
   select * into v_counter from public.offers where id = p_counter;
-  -- The load row is the lock: two "offer again" taps can't both pass the once-per-owner check.
+  -- The load row is the lock: two "offer again" taps can't both pass the once-per-owner check. The reply
+  -- is then locked and read again, so it can't be accepted at the same moment (money review).
   select * into v_load from public.loads where id = v_counter.load_id for update;
+  select * into v_counter from public.offers where id = p_counter for update;
   if v_load.id is null or not public.can_in_org(v_load.shipper_org_id, 'decide_offers') then
     raise exception 'not allowed' using errcode = '42501';
   end if;
@@ -531,6 +533,38 @@ begin
 end;
 $$;
 
+-- What has already gone back for one payment (its per-event surpluses and its whole-payment refunds), so a
+-- payment that can no longer apply is refunded in full exactly once (money review).
+create function private.payment_refunded(p_payment uuid) returns bigint language sql stable security definer set search_path = '' as $$
+  select coalesce(sum(r.amount_kobo), 0)::bigint from public.refunds r
+  where r.idempotency_key in (select 'surplus:' || e.provider_event_id from private.payment_events e where e.payment_id = p_payment)
+     or r.idempotency_key in ('topup-failed:' || p_payment, 'closed:' || p_payment);
+$$;
+
+-- Closes a load's open replies (pending, or accepted and waiting for the sender's top-up) and gives back
+-- anything already paid towards those top-ups (money review: a day change or a raise ends them).
+create function private.close_replies(p_load uuid, p_max_amount bigint default null) returns void
+language plpgsql security definer set search_path = '' as $$
+declare
+  v_pay record;
+  v_back bigint;
+begin
+  for v_pay in
+    select p.id, p.received_kobo from public.offers o join public.payments p on p.id = o.top_up_payment_id
+    where o.load_id = p_load and o.status = 'awaiting_top_up' and (p_max_amount is null or o.amount_kobo <= p_max_amount)
+    for update of p
+  loop
+    update public.payments set status = 'expired' where id = v_pay.id and status = 'pending';
+    v_back := v_pay.received_kobo - private.payment_refunded(v_pay.id);
+    if v_back > 0 then
+      perform private.queue_refund(p_load, least(v_back, private.ledger_balance(private.ledger_account('escrow', null, p_load))), 'The reply closed before it was paid in full', 'closed:' || v_pay.id);
+    end if;
+  end loop;
+  update public.offers set status = 'expired'
+  where load_id = p_load and status in ('pending', 'awaiting_top_up') and (p_max_amount is null or amount_kobo <= p_max_amount);
+end;
+$$;
+
 -- ---------------------------------------------------------------------------------------------------
 -- P11c No truck yet: raise the price (paid now, applied only when paid in full), change the pick-up day,
 -- or keep waiting. A full refund is cancel_load.
@@ -541,7 +575,11 @@ declare
   v_load public.loads;
   v_split record;
   v_payment uuid;
+  v_old record;
+  v_back bigint;
 begin
+  -- Same lock order as confirm_payment (payment, then load), so the two never deadlock (money review).
+  perform 1 from public.payments where load_id = p_load and purpose = 'raise' and status = 'pending' for update;
   select * into v_load from public.loads where id = p_load for update;
   if v_load.id is null or not public.can_in_org(v_load.shipper_org_id, 'pay') then
     raise exception 'not allowed' using errcode = '42501';
@@ -552,11 +590,14 @@ begin
   if p_total_kobo is null or p_total_kobo % 100000 <> 0 or p_total_kobo <= v_load.total_kobo or p_total_kobo > v_load.total_kobo * 2 then
     raise exception 'a raise is above your price, in whole thousands of naira' using errcode = '22023';
   end if;
-  -- One raise at a time: an unpaid one is replaced.
-  update public.payments set status = 'expired' where load_id = p_load and purpose = 'raise' and status = 'pending' and received_kobo = 0;
-  if exists (select 1 from public.payments where load_id = p_load and purpose = 'raise' and status = 'pending') then
-    raise exception 'a raise is being paid already' using errcode = '22023';
-  end if;
+  -- One raise at a time: an earlier one not yet paid in full is replaced, and anything paid towards it goes back.
+  for v_old in select id, received_kobo from public.payments where load_id = p_load and purpose = 'raise' and status = 'pending' loop
+    update public.payments set status = 'expired' where id = v_old.id;
+    v_back := v_old.received_kobo - private.payment_refunded(v_old.id);
+    if v_back > 0 then
+      perform private.queue_refund(p_load, v_back, 'A newer raise replaced this one', 'closed:' || v_old.id);
+    end if;
+  end loop;
   select * into v_split from private.offer_split(p_total_kobo, v_load.fee_bps);
   insert into public.payments (purpose, shipper_org_id, load_id, amount_kobo, expires_at, created_by, raise_freight_kobo, raise_fee_kobo)
   values ('raise', v_load.shipper_org_id, p_load, p_total_kobo - v_load.total_kobo,
@@ -584,8 +625,8 @@ begin
   update public.loads set pickup_from = p_pickup_from, pickup_until = p_pickup_until,
     no_truck_decision_due_at = case when status = 'funded' then now() + make_interval(hours => (private.setting('no_truck_decision_hours'))::int) end,
     updated_at = now() where id = p_load;
-  -- Replies were for the old day.
-  update public.offers set status = 'expired' where load_id = p_load and status = 'pending';
+  -- Replies were for the old day, including ones waiting for their top-up (money review).
+  perform private.close_replies(p_load);
 end;
 $$;
 
@@ -649,8 +690,9 @@ begin
       return 'partial';
     end if;
   elsif v_pay.purpose = 'top_up' then
-    if v_load.status <> 'funded' or not exists (select 1 from public.offers where id = v_pay.offer_id and status = 'awaiting_top_up') then
-      v_extra := least(v_held, p_amount_kobo);
+    if v_load.status <> 'funded' or v_pay.status <> 'pending' or not exists (select 1 from public.offers where id = v_pay.offer_id and status = 'awaiting_top_up') then
+      -- Everything paid towards a closed top-up goes back once, earlier parts too (money review).
+      v_extra := least(v_held, v_received - private.payment_refunded(v_pay.id));
     elsif v_received < v_pay.amount_kobo then
       return 'partial';
     else
@@ -666,8 +708,10 @@ begin
   elsif v_pay.purpose = 'raise' then
     -- A raise only applies to a paid load still waiting for a truck, and only once (review: a second
     -- event for the same raise after it applied is surplus, never a second raise).
-    if v_load.status <> 'funded' or v_pay.status = 'received' then
-      v_extra := least(v_held, p_amount_kobo);
+    -- v_pay is read before this event: only a raise still pending, and still a rise, can apply (money
+    -- review: a replaced raise paid late, or a raise already applied, is refunded in full instead).
+    if v_load.status <> 'funded' or v_pay.status <> 'pending' or v_pay.raise_freight_kobo + v_pay.raise_fee_kobo <= v_load.total_kobo then
+      v_extra := least(v_held, v_received - private.payment_refunded(v_pay.id));
     elsif v_received < v_pay.amount_kobo then
       return 'partial';
     else
@@ -677,8 +721,8 @@ begin
         offer_total_kobo = case when list_freight_kobo is not null and v_pay.raise_freight_kobo < list_freight_kobo then v_pay.raise_freight_kobo + v_pay.raise_fee_kobo end,
         no_truck_decision_due_at = now() + make_interval(hours => (private.setting('no_truck_decision_hours'))::int), updated_at = now()
       where id = v_load.id;
-      -- Replies at or below the new price are no longer replies; owners see the new price instead.
-      update public.offers set status = 'expired' where load_id = v_load.id and status = 'pending' and amount_kobo <= v_pay.raise_freight_kobo;
+      -- Replies at or below the new price are no longer replies, even ones waiting for a top-up (money review).
+      perform private.close_replies(v_load.id, v_pay.raise_freight_kobo);
       v_extra := v_received - v_pay.amount_kobo;
     end if;
   else
@@ -731,7 +775,8 @@ begin
     execute format('grant execute on function %s to authenticated', f);
   end loop;
   foreach f in array array[
-    'private.offer_split(bigint, int)', 'private.offer_floor(bigint)', 'private.top_up_for(public.loads, bigint)'
+    'private.offer_split(bigint, int)', 'private.offer_floor(bigint)', 'private.top_up_for(public.loads, bigint)',
+    'private.payment_refunded(uuid)', 'private.close_replies(uuid, bigint)'
   ] loop
     execute format('revoke all on function %s from public, anon, authenticated', f);
   end loop;
