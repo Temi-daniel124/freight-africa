@@ -2249,6 +2249,12 @@
         "address": "Add the address at each end.",
         "failed": "We couldn't save that. Check your connection and try again.",
         "noProvider": "Paying isn't open yet. Your booking is saved as a draft."
+      },
+      "liquidsShort": "Liquids",
+      "cols": {
+        "item": "Item",
+        "amount": "Amount",
+        "value": "Value"
       }
     }
   },
