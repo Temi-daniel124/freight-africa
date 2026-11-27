@@ -1,7 +1,8 @@
-import { Bell, ChevronDown, Menu, Search } from "lucide-react";
+import { Bell, ChevronDown, Menu, Search, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { Logo } from "@/components/brand/Logo";
+import { Avatar } from "@/components/ui/avatar";
 import { EmptyState } from "@/components/ui/empty-state";
 import { cn } from "@/lib/utils";
 import messages from "@/messages/en.json";
@@ -49,11 +50,17 @@ export function ConsoleNav({ base, page, role, badges = {} }: { base: string; pa
           <ConsoleLink key={item.page} href={`${base}/${item.page}`} label={t.pages[item.page]} icon={item.icon} current={item.page === page} badge={badges[item.page]} />
         ));
         if (!group.group) return <div key={index} className="flex flex-col gap-px">{links}</div>;
+        // ux-admin 1.3: Setup, Insights and Admin stay folded unless you're in them.
+        const folds = group.group === "setup" || group.group === "insights" || group.group === "admin";
+        const inside = group.items.some((item) => item.page === page);
         return (
-          <details key={group.group} open className="group/fold">
+          <details key={group.group} open={!folds || inside} className="group/fold">
             <summary className="flex h-8 cursor-pointer list-none items-center justify-between rounded-nav-dense px-3 pt-1.5 text-micro font-semibold tracking-[0.06em] text-ink-3 uppercase hover:text-ink-2">
               {t.groups[group.group]}
-              <ChevronDown aria-hidden className="size-3.5 -rotate-90 transition-transform motion-quick group-open/fold:rotate-0" strokeWidth={2} />
+              <span className="flex items-center gap-1.5">
+                {folds ? <span className="tabular font-medium tracking-normal group-open/fold:hidden">{group.items.length}</span> : null}
+                <ChevronDown aria-hidden className="size-3.5 -rotate-90 transition-transform motion-quick group-open/fold:rotate-0" strokeWidth={2} />
+              </span>
             </summary>
             <div className="flex flex-col gap-px">{links}</div>
           </details>
@@ -70,6 +77,8 @@ type StaffShellProps = {
   /** The staff member's role, which decides the pages in the sidebar (null: every page, for previews). */
   staffRole?: StaffRole | null;
   badges?: Partial<Record<StaffPage, StaffBadge>>;
+  /** X00k: no page title above the content. */
+  bare?: boolean;
   children?: ReactNode;
 };
 
@@ -77,7 +86,7 @@ type StaffShellProps = {
  * The staff console's frame (admin mockups X01): a 248 px grouped sidebar and a 64 px top bar with a
  * 40 px search pill and the bell; desktop first, with the sidebar in a menu on smaller screens.
  */
-export function StaffShell({ base, page, person, staffRole = null, badges, children }: StaffShellProps) {
+export function StaffShell({ base, page, person, staffRole = null, badges, bare, children }: StaffShellProps) {
   const Icon = shellIcons.dashboard;
   return (
     <div className="min-h-dvh bg-paper lg:grid lg:grid-cols-staff">
@@ -90,10 +99,13 @@ export function StaffShell({ base, page, person, staffRole = null, badges, child
         <div className="mt-auto flex flex-col gap-px border-t border-line pt-3">
           <ConsoleLink href={`${base}/playbooks`} label={t.pages.playbooks} icon="book" current={page === "playbooks"} />
           <ConsoleLink href={`${base}/help`} label={t.pages.help} icon="help" current={page === "help"} />
-          <p className="px-3 pt-2 text-body-sm font-semibold">
-            {person.name}
-            <small className="block text-caption font-normal text-ink-3">{person.role}</small>
-          </p>
+          <div className="mt-2 flex items-center gap-2.5 rounded-callout bg-paper px-3 py-2.5">
+            <Avatar name={person.name} size={32} className="bg-green-900 text-white" />
+            <p className="min-w-0 text-body-sm font-semibold">
+              <span className="block truncate">{person.name}</span>
+              <small className="block truncate text-caption font-normal text-ink-3">{person.role}</small>
+            </p>
+          </div>
         </div>
       </aside>
       <div className="flex min-w-0 flex-col">
@@ -112,15 +124,30 @@ export function StaffShell({ base, page, person, staffRole = null, badges, child
               /
             </kbd>
           </Link>
-          <Link href={`${base}/work`} aria-label={messages.shell.notifications} className="ml-auto grid size-11 shrink-0 place-items-center rounded-pill border border-line bg-surface text-ink-2 lg:size-10">
-            <Bell aria-hidden className="size-5" strokeWidth={1.75} />
-          </Link>
+          <div className="ml-auto flex items-center gap-2.5">
+            {staffRole === null || staffRole === "super_admin" || staffRole === "finance" ? (
+              <Link href={`${base}/approvals`} className="hidden h-10 items-center gap-2 rounded-pill border border-line bg-surface px-4 text-body-sm font-semibold text-ink md:inline-flex">
+                <ShieldCheck aria-hidden className="size-4.5 text-green-700" strokeWidth={1.75} />
+                {t.pages.approvals}
+              </Link>
+            ) : null}
+            <Link href={`${base}/work`} aria-label={messages.shell.notifications} className="grid size-11 shrink-0 place-items-center rounded-pill border border-line bg-surface text-ink-2 lg:size-10">
+              <Bell aria-hidden className="size-5" strokeWidth={1.75} />
+            </Link>
+            <span className="hidden items-center gap-2.5 pl-1 lg:flex">
+              <Avatar name={person.name} size={36} className="bg-green-900 text-white" />
+              <span className="text-body-sm font-semibold text-ink">
+                {person.name}
+                <small className="block text-caption font-normal text-ink-3">{person.role}</small>
+              </span>
+            </span>
+          </div>
         </header>
         <div id="staff-menu" popover="auto" className="inset-auto top-16 left-4 m-0 max-h-[80dvh] w-72 overflow-y-auto rounded-callout border border-line bg-surface p-3 shadow-floating">
           <ConsoleNav base={base} page={page} role={staffRole} badges={badges} />
         </div>
         <main className="w-full min-w-0 px-4 pt-4 pb-10 lg:px-8 lg:pt-6.5">
-          <h1 className="mb-5 hidden text-console-title text-ink lg:block">{t.pages[page]}</h1>
+          {bare || page === "work" ? null : <h1 className="mb-5 hidden text-console-title text-ink lg:block">{t.pages[page]}</h1>}
           {children ?? (
             <section className="rounded-card border border-line bg-surface">
               <EmptyState title={t.pages[page]} art={<Icon aria-hidden className="size-10 text-green-700" strokeWidth={1.5} />}>
