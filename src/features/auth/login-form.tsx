@@ -6,6 +6,7 @@ import { useActionState } from "react";
 import { Button } from "@/components/ui/button";
 import { useOnline } from "@/lib/use-online";
 import messages from "@/messages/en.json";
+import { SetupCodeLink } from "@/features/driver/setup-code-form";
 import { AuthActions, AuthBody, AuthTop, NewHere } from "./auth-frame";
 import { startPinSignIn, type LoginState } from "./pin-actions";
 
@@ -84,6 +85,7 @@ export function LoginForm({ next }: { next: string }) {
             {t.getStartedLink}
           </Link>
         </p>
+        <SetupCodeLink />
         <p className="hidden items-start gap-3 rounded-callout bg-green-50 px-4 py-3.5 text-meta text-green-800 lg:flex">
           <Lock aria-hidden className="size-5 shrink-0 text-green-700" strokeWidth={1.8} />
           {t.deskNote}

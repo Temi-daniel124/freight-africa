@@ -8,7 +8,7 @@ import { parseJoined, type Joined } from "./roles";
 // tracks (identity, bank, trucks, licence) stay open until their slices record them.
 
 export type SetupRole = "shipper" | "owner" | "ownerDriver" | "agent" | "driver";
-export type SetupStepKey = "details" | "business" | "identity" | "bank" | "truck" | "drivers" | "licence" | "agreement" | "pin";
+export type SetupStepKey = "details" | "business" | "identity" | "bank" | "truck" | "drivers" | "licence" | "agreement" | "install" | "pin";
 export type SetupStep = { key: SetupStepKey; done: boolean; optional?: boolean; href: string };
 export type Setup = { role: SetupRole; steps: SetupStep[]; complete: boolean };
 
@@ -19,7 +19,7 @@ const STEPS: Record<SetupRole, SetupStepKey[]> = {
   ownerDriver: ["business", "identity", "bank", "truck", "licence"],
   agent: ["details", "agreement", "identity", "bank"],
   // ux-driver D-ON-02 to D-ON-04, and the app-lock PIN (D042).
-  driver: ["identity", "licence", "pin"],
+  driver: ["identity", "licence", "install", "pin"],
 };
 
 /** Which setup a joining choice maps to; an owner who drives gets the licence step (D043). */
@@ -75,6 +75,7 @@ function hrefFor(role: SetupRole, key: SetupStepKey) {
   if (key === "identity") return `/onboarding/identity/${PURPOSE[role]}`;
   if (key === "licence") return "/onboarding/licence";
   if (key === "pin") return "/auth/pin/new?next=/app/drive";
+  if (key === "install") return "/onboarding/install";
   if (role === "shipper") return "/onboarding/shipper";
   if (role === "agent") return "/onboarding/agent";
   if (key === "business") return "/onboarding/owner?step=about";
@@ -89,12 +90,14 @@ export async function getSetup(role: SetupRole): Promise<Setup> {
   const { kinds, kyc, transporter } = await getMyJoining();
   const needsDriver = role === "driver" || role === "ownerDriver";
   const supabase = needsDriver ? await supabaseServer() : null;
-  const [{ count: licences }, { data: hasPin }] = supabase
+  const [{ count: licences }, { data: hasPin }, { count: installs }] = supabase
     ? await Promise.all([
         supabase.from("documents").select("id", { count: "exact", head: true }).eq("subject_kind", "driver").in("status", ["pending", "approved"]),
         supabase.rpc("has_app_pin"),
+        // D052: only an app that opened from the home screen and checked in counts.
+        supabase.from("app_installs").select("id", { count: "exact", head: true }).eq("state", "installed"),
       ])
-    : [{ count: 0 }, { data: false }];
+    : [{ count: 0 }, { data: false }, { count: 0 }];
   // A check that is waiting counts as done here: the person has nothing more to do for it.
   const identitySent = kyc === "approved" || kyc === "needs_review" || kyc === "in_progress";
   const done: Partial<Record<SetupStepKey, boolean>> = {
@@ -104,6 +107,7 @@ export async function getSetup(role: SetupRole): Promise<Setup> {
     bank: transporter.bank,
     truck: transporter.truck,
     licence: (licences ?? 0) > 0,
+    install: (installs ?? 0) > 0,
     pin: hasPin === true,
   };
   const steps = STEPS[role].map((key) => ({
