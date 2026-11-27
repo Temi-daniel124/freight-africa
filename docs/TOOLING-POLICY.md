@@ -49,6 +49,7 @@ not, and the bar a new one has to clear. Rule zero: **no paid tools or services 
 | `server-only` | Marks server modules so they can't be imported by the browser |
 | `date-fns`, `date-fns-tz` | Dates in Africa/Lagos time |
 | `qrcode` | Agent invite QR codes |
+| `pdfkit` | Receipts, statements and payout documents, server-only, behind `src/lib/pdf/` (combined brief §7; added 27 Nov 2026: MIT, maintained, works in Node tests, never in a browser bundle) |
 | `sonner` | Toasts (shadcn's toast component) |
 | `vaul` | Bottom sheets on mobile (shadcn's drawer) |
 

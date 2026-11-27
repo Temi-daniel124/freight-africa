@@ -228,6 +228,11 @@ export async function SenderPlaces({ viewer }: { viewer: Promise<Viewer> }) {
   return <SavedPlaces org={v.orgId} places={list} receivers={people} cities={cities ?? []} canEdit={((perms ?? []) as string[]).includes("book")} />;
 }
 
+/** "2026-11" for this month in Lagos. */
+function thisMonth() {
+  return new Intl.DateTimeFormat("en-CA", { year: "numeric", month: "2-digit", timeZone: "Africa/Lagos" }).format(new Date()).slice(0, 7);
+}
+
 /** P15 / D07 Payments: money held, a draft to pay, the history with receipts. */
 export async function SenderPayments({ viewer }: { viewer: Promise<Viewer> }) {
   const v = await viewer;
@@ -306,6 +311,9 @@ export async function SenderPayments({ viewer }: { viewer: Promise<Viewer> }) {
       <section>
         <div className="mb-2.5 flex items-center justify-between px-1">
           <h2 className="text-lead font-semibold text-ink">{a.history}</h2>
+          <a href={`/app/ship/statements/${thisMonth()}/pdf`} className="inline-flex min-h-11 items-center text-body-sm font-semibold text-green-700">
+            {a.statement}
+          </a>
         </div>
         {history.length ? (
           <ul className="rounded-card border border-line bg-surface px-4.5">

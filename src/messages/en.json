@@ -3003,6 +3003,8 @@
     "noPaymentsText": "Money you pay and get back shows here, with a receipt for each.",
     "placeInvalid": "Add a name, a city and an address of at least 3 letters. A phone is 11 digits, like 0803 123 4567.",
     "receiverInvalid": "Add a name and a Nigerian phone number, like 0803 123 4567.",
-    "businessInvalid": "Check the CAC number (like RC1234567) and the email."
+    "businessInvalid": "Check the CAC number (like RC1234567) and the email.",
+    "downloadReceipt": "Download receipt (PDF)",
+    "statement": "This month’s statement"
   }
 }
