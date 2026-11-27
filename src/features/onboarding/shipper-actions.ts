@@ -2,7 +2,7 @@
 
 import { assertUnlocked } from "@/features/auth/unlock";
 import { redirect } from "next/navigation";
-import { z } from "zod";
+import { shipperSchema } from "./shipper-schema";
 import { supabaseServer } from "@/lib/supabase/server";
 
 // A-04: one screen, then booking. Creates the sender business with this person as owner.
@@ -12,16 +12,6 @@ export type ShipperState = {
   errors: { name?: boolean; businessName?: boolean; cac?: boolean };
   values: { name: string; as: "myself" | "business"; businessName: string; cac: string };
 };
-
-export const shipperSchema = z
-  .object({
-    name: z.string().trim().min(2).max(120),
-    as: z.enum(["myself", "business"]),
-    businessName: z.string().trim().max(120),
-    // Same shape the database checks: up to 4 letters then digits (RC1234567, BN123456).
-    cac: z.string().trim().toUpperCase().regex(/^([A-Z]{0,4}[0-9]{1,12})?$/),
-  })
-  .refine((v) => v.as === "myself" || v.businessName.length >= 2, { path: ["businessName"] });
 
 export async function setUpShipper(_previous: ShipperState, formData: FormData): Promise<ShipperState> {
   await assertUnlocked();
