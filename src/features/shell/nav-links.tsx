@@ -20,7 +20,7 @@ export function SidebarLinks({ items, base, current: currentPath }: { items: Lin
   const routePath = usePathname();
   const pathname = currentPath ?? routePath;
   return (
-    <ul className="flex flex-col gap-0.5">
+    <ul className="flex flex-col gap-1">
       {items.map(({ href, label, icon }) => {
         const Icon = sidebarIcons[icon] ?? shellIcons[icon];
         const current = isCurrent(pathname, href, href === base);
