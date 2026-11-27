@@ -26,7 +26,7 @@ function ReasonDialog({ label, title, effect, variant = "secondary", extra, onCo
         setOpen(false);
         setReason("");
         router.refresh();
-      } else toast.error(r.status === "value" ? t.settings.badValue : r.status === "reason" ? t.reasonHint : t.failed);
+      } else toast.error(r.status === "value" ? t.settings.badValue : r.status === "reason" ? t.reasonHint : r.status === "fresh" ? t.fresh : t.failed);
     });
   return (
     <>
@@ -103,7 +103,11 @@ export function InviteStaff({ roles }: { roles: { value: string; label: string }
         setOpen(false);
         setEmail("");
         router.refresh();
-      } else toast.error(r.status === "value" ? t.team.badEmail : t.failed);
+      } else if (r.status === "notSent") {
+        toast.error(t.team.notSent);
+        setOpen(false);
+        router.refresh();
+      } else toast.error(r.status === "value" ? t.team.badEmail : r.status === "fresh" ? t.fresh : t.failed);
     });
   return (
     <>
