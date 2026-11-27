@@ -1,5 +1,5 @@
 import { dayLabel } from "@/features/checkout/data";
-import { type DraftCard, TripsTabs } from "@/features/checkout/trips-tabs";
+import { type DeskRow, type DraftCard, TripsTabs } from "@/features/checkout/trips-tabs";
 import { Receipt } from "lucide-react";
 import Link from "next/link";
 import { EmptyScene } from "@/components/art/scenes";
@@ -11,7 +11,7 @@ import messages from "@/messages/en.json";
 import { BookFlow } from "./book-flow";
 import { shipperLoads } from "./data";
 import { LoadBoardList } from "./load-board";
-import { lagosDate, naira, TripCard } from "./pieces";
+import { lagosDate, naira, statusOf, TripCard } from "./pieces";
 import { loadLine } from "./format";
 import { Suspense } from "react";
 
@@ -87,6 +87,29 @@ function draftCards(rows: Awaited<ReturnType<typeof shipperLoads>>) {
   return { drafts, days };
 }
 
+/** D05 one row of the desktop table and its panel. */
+function deskRow(r: Awaited<ReturnType<typeof shipperLoads>>[number]): DeskRow {
+  const status = statusOf(r);
+  const d = messages.drafts;
+  const done = !!r.trip && ["delivered", "delivered_with_exception", "closed"].includes(r.trip.status);
+  return {
+    id: r.id,
+    ref: r.ref,
+    route: r.from + " → " + r.to,
+    from: r.from,
+    to: r.to,
+    pickup: dayLabel(r.pickupFrom),
+    status: status.label,
+    tone: status.tone,
+    goods: [r.goods, loadLine(r)].filter(Boolean).join(", "),
+    truck: r.truckType,
+    paidKobo: r.totalKobo,
+    money: r.status === "refunded" || r.status === "cancelled" ? d.refunded : done ? d.released : d.heldSafely,
+    driver: r.trip?.driverName ? { name: r.trip.driverName, plate: r.trip.plate } : null,
+    live: !!r.trip && !done,
+  };
+}
+
 /** P12 the line under a trip's route: when it arrives or loads, and who drives. */
 function tripNext(row: Awaited<ReturnType<typeof shipperLoads>>[number]) {
   if (row.trip?.deliveredAt) return messages.trips.nextDelivered.replace("{day}", dayLabel(row.trip.deliveredAt));
@@ -137,6 +160,7 @@ export async function TripsPage({ viewer }: { viewer: Promise<Viewer> }) {
       <TripsTabs
         counts={{ active: groups.active.length, drafts: groups.drafts.length, done: groups.done.length, cancelled: groups.cancelled.length }}
         lists={{ active: list(groups.active), done: list(groups.done), cancelled: list(groups.cancelled) }}
+        desk={{ active: groups.active.map(deskRow), done: groups.done.map(deskRow), cancelled: groups.cancelled.map(deskRow) }}
         drafts={drafts}
         days={days}
       />

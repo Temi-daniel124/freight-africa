@@ -1,11 +1,14 @@
 "use client";
 
-import { Info, Trash2 } from "lucide-react";
+import { Info, Trash2, X } from "lucide-react";
+import { Dialog as RadixDialog } from "radix-ui";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState, useTransition, type ReactNode } from "react";
 import { toast } from "sonner";
+import { Avatar } from "@/components/ui/avatar";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { StatusChip, type StatusTone } from "@/components/ui/chip";
 import { Sheet } from "@/components/ui/sheet";
 import { cancelLoad } from "@/features/booking/actions";
 import { formatNaira } from "@/lib/money";
@@ -98,7 +101,111 @@ function DraftItem({ draft, days }: { draft: DraftCard; days: DayFree[] }) {
   );
 }
 
-export function TripsTabs({ counts, lists, drafts, days }: { counts: Record<TabKey, number>; lists: Record<Exclude<TabKey, "drafts">, ReactNode>; drafts: DraftCard[]; days: DayFree[] }) {
+export type DeskRow = {
+  id: string;
+  ref: string;
+  route: string;
+  from: string;
+  to: string;
+  pickup: string;
+  status: string;
+  tone: StatusTone;
+  goods: string;
+  truck: string;
+  paidKobo: number;
+  money: string;
+  driver: { name: string; plate: string | null } | null;
+  live: boolean;
+};
+
+/** D05: the desktop table of one tab, with the trip's detail panel on the right. */
+function DeskTable({ rows }: { rows: DeskRow[] }) {
+  const [open, setOpen] = useState<DeskRow | null>(null);
+  if (!rows.length) return <p className="rounded-card border border-line bg-surface px-6 py-10 text-center text-body-sm text-ink-2">{d.emptyTab}</p>;
+  const facts = (row: DeskRow) => [
+    [d.from, row.from],
+    [d.to, row.to],
+    [d.goods, row.goods],
+    [d.truck, row.truck],
+    [d.paid, naira(row.paidKobo)],
+    [d.money, row.money],
+  ];
+  return (
+    <>
+      <table className="w-full overflow-hidden rounded-card border border-line bg-surface text-left">
+        <thead className="bg-paper/60">
+          <tr className="text-caption font-semibold tracking-caps text-ink-3 uppercase">
+            <th className="px-5 py-3 font-semibold">{d.cols.ref}</th>
+            <th className="px-5 py-3 font-semibold">{d.cols.route}</th>
+            <th className="px-5 py-3 font-semibold">{d.cols.pickup}</th>
+            <th className="px-5 py-3 font-semibold">{d.cols.status}</th>
+          </tr>
+        </thead>
+        <tbody className="text-body-sm text-ink">
+          {rows.map((row) => (
+            <tr key={row.id} onClick={() => setOpen(row)} className={cn("cursor-pointer border-t border-line-soft hover:bg-paper", open?.id === row.id && "bg-green-50/60")}>
+              <td className="tabular px-5 py-4 font-semibold">
+                <button type="button" onClick={() => setOpen(row)} className="text-left">
+                  {row.ref}
+                </button>
+              </td>
+              <td className="px-5 py-4 font-semibold">{row.route}</td>
+              <td className="px-5 py-4">{row.pickup}</td>
+              <td className="px-5 py-4">
+                <StatusChip tone={row.tone}>{row.status}</StatusChip>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <RadixDialog.Root open={!!open} onOpenChange={(o) => !o && setOpen(null)}>
+        <RadixDialog.Portal>
+          <RadixDialog.Content className="fixed inset-y-0 right-0 z-50 flex w-110 flex-col border-l border-line bg-surface shadow-panel outline-none data-[state=open]:animate-in data-[state=open]:slide-in-from-right motion-reduce:animate-none">
+            {open ? (
+              <>
+                <header className="flex h-20 items-center justify-between border-b border-line px-6">
+                  <RadixDialog.Title className="tabular text-body-sm font-semibold text-ink-2">{open.ref}</RadixDialog.Title>
+                  <RadixDialog.Close aria-label={d.close} className="grid size-10 place-items-center rounded-full border border-line text-ink">
+                    <X aria-hidden className="size-4.5" strokeWidth={1.8} />
+                  </RadixDialog.Close>
+                </header>
+                <div className="flex-1 overflow-y-auto px-6 py-6">
+                  <StatusChip tone={open.tone}>{open.status}</StatusChip>
+                  <p className="mt-2.5 text-title-1 text-ink">{open.route}</p>
+                  <RadixDialog.Description className="text-body-sm text-ink-2">{open.pickup}</RadixDialog.Description>
+                  <dl className="mt-5 grid grid-cols-2 gap-x-6 gap-y-4">
+                    {facts(open).map(([k, v]) => (
+                      <div key={k}>
+                        <dt className="text-caption text-ink-3">{k}</dt>
+                        <dd className={cn("text-body font-semibold", k === d.money ? "text-green-800" : "text-ink")}>{v}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                  {open.driver ? (
+                    <div className="mt-5 flex items-center gap-3 rounded-card border border-line px-4 py-3.5">
+                      <Avatar name={open.driver.name} size={40} />
+                      <div className="min-w-0">
+                        <p className="text-body-sm font-semibold text-ink">{open.driver.name}</p>
+                        <p className="text-caption text-ink-3">{d.driver.replace("{plate}", open.driver.plate ?? "")}</p>
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
+                <footer className="border-t border-line px-6 py-4">
+                  <Link href={open.live ? "/app/ship/trips/" + open.id + "/track" : "/app/ship/trips/" + open.id} className={cn(buttonVariants(), "w-full")}>
+                    {open.live ? d.openMap : d.viewTrip}
+                  </Link>
+                </footer>
+              </>
+            ) : null}
+          </RadixDialog.Content>
+        </RadixDialog.Portal>
+      </RadixDialog.Root>
+    </>
+  );
+}
+
+export function TripsTabs({ counts, lists, desk, drafts, days }: { counts: Record<TabKey, number>; lists: Record<Exclude<TabKey, "drafts">, ReactNode>; desk?: Record<Exclude<TabKey, "drafts">, DeskRow[]>; drafts: DraftCard[]; days: DayFree[] }) {
   const params = useSearchParams();
   const router = useRouter();
   const path = usePathname();
@@ -147,7 +254,14 @@ export function TripsTabs({ counts, lists, drafts, days }: { counts: Record<TabK
             </div>
           )
         ) : (
-          lists[tab]
+          <>
+            <div className={cn(desk && "lg:hidden")}>{lists[tab]}</div>
+            {desk ? (
+              <div className="hidden lg:block">
+                <DeskTable key={tab} rows={desk[tab]} />
+              </div>
+            ) : null}
+          </>
         )}
       </div>
     </div>

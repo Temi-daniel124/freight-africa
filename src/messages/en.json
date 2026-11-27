@@ -2653,7 +2653,26 @@
     "search": "Search trips",
     "emptyDrafts": "No drafts",
     "emptyDraftsText": "Bookings you save without paying show here.",
-    "emptyTab": "Nothing here yet"
+    "emptyTab": "Nothing here yet",
+    "cols": {
+      "ref": "Reference",
+      "route": "Route",
+      "pickup": "Pick-up",
+      "status": "Status"
+    },
+    "from": "From",
+    "to": "To",
+    "goods": "Goods",
+    "truck": "Truck",
+    "paid": "Paid",
+    "money": "Money",
+    "heldSafely": "Held safely",
+    "released": "Paid to the owner",
+    "refunded": "Refunded",
+    "driver": "Driver · {plate}",
+    "openMap": "Open live map",
+    "viewTrip": "View trip",
+    "close": "Close"
   },
   "finding": {
     "pill": "Finding a truck · {time}",
