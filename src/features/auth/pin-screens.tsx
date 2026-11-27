@@ -1,9 +1,12 @@
 "use client";
 
+import { Lock, Mail } from "lucide-react";
 import Link from "next/link";
-import { useCallback, useRef, useState, useTransition } from "react";
+import { useCallback, useRef, useState, useTransition, type ReactNode } from "react";
+import { Logo } from "@/components/brand/Logo";
 import { Button, buttonVariants } from "@/components/ui/button";
 import messages from "@/messages/en.json";
+import { AuthTop, StepLabel } from "./auth-frame";
 import { chooseNewPin, forgotPin, signInWithPin, signOutToStart, unlockApp } from "./pin-actions";
 import { PinKeypad, type KeypadAnswer } from "./pin-keypad";
 import { useTurnstile } from "./turnstile-field";
@@ -17,6 +20,65 @@ function wrongText(left: number) {
 /** Full navigation, so the new session cookies are read by the next page. */
 function go(path: string) {
   window.location.assign(path);
+}
+
+/** "a•••••e@okaforfoods.ng": enough to recognise, not enough to read out (P05c). */
+export function maskEmail(email: string) {
+  const [name, domain] = email.split("@");
+  if (!domain || name.length < 2) return email;
+  return `${name[0]}•••••${name[name.length - 1]}@${domain}`;
+}
+
+/**
+ * P05c: five wrong PINs lock PIN sign-in. One way on (a code by email, then a new PIN) and help. People
+ * invited by phone have no email, so they are told to ask for a new PIN link instead.
+ */
+export function PinLocked({ email, back, action }: { email: string | null; back: string; action: ReactNode }) {
+  return (
+    <div className="relative flex min-h-dvh flex-col bg-paper md:items-center md:justify-center md:px-4 md:py-24">
+      <Logo variant="primary-green" className="absolute top-9 left-10 hidden h-7.5 w-auto md:block" />
+      <div className="flex min-h-dvh w-full flex-col md:min-h-0 md:max-w-105 md:rounded-card md:border md:border-line md:bg-surface md:px-8 md:py-9 md:shadow-[0_40px_80px_-50px_rgba(15,26,20,0.5)]">
+        <AuthTop back={back} middle={<span />} />
+        <div className="flex flex-col items-center px-8 pt-15 text-center md:px-0 md:pt-0">
+          <span aria-hidden className="grid size-24 place-items-center rounded-hero bg-warning-100 text-warning">
+            <Lock className="size-11" strokeWidth={1.8} />
+          </span>
+          <h1 className="mt-5.5 text-title-1 text-ink">{t.lockedTitle}</h1>
+          <p className="mt-2.5 text-body text-ink-2">{email ? t.lockedText : t.lockedPhone}</p>
+          {email ? (
+            <p className="mt-5.5 flex items-center gap-3 rounded-callout bg-green-50 px-4 py-3.5 text-left text-meta text-green-800">
+              <Mail aria-hidden className="size-5 shrink-0 text-green-700" strokeWidth={1.8} />
+              {t.lockedAlert.replace("{email}", maskEmail(email))}
+            </p>
+          ) : null}
+        </div>
+        <div className="mt-auto flex flex-col px-5 pt-3.5 pb-[max(env(safe-area-inset-bottom),30px)] md:mt-7 md:px-0 md:pb-0">
+          {action}
+          <a href={`mailto:${messages.site.contactEmail}`} className={buttonVariants({ variant: "tertiary", size: "text", className: "w-full" })}>
+            {t.getHelp}
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** "adaeze@okaforfoods.ng · Not you?" (D01b). */
+function WhoLine({ login, onNotYou }: { login: string; onNotYou?: () => void }) {
+  return (
+    <>
+      {login} ·{" "}
+      {onNotYou ? (
+        <button type="button" onClick={onNotYou} className="font-semibold text-green-700">
+          {t.notYou}
+        </button>
+      ) : (
+        <Link href="/auth?mode=signin" className="font-semibold text-green-700">
+          {t.notYou}
+        </Link>
+      )}
+    </>
+  );
 }
 
 /** A-13 on a new device: the sign-in keypad, after the email or phone number. */
@@ -74,13 +136,32 @@ export function PinSignIn({ shownLogin, phone, turnstileSiteKey, avatar }: { sho
       else setNotice(t.failed);
     });
 
+  if (blocked === "locked") {
+    return (
+      <PinLocked
+        email={phone ? null : shownLogin}
+        back="/auth?mode=signin"
+        action={
+          phone ? null : (
+            <>
+              {notice ? <p className="mb-3 text-center text-label text-ink-2">{notice}</p> : null}
+              <Button onClick={sendCode} loading={pending} className="w-full">
+                {t.lockedEmail}
+              </Button>
+            </>
+          )
+        }
+      />
+    );
+  }
+
   const blockedView =
-    blocked === "locked" || blocked === "none" ? (
+    blocked === "none" ? (
       phone ? (
         <p className="text-center text-body text-ink-2">{t.phoneForgot}</p>
       ) : (
         <Button onClick={sendCode} loading={pending} className="w-full">
-          {blocked === "locked" ? t.lockedAction : t.noneAction}
+          {t.noneAction}
         </Button>
       )
     ) : blocked === "phone" ? (
@@ -90,25 +171,34 @@ export function PinSignIn({ shownLogin, phone, turnstileSiteKey, avatar }: { sho
   return (
     <PinKeypad
       title={t.signInTitle}
-      lead={t.signInLead.replace("{login}", shownLogin)}
+      lead={<WhoLine login={shownLogin} />}
       avatar={avatar}
       onComplete={complete}
-      blocked={blockedView ? <>{blockedView}<Link href="/auth?mode=signin" className={buttonVariants({ variant: "tertiary", size: "text", className: "w-full" })}>{t.otherAccount}</Link></> : undefined}
+      openLabel={t.open}
+      blocked={
+        blockedView ? (
+          <>
+            {blockedView}
+            <Link href="/auth?mode=signin" className={buttonVariants({ variant: "tertiary", size: "text", className: "w-full" })}>
+              {t.otherAccount}
+            </Link>
+          </>
+        ) : undefined
+      }
       forgot={{ label: t.forgot, onPress: phone ? () => setNotice(t.phoneForgot) : sendCode }}
       extra={
-        <>
-          {notice ? <p className="max-w-80 text-label text-ink-2">{notice}</p> : null}
-          {needsCheck && turnstileSiteKey ? <form ref={checkBox}>{turnstile.field}</form> : null}
-          <Link href="/auth?mode=signin" className="text-label font-semibold text-green-700 underline-offset-4 hover:underline">
-            {t.otherAccount}
-          </Link>
-        </>
+        notice || (needsCheck && turnstileSiteKey) ? (
+          <>
+            {notice ? <p className="max-w-80 text-label text-ink-2">{notice}</p> : null}
+            {needsCheck && turnstileSiteKey ? <form ref={checkBox}>{turnstile.field}</form> : null}
+          </>
+        ) : undefined
       }
     />
   );
 }
 
-/** A-11: choose a PIN, entered twice. */
+/** A-11 (P05): choose a PIN, entered twice. Step 2 of 3 for someone new. */
 export function PinSet({ next, avatar }: { next: string; avatar?: React.ReactNode }) {
   const [first, setFirst] = useState<string | null>(null);
   const complete = useCallback(
@@ -131,11 +221,22 @@ export function PinSet({ next, avatar }: { next: string; avatar?: React.ReactNod
     },
     [first, next],
   );
-  return <PinKeypad title={first === null ? t.setTitle : t.confirmTitle} lead={t.setLead} avatar={avatar} onComplete={complete} stepKey={first === null ? "first" : "second"} />;
+  return (
+    <PinKeypad
+      large
+      // The email code is behind this step already, so there is no Back: the header only says where you are.
+      top={<AuthTop middle={<StepLabel n={2} />} />}
+      title={first === null ? t.setTitle : t.confirmTitle}
+      lead={t.setLead}
+      avatar={avatar}
+      onComplete={complete}
+      stepKey={first === null ? "first" : "second"}
+    />
+  );
 }
 
-/** A-13 on the same device: the app locked; the PIN opens it. */
-export function PinUnlock({ next, avatar, phone }: { next: string; avatar?: React.ReactNode; phone: boolean }) {
+/** A-13 on the same device (P05b, D01b): the app locked; the PIN opens it. */
+export function PinUnlock({ next, avatar, phone, name, email }: { next: string; avatar?: React.ReactNode; phone: boolean; name?: string; email?: string }) {
   const [locked, setLocked] = useState(false);
   const complete = useCallback(
     async (pin: string): Promise<KeypadAnswer> => {
@@ -153,21 +254,37 @@ export function PinUnlock({ next, avatar, phone }: { next: string; avatar?: Reac
     },
     [next, phone],
   );
-  const signOut = (
-    <form action={signOutToStart} className="w-full">
-      <Button type="submit" variant={locked ? "primary" : "tertiary"} size={locked ? "lg" : "text"} className="w-full">
-        {locked ? t.lockedAction : t.forgot}
-      </Button>
-    </form>
-  );
+  const signOut = () => void signOutToStart();
+  if (locked) {
+    return (
+      <PinLocked
+        email={phone ? null : (email ?? null)}
+        back="/auth?mode=signin"
+        action={
+          <form action={signOutToStart} className="w-full">
+            <Button type="submit" className="w-full">
+              {phone ? t.otherAccount : t.lockedEmail}
+            </Button>
+          </form>
+        }
+      />
+    );
+  }
+  const first = name?.split(/\s+/)[0];
   return (
     <PinKeypad
-      title={t.unlockTitle}
-      lead={t.unlockLead}
+      title={first ? t.unlockNamed.replace("{name}", first) : t.unlockTitle}
+      lead={
+        <>
+          <span className="md:hidden">{t.unlockLead}</span>
+          <span className="hidden md:inline">{email && !phone ? <WhoLine login={email} onNotYou={signOut} /> : t.unlockLead}</span>
+        </>
+      }
       avatar={avatar}
       onComplete={complete}
-      blocked={locked ? signOut : undefined}
-      forgot={phone ? undefined : { label: t.forgot, onPress: () => void signOutToStart() }}
+      openLabel={t.open}
+      corner={{ label: t.notYou, onPress: signOut }}
+      forgot={phone ? undefined : { label: t.forgot, onPress: signOut }}
     />
   );
 }

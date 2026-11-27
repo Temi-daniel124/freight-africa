@@ -16,7 +16,7 @@ export async function onboardingSession(next: string) {
   await requireUnlocked(next);
   const [{ data: agreed }, { data: profile }] = await Promise.all([
     supabase.rpc("has_accepted_terms", { p_version: TERMS_VERSION }),
-    supabase.from("profiles").select("full_name").eq("id", claims.sub).maybeSingle(),
+    supabase.from("profiles").select("full_name, avatar_key").eq("id", claims.sub).maybeSingle(),
   ]);
-  return { agreed: agreed === true, name: profile?.full_name ?? null };
+  return { agreed: agreed === true, name: profile?.full_name ?? null, avatar: profile?.avatar_key ?? null };
 }

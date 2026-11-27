@@ -683,9 +683,9 @@
       "google": "Google sign-in didn't finish. Try again, or use a code."
     },
     "code": {
-      "title": "Enter your code",
-      "sentEmail": "We sent a 6‑digit code to {to}.",
-      "sentWhatsApp": "We sent a 6‑digit code to {to} on WhatsApp.",
+      "title": "Check your email",
+      "sentEmail": "We sent a 6‑digit code to {to}",
+      "sentWhatsApp": "We sent a 6‑digit code to {to} on WhatsApp",
       "change": "Change",
       "label": "{count}‑digit code",
       "submit": "Continue",
@@ -702,7 +702,10 @@
       "sent": "Code sent",
       "eyebrow": "Code sent",
       "resendHint": "Didn’t get it? Check spam, or",
-      "note": "We’ll sign you in as soon as the last digit goes in."
+      "note": "You only need a code the first time on a phone or computer. After this, your PIN opens the app.",
+      "titleWhatsApp": "Check WhatsApp",
+      "changeEmail": "Change email",
+      "changePhone": "Change number"
     },
     "email": {
       "subject": "{code} is your Freight Africa code",
@@ -851,11 +854,11 @@
       "twoStepLockedIntro": "Someone entered 5 wrong authenticator codes in a row, so two-step sign-in is locked. To get back in, confirm it was you with an email code, then sign in again."
     },
     "pin": {
-      "setTitle": "Choose a 6-number PIN",
+      "setTitle": "Choose a 6-digit PIN",
       "confirmTitle": "Enter it again",
-      "setLead": "You’ll use it to sign in and to open the app.",
+      "setLead": "You'll use it to open the app. Avoid your birthday.",
       "unlockTitle": "Enter your PIN",
-      "unlockLead": "The app locked to keep your account safe.",
+      "unlockLead": "Enter your PIN to open Freight Africa",
       "signInTitle": "Enter your PIN",
       "signInLead": "Signing in as {login}",
       "wrong": "That PIN isn’t right. {left} tries left.",
@@ -877,11 +880,20 @@
       "expired": "That took a while. Enter your email or phone number again.",
       "otherAccount": "Use a different account",
       "entered": "{n} of 6 entered",
-      "rateLimited": "Too many codes for now. Try again in an hour."
+      "rateLimited": "Too many codes for now. Try again in an hour.",
+      "unlockNamed": "Welcome back, {name}",
+      "notYou": "Not you?",
+      "keyboard": "Type your PIN on your keyboard, or use the keypad.",
+      "open": "Open Freight Africa",
+      "lockedTitle": "PIN sign-in is locked",
+      "lockedText": "There were 5 wrong tries. To keep your money safe, confirm it's you with a code by email, then set a new PIN.",
+      "lockedAlert": "We sent an alert to {email}. If this wasn't you, the link in it locks your account.",
+      "lockedEmail": "Email me a code",
+      "getHelp": "Get help"
     },
     "signin": {
       "title": "Welcome back",
-      "lead": "Enter your email, or the phone number your truck owner invited.",
+      "lead": "Enter your email. You'll open the app with your PIN.",
       "loginLabel": "Email or phone number",
       "loginPlaceholder": "Email or 0803 123 4567",
       "continue": "Continue",
@@ -891,7 +903,12 @@
       "getStartedLink": "Get started",
       "haveAccount": "Already have an account?",
       "signInLink": "Sign in",
-      "noCode": "No code needed on a phone you’ve used before."
+      "noCode": "No code needed on a phone you’ve used before.",
+      "hint": "Drivers invited by phone use their phone number.",
+      "deskTitle": "Move full truckloads across Nigeria",
+      "deskLead": "Welcome back. Sign in with your email or phone number.",
+      "deskHint": "Drivers sign in with their phone number.",
+      "deskNote": "On a new device we email a code once. After that, you use your 6-digit PIN."
     },
     "twoStep": {
       "addTitle": "Add two-step sign-in",
@@ -957,6 +974,27 @@
       "failed": "Something went wrong. Try again.",
       "none": "Ask the business owner to make this change.",
       "twoStepLocked": "5 wrong authenticator codes in a row. Two-step sign-in is locked and we've emailed you. Sign out, then sign in again with an email code."
+    },
+    "frame": {
+      "back": "Back",
+      "step": "Step {n} of 3",
+      "lastStep": "Last step",
+      "newHere": "New here?",
+      "getStarted": "Get started",
+      "copyright": "© 2026 Freight Africa",
+      "terms": "Terms",
+      "privacy": "Privacy",
+      "art": {
+        "alt": "A Freight Africa team member holding a parcel",
+        "ref": "FA-7K3Q9",
+        "status": "On the road",
+        "route": "Lagos → Kano",
+        "progress": "Passing Lokoja · arrives Sat",
+        "easy": "Easy booking",
+        "easySub": "A fixed price in minutes",
+        "held": "Payment held safely",
+        "heldSub": "Released as the trip happens"
+      }
     }
   },
   "fonts": {
@@ -994,18 +1032,18 @@
     "lettersSample": "Ọjọ́ · Ẹ̀kọ́ · ṣe · Ƙofar Mata · ɗan · ɓangare · ị ụ ṅ ǹ"
   },
   "onboarding": {
-    "step": "Step 1 of 3",
-    "title": "What brings you here?",
-    "lead": "Choose one. You can add a business later.",
+    "step": "Step 3 of 3",
+    "title": "What brings you to Freight Africa?",
+    "lead": "You can add the other later.",
     "rolesLabel": "I’m joining as",
     "roles": {
       "shipper": {
         "title": "I send goods",
-        "text": "Book trucks for your loads"
+        "text": "Book a full truck and pay safely."
       },
       "owner": {
         "title": "I own trucks",
-        "text": "Find loads and get paid fast"
+        "text": "One truck or a fleet. Get paid loads."
       }
     },
     "driver": "Driving for a truck owner? Ask them to invite you.",
@@ -1063,14 +1101,14 @@
     },
     "shipper": {
       "title": "Tell us who’s sending",
-      "lead": "Two quick answers and you can book a truck.",
+      "lead": "This shows on your receipts and to truck owners.",
       "name": "Your name",
       "sendingAs": "Sending as",
       "myself": "Myself",
       "business": "A business",
       "businessName": "Business name",
-      "cac": "Registration number (optional)",
-      "cacHelp": "Your CAC number, like RC1234567. Helps large customers trust you.",
+      "cac": "CAC number",
+      "cacHelp": "Helps big customers trust you.",
       "submit": "Start booking",
       "saving": "Setting up",
       "errors": {
@@ -1078,7 +1116,12 @@
         "businessName": "Enter the business name",
         "cac": "That doesn’t look like a CAC number. Check it, or leave it empty.",
         "failed": "We couldn’t set that up. Check your connection and try again."
-      }
+      },
+      "lastStep": "Last step",
+      "avatar": "Pick your avatar",
+      "moreAvatars": "More avatars",
+      "fewerAvatars": "Fewer avatars",
+      "optional": "(optional)"
     },
     "identity": {
       "title": "Verify your identity",
@@ -1892,15 +1935,15 @@
     "slides": [
       {
         "title": "Full truckloads, across Nigeria",
-        "text": "Book verified trucks on the busiest routes."
+        "text": "Book verified trucks on the busiest routes, in minutes."
       },
       {
-        "title": "Your payment is held safely",
-        "text": "The truck owner is paid as the trip happens, not before."
+        "title": "Your money stays safe",
+        "text": "You pay once. We hold it and release it step by step as the trip happens."
       },
       {
         "title": "Follow every trip live",
-        "text": "See your goods from loading to delivery."
+        "text": "See where your goods are, and call the driver when you need to."
       }
     ],
     "title": "Move full truckloads across Nigeria",
@@ -1909,8 +1952,8 @@
     "getStarted": "Get started",
     "signIn": "Sign in",
     "install": {
-      "title": "Install Freight Africa",
-      "text": "Opens faster and works with a weak signal",
+      "title": "Add Freight Africa to your home screen",
+      "text": "Open it in one tap and get told the moment a truck accepts.",
       "install": "Install",
       "notNow": "Not now",
       "iphoneTitle": "Add Freight Africa to your Home Screen",
@@ -1918,7 +1961,25 @@
       "iphone2": "Add to Home Screen",
       "iphone3": "Tap Add",
       "done": "Done",
-      "sidebar": "Install app"
+      "sidebar": "Install app",
+      "point1": "Works like an app. No app store needed.",
+      "point2": "Trip alerts, even when it's closed."
+    },
+    "art": {
+      "route": "Lagos → Kano",
+      "truck": "30 t flatbed",
+      "verified": "Verified owner",
+      "held": "Held safely",
+      "amount": "₦1,850,000",
+      "loaded": "Loaded · part paid to owner",
+      "delivered": "Delivered · the rest",
+      "passing": "Passing Lokoja · live",
+      "arrives": "Arrives",
+      "arrivesAt": "Sat, about 2 pm",
+      "ref": "FA-7K3Q9",
+      "onRoad": "On the road",
+      "passingArrives": "Passing Lokoja · arrives Sat",
+      "paidAs": "Paid to the owner as the trip happens"
     }
   },
   "booking": {
