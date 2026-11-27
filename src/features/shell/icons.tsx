@@ -29,8 +29,7 @@ import {
   UserCog,
   Users,
   Wallet,
-  type LucideProps,
-} from "lucide-react";
+  type LucideProps, Ellipsis } from "lucide-react";
 
 /** The steering wheel from the Gate 4 target (Lucide has none), drawn the Lucide way. */
 function SteeringWheel({ strokeWidth = 1.75, ...props }: LucideProps) {
@@ -64,6 +63,7 @@ export const shellIcons = {
   loads: Package,
   map: Map,
   menu: Menu,
+  more: Ellipsis,
   money: Wallet,
   naira: Banknote,
   navigate: Navigation,

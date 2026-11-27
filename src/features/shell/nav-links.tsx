@@ -74,7 +74,8 @@ export function BottomTabs({ items, base, label, large = false, inline = false, 
     >
       <ul className="grid h-full" style={{ gridTemplateColumns: `repeat(${items.length}, minmax(0, 1fr))` }}>
         {items.map(({ href, label: tabLabel, icon, raised, badge }) => {
-          const Icon = shellIcons[icon];
+          // The phone tabs draw the mockup paths too where there is one (sender P12: truck, card).
+          const Icon = sidebarIcons[icon] ?? shellIcons[icon];
           const current = isCurrent(pathname, href, href === base);
           return (
             <li key={href} className="flex">
