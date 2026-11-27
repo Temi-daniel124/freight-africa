@@ -68,12 +68,13 @@ const owner: ShellConfig = {
   base: "/app/haul",
   home: "home",
   action: { page: "findLoads", icon: "loads" },
+  // Owner mockups O10 / O12: Loads is the raised middle tab.
   tabs: [
     { page: "home", icon: "home" },
-    { page: "loads", icon: "loads" },
     { page: "trips", icon: "trips" },
+    { page: "loads", icon: "loads", raised: true },
     { page: "earnings", icon: "earnings" },
-    { page: "more", icon: "menu" },
+    { page: "more", icon: "more" },
   ],
   sidebar: ownerSidebar,
   footer: [{ page: "settings", icon: "settings" }],
@@ -84,12 +85,13 @@ const ownerDriver: ShellConfig = {
   ...owner,
   role: "ownerDriver",
   action: { page: "drive", icon: "drive" },
+  // D043: Drive replaces Trips (trips move to More); Loads stays the raised middle tab.
   tabs: [
     { page: "home", icon: "home" },
-    { page: "loads", icon: "loads" },
-    { page: "drive", icon: "drive", raised: true },
+    { page: "drive", icon: "drive" },
+    { page: "loads", icon: "loads", raised: true },
     { page: "earnings", icon: "earnings" },
-    { page: "more", icon: "menu" },
+    { page: "more", icon: "more" },
   ],
   sidebar: [{ page: "home", icon: "home" }, { page: "drive", icon: "drive" }, ...ownerSidebar.slice(1)],
 };

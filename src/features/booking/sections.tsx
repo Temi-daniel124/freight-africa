@@ -9,8 +9,9 @@ import type { Viewer } from "@/features/shell/viewer";
 import { supabaseServer } from "@/lib/supabase/server";
 import messages from "@/messages/en.json";
 import { BookFlow } from "./book-flow";
+import type { FleetTruck } from "@/features/home/owner-home";
+import { LoadCard, toBoardLoad } from "@/features/owner/load-cards";
 import { shipperLoads } from "./data";
-import { LoadBoardList } from "./load-board";
 import { lagosDate, naira, statusOf, TripCard } from "./pieces";
 import { loadLine } from "./format";
 import { Suspense } from "react";
@@ -276,61 +277,21 @@ export async function PaymentsPage({ viewer }: { viewer: Promise<Viewer> }) {
 /** T-04 Loads for your trucks. */
 export async function LoadsPage({ viewer }: { viewer: Promise<Viewer> }) {
   const { orgId } = await viewer;
-  if (!orgId)
-    return (
-      <Empty title={messages.loads.empty} text={messages.loads.emptyText} />
-    );
+  if (!orgId) return <Empty title={messages.loads.empty} text={messages.loads.emptyText} />;
   const supabase = await supabaseServer();
-  const [{ data: loads }, { data: trucks }, { data: drivers }] =
-    await Promise.all([
-      supabase.rpc("load_board", { p_org: orgId }),
-      supabase
-        .from("trucks")
-        .select(
-          "id, plate_number, capacity_kg, truck_type_id, default_driver_id, status, availability",
-        )
-        .eq("org_id", orgId)
-        .eq("status", "active"),
-      supabase.rpc("team_members", { p_org: orgId }),
-    ]);
-  if (!loads?.length)
-    return (
-      <Empty title={messages.loads.empty} text={messages.loads.emptyText} />
-    );
+  const [{ data: loads }, { data: fleet }] = await Promise.all([supabase.rpc("load_board", { p_org: orgId }), supabase.rpc("fleet", { p_org: orgId })]);
+  if (!loads?.length) return <Empty title={messages.loads.empty} text={messages.loads.emptyText} />;
+  const rows = loads.map((l) => toBoardLoad(l, (fleet ?? []) as FleetTruck[]));
+  const o = messages.owner;
   return (
-    <LoadBoardList
-      loads={loads.map((l) => ({
-        id: l.load_id,
-        ref: l.ref,
-        from: l.from_city,
-        to: l.to_city,
-        goods: l.goods,
-        weightKg: l.weight_kg,
-        quantity: l.quantity,
-        unit: l.quantity_unit,
-        truckType: l.truck_type,
-        truckTypeId: l.truck_type_id,
-        pickup: lagosDate.format(new Date(l.pickup_from)),
-        freight: Number(l.freight_kobo),
-        payout: Number(l.payout_kobo),
-        band: l.value_band,
-      }))}
-      trucks={(trucks ?? [])
-        .filter((x) => x.availability !== "on_trip")
-        .map((x) => ({
-          id: x.id,
-          plate: x.plate_number,
-          capacity: x.capacity_kg,
-          typeId: x.truck_type_id,
-          driver: x.default_driver_id,
-        }))}
-      drivers={(drivers ?? [])
-        .filter((d) => d.is_driver && d.status === "active")
-        .map((d) => ({
-          id: d.user_id,
-          name: d.is_me ? messages.loads.meDriving : (d.full_name ?? ""),
-        }))}
-    />
+    <div className="mx-auto w-full max-w-[880px]">
+      <p className="mb-3 px-1 text-meta text-ink-3">{rows.length === 1 ? o.loadsCountOne : o.loadsCount.replace("{n}", String(rows.length))}</p>
+      <ul className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
+        {rows.map((l) => (
+          <LoadCard key={l.id} load={l} href={`/app/haul/loads/${l.id}`} />
+        ))}
+      </ul>
+    </div>
   );
 }
 

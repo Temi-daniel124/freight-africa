@@ -13,7 +13,7 @@ import { TrucksPage } from "@/features/trucks/trucks-page";
 import { BookPage, EarningsPage, LoadsPage, PaymentsPage, TripsPage } from "@/features/booking/sections";
 import { OwnerTripsPage } from "@/features/booking/owner-trips";
 import { DriverTrip } from "@/features/home/driver-trip";
-import { OwnerHome } from "@/features/home/owner-home";
+import { OwnerHome } from "@/features/owner/owner-home";
 import { SenderHome } from "@/features/home/sender-home";
 import { SettingsPage } from "@/features/settings/settings-page";
 import { DriversPage } from "@/features/drivers/drivers-page";
