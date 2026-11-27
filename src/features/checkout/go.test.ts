@@ -1,19 +1,13 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
-import { goToCheckout } from "./go";
+import { describe, expect, it } from "vitest";
+import { safeCheckoutUrl } from "./go";
 
-describe("goToCheckout (D048 review)", () => {
-  const assign = vi.fn();
-  vi.stubGlobal("location", { ...window.location, assign });
-  afterEach(() => assign.mockClear());
-
-  it("opens our own pages and https checkouts", () => {
-    goToCheckout("/app/pay/demo/demo-co-1?back=%2Fapp");
-    goToCheckout("https://checkout.bachs.example/pay/123");
-    expect(assign).toHaveBeenCalledTimes(2);
+describe("safeCheckoutUrl (D048 review)", () => {
+  it("allows our own pages and https checkouts", () => {
+    expect(safeCheckoutUrl("/app/pay/demo/demo-co-1?back=%2Fapp")).toBe(true);
+    expect(safeCheckoutUrl("https://checkout.bachs.example/pay/123")).toBe(true);
   });
 
-  it("never opens another host through a protocol-relative path or another scheme", () => {
-    for (const url of ["//evil.example/pay", "/\evil.example", "http://evil.example", "javascript:alert(1)", "https:///x"]) goToCheckout(url);
-    expect(assign).not.toHaveBeenCalled();
+  it("refuses protocol-relative paths and other schemes", () => {
+    for (const url of ["//evil.example/pay", "/\evil.example", "http://evil.example", "javascript:alert(1)", "https:///x"]) expect(safeCheckoutUrl(url)).toBe(false);
   });
 });
