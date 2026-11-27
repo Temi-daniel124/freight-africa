@@ -172,7 +172,7 @@ export function CodeForm({ t, channel, to, length, expiresInMs = null, preview }
         {/* Normal wrapping, as in the mockup: "pretty" would push the address down. */}
         <p className="type-signin-lead mt-3 text-wrap text-ink-2">
           {sentBefore}
-          <b className="font-semibold break-all text-ink">{to}</b>
+          <b className="font-semibold break-words text-ink">{to}</b>
           {sentAfter}
         </p>
 

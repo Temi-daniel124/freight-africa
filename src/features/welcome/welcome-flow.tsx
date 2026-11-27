@@ -74,7 +74,7 @@ export function WelcomeFlow({ seen = false }: { seen?: boolean }) {
     <Split art={art} tone="white">
       <header className="flex items-center justify-between px-6 pt-5 lg:px-0">
         <Logo variant="primary-green" className="h-7.5 w-auto" priority />
-        <button type="button" onClick={() => go(slides.length)} className="-mr-1 grid min-h-11 place-items-center px-1 py-3 text-body font-medium text-ink-2">
+        <button type="button" onClick={() => go(slides.length)} className="-mr-1 px-1 py-3 text-body leading-[1.25] font-medium text-ink-2">
           {t.skip}
         </button>
       </header>

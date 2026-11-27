@@ -26,7 +26,7 @@ export function ShipperForm({ name, avatar }: { name: string; avatar: string | n
   const [as, setAs] = useState(state.values.as);
   return (
     <form action={action} className="flex flex-1 flex-col" noValidate>
-      <AuthTop back="/onboarding/role" end={<span className="text-label whitespace-nowrap text-ink-3">{t.lastStep}</span>} />
+      <AuthTop back="/onboarding/role" middle={<span />} end={<span className="text-label whitespace-nowrap text-ink-3">{t.lastStep}</span>} />
       <AuthBody className="px-5 pt-4.5 md:px-0">
         <h1 className="text-title-1 text-ink">{t.title}</h1>
         <p className="mt-2 text-body text-ink-2">{t.lead}</p>
