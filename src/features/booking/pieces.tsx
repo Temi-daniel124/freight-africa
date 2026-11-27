@@ -37,7 +37,7 @@ export function statusOf(row: Pick<LoadRow, "status" | "trip">): {
       ? "success"
       : key === "cancelled" || key === "expired"
         ? "danger"
-        : key === "draft" || key === "awaiting_payment"
+        : key === "draft" || key === "awaiting_payment" || key === "funded"
           ? "warning"
           : key === "refunded"
             ? "neutral"

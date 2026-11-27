@@ -33,10 +33,10 @@ const shipper: ShellConfig = {
   action: { page: "book", icon: "plus" },
   tabs: [
     { page: "home", icon: "home" },
-    { page: "trips", icon: "trips" },
+    { page: "trips", icon: "truck" },
     { page: "book", icon: "plus", raised: true },
     { page: "payments", icon: "money" },
-    { page: "more", icon: "menu" },
+    { page: "more", icon: "more" },
   ],
   // Desktop icons follow sender D02b: Trips is the truck there.
   sidebar: [
