@@ -3796,5 +3796,73 @@
       "whatsappNote": "WhatsApp templates stay on hold until WhatsApp is connected; then they join with the 24-hour reply window."
     },
     "fresh": "Enter your authenticator code again, then try once more."
+  },
+  "staffLists": {
+    "demo": "Demo",
+    "none": "Nothing here.",
+    "loads": {
+      "lead": "Every load from booking to a confirmed truck. Loads paid but without a truck come first.",
+      "views": {
+        "finding": "Paid, no truck",
+        "awaiting": "Waiting for payment",
+        "matched": "Truck confirmed",
+        "closed": "Closed"
+      },
+      "cols": {
+        "ref": "Ref",
+        "status": "Status",
+        "route": "Route",
+        "sender": "Sender",
+        "truck": "Truck",
+        "pickup": "Pickup",
+        "paid": "Total"
+      },
+      "status": {
+        "draft": "Draft",
+        "awaiting_payment": "Waiting for payment",
+        "funded": "Paid, no truck yet",
+        "matched": "Truck confirmed",
+        "cancelled": "Cancelled",
+        "expired": "Expired",
+        "refunded": "Refunded"
+      },
+      "since": "paid {when}"
+    },
+    "users": {
+      "lead": "Truck businesses and senders. Open one to see its people, trucks and papers.",
+      "views": {
+        "transporter": "Truck businesses",
+        "shipper": "Senders"
+      },
+      "search": "Business name",
+      "cols": {
+        "name": "Name",
+        "status": "Status",
+        "tier": "Tier",
+        "city": "Home city",
+        "joined": "Joined"
+      }
+    },
+    "catalogue": {
+      "lead": "The goods and trucks people can choose when they book or add a truck.",
+      "goods": "Goods",
+      "trucks": "Truck types",
+      "banned": "Not carried",
+      "seal": "Seal needed",
+      "on": "On",
+      "off": "Off"
+    },
+    "corridors": {
+      "lead": "The four corridors and the lane prices behind every quote.",
+      "meta": "{km} km · about {h} h",
+      "cols": {
+        "lane": "Lane",
+        "truck": "Truck",
+        "base": "Base",
+        "perKm": "Per km",
+        "min": "Lowest"
+      },
+      "noPrices": "No lane prices yet."
+    }
   }
 }
