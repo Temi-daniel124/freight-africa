@@ -44,13 +44,28 @@ declare
   v_owner record;
 begin
   select * into v_driver from public.drivers where user_id = v_user and org_id = p_org;
-  if v_driver.user_id is null or v_driver.status = 'suspended'
-    or not exists (select 1 from public.organization_members where org_id = p_org and user_id = v_user and status = 'active') then
+  -- Only an approved, active driver of a business that isn't banned (review); a paused driver may still
+  -- say why they're paused.
+  if v_driver.user_id is null or v_driver.status <> 'active'
+    or not exists (select 1 from public.organization_members where org_id = p_org and user_id = v_user and status = 'active')
+    or exists (select 1 from public.organizations where id = p_org and status = 'banned') then
     raise exception 'not allowed' using errcode = '42501';
+  end if;
+  if nullif(btrim(p_body), '') is null and p_voice_path is null then
+    raise exception 'write a message or record a voice note' using errcode = '22023';
+  end if;
+  if p_voice_path is null then
+    p_voice_seconds := null;
+  elsif split_part(p_voice_path, '/', 1) <> p_org::text or split_part(p_voice_path, '/', 2) <> v_user::text then
+    raise exception 'that voice note isn''t yours' using errcode = '42501';
+  elsif not exists (select 1 from storage.objects where bucket_id = 'driver-voice' and name = p_voice_path) then
+    raise exception 'that voice note didn''t upload; record it again' using errcode = '22023';
   end if;
   if p_voice_path is not null and split_part(p_voice_path, '/', 1) <> p_org::text or (p_voice_path is not null and split_part(p_voice_path, '/', 2) <> v_user::text) then
     raise exception 'that voice note isn''t yours' using errcode = '42501';
   end if;
+  -- One send at a time per driver, so the daily limit can't be raced past (review).
+  perform pg_advisory_xact_lock(hashtext('driver-message:' || v_user::text));
   if (select count(*) from public.driver_messages where driver_id = v_user and created_at > now() - interval '1 day') >= 20 then
     raise exception 'too many messages today' using errcode = '22023';
   end if;
@@ -83,7 +98,8 @@ begin
   end if;
   update public.driver_messages set reply = btrim(p_reply), replied_by = v_user, replied_at = now(), read_at = coalesce(read_at, now()) where id = p_id;
   perform private.notify('fleet.owner_reply', 'owner_reply', array['in_app', 'push']::public.notify_channel[],
-    jsonb_build_object('message', p_id, 'reply', btrim(p_reply)), v_msg.driver_id, null, null, 'owner-reply:' || p_id || ':' || extract(epoch from now())::bigint);
+    -- The id only: the reply's words stay in the app, not on a lock screen (review).
+    jsonb_build_object('message', p_id), v_msg.driver_id, null, null, 'owner-reply:' || p_id || ':' || gen_random_uuid());
 end;
 $$;
 
@@ -114,11 +130,13 @@ $$;
 
 -- Voice notes: a private bucket; the driver uploads into their own folder, the owner side reads.
 insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-values ('driver-voice', 'driver-voice', false, 2097152, array['audio/webm', 'audio/ogg', 'audio/mp4', 'audio/mpeg'])
+values ('driver-voice', 'driver-voice', false, 2097152, array['audio/webm', 'audio/webm;codecs=opus', 'audio/ogg', 'audio/ogg;codecs=opus', 'audio/mp4', 'audio/mpeg'])
 on conflict (id) do nothing;
 create policy "driver voice: the driver uploads to their folder" on storage.objects for insert to authenticated
   with check (bucket_id = 'driver-voice' and (storage.foldername(name))[2] = (select auth.uid())::text
-    and exists (select 1 from public.drivers d where d.user_id = (select auth.uid()) and d.org_id::text = (storage.foldername(name))[1]));
+    and name ~ '^[0-9a-f-]{36}/[0-9a-f-]{36}/[0-9a-f-]{36}\.(webm|ogg|m4a|mp3)$'
+    and exists (select 1 from public.drivers d join public.organization_members m on m.org_id = d.org_id and m.user_id = d.user_id and m.status = 'active'
+      where d.user_id = (select auth.uid()) and d.status = 'active' and d.org_id::text = (storage.foldername(name))[1]));
 create policy "driver voice: the driver and the owner side read" on storage.objects for select to authenticated
   using (bucket_id = 'driver-voice' and ((storage.foldername(name))[2] = (select auth.uid())::text
     or (select public.can_in_org(private.folder_org(name), 'manage_drivers'))));

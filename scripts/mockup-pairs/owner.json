@@ -1,0 +1,18 @@
+[
+  {"mock": "O10-Home", "path": "/app/haul", "account": "owner"},
+  {"mock": "O11-Notifications", "path": "/app/haul/notifications", "account": "owner"},
+  {"mock": "O12-Loads", "path": "/app/haul/loads", "account": "owner"},
+  {"mock": "O14-Trips", "path": "/app/haul/trips", "account": "owner"},
+  {"mock": "O17-Earnings", "path": "/app/haul/earnings", "account": "owner"},
+  {"mock": "O18-Trucks", "path": "/app/haul/trucks", "account": "owner"},
+  {"mock": "O19-Drivers", "path": "/app/haul/drivers", "account": "owner"},
+  {"mock": "O20-Papers", "path": "/app/haul/documents", "account": "owner"},
+  {"mock": "O21-Record", "path": "/app/haul/record", "account": "owner"},
+  {"mock": "O22-More", "path": "/app/haul/more", "account": "owner"},
+  {"mock": "OD01-Home", "path": "/app/haul", "account": "owner"},
+  {"mock": "OD02-Loads", "path": "/app/haul/loads", "account": "owner"},
+  {"mock": "OD04-Trips", "path": "/app/haul/trips", "account": "owner"},
+  {"mock": "OD06-Earnings", "path": "/app/haul/earnings", "account": "owner"},
+  {"mock": "OD08-Trucks", "path": "/app/haul/trucks", "account": "owner"},
+  {"mock": "OD11-Drivers", "path": "/app/haul/drivers", "account": "owner"}
+]

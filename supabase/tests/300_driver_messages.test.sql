@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(13);
+select plan(16);
 
 -- Cast: Musa Haulage with its owner (Musa Danladi), an Admin (Zainab) and a driver (Musa Ibrahim);
 -- another business (Emeka Transport) with its own driver (Obi).
@@ -37,6 +37,16 @@ select throws_ok($$select public.reply_driver_message((select id from ids where 
 reset role;
 select is((select count(*)::int from public.notifications where event = 'fleet.driver_message' and user_id in ('30303030-0000-4000-8000-000000000001', '30303030-0000-4000-8000-000000000002') and channel = 'in_app'), 2,
   'the owner and the Admin hear about it in the app');
+
+-- A driver who isn't active can't send; another business's Admin can't reply.
+reset role;
+update public.drivers set status = 'banned' where user_id = '30303030-0000-4000-8000-000000000004';
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub": "30303030-0000-4000-8000-000000000004", "role": "authenticated"}', true);
+select throws_ok($$select public.send_driver_message('30303030-0000-4000-8000-0000000000b2', 'other', 'hello')$$, '42501', null, 'a banned driver can''t send');
+select set_config('request.jwt.claims', '{"sub": "30303030-0000-4000-8000-000000000003", "role": "authenticated"}', true);
+select throws_ok($$select public.send_driver_message('30303030-0000-4000-8000-0000000000b1', 'other', '   ')$$, '22023', null, 'a message has words or a voice note');
+select throws_ok($$select public.send_driver_message('30303030-0000-4000-8000-0000000000b1', 'other', 'listen', '30303030-0000-4000-8000-0000000000b1/30303030-0000-4000-8000-000000000003/30303030-0000-4000-8000-00000000ffff.webm', 4)$$, '22023', null, 'a voice note must have uploaded');
 
 -- Another business's driver sees nothing.
 set local role authenticated;
