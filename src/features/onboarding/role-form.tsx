@@ -134,7 +134,7 @@ export function RoleForm({ t, choices, preset, agreed, termsHref, privacyHref }:
     <form action={action} noValidate className="flex flex-1 flex-col">
       <p className="pt-3.5 text-center text-label text-ink-3">{t.step}</p>
       <AuthBody className="pt-7 md:px-0">
-        <h1 className="text-title-1 text-balance text-ink">{t.title}</h1>
+        <h1 className="text-title-1 text-ink">{t.title}</h1>
         <p className="type-signin-lead mt-2.5 text-ink-2">{t.lead}</p>
 
         {invalid || state.status === "error" ? (
