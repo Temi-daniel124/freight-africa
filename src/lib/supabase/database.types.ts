@@ -3398,6 +3398,20 @@ export type Database = {
         Args: { p_amount_kobo: number; p_load: string; p_reason: string }
         Returns: string
       }
+      staff_trip_action: {
+        Args: {
+          p_quantity?: number
+          p_reason: string
+          p_step: string
+          p_trip: string
+          p_weight_kg?: number
+        }
+        Returns: undefined
+      }
+      staff_trip_note: {
+        Args: { p_note: string; p_trip: string }
+        Returns: undefined
+      }
       staff_trip_step: {
         Args: {
           p_quantity?: number
