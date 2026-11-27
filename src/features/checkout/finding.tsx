@@ -13,6 +13,7 @@ import { CancelButton } from "@/features/booking/trip-controls";
 import { formatNaira } from "@/lib/money";
 import { cn } from "@/lib/utils";
 import messages from "@/messages/en.json";
+import { goToCheckout } from "./go";
 import { acceptReply, changeDay, declineReply, keepWaiting, raisePrice, sendReoffer } from "./actions";
 import { checkoutMessage } from "./screens";
 
@@ -22,7 +23,6 @@ import { checkoutMessage } from "./screens";
 const f = messages.finding;
 const naira = (kobo: number) => formatNaira(kobo / 100);
 const fill = (s: string, v: Record<string, string | number>) => s.replace(/\{(\w+)\}/g, (_, k) => String(v[k] ?? ""));
-const go = (url: string) => window.location.assign(url);
 
 export type Reply = {
   id: string;
@@ -61,6 +61,8 @@ export type FindingProps = {
   truckName: string;
   days: DayFree[];
   canCancel: boolean;
+  /** /dev preview only: open P11d on the first reply. */
+  previewAgain?: boolean;
 };
 
 function useNow(every = 30000) {
@@ -232,15 +234,15 @@ function TierPill({ tier }: { tier: string | null }) {
   return null;
 }
 
-function ReplyCard({ reply, first, offeredKobo, loadId }: { reply: Reply; first: boolean; offeredKobo: number; loadId: string }) {
+function ReplyCard({ reply, first, offeredKobo, loadId, openAgain = false }: { reply: Reply; first: boolean; offeredKobo: number; loadId: string; openAgain?: boolean }) {
   const router = useRouter();
   const now = useNow();
-  const [again, setAgain] = useState(false);
+  const [again, setAgain] = useState(openAgain);
   const [pending, start] = useTransition();
   const accept = () =>
     start(async () => {
       const result = await acceptReply(reply.id);
-      if (result.status === "ok") go(result.url);
+      if (result.status === "ok") goToCheckout(result.url);
       else toast.error(checkoutMessage(result));
     });
   const decline = () =>
@@ -349,7 +351,7 @@ export function FindingView(p: FindingProps) {
     start(async () => {
       const total = Math.ceil((p.totalKobo * (10000 + bps)) / 10000 / 100000) * 100000;
       const result = await raisePrice(p.loadId, total);
-      if (result.status === "ok") go(result.url);
+      if (result.status === "ok") goToCheckout(result.url);
       else toast.error(checkoutMessage(result));
     });
   const wait = () =>
@@ -415,7 +417,7 @@ export function FindingView(p: FindingProps) {
         <p className="mt-1.5 text-body text-ink-2 lg:hidden">{fill(f.offered, { amount: naira(offeredKobo) })}</p>
         <ul className="mt-5 flex flex-col gap-3 lg:mt-0">
           {replies.map((r, i) => (
-            <ReplyCard key={r.id} reply={r} first={i === 0} offeredKobo={offeredKobo} loadId={p.loadId} />
+            <ReplyCard key={r.id} reply={r} first={i === 0} offeredKobo={offeredKobo} loadId={p.loadId} openAgain={i === 0 && p.previewAgain} />
           ))}
         </ul>
         <p className="mt-4 px-1 text-caption text-ink-3">

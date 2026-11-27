@@ -29,14 +29,25 @@ function failure(code?: string, message?: string): CheckoutResult {
   return { status: "error" };
 }
 
-/** A payment's hosted checkout: the one already opened for it, or a new one from the provider. */
-async function checkoutFor(supabase: Supabase, paymentId: string, label: string): Promise<CheckoutResult> {
+/** Someone who may pay for this business (seeing its money is not enough; review). */
+async function canPay(supabase: Supabase, org: string) {
+  const { data } = await supabase.rpc("org_permissions", { p_org: org });
+  return ((data ?? []) as string[]).includes("pay");
+}
+
+/**
+ * A payment's hosted checkout: the one already opened for it, or a new one from the provider. Only an
+ * open payment of the sender's own, outside a batch (review). After attaching, the stored checkout is
+ * read back: if two taps raced, both get the one the database kept, never an untracked page.
+ */
+async function checkoutFor(supabase: Supabase, paymentId: string, label: string, purpose?: string): Promise<CheckoutResult> {
   const { data: payment } = await supabase
     .from("payments")
-    .select("id, amount_kobo, provider_ref, checkout_url")
+    .select("id, amount_kobo, provider_ref, checkout_url, status, purpose, batch_id, expires_at, shipper_org_id")
     .eq("id", paymentId)
     .maybeSingle();
-  if (!payment) return { status: "error" };
+  if (!payment || payment.status !== "pending" || payment.batch_id || new Date(payment.expires_at).getTime() <= Date.now()) return { status: "error" };
+  if ((purpose && payment.purpose !== purpose) || !(await canPay(supabase, payment.shipper_org_id))) return { status: "error" };
   if (payment.provider_ref && payment.checkout_url) return { status: "ok", url: payment.checkout_url };
   const p = await provider(supabase);
   if (!p) return { status: "noProvider" };
@@ -51,7 +62,8 @@ async function checkoutFor(supabase: Supabase, paymentId: string, label: string)
     console.error("attach_checkout failed", error.code);
     return { status: "error" };
   }
-  return { status: "ok", url: c.url };
+  const { data: kept } = await supabase.from("payments").select("checkout_url").eq("id", payment.id).maybeSingle();
+  return kept?.checkout_url ? { status: "ok", url: kept.checkout_url } : { status: "error" };
 }
 
 /** P10 Continue to Bachs: re-quote a draft, open its payment and send the sender to the checkout. */
@@ -83,7 +95,8 @@ export async function startBatchCheckout(loadIds: string[]): Promise<CheckoutRes
   const c = await p.createCheckout({ id: batch.id, amountKobo: Number(batch.amount_kobo), returnPath: `/app/pay/return?batch=${batch.id}`, label: "batch" });
   const { error: attachError } = await supabaseAdmin().rpc("attach_batch_checkout", { p_batch: batch.id, p_provider: p.kind, p_ref: c.ref, p_url: c.url });
   if (attachError) return { status: "error" };
-  return { status: "ok", url: c.url };
+  const { data: kept } = await supabase.from("payment_batches").select("checkout_url").eq("id", batch.id).maybeSingle();
+  return kept?.checkout_url ? { status: "ok", url: kept.checkout_url } : { status: "error" };
 }
 
 /** P10 / P10c Save as draft (D049): nothing is held, the price and the day can change. */
@@ -119,13 +132,14 @@ export async function finishDemoCheckout(ref: string, outcome: "pay" | "fail"): 
   await assertUnlocked();
   const supabase = await supabaseServer();
   const p = await provider(supabase);
-  if (!p || p.kind !== "demo" || !ref.startsWith("demo-co-")) return { status: "error" };
+  // A whole checkout's reference only: never one payment inside a batch (review).
+  if (!p || p.kind !== "demo" || !/^demo-co-[0-9a-f-]{36}$/.test(ref)) return { status: "error" };
   const [{ data: payment }, { data: batch }] = await Promise.all([
-    supabase.from("payments").select("id, amount_kobo, received_kobo, provider").eq("provider_ref", ref).maybeSingle(),
-    supabase.from("payment_batches").select("id, amount_kobo, received_kobo, provider").eq("provider_ref", ref).maybeSingle(),
+    supabase.from("payments").select("id, amount_kobo, received_kobo, provider, shipper_org_id").eq("provider_ref", ref).maybeSingle(),
+    supabase.from("payment_batches").select("id, amount_kobo, received_kobo, provider, shipper_org_id").eq("provider_ref", ref).maybeSingle(),
   ]);
   const row = payment ?? batch;
-  if (!row || row.provider !== "demo") return { status: "error" };
+  if (!row || row.provider !== "demo" || !(await canPay(supabase, row.shipper_org_id))) return { status: "error" };
   const admin = supabaseAdmin();
   if (outcome === "fail") {
     const { error } = await admin.rpc("fail_payment", { p_provider_ref: ref });
@@ -154,7 +168,7 @@ export async function acceptReply(offerId: string): Promise<CheckoutResult> {
   const supabase = await supabaseServer();
   const { data: paymentId, error } = await supabase.rpc("accept_counter", { p_offer: offerId });
   if (error || !paymentId) return failure(error?.code, error?.message);
-  return checkoutFor(supabase, paymentId as string, "top_up");
+  return checkoutFor(supabase, paymentId as string, "top_up", "top_up");
 }
 
 export async function declineReply(offerId: string, loadId: string) {
@@ -183,7 +197,7 @@ export async function raisePrice(loadId: string, totalKobo: number): Promise<Che
   const supabase = await supabaseServer();
   const { data: paymentId, error } = await supabase.rpc("raise_load_price", { p_load: loadId, p_total_kobo: totalKobo });
   if (error || !paymentId) return failure(error?.code, error?.message);
-  return checkoutFor(supabase, paymentId as string, "raise");
+  return checkoutFor(supabase, paymentId as string, "raise", "raise");
 }
 
 /** P11 Change pick-up day / P12b Finish: a new day for a draft or a paid booking still waiting for a truck. */
@@ -204,5 +218,5 @@ export async function keepWaiting(loadId: string): Promise<{ status: "ok" | "err
 /** A difference to pay (an accepted reply or a second offer the owner accepted): its hosted checkout. */
 export async function payTopUp(paymentId: string): Promise<CheckoutResult> {
   await assertUnlocked();
-  return checkoutFor(await supabaseServer(), paymentId, "top_up");
+  return checkoutFor(await supabaseServer(), paymentId, "top_up", "top_up");
 }
