@@ -2464,18 +2464,54 @@
     "full": "{n}% full"
   },
   "driverTrip": {
-    "emptyTitle": "No trip right now",
-    "emptyText": "When your truck owner gives you a trip, it shows here.",
+    "noTrip": "No trip right now",
+    "noTripText": "{org} will give you a trip here. You'll get a notification too.",
+    "noTripTextPlain": "Your owner will give you a trip here. You'll get a notification too.",
+    "seeNext": "See next loads",
+    "testGps": "Test my GPS",
+    "next": "Next trip · {ref}",
+    "now": "Trip · {ref}",
+    "loadsIn": "Loading in {t}",
+    "loadsAt": "Loads {when}",
+    "status": {
+      "assigned": "Assigned",
+      "to_pickup": "Going to pickup",
+      "at_pickup": "At pickup",
+      "loading": "Loading",
+      "loaded": "Loaded",
+      "in_transit": "On the road",
+      "arrived": "Arrived",
+      "delivered": "Delivered",
+      "closed": "Delivered",
+      "cancelled": "Cancelled"
+    },
+    "loadAt": "Load at",
+    "deliverTo": "Deliver to",
+    "before": "Before you go",
+    "checklist": [
+      "Phone charger in the cab",
+      "Phone holder",
+      "Truck papers with you",
+      "Tarpaulin and ropes"
+    ],
+    "directions": "Directions",
+    "details": "Details",
     "call": "Call {name}",
-    "next": {
-      "goToPickup": "Go to pickup",
-      "arrivedPickup": "I’ve arrived at pickup",
-      "startLoading": "Start loading",
-      "loaded": "Loading is done",
-      "startTrip": "Start the trip",
-      "arrivedDropoff": "I’ve arrived",
-      "delivered": "Hand over the goods"
-    }
+    "detailsTitle": "Trip details",
+    "goods": "Goods",
+    "truck": "Truck",
+    "notes": "Notes for you",
+    "phaseNote": "The trip steps (arrival, photos, codes) open here when trips go live.",
+    "history": "History",
+    "historyEmpty": "No trips yet",
+    "historyEmptyText": "Trips you finish show here, with their proof.",
+    "desk": {
+      "title": "Drive this trip on your phone",
+      "text": "The trip buttons, photos, codes and tracking only work there.",
+      "scan": "Scan with your phone camera",
+      "noTrip": "No trip right now"
+    },
+    "reference": "Reference"
   },
   "truckDetail": {
     "title": "Truck",
@@ -3421,5 +3457,51 @@
     "nameError": "Add their name too, so we know who to call.",
     "ready": "I'm ready",
     "error": "That didn't save. Try again."
+  },
+  "driverNotes": {
+    "title": "Notifications",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "earlier": "Earlier",
+    "empty": "No notifications yet",
+    "emptyText": "Trip changes and replies from your owner show here.",
+    "waitNote": "New messages wait while the truck is moving. Trip changes always come through.",
+    "reply": "{org} replied: {text}",
+    "update": "You have an update",
+    "events": {
+      "trip.driver_assigned": "You have a new trip",
+      "trip.driver_removed": "You were taken off a trip",
+      "owner_reply": "Your owner replied to your message",
+      "document.approved": "Your papers were approved",
+      "document.rejected": "Your papers need a new photo"
+    }
+  },
+  "driverHelp": {
+    "title": "How can we help?",
+    "topics": [
+      "The trip screen",
+      "Codes",
+      "Photos",
+      "Problems and SOS"
+    ],
+    "questions": [
+      {
+        "q": "What if my phone dies on a trip?",
+        "a": "Keep the charger plugged in. If the phone dies, charge it and open the app: what you did while it was off is sent when it's back on. Your owner can see where the truck was last."
+      },
+      {
+        "q": "The receiver won't give the code",
+        "a": "Don't leave the goods. Use Report a problem on the trip screen, and we'll call the receiver and the sender. The trip isn't finished until the code is given."
+      },
+      {
+        "q": "Why do I take photos at loading?",
+        "a": "The photos, seal number and count protect you. If anything is said to be missing at delivery, they show what was loaded."
+      }
+    ],
+    "listen": "Listen",
+    "stop": "Stop",
+    "talk": "Talk to us",
+    "hours": "7 am to 9 pm, every day",
+    "call": "Call"
   }
 }
