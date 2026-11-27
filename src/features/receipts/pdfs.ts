@@ -140,7 +140,7 @@ export async function renderReceipt(m: ReceiptModel): Promise<{ bytes: Buffer; n
 
 // ---- Statement ---------------------------------------------------------------------------------------
 
-const STATUS: Record<string, string> = { funded: "Held · finding a truck", matched: "Held · on the road", refunded: "Refunded", cancelled: "Cancelled" };
+const STATUS: Record<string, string> = { funded: "Finding a truck", matched: "Held · on the road", refunded: "Refunded", cancelled: "Cancelled" };
 
 export async function statementPdf(orgId: string, month: string): Promise<{ bytes: Buffer; name: string } | null> {
   const range = monthRange(month);
