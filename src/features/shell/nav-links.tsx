@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { shellIcons, type ShellIcon } from "./icons";
+import { shellIcons, sidebarIcons, type ShellIcon } from "./icons";
 
 export type LinkItem = { href: string; label: string; icon: ShellIcon; raised?: boolean; badge?: boolean };
 
@@ -12,14 +12,17 @@ function isCurrent(pathname: string, href: string, exact: boolean) {
   return exact ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
 }
 
-/** Desktop sidebar items (mockup .nav): 44 px, 14 px radius, 15/600; the current one deep green (.nav.on). */
+/**
+ * Desktop sidebar items (mockup .side .nav): 44 px, 14 px radius, 15/600, a 20 px icon (1.8 stroke) before
+ * each; the current one pale green with green words and icon (.nav.act), the others ink-2 words, ink-3 icon.
+ */
 export function SidebarLinks({ items, base, current: currentPath }: { items: LinkItem[]; base: string; current?: string }) {
   const routePath = usePathname();
   const pathname = currentPath ?? routePath;
   return (
     <ul className="flex flex-col gap-0.5">
-      {items.map(({ href, label }) => {
-        // Mockup .side: words only, no icons, on desktop.
+      {items.map(({ href, label, icon }) => {
+        const Icon = sidebarIcons[icon] ?? shellIcons[icon];
         const current = isCurrent(pathname, href, href === base);
         return (
           <li key={href}>
@@ -28,9 +31,10 @@ export function SidebarLinks({ items, base, current: currentPath }: { items: Lin
               aria-current={current ? "page" : undefined}
               className={cn(
                 "flex h-11 items-center gap-3 rounded-nav px-3.5 text-body leading-4.5 font-semibold transition-colors motion-quick",
-                current ? "bg-green-900 text-white" : "text-ink-2 hover:bg-paper hover:text-ink",
+                current ? "bg-green-50 text-green-700" : "text-ink-2 hover:bg-paper hover:text-ink",
               )}
             >
+              <Icon aria-hidden className={cn("size-5 shrink-0", current ? "text-green-700" : "text-ink-3")} strokeWidth={1.8} />
               <span className="min-w-0">{label}</span>
             </Link>
           </li>

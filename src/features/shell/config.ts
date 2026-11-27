@@ -38,9 +38,10 @@ const shipper: ShellConfig = {
     { page: "payments", icon: "money" },
     { page: "more", icon: "menu" },
   ],
+  // Desktop icons follow sender D02b: Trips is the truck there.
   sidebar: [
     { page: "home", icon: "home" },
-    { page: "trips", icon: "trips" },
+    { page: "trips", icon: "truck" },
     { page: "payments", icon: "money" },
     { page: "places", icon: "places" },
     { page: "team", icon: "people" },
@@ -58,7 +59,7 @@ const ownerSidebar: NavItem[] = [
   { page: "drivers", icon: "people" },
   { page: "documents", icon: "documents" },
   { page: "record", icon: "trust" },
-  { page: "team", icon: "people" },
+  { page: "team", icon: "settings" },
   { page: "help", icon: "help" },
 ];
 
@@ -104,7 +105,7 @@ const driver: ShellConfig = {
     { page: "me", icon: "user" },
   ],
   sidebar: [
-    { page: "trip", icon: "drive" },
+    { page: "trip", icon: "navigate" },
     { page: "next", icon: "loads" },
     { page: "history", icon: "history" },
     { page: "me", icon: "user" },
@@ -128,7 +129,7 @@ const agent: ShellConfig = {
   sidebar: [
     { page: "home", icon: "home" },
     { page: "people", icon: "people" },
-    { page: "earnings", icon: "earnings" },
+    { page: "earnings", icon: "naira" },
     { page: "bookings", icon: "book" },
     { page: "help", icon: "help" },
   ],
