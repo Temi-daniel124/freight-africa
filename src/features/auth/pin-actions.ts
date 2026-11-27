@@ -7,11 +7,14 @@ import { supabaseAdmin } from "@/lib/supabase/admin";
 import { supabaseServer } from "@/lib/supabase/server";
 import { passesTurnstile, turnstileSiteKey } from "@/lib/turnstile";
 import { sendCodeTo } from "./code-issue";
+import { clearCodeProof, hasCodeProof } from "./code-proof-cookie";
 import { safeNext } from "./next-path";
+import { clearPendingCode } from "./pending";
 import { NEW_PIN_COOKIE, TWO_STEP_OFFERED_COOKIE } from "./pin-cookies";
 import { clearPinLogin, parseLogin, readPinLogin, setPinLogin } from "./pin-login";
 import { finishSignIn, needsSecondStep, openSessionFor, sendSecurityEmail } from "./pin-session";
 import { markUnlocked, secondStepDone } from "./unlock";
+import { UNLOCK_COOKIE } from "./unlock-token";
 
 // D044 sign-in and app lock. The PIN is checked only here, on our server, with the service key; the
 // browser never reaches a function that accepts a PIN for sign-in.
@@ -87,16 +90,17 @@ export async function chooseNewPin(pin: string, next: string): Promise<SetPinRes
   const { data } = await supabase.auth.getClaims();
   const claims = data?.claims;
   if (!claims || typeof claims.session_id !== "string") return { status: "error" };
-  // Replacing a PIN needs a reason from this sign-in: "Forgot PIN?" (the email code just given) or a
-  // lockout. Otherwise Settings' Change PIN asks for the current one (review).
-  const [{ data: has }, { data: locked }] = await Promise.all([supabase.rpc("has_app_pin"), supabase.rpc("my_pin_locked")]);
-  const forgot = (await cookies()).get(NEW_PIN_COOKIE)?.value === "1";
-  if (has === true && locked !== true && !forgot) return { status: "fresh" };
+  // Replacing a PIN ("Forgot PIN?" or after a lockout) needs an email code confirmed in this session
+  // (review of #85: a lockout alone was enough before). Otherwise Settings' Change PIN asks for the
+  // current one.
+  const { data: has } = await supabase.rpc("has_app_pin");
+  if (has === true && !(await hasCodeProof(claims.sub, claims.session_id))) return { status: "fresh" };
   if (!(await secondStepDone())) return { status: "error" };
   const { error } = await supabase.rpc("set_app_pin", { p_pin: pin });
   if (error) return { status: error.code === "22023" ? "weak" : error.code === "28000" ? "fresh" : "error" };
   await markUnlocked(claims.sub, claims.session_id);
   (await cookies()).delete({ name: NEW_PIN_COOKIE, path: "/auth" });
+  await clearCodeProof();
   const home = await requestHome();
   const target = safeNext(next, home);
   // A-12 is offered once on each device, never to staff (theirs is required and set up in the console).
@@ -138,5 +142,10 @@ export async function unlockApp(pin: string, next: string): Promise<UnlockResult
 /** Locked out, or "Use a different account": sign out of this device and start again. */
 export async function signOutToStart(): Promise<void> {
   await (await supabaseServer()).auth.signOut({ scope: "local" });
+  // Nothing of this sign-in is left for the next person on a shared phone (review of #85).
+  const jar = await cookies();
+  jar.delete({ name: UNLOCK_COOKIE, path: "/" });
+  jar.delete({ name: NEW_PIN_COOKIE, path: "/auth" });
+  await Promise.all([clearPinLogin(), clearPendingCode(), clearCodeProof()]);
   redirect("/auth?mode=signin");
 }
