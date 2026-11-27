@@ -11,7 +11,8 @@ import { formatNaira } from "@/lib/money";
 import { TruckGraphic, truckKind } from "@/components/art/truck";
 import { cn } from "@/lib/utils";
 import messages from "@/messages/en.json";
-import { availability, createLoad, quoteBooking, startPayment, type BookingInput, type DayFree, type Quote } from "./actions";
+import { DraftSaved } from "@/features/checkout/screens";
+import { availability, createLoad, quoteBooking, type BookingInput, type DayFree, type Quote } from "./actions";
 import { ItemSheet, NoTruckSheet, PlaceSheet, unitFor, type Alternative, type City, type Goods, type ItemDraft, type Place } from "./book-sheets";
 
 const f = messages.booking.flow;
@@ -87,6 +88,7 @@ export function BookFlow({ orgId, myName, cities, truckTypes, goods, defaultFrom
   const [sheet, setSheet] = useState<null | "from" | "to" | "item" | "noTruck" | "offer">(null);
   const [editing, setEditing] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [savedLine, setSavedLine] = useState<string | null>(null);
   const [tried, setTried] = useState(false);
   const [pending, start] = useTransition();
   const cityName = (id: string) => cities.find((c) => c.id === id)?.name ?? "";
@@ -211,10 +213,9 @@ export function BookFlow({ orgId, myName, cities, truckTypes, goods, defaultFrom
       const made = await createLoad(input);
       if (made.status !== "ok") return setError(made.status === "route" ? f.noRoute : (made.status === "error" && made.message) || f.errors.failed);
       localStorage.removeItem(STORE);
-      if (!pay) return router.push("/app/ship/trips?tab=drafts");
-      const paid = await startPayment(made.id);
-      if (paid.status === "noProvider") setError(f.errors.noProvider);
-      router.push(`/app/ship/trips/${made.id}`);
+      // D049: a booking is a draft until it is paid; P10 Pay opens Bachs (D048).
+      if (!pay) return setSavedLine(`${cityName(from.city)} → ${cityName(to.city)} · ${new Intl.DateTimeFormat("en-GB", { weekday: "short", day: "numeric", month: "short", timeZone: "Africa/Lagos" }).format(new Date(input.pickupFrom)).replace(",", "")}`);
+      router.push(`/app/pay/${made.id}`);
     });
   };
 
@@ -684,6 +685,7 @@ export function BookFlow({ orgId, myName, cities, truckTypes, goods, defaultFrom
           </div>
         </Dialog>
       ) : null}
+      <DraftSaved open={savedLine !== null} onOpenChange={(o) => (o ? null : setSavedLine(null))} line={savedLine ?? ""} />
     </div>
   );
 }

@@ -1,3 +1,5 @@
+import { dayLabel } from "@/features/checkout/data";
+import { type DraftCard, TripsTabs } from "@/features/checkout/trips-tabs";
 import { Receipt } from "lucide-react";
 import Link from "next/link";
 import { EmptyScene } from "@/components/art/scenes";
@@ -10,6 +12,8 @@ import { BookFlow } from "./book-flow";
 import { shipperLoads } from "./data";
 import { LoadBoardList } from "./load-board";
 import { lagosDate, naira, TripRow } from "./pieces";
+import { loadLine } from "./format";
+import { Suspense } from "react";
 
 function Empty({
   title,
@@ -55,7 +59,35 @@ export async function BookPage({ viewer }: { viewer: Promise<Viewer> }) {
   );
 }
 
-/** S-03 Trips. */
+/** P12b cards, and the days a passed draft can move to (computed outside render: they read the clock). */
+function draftCards(rows: Awaited<ReturnType<typeof shipperLoads>>) {
+  const now = Date.now();
+  const today = new Date().toLocaleDateString("en-GB", { timeZone: "Africa/Lagos" });
+  const drafts: DraftCard[] = rows.map((r) => {
+    const passed = new Date(r.pickupFrom).getTime() < now - 3600_000;
+    const created = new Date(r.createdAt);
+    const saved =
+      created.toLocaleDateString("en-GB", { timeZone: "Africa/Lagos" }) === today
+        ? messages.drafts.savedToday.replace("{time}", created.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", timeZone: "Africa/Lagos" }))
+        : messages.drafts.saved.replace("{date}", created.toLocaleDateString("en-GB", { day: "numeric", month: "short", timeZone: "Africa/Lagos" }));
+    return {
+      id: r.id,
+      route: `${r.from} → ${r.to}`,
+      line: [[r.goods, loadLine(r)].filter(Boolean).join(", "), passed ? messages.drafts.dayNotSet : dayLabel(r.pickupFrom), r.truckType.toLowerCase()].join(" · "),
+      saved,
+      totalKobo: r.totalKobo,
+      dayPassed: passed,
+    };
+  });
+  // Finishing a draft: the next eight days (free counts are shown on the booking screen).
+  const days = Array.from({ length: 8 }, (_, i) => ({
+    day: new Date(now + (i + 1) * 86400_000).toLocaleDateString("en-CA", { timeZone: "Africa/Lagos" }),
+    free: -1,
+  }));
+  return { drafts, days };
+}
+
+/** S-03 / P12 Trips: Active, Drafts (D049), Done, Cancelled. */
 export async function TripsPage({ viewer }: { viewer: Promise<Viewer> }) {
   const { orgId } = await viewer;
   const rows = orgId ? await shipperLoads(orgId) : [];
@@ -75,12 +107,33 @@ export async function TripsPage({ viewer }: { viewer: Promise<Viewer> }) {
       />
     );
   }
+  const done = (r: (typeof rows)[number]) => !!r.trip && ["delivered", "delivered_with_exception", "closed"].includes(r.trip.status);
+  const groups = {
+    active: rows.filter((r) => ["funded", "matched"].includes(r.status) && !done(r)),
+    drafts: rows.filter((r) => ["draft", "awaiting_payment", "expired"].includes(r.status)),
+    done: rows.filter(done),
+    cancelled: rows.filter((r) => ["cancelled", "refunded"].includes(r.status)),
+  };
+  const list = (items: typeof rows) =>
+    items.length ? (
+      <ul className="overflow-hidden rounded-tile bg-surface shadow-raised lg:rounded-card">
+        {items.map((row) => (
+          <TripRow key={row.id} row={row} href={`/app/ship/trips/${row.id}`} />
+        ))}
+      </ul>
+    ) : (
+      <p className="rounded-card border border-line bg-surface px-6 py-10 text-center text-body-sm text-ink-2">{messages.drafts.emptyTab}</p>
+    );
+  const { drafts, days } = draftCards(groups.drafts);
   return (
-    <ul className="mx-auto w-full max-w-[880px] overflow-hidden rounded-tile bg-surface shadow-raised lg:rounded-card">
-      {rows.map((row) => (
-        <TripRow key={row.id} row={row} href={`/app/ship/trips/${row.id}`} />
-      ))}
-    </ul>
+    <Suspense>
+      <TripsTabs
+        counts={{ active: groups.active.length, drafts: groups.drafts.length, done: groups.done.length, cancelled: groups.cancelled.length }}
+        lists={{ active: list(groups.active), done: list(groups.done), cancelled: list(groups.cancelled) }}
+        drafts={drafts}
+        days={days}
+      />
+    </Suspense>
   );
 }
 
