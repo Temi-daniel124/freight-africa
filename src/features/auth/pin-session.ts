@@ -57,13 +57,15 @@ export async function sendSecurityEmail(userId: string, email: string | null | u
 
 /**
  * Every successful sign-in on a device (email code, PIN or PIN link): remember the device, email the
- * person if it is a new one, and open the app (the PIN, or the email code, has just been given).
+ * person if it is a new one, and open the app (the PIN, or the email code, has just been given) unless
+ * `unlock` is false because a new PIN has to be chosen first.
  */
-export async function finishSignIn(userId: string, sessionId: string, email: string | null | undefined) {
+export async function finishSignIn(userId: string, sessionId: string, email: string | null | undefined, unlock = true) {
   const id = await deviceId();
   const { label, city } = await deviceContext();
   const { data: isNew, error } = await supabaseAdmin().rpc("record_device", { p_user: userId, p_device_hash: deviceHash(id), p_label: label, p_city: city });
   if (error) console.error("record_device failed", error.code);
   if (isNew === true) await sendSecurityEmail(userId, email, "newDevice", label, city);
-  await markUnlocked(userId, sessionId);
+  // Not when a new PIN must be chosen first: choosing it opens the app (review of #85).
+  if (unlock) await markUnlocked(userId, sessionId);
 }
