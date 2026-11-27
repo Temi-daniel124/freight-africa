@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { Logo } from "@/components/brand/Logo";
+import { buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PrintButton } from "@/features/booking/print-button";
 import { lagosTime, naira } from "@/features/booking/pieces";
@@ -65,7 +66,10 @@ async function Receipt({ params }: { params: Promise<{ id: string }> }) {
         </div>
       </dl>
       <p className="mt-5 text-caption text-ink-3">{messages.booking.heldNote}</p>
-      <div className="mt-6 print:hidden">
+      <div className="mt-6 flex flex-col gap-2 print:hidden">
+        <a href={`/app/ship/receipts/${data.id}/pdf`} className={buttonVariants({ size: "md" })}>
+          {messages.account.downloadReceipt}
+        </a>
         <PrintButton label={t.print} note={t.printNote} />
       </div>
     </article>
