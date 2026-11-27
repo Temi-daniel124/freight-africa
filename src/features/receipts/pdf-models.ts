@@ -3,13 +3,20 @@
 
 export type MoneyRow = { kobo: number };
 
-/** A receipt's lines: what the truck and driver get and our service fee, always adding up to the money kept. */
-export function receiptLines(input: { paid: MoneyRow[]; refunded: MoneyRow[]; freightKobo: number }) {
-  const paid = input.paid.reduce((s, r) => s + r.kobo, 0);
+/**
+ * A receipt's lines: what the truck and driver get, any waiting charge or cancellation fee on its own
+ * line, and our service fee, adding up to what was paid; then every refund owed back (a refund that
+ * failed is still owed, so it still counts), leaving the money kept.
+ */
+export function receiptLines(input: { paid: MoneyRow[]; refunded: MoneyRow[]; freightKobo: number; extras?: { label: string; kobo: number }[] }) {
+  const paid = input.paid.reduce((s, r) => s + r.kobo, 0) + (input.extras ?? []).reduce((s, e) => s + e.kobo, 0);
   const refunded = input.refunded.reduce((s, r) => s + r.kobo, 0);
   const net = paid - refunded;
-  const freight = Math.min(input.freightKobo, net);
-  return { paidKobo: paid, refundedKobo: refunded, netKobo: net, freightKobo: freight, feeKobo: net - freight };
+  const extras = (input.extras ?? []).filter((e) => e.kobo > 0);
+  const extrasKobo = extras.reduce((s, e) => s + e.kobo, 0);
+  // The lines add up to what was paid; a refund line then takes it down to the total kept.
+  const freight = Math.max(0, Math.min(input.freightKobo, paid - extrasKobo));
+  return { paidKobo: paid, refundedKobo: refunded, netKobo: net, freightKobo: freight, feeKobo: paid - extrasKobo - freight, extras };
 }
 
 export type StatementLoad = {
