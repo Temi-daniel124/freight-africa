@@ -14,6 +14,7 @@ import { BookPage, EarningsPage, LoadsPage, PaymentsPage, TripsPage } from "@/fe
 import { OwnerTripsPage } from "@/features/booking/owner-trips";
 import { DriverTrip } from "@/features/home/driver-trip";
 import { OwnerHome } from "@/features/owner/owner-home";
+import { OwnerMore } from "@/features/owner/more";
 import { SenderHome } from "@/features/home/sender-home";
 import { SettingsPage } from "@/features/settings/settings-page";
 import { DriversPage } from "@/features/drivers/drivers-page";
@@ -184,7 +185,13 @@ async function sectionBody(page: PageKey, config: ShellConfig, viewer: Promise<V
     case "payments":
       return shipper ? <SenderPayments viewer={viewer} /> : <PaymentsPage viewer={viewer} />;
     case "more":
-      return shipper ? <SenderMore viewer={viewer} /> : <PlaceholderPage config={config} page={page} />;
+      return shipper ? (
+        <SenderMore viewer={viewer} />
+      ) : config.role === "owner" || config.role === "ownerDriver" ? (
+        <OwnerMore viewer={viewer} drives={config.role === "ownerDriver"} />
+      ) : (
+        <PlaceholderPage config={config} page={page} />
+      );
     case "places":
       return shipper ? <SenderPlaces viewer={viewer} /> : <PlaceholderPage config={config} page={page} />;
     case "help":

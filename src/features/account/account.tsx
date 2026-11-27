@@ -22,7 +22,7 @@ import { AvatarChange, BusinessForm, HelpQuestions, NotificationTable, PillTabs,
 const a = messages.account;
 const fill = (s: string, v: Record<string, string | number>) => s.replace(/\{(\w+)\}/g, (_, k) => String(v[k] ?? ""));
 
-function Row({ href, icon: Icon, label, value, danger }: { href: string; icon: typeof Bell; label: string; value?: string; danger?: boolean }) {
+export function Row({ href, icon: Icon, label, value, danger }: { href: string; icon: typeof Bell; label: string; value?: string; danger?: boolean }) {
   return (
     <li>
       <Link href={href} className="flex min-h-16 items-center gap-3.5 border-t border-line-soft py-3 first:border-t-0">
@@ -37,7 +37,7 @@ function Row({ href, icon: Icon, label, value, danger }: { href: string; icon: t
   );
 }
 
-function Group({ title, children }: { title: string; children: React.ReactNode }) {
+export function Group({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section>
       <h2 className="mb-2 px-1 text-caption font-semibold tracking-caps text-ink-3 uppercase">{title}</h2>
