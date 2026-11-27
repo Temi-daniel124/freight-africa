@@ -27,7 +27,8 @@ export function isNight(mode: Mode, now = new Date()) {
 export function NightScreen() {
   const mode = useSyncExternalStore(subscribe, read, () => "auto" as Mode);
   useEffect(() => {
-    const apply = () => document.documentElement.toggleAttribute("data-night", isNight(mode));
+    // Phones only: on a computer the trip is view only (DVD01), and the night look is for the cab.
+    const apply = () => document.documentElement.toggleAttribute("data-night", isNight(mode) && window.matchMedia("(max-width: 1023px)").matches);
     apply();
     const timer = window.setInterval(apply, 60_000);
     return () => (window.clearInterval(timer), document.documentElement.removeAttribute("data-night"));

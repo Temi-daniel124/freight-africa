@@ -631,3 +631,20 @@ body:has([data-full-screen]) .bottom-tabs {
 body:has([data-full-screen]) .pb-tabs {
   padding-bottom: 0;
 }
+
+/* DESIGN_SYSTEM.md: the driver's night look (D022), set by NightScreen on the Trip tab during a live trip. */
+html[data-night] {
+  --color-paper: #0e1712;
+  --color-surface: #16211b;
+  --color-ink: #e7efe9;
+  --color-ink-2: #b8c6bd;
+  --color-ink-3: #93a399;
+  --color-line: #26342c;
+  --color-line-soft: #1e2b24;
+  --color-line-field: #33433a;
+  --color-green-50: #1c3027;
+  color-scheme: dark;
+}
+html[data-night] .bg-green-900 {
+  outline: 1px solid #7fc4a2;
+}

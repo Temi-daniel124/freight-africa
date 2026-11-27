@@ -3371,7 +3371,8 @@
     "done": "Done",
     "failed": "That didn't send. Check your connection and try again.",
     "tooMany": "You've sent a lot of messages today. Try again tomorrow, or call operations if it's urgent.",
-    "noMic": "The microphone isn't available. Type your message instead."
+    "noMic": "The microphone isn't available. Type your message instead.",
+    "moving": "Typing is off while the truck is moving. Hold to record a voice note instead."
   },
   "driverInstall": {
     "step": "Step 3 of 4",
@@ -3503,5 +3504,48 @@
     "talk": "Talk to us",
     "hours": "7 am to 9 pm, every day",
     "call": "Call"
+  },
+  "driverSos": {
+    "label": "SOS. Press and hold for 2 seconds",
+    "hint": "Hold for 2 seconds so it can't go off by accident.",
+    "keepHolding": "Keep holding…",
+    "title": "Help is being contacted. Stay safe.",
+    "told": "{who} have your location near {near}.",
+    "emergency": "Emergency",
+    "ops": "Freight Africa operations",
+    "opsPlaceholder": "[Operations line]",
+    "call": "Call",
+    "safe": "I'm safe now"
+  },
+  "driverSteps": {
+    "tracking": "Tracking on",
+    "toPickup": "To pickup",
+    "atPickup": "At pickup",
+    "whatNow": "What to do now",
+    "arrived": "I've arrived",
+    "startLoading": "Start loading",
+    "freeWait": "Waiting {waited}. The first 4 hours are free.",
+    "askedCall": "{name} asked you to call",
+    "todo": {
+      "drive": "Drive to the pickup.",
+      "wait": "Wait for loading to start. {name} has the loading code."
+    },
+    "tiles": {
+      "directions": "Directions",
+      "call": "Call",
+      "callName": "Call {name}",
+      "rest": "Rest stops",
+      "problem": "Problem",
+      "details": "Details",
+      "photo": "Photo"
+    },
+    "photoTaken": "Photo taken",
+    "askLoading": "Ask {name} for the loading code",
+    "loadingHas": "{name} has it, and gives it to you when happy the goods are on.",
+    "askDelivery": "Ask {name} for the delivery code",
+    "deliveryHas": "{name} gives it to you once happy with the goods.",
+    "wrongCode": "That code isn't right. {n} tries left.",
+    "delete": "Delete",
+    "confirm": "Confirm"
   }
 }
