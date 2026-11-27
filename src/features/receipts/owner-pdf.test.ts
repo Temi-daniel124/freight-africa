@@ -28,7 +28,8 @@ describe("payout advice (owner-mockups pdf)", () => {
     const l = adviceLines(model);
     expect(l.youGetKobo).toBe(170_880_000);
     expect(model.thisKobo + model.stillKobo).toBe(l.youGetKobo);
-    expect(l.addsUp).toBe(true);
+    expect(l.tripPart).toBe(true);
+    expect(adviceLines({ ...model, kind: "cancellation_fee" }).tripPart).toBe(false);
   });
   it("renders", async () => {
     const pdf = await renderAdvice(model);

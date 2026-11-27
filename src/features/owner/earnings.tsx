@@ -32,9 +32,11 @@ export async function OwnerEarnings({ viewer }: { viewer: Promise<Viewer> }) {
   const { orgId } = await viewer;
   if (!orgId) return null;
   const supabase = await supabaseServer();
-  const [{ data: payouts }, { data: bank }] = await Promise.all([
+  const [{ data: payouts }, { data: bank }, { data: monthsPaid }] = await Promise.all([
     supabase.from("payouts").select("id, kind, amount_kobo, status, paid_at, created_at, trip:trips(id, ref)").eq("org_id", orgId).order("created_at", { ascending: false }).limit(200),
     supabase.from("bank_accounts").select("bank_name, account_last4, resolved_name, status, usable_from").eq("org_id", orgId).order("created_at", { ascending: false }).limit(1),
+    // Statements: every month with paid money, beyond the newest payouts shown above (review).
+    supabase.from("payouts").select("trip_id, kind, amount_kobo, paid_at").eq("org_id", orgId).eq("status", "paid").order("paid_at", { ascending: false }).limit(5000),
   ]);
   const rows = payouts ?? [];
   const now = thisMonth();
@@ -42,13 +44,12 @@ export async function OwnerEarnings({ viewer }: { viewer: Promise<Viewer> }) {
   const coming = rows.filter((p) => COMING.includes(p.status)).reduce((s, p) => s + Number(p.amount_kobo), 0);
   // Statements: every month with a paid payout, newest first (net paid to the owner that month).
   const months = new Map<string, { net: number; trips: Set<string> }>();
-  for (const p of rows) {
-    if (p.status !== "paid" || !p.paid_at) continue;
+  for (const p of monthsPaid ?? []) {
+    if (!p.paid_at) continue;
     const k = monthOf(p.paid_at);
     const v = months.get(k) ?? { net: 0, trips: new Set<string>() };
     v.net += Number(p.amount_kobo);
-    const trip = p.trip as unknown as { id: string } | null;
-    if (p.kind === "balance" && trip) v.trips.add(trip.id);
+    if (p.trip_id) v.trips.add(p.trip_id);
     months.set(k, v);
   }
   const ba = bank?.[0];
@@ -161,7 +162,7 @@ export async function OwnerPayout({ id }: { id: string }) {
   ]);
   const paid = p.status === "paid";
   const steps = [
-    { title: p.kind === "advance" ? e.step1Advance : e.step1Balance, at: p.created_at, done: true },
+    { title: p.kind === "advance" ? e.step1Advance : p.kind === "balance" ? e.step1Balance : (e.kinds[p.kind as keyof typeof e.kinds] ?? p.kind), at: p.created_at, done: true },
     { title: e.step2, at: paid ? p.paid_at : null, done: paid || p.status === "processing" },
     { title: e.step3, at: p.paid_at, done: paid },
   ];

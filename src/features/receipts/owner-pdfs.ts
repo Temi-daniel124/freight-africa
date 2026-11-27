@@ -34,8 +34,9 @@ export type AdviceModel = {
 };
 
 /** The lines add up: freight less commission is what the trip pays; this payment plus what's still to come is that. */
-export function adviceLines(m: Pick<AdviceModel, "freightKobo" | "commissionKobo" | "thisKobo" | "stillKobo">) {
-  return { youGetKobo: m.freightKobo - m.commissionKobo, addsUp: m.freightKobo - m.commissionKobo >= m.thisKobo + m.stillKobo };
+export function adviceLines(m: Pick<AdviceModel, "freightKobo" | "commissionKobo" | "thisKobo" | "stillKobo" | "kind">) {
+  const tripPart = m.kind === "advance" || m.kind === "balance";
+  return { youGetKobo: m.freightKobo - m.commissionKobo, tripPart };
 }
 
 export async function renderAdvice(m: AdviceModel) {
@@ -59,13 +60,17 @@ export async function renderAdvice(m: AdviceModel) {
   label(doc, "Amount", PAGE.x, y + px(16), width - px(16), "right");
   y += px(44);
   const youGet = m.freightKobo - m.commissionKobo;
-  const rows: [string, string, "plain" | "bold" | "soft"][] = [
-    ["Freight for the trip", naira(m.freightKobo), "plain"],
-    [`Commission (${m.tierLabel}, ${m.commissionPct}%)`, `−${naira(m.commissionKobo)}`, "plain"],
-    ["You get for the trip", naira(youGet), "plain"],
-    [`This payment: ${KIND[m.kind] ?? m.kind}${m.kind === "advance" ? ` (${m.advancePct}%)` : ""}`, naira(m.thisKobo), "bold"],
-  ];
-  if (m.stillKobo > 0) rows.push(["Still to come: balance after delivery", naira(m.stillKobo), "soft"]);
+  // A cancellation fee or a waiting charge isn't part of the trip's freight: only the payment itself (review).
+  const tripPart = m.kind === "advance" || m.kind === "balance";
+  const rows: [string, string, "plain" | "bold" | "soft"][] = tripPart
+    ? [
+        ["Freight for the trip", naira(m.freightKobo), "plain"],
+        [`Commission (${m.tierLabel}, ${m.commissionPct}%)`, `−${naira(m.commissionKobo)}`, "plain"],
+        ["You get for the trip", naira(youGet), "plain"],
+        [`This payment: ${KIND[m.kind] ?? m.kind}${m.kind === "advance" ? ` (${m.advancePct}%)` : ""}`, naira(m.thisKobo), "bold"],
+      ]
+    : [[`This payment: ${KIND[m.kind] ?? m.kind}`, naira(m.thisKobo), "bold"]];
+  if (tripPart && m.stillKobo > 0) rows.push(["Still to come at issue: balance after delivery", naira(m.stillKobo), "soft"]);
   for (const [text, amount, style] of rows) {
     doc.font(style === "bold" ? "b" : "r").fontSize(px(14)).fillColor(style === "soft" ? C.ink3 : C.ink).text(text, PAGE.x + px(16), y + px(17), { width: width * 0.7, lineBreak: false });
     doc.text(amount, PAGE.x, y + px(17), { width: width - px(16), align: "right", lineBreak: false });
@@ -212,38 +217,48 @@ export async function renderPayoutStatement(m: { month: string; owner: string; o
   return { bytes, name: `payout-statement-${m.month}.pdf` };
 }
 
-/** A month: every trip whose balance was paid that month (paid in full), from payouts and trip money. */
+/** A month: every payout paid in it (Lagos), one row per trip and one per fee, so the total matches Earnings. */
 export async function payoutStatementPdf(orgId: string, month: string) {
   const range = monthRange(month);
   if (!range) return null;
   const supabase = await supabaseServer();
-  const [{ data: org }, { data: balances }, { data: bank }] = await Promise.all([
-    supabase.from("organizations").select("name, cac_number, tier, home_city_id").eq("id", orgId).maybeSingle(),
-    supabase.from("payouts").select("trip_id, paid_at").eq("org_id", orgId).eq("kind", "balance").eq("status", "paid").gte("paid_at", range.from.toISOString()).lt("paid_at", range.to.toISOString()).order("paid_at"),
-    supabase.from("bank_accounts").select("bank_name, account_last4, resolved_name, status").eq("org_id", orgId).order("created_at", { ascending: false }).limit(1),
+  const [{ data: org }, { data: paidRows }] = await Promise.all([
+    supabase.from("organizations").select("name, cac_number, tier, home_city_id, kind").eq("id", orgId).maybeSingle(),
+    supabase.from("payouts").select("trip_id, kind, amount_kobo, paid_at, bank_account_id").eq("org_id", orgId).eq("status", "paid").gte("paid_at", range.from.toISOString()).lt("paid_at", range.to.toISOString()).order("paid_at"),
   ]);
-  if (!org) return null;
+  if (!org || org.kind !== "transporter") return null;
   const rows: PayoutStatementRow[] = [];
-  for (const b of balances ?? []) {
-    if (!b.trip_id || !b.paid_at) continue;
-    const [{ data: trip }, { data: money }, { data: paid }] = await Promise.all([
-      supabase.from("trips").select("ref, truck:trucks(plate_number), load:loads(from:cities!loads_from_city_id_fkey(name), to:cities!loads_to_city_id_fkey(name))").eq("id", b.trip_id).maybeSingle(),
-      supabase.rpc("trip_money", { p_trip: b.trip_id }),
-      supabase.from("payouts").select("amount_kobo").eq("trip_id", b.trip_id).in("kind", ["advance", "balance"]).eq("status", "paid"),
-    ]);
-    const mm = money?.[0];
-    if (!trip || !mm) continue;
-    const load = trip.load as unknown as { from: { name: string } | null; to: { name: string } | null } | null;
-    rows.push({
-      date: b.paid_at,
-      ref: trip.ref.replace(/-T\d+$/, ""),
-      route: `${load?.from?.name ?? ""} → ${load?.to?.name ?? ""}`,
-      truck: spaced((trip.truck as unknown as { plate_number: string } | null)?.plate_number),
-      freightKobo: Number(mm.freight_kobo),
-      commissionKobo: Number(mm.commission_kobo),
-      paidKobo: (paid ?? []).reduce((s, x) => s + Number(x.amount_kobo), 0),
-    });
+  const byTrip = new Map<string, { last: string; paid: number }>();
+  const fees: { trip: string | null; kind: string; paid: number; at: string }[] = [];
+  for (const p of paidRows ?? []) {
+    if (!p.paid_at) continue;
+    if ((p.kind === "advance" || p.kind === "balance") && p.trip_id) {
+      const v = byTrip.get(p.trip_id) ?? { last: p.paid_at, paid: 0 };
+      v.paid += Number(p.amount_kobo);
+      v.last = p.paid_at;
+      byTrip.set(p.trip_id, v);
+    } else fees.push({ trip: p.trip_id, kind: p.kind, paid: Number(p.amount_kobo), at: p.paid_at });
   }
+  const tripInfo = async (id: string) => {
+    const [{ data: trip }, { data: money }] = await Promise.all([
+      supabase.from("trips").select("ref, truck:trucks(plate_number), load:loads(from:cities!loads_from_city_id_fkey(name), to:cities!loads_to_city_id_fkey(name))").eq("id", id).maybeSingle(),
+      supabase.rpc("trip_money", { p_trip: id }),
+    ]);
+    const load = trip?.load as unknown as { from: { name: string } | null; to: { name: string } | null } | null;
+    return { ref: trip?.ref.replace(/-T\d+$/, "") ?? "", route: `${load?.from?.name ?? ""} → ${load?.to?.name ?? ""}`, truck: spaced((trip?.truck as unknown as { plate_number: string } | null)?.plate_number), m: money?.[0] };
+  };
+  for (const [id, v] of byTrip) {
+    const info = await tripInfo(id);
+    rows.push({ date: v.last, ref: info.ref, route: info.route, truck: info.truck, freightKobo: Number(info.m?.freight_kobo ?? 0), commissionKobo: Number(info.m?.commission_kobo ?? 0), paidKobo: v.paid });
+  }
+  for (const fee of fees) {
+    const info = fee.trip ? await tripInfo(fee.trip) : { ref: "", route: "", truck: "" };
+    rows.push({ date: fee.at, ref: info.ref, route: `${KIND[fee.kind] ?? fee.kind}${info.route ? ` · ${info.route}` : ""}`, truck: info.truck, freightKobo: 0, commissionKobo: 0, paidKobo: fee.paid });
+  }
+  rows.sort((x, y) => (x.date < y.date ? -1 : 1));
+  // The account the month's money went to (the latest payout's), not today's (review).
+  const lastBank = [...(paidRows ?? [])].reverse().find((p) => p.bank_account_id)?.bank_account_id;
+  const { data: bank } = lastBank ? await supabase.from("bank_accounts").select("bank_name, account_last4, resolved_name").eq("id", lastBank).limit(1) : { data: null };
   const ba = bank?.[0];
   const city = org.home_city_id ? (await supabase.from("cities").select("name").eq("id", org.home_city_id).maybeSingle()).data?.name : null;
   return renderPayoutStatement({
