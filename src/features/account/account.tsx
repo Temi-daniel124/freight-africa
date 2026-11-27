@@ -14,7 +14,7 @@ import { siteHref } from "@/lib/hosts";
 import { supabaseServer } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
 import messages from "@/messages/en.json";
-import { BusinessForm, HelpQuestions, NotificationTable, PillTabs, SavedPlaces, type Place, type Receiver } from "./account-client";
+import { AvatarChange, BusinessForm, HelpQuestions, NotificationTable, PillTabs, SavedPlaces, type Place, type Receiver } from "./account-client";
 
 // Sender account screens (combined brief 5e): P16 More, P16a switch (on More), P16d / D11 saved places,
 // P16e / P16f / P16g / D12 settings tabs, P15 / D07 payments, P25 / D13 help.
@@ -139,7 +139,9 @@ export async function SenderSettings({ viewer }: { viewer: Promise<Viewer> }) {
     <div className="flex flex-col gap-4">
       <section className="rounded-card border border-line bg-surface p-5 lg:p-6">
         <h2 className="text-lead font-semibold text-ink">{a.profile}</h2>
-        <AvatarPicker name={v.fullName} current={v.avatar ? (v.avatar.split("/").pop()?.replace(".webp", "") ?? null) : null} />
+        <AvatarChange avatar={<Avatar name={v.fullName} src={v.avatar} size={56} />}>
+          <AvatarPicker name={v.fullName} current={v.avatar ? (v.avatar.split("/").pop()?.replace(".webp", "") ?? null) : null} />
+        </AvatarChange>
         <dl className="mt-4 grid gap-3 lg:grid-cols-3">
           {[
             [a.name, v.fullName],
