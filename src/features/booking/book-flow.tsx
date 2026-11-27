@@ -1,12 +1,14 @@
 "use client";
 
-import { ArrowUpDown, Box, CalendarDays, Check, ChevronRight, Info, Lock, MapPin, Package, Pencil, Plus, ShieldCheck, Truck, UserRound, X } from "lucide-react";
+import { ArrowUpDown, Box, CalendarDays, Check, ChevronRight, Info, Lock, MapPin, Pencil, Plus, ShieldCheck, Truck, UserRound, X } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState, useTransition, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { formatNaira } from "@/lib/money";
+import { TruckGraphic, truckKind } from "@/components/art/truck";
 import { cn } from "@/lib/utils";
 import messages from "@/messages/en.json";
 import { availability, createLoad, quoteBooking, startPayment, type BookingInput, type DayFree, type Quote } from "./actions";
@@ -59,6 +61,8 @@ export function BookFlow({ orgId, myName, cities, truckTypes, goods, defaultFrom
   const [step, setStep] = useState(sample ? Math.min(3, Math.max(1, Number(params.get("step")) || 1)) : 1);
   const [from, setFrom] = useState<Place>({ city: defaultFrom ?? "", address: sample ? "Apapa" : "", landmark: "" });
   const [to, setTo] = useState<Place>({ city: defaultTo ?? "", address: sample ? "Dawanau Market" : "", landmark: "" });
+  const [via, setVia] = useState<Place[]>([]);
+  const [viaOpen, setViaOpen] = useState<number | null>(null);
   const [days, setDays] = useState<DayFree[]>([]);
   const [day, setDay] = useState("");
   const [slot, setSlot] = useState<Slot>("morning");
@@ -136,7 +140,7 @@ export function BookFlow({ orgId, myName, cities, truckTypes, goods, defaultFrom
   useEffect(() => {
     if (!from.city || !to.city || from.city === to.city || !truckType) return;
     let live = true;
-    void quoteBooking(orgId, from.city, to.city, truckType).then((q) => {
+    void quoteBooking(orgId, from.city, to.city, truckType, 1 + via.length).then((q) => {
       if (!live) return;
       setQuote(q ?? "none");
       setOffer((o) => (q && o !== null ? Math.min(Math.max(o, q.minOffer), q.total - 100000) : o));
@@ -144,7 +148,7 @@ export function BookFlow({ orgId, myName, cities, truckTypes, goods, defaultFrom
     return () => {
       live = false;
     };
-  }, [orgId, from.city, to.city, truckType]);
+  }, [orgId, from.city, to.city, truckType, via.length]);
 
   const dayList = useMemo(() => [...new Set(days.map((d) => d.day))], [days]);
   const freeOn = (d: string, t = truckType) => days.find((r) => r.day === d && r.truckType === t)?.free ?? 0;
@@ -153,7 +157,8 @@ export function BookFlow({ orgId, myName, cities, truckTypes, goods, defaultFrom
   const totalKg = known.every((w) => w !== null) && items.length ? known.reduce<number>((a, b) => a + (b ?? 0), 0) : null;
   const tonnes = totalKg !== null ? Math.round(totalKg / 100) / 10 : null;
   const allowed = (t: TruckType) => (t.code === "livestock" ? livestock || !items.length : t.code === "tanker" ? liquid : !livestock);
-  const total = mode === "offer" && offer && q ? offer : (q?.total ?? 0);
+  const myOffer = mode === "offer" && q ? (offer ?? q.chips[1]) : null;
+  const total = myOffer ?? q?.total ?? 0;
   const transitDays = q ? Math.max(1, Math.ceil(q.typicalHours / 24)) : 0;
 
   const pickDay = (d: string) => {
@@ -195,11 +200,12 @@ export function BookFlow({ orgId, myName, cities, truckTypes, goods, defaultFrom
       pickupUntil: iso(day, HOURS[slot][1]),
       stops: [
         { city: from.city, address: place(from), name: loadingMe ? myName : loading.name, phone: loadingMe ? undefined : loading.phone },
+        ...via.filter((v) => v.city && v.address.trim().length >= 3).map((v) => ({ city: v.city, address: place(v) })),
         { city: to.city, address: place(to), name: receiverMe ? myName : receiver.name, phone: receiverMe ? undefined : receiver.phone },
       ],
       items: items.map((i) => ({ ...i, amount: Number(i.amount), valueNaira: Number(i.valueNaira) || 0 })),
       note: note || undefined,
-      offerNaira: mode === "offer" && offer ? offer / 100 : undefined,
+      offerNaira: myOffer ? myOffer / 100 : undefined,
     };
     start(async () => {
       const made = await createLoad(input);
@@ -225,12 +231,34 @@ export function BookFlow({ orgId, myName, cities, truckTypes, goods, defaultFrom
             aria-label={f.swap}
             className="absolute top-1/2 right-3 grid size-11 -translate-y-1/2 place-items-center rounded-full border border-line bg-surface text-ink lg:static lg:order-2 lg:translate-y-0"
           >
-            <ArrowUpDown aria-hidden className="size-5 lg:rotate-90" strokeWidth={1.8} />
+            <ArrowUpDown aria-hidden className="size-5" strokeWidth={1.8} />
           </button>
           <PlaceRow kind="to" place={to} name={cityName(to.city)} onOpen={() => setSheet("to")} />
         </div>
       </div>
-      {q ? <p className="mt-3 text-meta text-ink-3">{fill(f.routeFacts, { km: q.distanceKm.toLocaleString("en-NG"), days: transitDays <= 1 ? f.daysOne : fill(f.daysRange, { a: transitDays, b: transitDays + 1 }) })}</p> : null}
+      {via.map((v, n) => (
+        <div key={n} className="mt-2 flex items-center gap-2">
+          <button type="button" onClick={() => setViaOpen(n)} className="flex min-h-12 min-w-0 flex-1 items-center gap-3 rounded-tile border border-line bg-surface px-4 text-left">
+            <MapPin aria-hidden className="size-4.5 shrink-0 text-ink-3" strokeWidth={1.8} />
+            <span className="min-w-0">
+              <span className="block text-caption text-ink-3">{fill(f.stop, { n: n + 1 })}</span>
+              <span className={cn("block truncate text-body font-semibold", !v.address && "text-ink-3")}>{v.address ? `${v.address}, ${cityName(v.city)}` : f.choosePlace}</span>
+            </span>
+          </button>
+          <button type="button" aria-label={f.removeStop} onClick={() => setVia((list) => list.filter((_, i) => i !== n))} className="grid size-11 place-items-center rounded-full text-ink-3">
+            <X aria-hidden className="size-5" strokeWidth={1.8} />
+          </button>
+        </div>
+      ))}
+      <div className="mt-3 flex items-center justify-between gap-3">
+        <p className="text-meta text-ink-3">{q ? fill(f.routeFacts, { km: q.distanceKm.toLocaleString("en-NG"), days: transitDays <= 1 ? f.daysOne : fill(f.daysRange, { a: transitDays, b: transitDays + 1 }) }) : null}</p>
+        {via.length < 3 ? (
+          <button type="button" onClick={() => (setVia((list) => [...list, { city: "", address: "", landmark: "" }]), setViaOpen(via.length))} className="inline-flex min-h-11 shrink-0 items-center gap-1.5 text-body-sm font-semibold text-green-700">
+            <Plus aria-hidden className="size-4" strokeWidth={2} />
+            {f.addStop}
+          </button>
+        ) : null}
+      </div>
       {quote === "none" ? <p className="mt-3 text-meta text-danger">{f.noRoute}</p> : null}
       {tried && (!from.address || !to.address) ? <p className="mt-2 text-label font-medium text-danger">{f.errors.address}</p> : null}
     </Card>
@@ -262,9 +290,9 @@ export function BookFlow({ orgId, myName, cities, truckTypes, goods, defaultFrom
           <input type="date" aria-label={f.otherDay} min={dayList[0]} className="absolute inset-0 opacity-0" onChange={(e) => e.target.value && pickDay(e.target.value)} />
         </label>
       </div>
-      <div role="radiogroup" aria-label={f.dayTimeHeading} className="mt-3 flex gap-2 overflow-x-auto pb-1">
+      <div role="radiogroup" aria-label={f.dayTimeHeading} className="mt-3 grid grid-cols-4 gap-2 lg:flex">
         {(Object.keys(f.slots) as Slot[]).map((s) => (
-          <button key={s} type="button" role="radio" aria-checked={slot === s} onClick={() => setSlot(s)} className={cn("h-10 shrink-0 rounded-pill border px-4 text-body-sm", slot === s ? "border-green-900 bg-green-900 text-white" : "border-line bg-surface text-ink")}>
+          <button key={s} type="button" role="radio" aria-checked={slot === s} onClick={() => setSlot(s)} className={cn("h-10 min-w-0 rounded-pill border px-1 text-body-sm whitespace-nowrap lg:px-4", slot === s ? "border-green-900 bg-green-900 text-white" : "border-line bg-surface text-ink")}>
             {f.slots[s]}
             {slot === s ? <span className="hidden lg:inline"> · {f.slotHours[s]}</span> : null}
           </button>
@@ -277,16 +305,25 @@ export function BookFlow({ orgId, myName, cities, truckTypes, goods, defaultFrom
   const goodsCard = (
     <Card title={f.sending} aside={tonnes !== null && items.length ? <span className="hidden text-meta text-ink-3 lg:inline">{fits ? fill(f.fitsShort, { t: tonnes }) : ""}</span> : null}>
       {items.length ? (
+        <div aria-hidden className="hidden h-11 items-center gap-3.5 rounded-t-inner bg-table-head px-0 text-caption font-semibold tracking-[0.04em] text-ink-3 uppercase lg:flex">
+          <span className="flex-1 pl-0">{f.cols.item}</span>
+          <span className="w-50">{f.cols.amount}</span>
+          <span className="w-40">{f.cols.value}</span>
+          <span className="w-14" />
+        </div>
+      ) : null}
+      {items.length ? (
         <ul className="rounded-card border border-line bg-surface px-4 lg:border-0 lg:px-0">
           {items.map((i, n) => (
             <li key={n} className="flex min-h-16 items-center gap-3.5 border-line-soft py-3 not-first:border-t">
-              <span className="grid size-10 shrink-0 place-items-center rounded-icon bg-warning-100 text-warning">
-                <Package aria-hidden className="size-5" strokeWidth={1.8} />
+              <span className="grid size-10 shrink-0 place-items-center rounded-icon bg-warning-100">
+                <Image src="/art/box.webp" alt="" width={26} height={21} className="w-6.5" />
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block truncate text-body font-semibold text-ink">{i.description}</span>
-                <span className="block text-meta text-ink-3">{itemLine(i, goods)}</span>
+                <span className="block truncate text-body font-semibold text-ink lg:text-body-sm">{i.description}</span>
+                <span className="block text-meta text-ink-3 lg:hidden">{itemLine(i, goods)}</span>
               </span>
+              <span className="hidden w-50 text-body-sm font-normal text-ink lg:block">{itemLine(i, goods)}</span>
               {i.valueNaira ? <span className="tabular hidden w-40 text-body text-ink lg:block">{naira(Number(i.valueNaira) * 100)}</span> : null}
               <button type="button" aria-label={`${f.edit} ${i.description}`} onClick={() => (setEditing(n), setSheet("item"))} className="grid size-11 place-items-center rounded-full text-ink-2 lg:w-auto lg:px-3 lg:text-body-sm lg:font-semibold lg:text-green-700">
                 <Pencil aria-hidden className="size-4.5 lg:hidden" strokeWidth={1.8} />
@@ -331,10 +368,20 @@ export function BookFlow({ orgId, myName, cities, truckTypes, goods, defaultFrom
                 className={cn("relative flex h-23.5 flex-col items-center justify-center gap-1 rounded-tile border text-center lg:h-24 lg:flex-row lg:justify-start lg:gap-3 lg:px-4 lg:text-left", on ? "border-2 border-green-700 bg-green-50" : "border-line bg-surface", !ok && "opacity-45")}
               >
                 {t.code === suggested ? <span className="absolute -top-2.5 left-2 rounded-pill bg-green-700 px-2 py-0.5 text-micro text-white lg:hidden">{f.suggested}</span> : null}
-                <Truck aria-hidden className={cn("size-7", on ? "text-green-700" : "text-ink-2")} strokeWidth={1.6} />
+                <TruckGraphic kind={truckKind(t.code)} load={null} className="w-12 shrink-0" />
                 <span>
                   <span className={cn("block text-body-sm", on && "text-green-800")}>{f.trucks[t.code as keyof typeof f.trucks] ?? t.name}</span>
-                  <span className="block text-caption text-ink-3">{t.code === "tanker" ? f.liquids : fill(f.tonnesShort, { n: t.capacity / 1000 })}</span>
+                  <span className="block text-caption text-ink-3">{t.code === "tanker" ? (
+                      <>
+                        <span className="lg:hidden">{f.liquidsShort}</span>
+                        <span className="hidden lg:inline">{f.liquids}</span>
+                      </>
+                    ) : (
+                      <>
+                        {fill(f.tonnesShort, { n: t.capacity / 1000 })}
+                        {t.code === suggested ? <span className="hidden lg:inline"> · {f.suggested.toLowerCase()}</span> : null}
+                      </>
+                    )}</span>
                 </span>
               </button>
             );
@@ -363,8 +410,13 @@ export function BookFlow({ orgId, myName, cities, truckTypes, goods, defaultFrom
             <span className="block text-meta text-ink-3 lg:hidden">{who === "loading" ? ct.loadingSub : ct.receiverSub}</span>
             {who === "loading" && me ? <span className="hidden text-meta text-ink-3 lg:block">{ct.loadingDesk}</span> : null}
           </span>
+          <span className="hidden lg:block">
+            <Toggle id={`${who}-me-desk`} label={who === "loading" ? ct.loadingMe : ct.receiverMe} short={ct.me} checked={me} onChange={setMe} />
+          </span>
         </div>
-        <Toggle id={`${who}-me`} label={who === "loading" ? ct.loadingMe : ct.receiverMe} short={ct.me} checked={me} onChange={setMe} />
+        <span className="lg:hidden">
+          <Toggle id={`${who}-me`} label={who === "loading" ? ct.loadingMe : ct.receiverMe} short={ct.me} checked={me} onChange={setMe} />
+        </span>
         {me ? null : (
           <div className="mt-3 flex flex-col gap-3">
             <label className="block">
@@ -405,7 +457,7 @@ export function BookFlow({ orgId, myName, cities, truckTypes, goods, defaultFrom
   const offerBox = q ? <OfferBox q={q} offer={offer} setOffer={setOffer} /> : null;
   const choices = q ? (
     <div role="radiogroup" aria-label={pr.how} className="flex flex-col gap-2.5">
-      <Choice on={mode === "price"} onClick={() => setMode("price")} title={fill(pr.bookAt, { price: naira(q.total) })} badge={pr.fastest} sub={pr.bookAtSub} />
+      <Choice on={mode === "price"} onClick={() => setMode("price")} title={fill(pr.bookAt, { price: naira(q.total) })} badge={pr.fastest} sub={mode === "price" ? pr.bookAtSub : undefined} />
       <Choice on={mode === "offer"} onClick={() => (setMode("offer"), setOffer((o) => o ?? q.chips[1]))} title={pr.offerOwn} sub={mode === "offer" ? undefined : pr.offerOwnSub}>
         {mode === "offer" ? offerBox : null}
       </Choice>
@@ -421,7 +473,7 @@ export function BookFlow({ orgId, myName, cities, truckTypes, goods, defaultFrom
     { label: pr.contacts, value: `${loadingMe ? pr.youLoad : fill(pr.loadsBy, { name: loading.name })} · ${receiverMe ? pr.youReceive : fill(pr.receives, { name: receiver.name })}`, step: 2 },
   ];
 
-  const payLabel = mode === "offer" && offer ? fill(pr.payOffer, { amount: naira(offer) }) : fill(pr.pay, { amount: naira(total) });
+  const payLabel = myOffer ? fill(pr.payOffer, { amount: naira(myOffer) }) : fill(pr.pay, { amount: naira(total) });
   const actions = (
     <>
       <Button className="w-full" loading={pending} loadingLabel={pr.paying} onClick={() => submit(true)} disabled={!q}>
@@ -557,7 +609,7 @@ export function BookFlow({ orgId, myName, cities, truckTypes, goods, defaultFrom
               </button>
               <button type="button" role="radio" aria-checked={mode === "offer"} onClick={() => (setMode("offer"), setOffer((o) => o ?? q.chips[1]), setSheet("offer"))} className={cn("flex h-13 items-center gap-3 rounded-pill border px-4", mode === "offer" ? "border-2 border-green-700" : "border-line")}>
                 <Radio on={mode === "offer"} />
-                <span className="flex-1 text-left text-body font-semibold">{mode === "offer" && offer ? fill(pr.offerSet, { amount: naira(offer) }) : pr.offerOwn}</span>
+                <span className="flex-1 text-left text-body font-semibold">{myOffer ? fill(pr.offerSet, { amount: naira(myOffer) }) : pr.offerOwn}</span>
                 <ChevronRight aria-hidden className="size-4.5 text-ink-3" strokeWidth={1.8} />
               </button>
             </div>
@@ -596,6 +648,16 @@ export function BookFlow({ orgId, myName, cities, truckTypes, goods, defaultFrom
 
       <PlaceSheet open={sheet === "from"} onOpenChange={(o) => setSheet(o ? "from" : null)} kind="from" cities={cities} value={from} onSave={setFrom} />
       <PlaceSheet open={sheet === "to"} onOpenChange={(o) => setSheet(o ? "to" : null)} kind="to" cities={cities} value={to} onSave={setTo} />
+      {viaOpen !== null && via[viaOpen] ? (
+        <PlaceSheet
+          open
+          onOpenChange={(o) => !o && setViaOpen(null)}
+          kind="to"
+          cities={cities}
+          value={via[viaOpen]}
+          onSave={(p) => setVia((list) => list.map((x, i) => (i === viaOpen ? p : x)))}
+        />
+      ) : null}
       <ItemSheet
         open={sheet === "item"}
         onOpenChange={(o) => setSheet(o ? "item" : null)}
@@ -658,7 +720,7 @@ function PlaceRow({ kind, place, name, onOpen }: { kind: "from" | "to"; place: P
 
 function Toggle({ id, label, short, checked, onChange }: { id: string; label: string; short: string; checked: boolean; onChange: (v: boolean) => void }) {
   return (
-    <label htmlFor={id} className="mt-3 flex min-h-11 cursor-pointer items-center justify-between gap-3">
+    <label htmlFor={id} className="mt-3 flex min-h-11 cursor-pointer items-center justify-between gap-3 lg:mt-0 lg:gap-2">
       <span className="text-body font-semibold text-ink">
         <span className="lg:hidden">{label}</span>
         <span className="hidden text-caption lg:inline">{short}</span>
@@ -677,7 +739,7 @@ function Radio({ on }: { on: boolean }) {
 
 function Choice({ on, onClick, title, badge, sub, children }: { on: boolean; onClick: () => void; title: string; badge?: string; sub?: string; children?: ReactNode }) {
   return (
-    <div className={cn("rounded-card border bg-surface", on ? "border-2 border-green-700" : "border-line")}>
+    <div className={cn("rounded-card border", on ? "border-2 border-green-700 bg-green-50/40" : "border-line bg-surface")}>
       <button type="button" role="radio" aria-checked={on} onClick={onClick} className={cn("flex w-full items-start gap-3 text-left", on ? "px-4 py-3.75" : "px-4.5 py-4")}>
         <Radio on={on} />
         <span className="min-w-0">
