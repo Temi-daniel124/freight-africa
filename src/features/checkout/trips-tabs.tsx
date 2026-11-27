@@ -134,7 +134,7 @@ export function TripsTabs({ counts, lists, drafts, days }: { counts: Record<TabK
                   <DraftItem key={x.id} draft={x} days={days} />
                 ))}
               </ul>
-              {drafts.filter((x) => !x.dayPassed).length >= 2 ? (
+              {drafts.length >= 2 ? (
                 <Link href="/app/pay/several" className="mt-4 flex min-h-12 items-center justify-center text-body font-semibold text-green-700">
                   {d.paySeveral}
                 </Link>

@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
-import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Sheet } from "@/components/ui/sheet";
 import { CancelButton } from "@/features/booking/trip-controls";
@@ -79,6 +78,11 @@ const minutesText = (ms: number) => {
   return min < 60 ? fill(f.minutes, { n: min }) : fill(f.hours, { h: Math.floor(min / 60), m: min % 60 });
 };
 
+const ago = (ms: number) => {
+  const min = Math.max(1, Math.floor(ms / 60000));
+  return min < 60 ? fill(f.minutesAgo, { n: min }) : fill(f.hoursOnly, { n: Math.floor(min / 60) });
+};
+
 const dayName = (day: string) =>
   new Intl.DateTimeFormat("en-GB", { weekday: "short", day: "numeric", timeZone: "Africa/Lagos" }).format(new Date(`${day}T12:00:00+01:00`)).replace(",", "");
 
@@ -86,7 +90,7 @@ const dayName = (day: string) =>
 function Pulse() {
   const reduce = useReducedMotion();
   return (
-    <span className="relative grid size-26 place-items-center">
+    <span className="relative grid size-30 place-items-center">
       {[0, 1.2].map((delay) => (
         <m.span
           key={delay}
@@ -97,7 +101,7 @@ function Pulse() {
           transition={reduce ? undefined : { duration: 2.4, delay, repeat: Infinity, ease: "easeOut" }}
         />
       ))}
-      <span className="relative grid size-21 place-items-center rounded-full bg-green-700 text-white">
+      <span className="relative grid size-30 place-items-center rounded-full bg-green-700 text-white shadow-[0_24px_40px_-22px_rgba(8,56,38,0.8)]">
         <Truck aria-hidden className="size-8" strokeWidth={1.8} />
       </span>
     </span>
@@ -193,7 +197,7 @@ function OfferAgain({ open, onOpenChange, reply, offeredKobo, loadId }: { open: 
     <Sheet
       open={open}
       onOpenChange={onOpenChange}
-      title={fill(f.againTitle, { org: reply.org })}
+      title={fill(f.againTitle, { org: shortOrg(reply.org) })}
       description={fill(f.againText, { asked: naira(reply.totalKobo), offered: naira(offeredKobo) })}
       actions={
         <>
@@ -215,16 +219,27 @@ function OfferAgain({ open, onOpenChange, reply, offeredKobo, loadId }: { open: 
         value={value}
         onChange={(e) => setValue(Number(e.target.value))}
         aria-label={fill(f.againTitle, { org: reply.org })}
-        className="mt-4 w-full accent-green-700"
+        className="mt-4 h-6 w-full cursor-pointer appearance-none bg-transparent [&::-moz-range-thumb]:size-5.5 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:border-2 [&::-moz-range-thumb]:border-green-900 [&::-moz-range-thumb]:bg-white [&::-webkit-slider-runnable-track]:h-1 [&::-webkit-slider-runnable-track]:rounded-pill [&::-webkit-slider-runnable-track]:bg-[linear-gradient(to_right,var(--color-green-700)_var(--fill),var(--color-line)_var(--fill))] [&::-webkit-slider-thumb]:-mt-2.25 [&::-webkit-slider-thumb]:size-5.5 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-green-900 [&::-webkit-slider-thumb]:bg-white"
+        style={{ "--fill": `${high > low ? ((value - low) / (high - low)) * 100 : 50}%` } as React.CSSProperties}
       />
       <div className="flex justify-between text-meta text-ink-3">
         <span className="tabular">{naira(offeredKobo)}</span>
         <span className="tabular">{naira(reply.totalKobo)}</span>
       </div>
-      <p className="mt-3 text-meta text-ink-2">{fill(f.againNote, { org: reply.org, more: naira(value - offeredKobo) })}</p>
+      <p className="mt-3 text-meta text-ink-2">{fill(f.againNote, { org: shortOrg(reply.org), more: naira(value - offeredKobo) })}</p>
     </Sheet>
   );
 }
+
+/** "Musa Haulage Ltd" → "MH", "Emeka Nwosu Transport" → "EN" (the mockup's tiles). */
+const initials = (org: string) =>
+  shortOrg(org)
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase() ?? "")
+    .join("");
+/** The name in sentences: "Musa Haulage", not "Musa Haulage Ltd". */
+const shortOrg = (org: string) => org.replace(/\s+(Ltd\.?|Limited|Plc|Nig\.? Ltd)$/i, "");
 
 // ---- P11b / D08 replies -----------------------------------------------------------------------------
 
@@ -253,10 +268,10 @@ function ReplyCard({ reply, first, offeredKobo, loadId, openAgain = false }: { r
   const left = new Date(reply.expiresAt).getTime() - now;
   const head = (
     <div className="flex min-w-0 items-center gap-3">
-      <Avatar name={reply.org} size={48} className={first ? "bg-green-900 text-white" : undefined} />
+      <span aria-hidden className={cn("grid size-12 shrink-0 place-items-center rounded-icon text-body font-semibold", first ? "bg-green-900 text-white" : "bg-paper text-ink")}>{initials(reply.org)}</span>
       <div className="min-w-0">
         <p className="flex items-center gap-2">
-          <span className="truncate text-body font-semibold text-ink">{reply.org}</span>
+          <span className="truncate text-body font-semibold text-ink lg:whitespace-normal">{reply.org}</span>
           <TierPill tier={reply.tier} />
         </p>
         <p className="flex items-center gap-1 text-meta text-ink-3">
@@ -414,7 +429,11 @@ export function FindingView(p: FindingProps) {
     main = (
       <div className="px-5 pt-5 lg:px-0 lg:pt-0">
         <h1 className="text-title-1 text-ink lg:hidden">{f.owners}</h1>
-        <p className="mt-1.5 text-body text-ink-2 lg:hidden">{fill(f.offered, { amount: naira(offeredKobo) })}</p>
+        <p className="mt-1.5 text-body text-ink-2 lg:hidden">
+          {f.offered.split("{amount}")[0]}
+          <strong className="font-semibold text-ink">{naira(offeredKobo)}</strong>
+          {f.offered.split("{amount}")[1]}
+        </p>
         <ul className="mt-5 flex flex-col gap-3 lg:mt-0">
           {replies.map((r, i) => (
             <ReplyCard key={r.id} reply={r} first={i === 0} offeredKobo={offeredKobo} loadId={p.loadId} openAgain={i === 0 && p.previewAgain} />
@@ -486,7 +505,17 @@ export function FindingView(p: FindingProps) {
             <span className={cn("rounded-pill px-3 py-1.5 text-caption font-semibold", pill.tone === "info" ? "bg-info-100 text-info" : "bg-warning-100 text-warning")}>{pill.text}</span>
           </div>
           <p className="mt-1 text-body text-ink-2">
-            {p.reference} · {p.pickupLine}
+            {p.offered && replies.length ? (
+              <>
+                {p.reference} · {f.offeredDesk.split("{amount}")[0].replace("{ref} · ", "")}
+                <strong className="font-semibold text-ink">{naira(offeredKobo)}</strong>
+                {f.offeredDesk.split("{amount}")[1].replace("{ago}", ago(now - since))}
+              </>
+            ) : (
+              <>
+                {p.reference} · {p.pickupLine}
+              </>
+            )}
           </p>
         </div>
         {main}
@@ -524,7 +553,7 @@ export function FindingView(p: FindingProps) {
             {f.viewTrip}
           </Link>
         ) : null}
-        {cancel}
+        {replies.length && !p.due ? null : cancel}
       </div>
       <DaySheet open={daySheet} onOpenChange={setDaySheet} loadId={p.loadId} days={p.days} title={f.changeDayTitle} />
     </div>
