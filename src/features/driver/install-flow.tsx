@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, LoaderCircle, Plus, Share, Smartphone } from "lucide-react";
+import { Check, ChevronLeft, LoaderCircle, Plus, Share, Smartphone } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -37,9 +37,9 @@ function AppCard({ chip, tone }: { chip: string; tone: "muted" | "waiting" | "do
       </span>
       <span className="min-w-0 flex-1">
         <span className="block text-[17px] font-semibold text-ink">{t.app}</span>
-        <span className="block text-meta text-ink-3">{t.appSub}</span>
+        <span className="block truncate text-meta text-ink-3">{t.appSub}</span>
       </span>
-      <span className={cn("inline-flex h-7.5 items-center gap-1.5 rounded-pill px-3 text-meta font-semibold", tone === "waiting" ? "bg-warning-100 text-warning" : tone === "done" ? "bg-green-50 text-green-800" : "bg-[#EEF0EC] text-ink-2")}>
+      <span className={cn("inline-flex h-7.5 shrink-0 items-center gap-1.5 rounded-pill px-3 text-meta font-semibold", tone === "waiting" ? "bg-warning-100 text-warning" : tone === "done" ? "bg-green-50 text-green-800" : "bg-[#EEF0EC] text-ink-2")}>
         {tone === "waiting" ? <LoaderCircle aria-hidden className="size-3.5 motion-safe:animate-spin" strokeWidth={2} /> : null}
         {chip}
       </span>
@@ -55,7 +55,7 @@ function Steps({ items }: { items: { icon?: typeof Share; text: string }[] }) {
           <span className="grid size-11 shrink-0 place-items-center rounded-icon bg-green-50 text-[17px] font-semibold text-green-800">
             {item.icon ? <item.icon aria-hidden className="size-5" strokeWidth={1.8} /> : i + 1}
           </span>
-          <span className="text-[17px] font-semibold text-ink">{item.text}</span>
+          <span className="text-[16px] leading-snug font-semibold text-ink">{item.text}</span>
         </li>
       ))}
     </ol>
@@ -116,9 +116,21 @@ export function InstallFlow({ next, preview }: { next: string; preview?: Install
     setView(outcome === "accepted" ? "waiting" : "failed");
   };
 
+  const back = view === "start" ? null : () => setView("start");
   const head = (title: string, lead: string, step = true) => (
     <div className="flex flex-col gap-2">
-      {step ? <p className="text-meta text-ink-3">{t.step}</p> : null}
+      {step ? (
+        <div className="mb-3 flex items-center justify-between">
+          {back ? (
+            <button type="button" onClick={back} aria-label={t.back} className="grid size-11 place-items-center rounded-full border border-line bg-surface text-green-900">
+              <ChevronLeft aria-hidden className="size-5" strokeWidth={1.8} />
+            </button>
+          ) : (
+            <span />
+          )}
+          <p className="text-meta text-ink-3">{t.step}</p>
+        </div>
+      ) : null}
       <h1 className="text-title-1 text-ink">{title}</h1>
       <p className="text-[17px] text-ink-2">{lead}</p>
     </div>
@@ -146,7 +158,7 @@ export function InstallFlow({ next, preview }: { next: string; preview?: Install
         <Steps items={[{ icon: Share, text: t.ios.s1 }, { icon: Plus, text: t.ios.s2 }, { icon: Smartphone, text: t.ios.s3 }]} />
         <div className="rounded-card bg-green-900 px-5 py-4.5 text-white">
           <p className="text-meta text-green-200">{t.ios.codeLabel}</p>
-          <p className="mt-1 font-semibold tracking-[0.06em] tabular-nums text-[40px] leading-tight" aria-live="polite">
+          <p className="mt-1 font-bold tracking-[0.04em] text-[40px] leading-tight" aria-live="polite">
             {code ? `${code.slice(0, 3)} ${code.slice(3)}` : "··· ···"}
           </p>
           <p className="text-meta text-green-200">{t.ios.codeNote}</p>
@@ -166,7 +178,7 @@ export function InstallFlow({ next, preview }: { next: string; preview?: Install
 
   if (view === "waiting")
     return (
-      <div className="flex min-h-[calc(100dvh-12rem)] flex-col gap-5">
+      <div className="flex min-h-[calc(100dvh-4.5rem)] flex-col gap-5">
         {head(t.waiting.title, t.waiting.lead)}
         <AppCard chip={t.waiting.chip} tone="waiting" />
         <Steps items={[{ text: t.waiting.s1 }, { text: t.waiting.s2 }, { text: t.waiting.s3 }]} />
@@ -184,7 +196,7 @@ export function InstallFlow({ next, preview }: { next: string; preview?: Install
 
   if (view === "failed")
     return (
-      <div className="flex min-h-[calc(100dvh-12rem)] flex-col gap-5">
+      <div className="flex min-h-[calc(100dvh-4.5rem)] flex-col gap-5">
         {head(t.failed.title, t.failed.lead)}
         <AppCard chip={t.start.chip} tone="muted" />
         <ul className="flex flex-col gap-2.5 rounded-card border border-line bg-surface p-4 text-[17px] text-ink">
@@ -207,7 +219,7 @@ export function InstallFlow({ next, preview }: { next: string; preview?: Install
     );
 
   return (
-    <div className="flex min-h-[calc(100dvh-12rem)] flex-col gap-5">
+    <div className="flex min-h-[calc(100dvh-4.5rem)] flex-col gap-5">
       {head(t.start.title, t.start.lead)}
       <AppCard chip={t.start.chip} tone="muted" />
       <div className="rounded-card border border-line bg-surface p-4">
