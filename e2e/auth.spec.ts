@@ -27,7 +27,7 @@ for (const width of widths) {
     await page.setViewportSize({ width, height: 900 });
     await page.goto("/auth/code", { waitUntil: "networkidle" });
     await page.evaluate(() => document.fonts.ready);
-    await expect(page.getByRole("heading", { level: 1, name: "Enter your code" })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name: "Check your email" })).toBeVisible();
     await page.getByLabel(/digit code/).fill("482");
     await expect(page).toHaveScreenshot(`enter-code-${width}.png`, { fullPage: true });
   });

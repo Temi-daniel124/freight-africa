@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleAlert, CircleCheck, ShieldCheck, WifiOff } from "lucide-react";
+import { CircleAlert, CircleCheck, Info, Mail, MessageCircle, WifiOff } from "lucide-react";
 import Link from "next/link";
 import { startTransition, useActionState, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import { usePrefersReducedMotion } from "@/lib/use-prefers-reduced-motion";
 import { resendCode, verifyCode } from "./actions";
 import { CODE_MINUTES } from "./code-rules";
 import type { ResendState, VerifyState } from "./state";
+import { AuthBody, AuthTop } from "./auth-frame";
 
 export type CodeText = {
   eyebrow: string;
@@ -19,6 +20,9 @@ export type CodeText = {
   sentEmail: string;
   sentWhatsApp: string;
   change: string;
+  changeEmail: string;
+  changePhone: string;
+  titleWhatsApp: string;
   label: string;
   submit: string;
   checking: string;
@@ -156,86 +160,89 @@ export function CodeForm({ t, channel, to, length, expiresInMs = null, preview }
     startTransition(resendAction);
   };
 
+  const Icon = channel === "email" ? Mail : MessageCircle;
   return (
-    <div className="flex flex-col">
-      <span className="mb-5 inline-flex h-7 items-center gap-2 self-start rounded-pill bg-green-50 pr-3 pl-2.5 text-caption font-semibold text-green-700">
-        <i aria-hidden className="size-1.5 rounded-pill bg-green-500" />
-        {t.eyebrow}
-      </span>
-      <h1 className="type-signin text-balance text-ink">{t.title}</h1>
-      {/* Normal wrapping, as in the target: "pretty" would push the address down to keep "Change" company. */}
-      <p className="type-signin-lead mt-3 text-wrap text-ink-2">
-        {sentBefore}
-        <b className="font-semibold text-ink">{to}</b>
-        {sentAfter}{" "}
-        <Link href="/auth" className="font-semibold text-green-700 hover:underline">
-          {t.change}
-        </Link>
-      </p>
-
-      <form ref={formRef} action={verifyAction} onSubmit={() => setLatest("verify")} noValidate className="mt-6 flex flex-col lg:mt-8">
-        <CodeInput
-          id="auth-code"
-          name="code"
-          length={length}
-          label={fill(t.label, { count: length })}
-          value={code}
-          onChange={change}
-          state={inputState}
-          attempt={verify.attempt}
-          disabled={blocked || done}
-          autoFocus
-          describedBy={message ? "auth-code-message" : undefined}
-        />
-        {message ? (
-          <p id="auth-code-message" role="alert" className="mt-helper flex items-center gap-1 text-caption text-danger">
-            <CircleAlert aria-hidden className="size-4 shrink-0" strokeWidth={1.75} />
-            {message}
-          </p>
-        ) : null}
-        {done ? (
-          <p role="status" className="mt-helper flex items-center gap-1 text-caption text-success">
-            <CircleCheck aria-hidden className="size-4 shrink-0" strokeWidth={1.75} />
-            {t.done}
-          </p>
-        ) : latest === "resend" && resend.status === "sent" ? (
-          <p role="status" className="mt-helper flex items-center gap-1 text-caption text-success">
-            <CircleCheck aria-hidden className="size-4 shrink-0" strokeWidth={1.75} />
-            {t.resent}
-          </p>
-        ) : null}
-      </form>
-
-      {online ? null : (
-        <p role="status" className="mt-6 flex items-start gap-2 rounded-inner bg-warning-100 p-4 text-body text-ink">
-          <WifiOff aria-hidden className="mt-0.5 size-5 shrink-0 text-warning" strokeWidth={1.75} />
-          {t.offline}
+    <div className="flex flex-1 flex-col">
+      <AuthTop back="/auth" />
+      <AuthBody className="pt-9 lg:pt-0">
+        <span aria-hidden className="grid size-14 place-items-center rounded-callout border border-line bg-surface text-green-700 shadow-[0_14px_30px_-18px_rgba(15,26,20,0.3)]">
+          <Icon className="size-5.5" strokeWidth={1.8} />
+        </span>
+        <h1 className="mt-5.5 text-title-1 text-balance text-ink">{channel === "email" ? t.title : t.titleWhatsApp}</h1>
+        {/* Normal wrapping, as in the mockup: "pretty" would push the address down. */}
+        <p className="type-signin-lead mt-3 text-wrap text-ink-2">
+          {sentBefore}
+          <b className="font-semibold break-all text-ink">{to}</b>
+          {sentAfter}
         </p>
-      )}
 
-      {blocked ? (
-        // With no tries left, or the code expired, getting a new code is the one thing to do.
-        <Button className="mt-6 w-full text-control font-semibold" disabled={!online} loading={resending} loadingLabel={t.checking} onClick={resendNow}>
-          {t.resend}
-        </Button>
-      ) : done ? null : (
-        <div className="mt-4 flex flex-col gap-1 text-label leading-4 font-medium text-ink-2 lg:flex-row lg:items-center lg:justify-between">
-          <span>{t.resendHint}</span>
-          {seconds > 0 ? (
-            <span className="tabular font-semibold text-ink-3" aria-live="off">
-              {fill(t.resendIn, { time })}
-            </span>
-          ) : (
-            <Button variant="tertiary" size="text" className="min-h-11 self-start text-label font-semibold lg:self-auto" disabled={!online} loading={resending} loadingLabel={t.checking} onClick={resendNow}>
-              {t.resend}
-            </Button>
-          )}
-        </div>
-      )}
+        <form ref={formRef} action={verifyAction} onSubmit={() => setLatest("verify")} noValidate className="mt-7.5 flex flex-col">
+          <CodeInput
+            id="auth-code"
+            name="code"
+            length={length}
+            label={fill(t.label, { count: length })}
+            hideLabel
+            value={code}
+            onChange={change}
+            state={inputState}
+            attempt={verify.attempt}
+            disabled={blocked || done}
+            autoFocus
+            describedBy={message ? "auth-code-message" : undefined}
+          />
+          {message ? (
+            <p id="auth-code-message" role="alert" className="mt-helper flex items-center gap-1 text-caption text-danger">
+              <CircleAlert aria-hidden className="size-4 shrink-0" strokeWidth={1.75} />
+              {message}
+            </p>
+          ) : null}
+          {done ? (
+            <p role="status" className="mt-helper flex items-center gap-1 text-caption text-success">
+              <CircleCheck aria-hidden className="size-4 shrink-0" strokeWidth={1.75} />
+              {t.done}
+            </p>
+          ) : latest === "resend" && resend.status === "sent" ? (
+            <p role="status" className="mt-helper flex items-center gap-1 text-caption text-success">
+              <CircleCheck aria-hidden className="size-4 shrink-0" strokeWidth={1.75} />
+              {t.resent}
+            </p>
+          ) : null}
+        </form>
+
+        {online ? null : (
+          <p role="status" className="mt-6 flex items-start gap-2 rounded-callout bg-warning-100 p-4 text-body text-ink">
+            <WifiOff aria-hidden className="mt-0.5 size-5 shrink-0 text-warning" strokeWidth={1.75} />
+            {t.offline}
+          </p>
+        )}
+
+        {blocked ? (
+          // With no tries left, or the code expired, getting a new code is the one thing to do.
+          <Button className="mt-6 w-full" disabled={!online} loading={resending} loadingLabel={t.checking} onClick={resendNow}>
+            {t.resend}
+          </Button>
+        ) : done ? null : (
+          <div className="mt-4.5 flex items-center justify-between gap-3 text-body-sm">
+            {seconds > 0 ? (
+              <span className="tabular font-normal text-ink-3" aria-live="off">
+                {fill(t.resendIn, { time })}
+              </span>
+            ) : (
+              <Button variant="tertiary" size="text" className="-ml-2 min-h-11 text-body-sm" disabled={!online} loading={resending} loadingLabel={t.checking} onClick={resendNow}>
+                {t.resend}
+              </Button>
+            )}
+            <Link href="/auth" className="py-3 font-semibold text-green-700">
+              {channel === "email" ? t.changeEmail : t.changePhone}
+            </Link>
+          </div>
+        )}
+      </AuthBody>
 
       {blocked || done ? null : (
-        <p className="mt-5 flex items-center gap-2 text-label leading-4 font-medium text-wrap text-ink-2">
-          <ShieldCheck aria-hidden className="size-4 shrink-0 text-green-700" strokeWidth={1.75} />
+        <p className="mx-6 mt-auto mb-[max(env(safe-area-inset-bottom),30px)] flex items-start gap-3 rounded-callout border border-line bg-surface px-4 py-3.5 text-meta text-ink-2 lg:mx-0 lg:mt-8 lg:mb-0">
+          <Info aria-hidden className="mt-0.5 size-5 shrink-0 text-green-700" strokeWidth={1.8} />
           {t.note}
         </p>
       )}

@@ -1,3 +1,4 @@
+import { avatarSrc } from "@/features/settings/avatars";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { Avatar } from "@/components/ui/avatar";
@@ -15,9 +16,10 @@ async function Pad({ searchParams }: { searchParams: Params }) {
   const supabase = await supabaseServer();
   const { data } = await supabase.auth.getClaims();
   if (!data?.claims) redirect(`/auth?next=${encodeURIComponent(next)}`);
-  const { data: profile } = await supabase.from("profiles").select("full_name").eq("id", data.claims.sub).maybeSingle();
+  const { data: profile } = await supabase.from("profiles").select("full_name, avatar_key").eq("id", data.claims.sub).maybeSingle();
   const name = profile?.full_name?.trim();
-  return <PinSet next={next} avatar={name ? <Avatar name={name} size={64} /> : undefined} />;
+  const src = avatarSrc(profile?.avatar_key);
+  return <PinSet next={next} avatar={name ? <Avatar name={name} src={src} size={64} className="shadow-[0_10px_24px_-14px_rgba(15,26,20,0.35)]" /> : undefined} />;
 }
 
 // A-11 Set your PIN (D044): after the first email code, a forgotten PIN, an invite or a PIN link.

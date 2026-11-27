@@ -9,7 +9,7 @@ export const inputErrorClasses = "border-danger focus:border-danger focus:outlin
 
 type FieldShellProps = {
   id: string;
-  label: string;
+  label: ReactNode;
   helper?: string;
   error?: string;
   children: ReactNode;
@@ -41,7 +41,7 @@ export function FieldShell({ id, label, helper, error, children }: FieldShellPro
 type TextFieldProps = InputHTMLAttributes<HTMLInputElement> & {
   ref?: Ref<HTMLInputElement>;
   id: string;
-  label: string;
+  label: ReactNode;
   helper?: string;
   error?: string;
 };

@@ -1,3 +1,4 @@
+import { avatarSrc } from "@/features/settings/avatars";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { Avatar } from "@/components/ui/avatar";
@@ -18,10 +19,11 @@ async function Pad({ searchParams }: { searchParams: Params }) {
   if (!data?.claims) redirect(`/auth?mode=signin&next=${encodeURIComponent(next)}`);
   const { data: has } = await supabase.rpc("has_app_pin");
   if (has === false) redirect(`/auth/pin/new?next=${encodeURIComponent(next)}`);
-  const { data: profile } = await supabase.from("profiles").select("full_name").eq("id", data.claims.sub).maybeSingle();
+  const { data: profile } = await supabase.from("profiles").select("full_name, avatar_key").eq("id", data.claims.sub).maybeSingle();
   const name = profile?.full_name?.trim();
   const email = typeof data.claims.email === "string" ? data.claims.email : "";
-  return <PinUnlock next={next} phone={isInternalEmail(email)} avatar={name ? <Avatar name={name} size={64} /> : undefined} />;
+  const src = avatarSrc(profile?.avatar_key);
+  return <PinUnlock next={next} phone={isInternalEmail(email)} name={name} email={email} avatar={name ? <Avatar name={name} src={src} size={76} /> : undefined} />;
 }
 
 // A-13 Enter your PIN: the app locked on this device (D044).

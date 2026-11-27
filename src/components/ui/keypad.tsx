@@ -27,10 +27,10 @@ type KeypadProps = {
 
 /**
  * Mockup .kp: a 3 × 4 grid with 4 px gaps, 64 px keys with 18 px corners, 28 px digits at weight 500,
- * a soft press colour. The page listens for the physical keyboard itself (see PinKeypad).
+ * a soft press colour; 52 px keys with 22 px digits in the desktop card (D01b). The page listens for the physical keyboard itself (see PinKeypad).
  */
 export function Keypad({ onKey, deleteLabel, disabled, canDelete = true, extra }: KeypadProps) {
-  const key = "grid h-16 place-items-center rounded-key text-[28px] leading-none font-medium text-ink tabular transition-colors duration-100 active:bg-green-50 hover:bg-paper disabled:opacity-60";
+  const key = "grid h-16 place-items-center rounded-key text-[28px] md:h-13 md:text-[22px] leading-none font-medium text-ink tabular transition-colors duration-100 active:bg-green-50 hover:bg-paper disabled:opacity-60";
   return (
     <div className="grid grid-cols-3 gap-1">
       {DIGITS.map((digit) => (
@@ -39,7 +39,7 @@ export function Keypad({ onKey, deleteLabel, disabled, canDelete = true, extra }
         </button>
       ))}
       {extra ? (
-        <button type="button" onClick={extra.onPress} disabled={disabled} className="grid h-16 place-items-center rounded-key px-1 text-body-sm font-semibold text-green-700 active:bg-green-50">
+        <button type="button" onClick={extra.onPress} disabled={disabled} className="grid h-16 place-items-center rounded-key px-1 text-label font-semibold text-green-700 active:bg-green-50 md:h-13">
           {extra.label}
         </button>
       ) : (
@@ -49,7 +49,7 @@ export function Keypad({ onKey, deleteLabel, disabled, canDelete = true, extra }
         0
       </button>
       <button type="button" onClick={() => onKey("del")} disabled={disabled || !canDelete} aria-label={deleteLabel} className={cn(key, "text-ink-2")}>
-        <Delete aria-hidden className="size-6.5" strokeWidth={1.75} />
+        <Delete aria-hidden className="size-6.5 md:size-5" strokeWidth={1.75} />
       </button>
     </div>
   );
