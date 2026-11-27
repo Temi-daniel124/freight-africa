@@ -34,7 +34,7 @@ create function pg_temp.items() returns jsonb language sql as $$
   select jsonb_build_array(jsonb_build_object('goods', (select id from ids where name = 'rice'), 'description', 'Bags of rice', 'quantity', 600, 'unit', 'bags', 'unit_weight_kg', 50, 'value_kobo', 600000000));
 $$;
 create function pg_temp.escrow(p_load text) returns bigint language sql as $$
-  select private.ledger_balance(private.ledger_account('escrow', null, (select id from ids where name = p_load)));
+  select coalesce(private.ledger_balance(private.ledger_account('escrow', null, (select id from ids where name = p_load))), 0);
 $$;
 create function pg_temp.draft(p_org uuid) returns uuid language sql as $$
   select public.create_load(p_org, (select id from ids where name = 'flatbed'), now() + interval '1 day', now() + interval '1 day 6 hours', pg_temp.stops(), pg_temp.items());
