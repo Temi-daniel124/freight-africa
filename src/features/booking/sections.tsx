@@ -6,7 +6,7 @@ import { StatusChip } from "@/components/ui/chip";
 import type { Viewer } from "@/features/shell/viewer";
 import { supabaseServer } from "@/lib/supabase/server";
 import messages from "@/messages/en.json";
-import { BookForm } from "./book-form";
+import { BookFlow } from "./book-flow";
 import { shipperLoads } from "./data";
 import { LoadBoardList } from "./load-board";
 import { lagosDate, naira, TripRow } from "./pieces";
@@ -30,46 +30,27 @@ function Empty({
   );
 }
 
-/** S-02 Book a truck. */
+/** S-02 Book a truck (mockups P08–P09b, D03). */
 export async function BookPage({ viewer }: { viewer: Promise<Viewer> }) {
-  const { orgId } = await viewer;
-  if (!orgId)
-    return (
-      <Empty title={messages.booking.title} text={messages.org.team.noOrg} />
-    );
+  const { orgId, fullName } = await viewer;
+  if (!orgId) return <Empty title={messages.booking.title} text={messages.org.team.noOrg} />;
   const supabase = await supabaseServer();
-  const [{ data: cities }, { data: types }, { data: goods }] =
-    await Promise.all([
-      supabase
-        .from("cities")
-        .select("id, name")
-        .eq("is_corridor_hub", true)
-        .order("name"),
-      supabase
-        .from("truck_types")
-        .select("id, name, code, capacity_kg_default")
-        .eq("active", true)
-        .order("sort_order"),
-      supabase
-        .from("goods_categories")
-        .select("id, name, code")
-        .eq("active", true)
-        .eq("is_banned", false)
-        .not("parent_id", "is", null)
-        .order("sort_order"),
-    ]);
+  const [{ data: cities }, { data: types }, { data: goods }] = await Promise.all([
+    supabase.from("cities").select("id, name").eq("is_corridor_hub", true).order("name"),
+    supabase.from("truck_types").select("id, name, code, capacity_kg_default").eq("active", true).order("sort_order"),
+    supabase.from("goods_categories").select("id, name, code").eq("active", true).eq("is_banned", false).not("parent_id", "is", null).order("sort_order"),
+  ]);
+  const list = cities ?? [];
   return (
-    <BookForm
+    <BookFlow
       orgId={orgId}
-      cities={cities ?? []}
-      truckTypes={(types ?? []).map((x) => ({
-        id: x.id,
-        name: x.name,
-        code: x.code,
-        capacity: x.capacity_kg_default,
-      }))}
+      myName={fullName}
+      cities={list}
+      truckTypes={(types ?? []).map((x) => ({ id: x.id, name: x.name, code: x.code, capacity: x.capacity_kg_default }))}
       goods={goods ?? []}
-      defaultFrom={(cities ?? []).find((c) => c.name === "Lagos")?.id}
+      defaultFrom={list.find((c) => c.name === "Lagos")?.id}
+      defaultTo={list.find((c) => c.name === "Kano")?.id}
+      allowSample={process.env.NODE_ENV === "development" || process.env.VERCEL_ENV === "preview"}
     />
   );
 }

@@ -19,64 +19,82 @@ const stop = z.object({
   phone: z.string().trim().max(20).optional(),
 });
 
-export const loadSchema = z
+// D055: one to ten items; each is tonnes or a count (with an optional weight each), and a value.
+const item = z
   .object({
-    org: z.uuid(),
     goods: z.uuid(),
-    description: z.string().trim().max(120).optional(),
-    truckType: z.uuid(),
-    weightTonnes: z.number().positive().max(60).optional(),
-    notSure: z.boolean(),
-    quantity: z.number().int().positive().max(1000000).optional(),
-    quantityUnit: z
-      .enum(["bags", "cartons", "pieces", "drums", "tonnes", "head"])
-      .optional(),
-    livestock: z.boolean(),
-    value: z.number().nonnegative().max(10_000_000_000),
-    pickupFrom: z.iso.datetime({ offset: true }),
-    pickupUntil: z.iso.datetime({ offset: true }),
-    stops: z.array(stop).min(2).max(5),
+    description: z.string().trim().min(2).max(120),
+    kind: z.enum(["tonnes", "count"]),
+    amount: z.number().int().positive().max(1_000_000),
+    unit: z.enum(["bags", "cartons", "pieces", "drums", "head"]).optional(),
+    unitWeightKg: z.number().int().positive().max(5000).optional(),
+    valueNaira: z.number().int().nonnegative().max(100_000_000_000),
   })
-  .superRefine((v, ctx) => {
-    // D046: tonnes, or Not sure (then an optional rough amount); livestock gives a head count.
-    if (v.livestock && !v.quantity)
-      ctx.addIssue({ code: "custom", path: ["quantity"], message: "head" });
-    if (!v.livestock && !v.notSure && !v.weightTonnes)
-      ctx.addIssue({
-        code: "custom",
-        path: ["weightTonnes"],
-        message: "weight",
-      });
-  });
+  .refine((v) => v.kind === "tonnes" || v.unit, { path: ["unit"] });
 
-export type LoadInput = z.infer<typeof loadSchema>;
+export const bookingSchema = z.object({
+  org: z.uuid(),
+  truckType: z.uuid(),
+  pickupFrom: z.iso.datetime({ offset: true }),
+  pickupUntil: z.iso.datetime({ offset: true }),
+  stops: z.array(stop).min(2).max(5),
+  items: z.array(item).min(1).max(10),
+  note: z.string().trim().max(300).optional(),
+  /** D047: the sender's own price in naira, fee included; absent books at our price. */
+  offerNaira: z.number().int().positive().max(100_000_000_000).optional(),
+});
 
-/** S-02 live price for the route and truck (the database prices it; null when the lane isn't covered). */
-export async function quoteFor(
-  org: string,
-  from: string,
-  to: string,
-  truckType: string,
-): Promise<{ freight: number; fee: number; total: number } | null> {
+export type BookingInput = z.infer<typeof bookingSchema>;
+export type BookingItem = z.infer<typeof item>;
+
+export type Quote = {
+  freight: number;
+  fee: number;
+  feeBps: number;
+  total: number;
+  /** D047: the lowest offer, and -5% / -8% / -10% of our price (never under the lowest), in kobo. */
+  minOffer: number;
+  chips: number[];
+  distanceKm: number;
+  typicalHours: number;
+  /** Shown only with real history behind them (5 or more trips in 90 days). */
+  usual: { low: number; high: number } | null;
+  acceptedFrom: number | null;
+};
+
+/** S-02 the price for a route and truck, with what the offer screen needs (null when the lane isn't covered). */
+export async function quoteBooking(org: string, from: string, to: string, truckType: string, dropoffs = 1): Promise<Quote | null> {
   await assertUnlocked();
-  const { data } = await (
-    await supabaseServer()
-  ).rpc("quote_load", {
-    p_org: org,
-    p_from: from,
-    p_to: to,
-    p_truck_type: truckType,
-    p_dropoffs: 1,
-  });
+  const { data } = await (await supabaseServer()).rpc("quote_booking", { p_org: org, p_from: from, p_to: to, p_truck_type: truckType, p_dropoffs: dropoffs });
   const row = data?.[0];
-  return row
-    ? {
-        freight: Number(row.freight_kobo),
-        fee: Number(row.fee_kobo),
-        total: Number(row.total_kobo),
-      }
-    : null;
+  if (!row) return null;
+  const total = Number(row.total_kobo);
+  const min = Number(row.min_offer_kobo);
+  // Whole thousands of naira, never under the lowest offer, never our price itself.
+  const chips = [500, 800, 1000].map((bps) => Math.max(min, Math.floor((total * (10000 - bps)) / 10000 / 100000) * 100000));
+  return {
+    freight: Number(row.freight_kobo),
+    fee: Number(row.fee_kobo),
+    feeBps: Number(row.fee_bps),
+    total,
+    minOffer: min,
+    chips,
+    distanceKm: Number(row.distance_km),
+    typicalHours: Number(row.typical_hours),
+    usual: row.usual_low_kobo && row.usual_high_kobo ? { low: Number(row.usual_low_kobo), high: Number(row.usual_high_kobo) } : null,
+    acceptedFrom: row.accepted_from_kobo ? Number(row.accepted_from_kobo) : null,
+  };
 }
+
+export type DayFree = { day: string; truckType: string; free: number };
+
+/** D055: free trucks of each type for the next days on this route. */
+export async function availability(org: string, from: string, to: string, days = 7): Promise<DayFree[]> {
+  await assertUnlocked();
+  const { data } = await (await supabaseServer()).rpc("day_availability", { p_org: org, p_from: from, p_to: to, p_days: days });
+  return (data ?? []).map((r) => ({ day: r.day, truckType: r.truck_type_id, free: Number(r.free) }));
+}
+
 export type CreateResult =
   | { status: "ok"; id: string }
   | { status: "invalid"; field: string }
@@ -90,54 +108,35 @@ const phone = (raw?: string) => {
   return /^[789][01]\d{8}$/.test(digits) ? `+234${digits}` : undefined;
 };
 
-/** S-02 Post a load (six fields plus the D046 amount rules). */
-export async function createLoad(input: LoadInput): Promise<CreateResult> {
+/** S-02 Post a booking: route, day, items, truck, contacts and, optionally, the sender's own price. */
+export async function createLoad(input: BookingInput): Promise<CreateResult> {
   await assertUnlocked();
-  const parsed = loadSchema.safeParse(input);
-  if (!parsed.success)
-    return {
-      status: "invalid",
-      field: String(parsed.error.issues[0]?.path[0] ?? "form"),
-    };
+  const parsed = bookingSchema.safeParse(input);
+  if (!parsed.success) return { status: "invalid", field: String(parsed.error.issues[0]?.path[0] ?? "form") };
   const v = parsed.data;
   const supabase = await supabaseServer();
-  // Generated types mark every argument required; create_load takes null for an unknown weight or amount (D046).
   const args = {
     p_org: v.org,
-    p_goods: v.goods,
-    p_description: v.description ?? "",
     p_truck_type: v.truckType,
-    p_weight_kg:
-      v.livestock || v.notSure || !v.weightTonnes
-        ? null
-        : Math.round(v.weightTonnes * 1000),
-    p_quantity: v.livestock || v.notSure ? (v.quantity ?? null) : null,
-    p_quantity_unit: v.livestock
-      ? "head"
-      : v.notSure && v.quantity
-        ? (v.quantityUnit ?? "bags")
-        : null,
-    p_declared_value_kobo: Math.round(v.value * 100),
     p_pickup_from: v.pickupFrom,
     p_pickup_until: v.pickupUntil,
-    p_stops: v.stops.map((s) => ({
-      city: s.city,
-      address: s.address,
-      name: s.name || null,
-      phone: phone(s.phone) ?? null,
+    p_stops: v.stops.map((s) => ({ city: s.city, address: s.address, name: s.name || null, phone: phone(s.phone) ?? null })),
+    p_items: v.items.map((i) => ({
+      goods: i.goods,
+      description: i.description,
+      quantity: i.amount,
+      unit: i.kind === "tonnes" ? "tonnes" : i.unit,
+      unit_weight_kg: i.kind === "count" ? (i.unitWeightKg ?? null) : null,
+      value_kobo: i.valueNaira * 100,
     })),
+    p_notes: v.note || null,
+    p_offer_total_kobo: v.offerNaira ? v.offerNaira * 100 : null,
   };
-  const { data, error } = await supabase.rpc(
-    "create_load",
-    args as unknown as Parameters<typeof supabase.rpc<"create_load">>[1],
-  );
+  const { data, error } = await supabase.rpc("create_load", args as unknown as Parameters<typeof supabase.rpc<"create_load">>[1]);
   if (error || !data) {
     if (error?.code === "P0002") return { status: "route" };
     console.error("create_load failed", error?.code);
-    return {
-      status: "error",
-      message: error?.code === "22023" ? error.message : undefined,
-    };
+    return { status: "error", message: error?.code === "22023" ? error.message : undefined };
   }
   revalidatePath("/app/ship", "layout");
   return { status: "ok", id: data as string };
