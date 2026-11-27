@@ -28,6 +28,9 @@ create function public.install_started(p_device uuid, p_platform text) returns v
 declare
   v_user uuid := private.require_user();
 begin
+  if (select count(*) from public.app_installs where user_id = v_user) >= 20 and not exists (select 1 from public.app_installs where user_id = v_user and device_id = p_device) then
+    raise exception 'too many devices' using errcode = '22023';
+  end if;
   insert into public.app_installs (user_id, device_id, platform) values (v_user, p_device, p_platform)
   on conflict (user_id, device_id) do update set platform = excluded.platform
     where public.app_installs.state = 'waiting';
@@ -44,6 +47,9 @@ begin
     -- A browser tab is never an install.
     update public.app_installs set last_seen_at = now() where user_id = v_user and device_id = p_device;
     return exists (select 1 from public.app_installs where user_id = v_user and state = 'installed');
+  end if;
+  if (select count(*) from public.app_installs where user_id = v_user) >= 20 and not exists (select 1 from public.app_installs where user_id = v_user and device_id = p_device) then
+    raise exception 'too many devices' using errcode = '22023';
   end if;
   insert into public.app_installs (user_id, device_id, platform, state, installed_at, last_seen_at)
   values (v_user, p_device, p_platform, 'installed', now(), now())
@@ -90,20 +96,37 @@ $$;
 
 -- Server only (the home-screen app, signed out): phone number and code. Returns the person's id once,
 -- then the code is gone. A wrong code counts a try; five tries end the code.
+create table private.install_redeem_attempts (
+  phone text not null,
+  created_at timestamptz not null default now()
+);
+create index install_redeem_attempts_phone on private.install_redeem_attempts (phone, created_at);
+
 create function public.redeem_install_code(p_phone text, p_code text) returns uuid language plpgsql security definer set search_path = '' as $$
 declare
   v_user uuid;
   v_row private.install_codes;
+  -- Every path does one bcrypt, so the time taken doesn't say which numbers have a live code (review).
+  v_dummy constant text := '$2a$08$0123456789012345678901uJ6yq7Lq3fYc6QFz9i0m6kz2V7pJ6W1u';
+  v_well_formed boolean := coalesce(p_code, '') ~ '^[0-9]{6}$';
 begin
+  -- At most 10 tries for a number in 15 minutes, whoever makes them (the server also limits by address).
+  perform pg_advisory_xact_lock(hashtext('install-redeem:' || coalesce(p_phone, '')));
+  if (select count(*) from private.install_redeem_attempts where phone = coalesce(p_phone, '') and created_at > now() - interval '15 minutes') >= 10 then
+    perform extensions.crypt(coalesce(p_code, ''), v_dummy);
+    return null;
+  end if;
+  insert into private.install_redeem_attempts (phone) values (coalesce(p_phone, ''));
   select id into v_user from public.profiles where phone = p_phone and deleted_at is null;
-  if v_user is null then
+  if v_user is not null then
+    select * into v_row from private.install_codes where user_id = v_user for update;
+  end if;
+  if v_user is null or v_row.user_id is null or v_row.expires_at < now() or v_row.tries >= 5 then
+    perform extensions.crypt(coalesce(p_code, ''), v_dummy);
     return null;
   end if;
-  select * into v_row from private.install_codes where user_id = v_user for update;
-  if v_row.user_id is null or v_row.expires_at < now() or v_row.tries >= 5 then
-    return null;
-  end if;
-  if extensions.crypt(p_code, v_row.code_hash) <> v_row.code_hash then
+  -- A missing or malformed code is a wrong code (crypt of NULL is NULL, which would otherwise pass; review).
+  if not v_well_formed or extensions.crypt(p_code, v_row.code_hash) is distinct from v_row.code_hash then
     update private.install_codes set tries = tries + 1 where user_id = v_user;
     return null;
   end if;
