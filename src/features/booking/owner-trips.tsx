@@ -1,4 +1,10 @@
 import Link from "next/link";
+import { Suspense } from "react";
+import { PillTabs } from "@/features/account/account-client";
+import { dayLabel } from "@/features/checkout/data";
+import { slotOf } from "@/features/owner/load-cards";
+import { cn } from "@/lib/utils";
+
 import { notFound } from "next/navigation";
 import { EmptyScene } from "@/components/art/scenes";
 import { fillPercent, TruckGraphic, truckKind } from "@/components/art/truck";
@@ -72,12 +78,7 @@ export async function OwnerTripsPage({ viewer }: { viewer: Promise<Viewer> }) {
   const { orgId } = await viewer;
   const supabase = await supabaseServer();
   const { data } = orgId
-    ? await supabase
-        .from("trips")
-        .select(OWNER_TRIP_SELECT)
-        .eq("transporter_org_id", orgId)
-        .order("created_at", { ascending: false })
-        .limit(50)
+    ? await supabase.from("trips").select(OWNER_TRIP_SELECT).eq("transporter_org_id", orgId).order("created_at", { ascending: false }).limit(50)
     : { data: [] };
   const rows = (data ?? []) as unknown as OwnerTrip[];
   if (!rows.length) {
@@ -88,38 +89,112 @@ export async function OwnerTripsPage({ viewer }: { viewer: Promise<Viewer> }) {
       </section>
     );
   }
-  return (
-    <ul className="mx-auto w-full max-w-[880px] overflow-hidden rounded-tile bg-surface shadow-raised lg:rounded-card">
-      {rows.map((r) => (
-        <li key={r.id}>
-          <Link
-            href={`/app/haul/trips/${r.id}`}
-            className="flex min-h-18 items-center gap-3 border-t border-line px-4 py-3 hover:bg-paper lg:px-5"
-          >
-            <span className="min-w-0 flex-1">
-              <span className="tabular block text-body-sm font-semibold whitespace-nowrap text-ink">
-                {r.ref}
-              </span>
-              <span className="block truncate text-caption font-medium whitespace-nowrap text-ink-3">
-                {r.load?.from?.name} → {r.load?.to?.name} ·{" "}
-                {r.truck?.plate_number}
-              </span>
-            </span>
-            <StatusChip
-              tone={
-                r.status === "closed"
-                  ? "success"
-                  : r.status === "cancelled"
-                    ? "danger"
-                    : "info"
-              }
-            >
-              {t.status[r.status as keyof typeof t.status] ?? r.status}
+  // O14: what the owner gets on each trip (drivers never reach this page, D003).
+  const money = new Map<string, { advance: number; balance: number }>();
+  const [{ data: paid }] = await Promise.all([
+    supabase.from("payouts").select("trip_id, kind, status").in("trip_id", rows.map((r) => r.id)),
+    ...rows.slice(0, 30).map(async (r) => {
+      const { data: m } = await supabase.rpc("trip_money", { p_trip: r.id });
+      if (m?.[0]) money.set(r.id, { advance: Number(m[0].advance_kobo), balance: Number(m[0].balance_kobo) });
+      return { data: null };
+    }),
+  ]);
+  const o = messages.owner;
+  const advanceDone = (id: string) => (paid ?? []).some((p) => p.trip_id === id && p.kind === "advance" && p.status === "paid");
+  const group = (r: OwnerTrip) =>
+    ["loaded", "in_transit", "arrived", "at_pickup", "loading"].includes(r.status)
+      ? "active"
+      : ["assigned", "to_pickup"].includes(r.status)
+        ? "upcoming"
+        : r.status === "cancelled"
+          ? "cancelled"
+          : "done";
+  const card = (r: OwnerTrip) => {
+    const m = money.get(r.id);
+    const g = group(r);
+    const fillLine = r.load?.weight_kg && r.truck ? `${Math.round((r.load.weight_kg / r.truck.capacity_kg) * 100)}% full` : null;
+    const when = r.load ? `${o.loadsOn.replace("{day}", dayLabel(r.load.pickup_from))}, ${slotOf(r.load.pickup_from)}` : "";
+    return (
+      <li key={r.id}>
+        <Link href={`/app/haul/trips/${r.id}`} className="block rounded-card border border-line bg-surface px-5 pt-4.5 pb-4 hover:border-green-700/40">
+          <div className="flex items-center justify-between gap-3">
+            <p className="tabular truncate text-caption font-semibold tracking-caps text-ink-3 uppercase">
+              {r.ref.replace(/-T\d+$/, "")} · {r.truck?.plate_number}
+            </p>
+            <StatusChip tone={g === "active" ? "info" : g === "upcoming" ? "success" : g === "cancelled" ? "danger" : "success"}>
+              {g === "upcoming" ? o.upcoming : (messages.trips.status[r.status as keyof typeof messages.trips.status] ?? r.status)}
             </StatusChip>
-          </Link>
-        </li>
-      ))}
-    </ul>
+          </div>
+          <p className="mt-1.5 text-title-3 text-ink">
+            {r.load?.from?.name} → {r.load?.to?.name}
+          </p>
+          <p className="truncate text-meta text-ink-3">{[r.driver?.full_name, g === "upcoming" ? when : null, fillLine].filter(Boolean).join(" · ")}</p>
+          {m && g !== "cancelled" ? (
+            <div className="mt-3 flex items-center justify-between border-t border-line-soft pt-3 text-meta">
+              <span className="text-ink-3">{g === "done" ? o.paidDone : advanceDone(r.id) ? o.advancePaid.replace("{amount}", "").trim() : o.advanceAtLoading}</span>
+              <span className="tabular font-semibold text-ink">
+                {g === "done" ? naira(m.advance + m.balance) : advanceDone(r.id) ? o.onDelivery.replace("{amount}", naira(m.balance)) : naira(m.advance)}
+              </span>
+            </div>
+          ) : null}
+        </Link>
+      </li>
+    );
+  };
+  const keys = ["active", "upcoming", "done", "cancelled"] as const;
+  const counts = Object.fromEntries(keys.map((k) => [k, rows.filter((r) => group(r) === k).length])) as Record<(typeof keys)[number], number>;
+  const panel = (k: (typeof keys)[number]) => {
+    const list = rows.filter((r) => group(r) === k);
+    if (!list.length) return <p className="rounded-card border border-line bg-surface px-6 py-10 text-center text-body-sm text-ink-2">{o.noTrips}</p>;
+    return (
+      <>
+        <ul className="flex flex-col gap-3 lg:hidden">{list.map(card)}</ul>
+        <table className="hidden w-full overflow-hidden rounded-card border border-line bg-surface text-left text-body-sm lg:table">
+          <thead className="bg-paper/60">
+            <tr className="text-caption font-semibold tracking-caps text-ink-3 uppercase">
+              {[o.cols.truck, o.cols.driver, o.cols.route, o.cols.status, o.cols.load, o.cols.next].map((c, i) => (
+                <th key={c} className={cn("px-5 py-3 font-semibold", i === 5 && "text-right")}>
+                  {c}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {list.map((r) => {
+              const m = money.get(r.id);
+              return (
+                <tr key={r.id} className="border-t border-line-soft hover:bg-paper">
+                  <td className="tabular px-5 py-4 font-semibold">
+                    <Link href={`/app/haul/trips/${r.id}`}>{r.truck?.plate_number}</Link>
+                  </td>
+                  <td className="px-5 py-4">{r.driver?.full_name ?? "—"}</td>
+                  <td className="px-5 py-4">
+                    {r.load?.from?.name} → {r.load?.to?.name}
+                  </td>
+                  <td className="px-5 py-4">
+                    <StatusChip tone={group(r) === "active" ? "info" : "success"}>{messages.trips.status[r.status as keyof typeof messages.trips.status] ?? r.status}</StatusChip>
+                  </td>
+                  <td className="px-5 py-4 text-ink-2">{r.load?.weight_kg && r.truck ? `${Math.round((r.load.weight_kg / r.truck.capacity_kg) * 100)}% · ${Math.round(r.load.weight_kg / 1000)} t` : (r.load?.goods?.name ?? "")}</td>
+                  <td className="tabular px-5 py-4 text-right">
+                    {m ? (advanceDone(r.id) ? o.onDelivery.replace("{amount}", naira(m.balance)) : o.atLoading.replace("{amount}", naira(m.advance))) : "—"}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </>
+    );
+  };
+  return (
+    <div className="mx-auto w-full max-w-[1080px]">
+      <Suspense>
+        <PillTabs
+          tabs={keys.map((k) => ({ key: k, label: counts[k] && (k === "active" || k === "upcoming") ? `${o.tabs[k]} · ${counts[k]}` : o.tabs[k] }))}
+          panels={{ active: panel("active"), upcoming: panel("upcoming"), done: panel("done"), cancelled: panel("cancelled") }}
+        />
+      </Suspense>
+    </div>
   );
 }
 

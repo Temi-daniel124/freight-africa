@@ -57,8 +57,9 @@ async function shot(context, url, width, height, cookies = []) {
   if (cookies.length) await context.addCookies(cookies.map(([name, value]) => ({ name, value, url: BASE })));
   await page.setViewportSize({ width, height });
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await page.goto(url, { waitUntil: "networkidle", timeout: 120000 });
-  await page.waitForTimeout(600);
+  // Pages with a live map never go quiet: after 30 s, take the page as loaded.
+  await page.goto(url, { waitUntil: "networkidle", timeout: 30000 }).catch(() => page.waitForLoadState("load"));
+  await page.waitForTimeout(url.startsWith("file:") ? 600 : 2500);
   const png = await page.screenshot({ fullPage: true });
   await page.close();
   return png.toString("base64");
@@ -66,7 +67,7 @@ async function shot(context, url, width, height, cookies = []) {
 
 const composer = await browser.newPage();
 for (const pair of pairs) {
-  const width = pair.width ?? (pair.mock.startsWith("D") ? 1440 : 390);
+  const width = pair.width ?? (/^(O|DV|G|X)?D\d/.test(pair.mock) ? 1440 : 390);
   const height = width > 600 ? 900 : 844;
   const mockUrl = pathToFileURL(resolve(`docs/design/reference/${set}-mockups/screens/${pair.mock}.html`)).href;
   const mock = await shot(await contextFor(null), mockUrl, width, height);

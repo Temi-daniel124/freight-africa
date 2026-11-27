@@ -398,6 +398,83 @@ export type Database = {
           },
         ]
       }
+      driver_messages: {
+        Row: {
+          body: string | null
+          created_at: string
+          driver_id: string
+          id: string
+          org_id: string
+          read_at: string | null
+          reason: Database["public"]["Enums"]["driver_message_reason"]
+          replied_at: string | null
+          replied_by: string | null
+          reply: string | null
+          truck_id: string | null
+          voice_path: string | null
+          voice_seconds: number | null
+        }
+        Insert: {
+          body?: string | null
+          created_at?: string
+          driver_id: string
+          id?: string
+          org_id: string
+          read_at?: string | null
+          reason: Database["public"]["Enums"]["driver_message_reason"]
+          replied_at?: string | null
+          replied_by?: string | null
+          reply?: string | null
+          truck_id?: string | null
+          voice_path?: string | null
+          voice_seconds?: number | null
+        }
+        Update: {
+          body?: string | null
+          created_at?: string
+          driver_id?: string
+          id?: string
+          org_id?: string
+          read_at?: string | null
+          reason?: Database["public"]["Enums"]["driver_message_reason"]
+          replied_at?: string | null
+          replied_by?: string | null
+          reply?: string | null
+          truck_id?: string | null
+          voice_path?: string | null
+          voice_seconds?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "driver_messages_driver_id_fkey"
+            columns: ["driver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "driver_messages_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "driver_messages_replied_by_fkey"
+            columns: ["replied_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "driver_messages_truck_id_fkey"
+            columns: ["truck_id"]
+            isOneToOne: false
+            referencedRelation: "trucks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       drivers: {
         Row: {
           created_at: string
@@ -3014,14 +3091,20 @@ export type Database = {
         Returns: {
           freight_kobo: number
           from_city: string
+          funded_at: string
           goods: string
+          list_freight_kobo: number
           load_id: string
+          offered: boolean
           payout_kobo: number
           pickup_from: string
           pickup_until: string
           quantity: number
           quantity_unit: string
           ref: string
+          replied: boolean
+          sender_name: string
+          sender_trips: number
           to_city: string
           truck_type: string
           truck_type_id: string
@@ -3131,6 +3214,7 @@ export type Database = {
         Args: { p_load: string; p_total_kobo: number }
         Returns: string
       }
+      read_driver_message: { Args: { p_id: string }; Returns: undefined }
       record_device: {
         Args: {
           p_city: string
@@ -3159,6 +3243,10 @@ export type Database = {
       reoffer_quote: {
         Args: { p_counter: string; p_total_kobo: number }
         Returns: number
+      }
+      reply_driver_message: {
+        Args: { p_id: string; p_reply: string }
+        Returns: undefined
       }
       request_batch_payment: { Args: { p_loads: string[] }; Returns: string }
       request_load_payment: { Args: { p_load: string }; Returns: string }
@@ -3199,6 +3287,16 @@ export type Database = {
       seed_demo_pin: {
         Args: { p_pin: string; p_user: string }
         Returns: undefined
+      }
+      send_driver_message: {
+        Args: {
+          p_body?: string
+          p_org: string
+          p_reason: Database["public"]["Enums"]["driver_message_reason"]
+          p_voice_path?: string
+          p_voice_seconds?: number
+        }
+        Returns: string
       }
       set_active_org: { Args: { p_org: string }; Returns: undefined }
       set_app_pin: { Args: { p_pin: string }; Returns: undefined }
@@ -3354,6 +3452,7 @@ export type Database = {
       availability: "available" | "on_trip" | "unavailable"
       consent_kind: "terms" | "privacy" | "whatsapp" | "location" | "marketing"
       doc_status: "pending" | "approved" | "rejected" | "expired"
+      driver_message_reason: "repair" | "day_off" | "papers" | "other"
       kyc_status:
         | "not_started"
         | "in_progress"
@@ -3606,6 +3705,7 @@ export const Constants = {
       availability: ["available", "on_trip", "unavailable"],
       consent_kind: ["terms", "privacy", "whatsapp", "location", "marketing"],
       doc_status: ["pending", "approved", "rejected", "expired"],
+      driver_message_reason: ["repair", "day_off", "papers", "other"],
       kyc_status: [
         "not_started",
         "in_progress",
