@@ -3283,7 +3283,7 @@ export type Database = {
         Returns: undefined
       }
       redeem_install_code: {
-        Args: { p_code: string; p_phone: string }
+        Args: { p_code: string; p_ip_key: string; p_phone: string }
         Returns: string
       }
       refund_paid: {

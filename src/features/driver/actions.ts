@@ -19,11 +19,13 @@ export async function saveNightLook(mode: "auto" | "always" | "never"): Promise<
 }
 
 /** DV06 Emergency contact (optional): a name and a Nigerian mobile number, or both cleared. */
-export async function saveEmergencyContact(name: string, phone: string): Promise<{ status: "ok" | "phone" | "error" }> {
+export async function saveEmergencyContact(name: string, phone: string): Promise<{ status: "ok" | "name" | "phone" | "error" }> {
   await assertUnlocked();
   const clean = name.trim().replace(/\s+/g, " ").slice(0, 80);
   const e164 = phone.trim() ? normaliseNigerianPhone(phone) : null;
   if (phone.trim() && !e164) return { status: "phone" };
+  // A number with no name would be lost (review): ask for the name.
+  if (e164 && !clean) return { status: "name" };
   const { supabase, id } = await me();
   if (!id) return { status: "error" };
   const { error } = await supabase.from("profiles").update({ emergency_contact_name: clean || null, emergency_contact_phone: clean ? e164 : null }).eq("id", id);

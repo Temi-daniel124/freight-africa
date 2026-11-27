@@ -2,6 +2,7 @@
 
 import { assertUnlocked } from "@/features/auth/unlock";
 import { finishSignIn, openSessionFor } from "@/features/auth/pin-session";
+import { ipKey } from "@/lib/ip-key";
 import { normaliseNigerianPhone } from "@/lib/phone";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { supabaseServer } from "@/lib/supabase/server";
@@ -15,6 +16,7 @@ const PLATFORMS: Platform[] = ["android", "ios", "desktop", "other"];
 const clean = (device: string, platform: string) => (UUID.test(device) && PLATFORMS.includes(platform as Platform) ? { device, platform } : null);
 
 export async function installStarted(device: string, platform: string): Promise<boolean> {
+  await assertUnlocked();
   const input = clean(device, platform);
   if (!input) return false;
   const { error } = await (await supabaseServer()).rpc("install_started", { p_device: input.device, p_platform: input.platform });
@@ -23,6 +25,7 @@ export async function installStarted(device: string, platform: string): Promise<
 
 /** Returns whether this person has an installed app (true once the home-screen app has checked in). */
 export async function installCheckin(device: string, platform: string, standalone: boolean): Promise<boolean> {
+  await assertUnlocked();
   const input = clean(device, platform);
   if (!input) return false;
   const { data, error } = await (await supabaseServer()).rpc("install_checkin", { p_device: input.device, p_platform: input.platform, p_standalone: standalone === true });
@@ -46,14 +49,15 @@ export async function signInWithSetupCode(phone: string, code: string): Promise<
   const e164 = normaliseNigerianPhone(phone);
   if (!e164 || !/^\d{6}$/.test(code.replace(/\s/g, ""))) return { status: "wrong" };
   const admin = supabaseAdmin();
-  const { data: userId, error } = await admin.rpc("redeem_install_code", { p_phone: e164, p_code: code.replace(/\s/g, "") });
+  const { data: userId, error } = await admin.rpc("redeem_install_code", { p_phone: e164, p_code: code.replace(/\s/g, ""), p_ip_key: await ipKey() });
   if (error) {
     console.error("redeem_install_code failed", error.code);
     return { status: "error" };
   }
   if (!userId) return { status: "wrong" };
   const { data: user } = await admin.auth.admin.getUserById(userId);
-  if (!user?.user?.email || user.user.banned_until) return { status: "wrong" };
+  const banned = user?.user?.banned_until ? new Date(user.user.banned_until).getTime() > Date.now() : false;
+  if (!user?.user?.email || banned) return { status: "wrong" };
   const session = await openSessionFor(user.user.email);
   if (!session) return { status: "error" };
   await finishSignIn(session.userId, session.sessionId, user.user.email, false);
