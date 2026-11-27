@@ -12,15 +12,17 @@ values
   ('18181818-0000-4000-8000-000000000004', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'tola@example.com', null, null, now(), '{"full_name": "Tola Ade"}', now(), now());
 
 -- ---- Obvious PINs are refused ------------------------------------------------------------------
+set local role service_role;
+select throws_ok($$select public.set_app_pin_for('18181818-0000-4000-8000-000000000001', '000000')$$, '22023', null, 'repeated digits are refused');
+select throws_ok($$select public.set_app_pin_for('18181818-0000-4000-8000-000000000001', '123456')$$, '22023', null, 'a run up is refused');
+select throws_ok($$select public.set_app_pin_for('18181818-0000-4000-8000-000000000001', '987654')$$, '22023', null, 'a run down is refused');
+select throws_ok($$select public.set_app_pin_for('18181818-0000-4000-8000-000000000001', '121212')$$, '22023', null, 'a repeated pair is refused');
+select throws_ok($$select public.set_app_pin_for('18181818-0000-4000-8000-000000000001', '123123')$$, '22023', null, 'a repeated triple is refused');
+select throws_ok($$select public.set_app_pin_for('18181818-0000-4000-8000-000000000001', '12345')$$, '22023', null, 'five digits are refused');
+select lives_ok($$select public.set_app_pin_for('18181818-0000-4000-8000-000000000001', '480157')$$, 'a good PIN is saved');
+reset role;
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub": "18181818-0000-4000-8000-000000000001", "role": "authenticated"}', true);
-select throws_ok($$select public.set_app_pin('000000')$$, '22023', null, 'repeated digits are refused');
-select throws_ok($$select public.set_app_pin('123456')$$, '22023', null, 'a run up is refused');
-select throws_ok($$select public.set_app_pin('987654')$$, '22023', null, 'a run down is refused');
-select throws_ok($$select public.set_app_pin('121212')$$, '22023', null, 'a repeated pair is refused');
-select throws_ok($$select public.set_app_pin('123123')$$, '22023', null, 'a repeated triple is refused');
-select throws_ok($$select public.set_app_pin('12345')$$, '22023', null, 'five digits are refused');
-select lives_ok($$select public.set_app_pin('480157')$$, 'a good PIN is saved');
 select is(public.has_app_pin(), true, 'the person now has a PIN');
 
 -- ---- Only our server checks PINs for sign-in -----------------------------------------------------
