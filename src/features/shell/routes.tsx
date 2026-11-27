@@ -9,13 +9,13 @@ import messages from "@/messages/en.json";
 import { AppShell, ShellContent, ShellTopBar } from "./app-shell";
 import { shellPages, shells, type PageKey, type ShellConfig, type ShellRole } from "./config";
 import { TeamPage } from "@/features/org/team-page";
-import { TrucksPage } from "@/features/trucks/trucks-page";
 import { BookPage, LoadsPage, PaymentsPage, TripsPage } from "@/features/booking/sections";
 import { OwnerTripsPage } from "@/features/booking/owner-trips";
 import { DriverTrip } from "@/features/home/driver-trip";
 import { OwnerHome } from "@/features/owner/owner-home";
 import { OwnerMore } from "@/features/owner/more";
 import { OwnerEarnings } from "@/features/owner/earnings";
+import { OwnerPapers, OwnerTrucks } from "@/features/owner/fleet";
 import { SenderHome } from "@/features/home/sender-home";
 import { SettingsPage } from "@/features/settings/settings-page";
 import { DriversPage } from "@/features/drivers/drivers-page";
@@ -172,7 +172,9 @@ async function sectionBody(page: PageKey, config: ShellConfig, viewer: Promise<V
     case "team":
       return <TeamPage viewer={viewer} />;
     case "trucks":
-      return <TrucksPage />;
+      return <OwnerTrucks viewer={viewer} />;
+    case "documents":
+      return <OwnerPapers viewer={viewer} />;
     case "drivers":
       return <DriversPage orgId={(await viewer).orgId} />;
     case "settings":

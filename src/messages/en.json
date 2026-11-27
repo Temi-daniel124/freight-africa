@@ -1396,7 +1396,7 @@
         "text": "Add the people who drive your trucks."
       },
       "documents": {
-        "title": "Documents",
+        "title": "Papers",
         "empty": "No documents yet",
         "text": "Your papers and their expiry dates will show here."
       },
@@ -3263,5 +3263,38 @@
     "reference": "Bank reference",
     "stillToCome": "Balance still to come",
     "download": "Download payout advice"
+  },
+  "fleet": {
+    "add": "Add",
+    "onTrip": "On trip",
+    "onTripFull": "On trip · {p}% full",
+    "tripToday": "Trip today",
+    "available": "Available",
+    "paused": "Paused",
+    "review": "Being checked",
+    "draft": "Needs papers",
+    "papersOk": "Papers OK",
+    "paperEnds": "{paper} ends in {n} days",
+    "paperEndsToday": "{paper} ends today",
+    "paperExpired": "{paper} expired",
+    "insured": "Insured",
+    "gps": "GPS tracker",
+    "youDrive": "you drive it",
+    "noDriver": "no driver yet",
+    "expired": "Expired",
+    "endingSoon": "Ends within 30 days",
+    "newPhoto": "Needs a new photo",
+    "allGood": "All good",
+    "allGoodText": "{t} trucks and {d} drivers have valid papers",
+    "allGoodTrucks": "{t} trucks have valid papers",
+    "replace": "Replace",
+    "expiredOn": "Expired {date}",
+    "truckPaused": "truck paused",
+    "driverPaused": "driver paused",
+    "endsOn": "Ends {date}",
+    "reminders": "Reminders come 30, 7 and 1 day before a paper ends.",
+    "driversLicence": "Driver's licence",
+    "noPapers": "No papers yet",
+    "noPapersText": "Add a truck and its papers, and they show here sorted by what needs you first."
   }
 }
