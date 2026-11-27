@@ -1,7 +1,9 @@
-/**
- * Off to a checkout page (D048): only our own paths ("/app/…", never "//host") or an https page; the
- * URL always comes from our database, this is a second guard (review).
- */
+/** Our own paths ("/app/…", never "//host") or an https page (D048 review). */
+export function safeCheckoutUrl(url: string) {
+  return /^\/[^/\]/.test(url) || /^https:\/\/[^/]/.test(url);
+}
+
+/** Off to a checkout page. The URL always comes from our database; this is a second guard. */
 export function goToCheckout(url: string) {
-  if (/^\/[^/\]/.test(url) || /^https:\/\/[^/]/.test(url)) window.location.assign(url);
+  if (safeCheckoutUrl(url)) window.location.assign(url);
 }
