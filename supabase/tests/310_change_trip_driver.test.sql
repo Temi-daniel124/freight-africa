@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(6);
+select plan(8);
 
 -- Musa Haulage (owner Musa, drivers Sani and Bello) has a trip assigned to Sani; Emeka's owner is a stranger.
 insert into auth.users (id, instance_id, aud, role, email, email_confirmed_at, raw_user_meta_data, created_at, updated_at) values
@@ -45,6 +45,14 @@ select throws_ok($$select public.change_trip_driver('31313131-0000-4000-8000-000
 select lives_ok($$select public.change_trip_driver('31313131-0000-4000-8000-0000000000e1', '31313131-0000-4000-8000-000000000003', 'Sani is unwell')$$, 'the owner hands the trip to Bello');
 reset role;
 select is((select driver_id from public.trips where id = '31313131-0000-4000-8000-0000000000e1'), '31313131-0000-4000-8000-000000000003'::uuid, 'Bello drives it now');
+-- Back to Sani, then to Bello again: every change still reaches both drivers (review).
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub": "31313131-0000-4000-8000-000000000001", "role": "authenticated"}', true);
+select public.change_trip_driver('31313131-0000-4000-8000-0000000000e1', '31313131-0000-4000-8000-000000000002');
+select public.change_trip_driver('31313131-0000-4000-8000-0000000000e1', '31313131-0000-4000-8000-000000000003');
+reset role;
+select is((select count(*)::int from public.notifications where event = 'trip.driver_assigned' and channel = 'in_app' and user_id = '31313131-0000-4000-8000-000000000003'), 2, 'Bello is told both times');
+select is((select count(*)::int from public.trip_events where trip_id = '31313131-0000-4000-8000-0000000000e1' and type = 'driver_changed'), 3, 'each change is on the timeline');
 update public.trips set status = 'loaded', loaded_at = now() where id = '31313131-0000-4000-8000-0000000000e1';
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub": "31313131-0000-4000-8000-000000000001", "role": "authenticated"}', true);
