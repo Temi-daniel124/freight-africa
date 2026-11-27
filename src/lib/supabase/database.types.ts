@@ -14,6 +14,47 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_installs: {
+        Row: {
+          device_id: string
+          id: string
+          installed_at: string | null
+          last_seen_at: string | null
+          platform: string
+          started_at: string
+          state: string
+          user_id: string
+        }
+        Insert: {
+          device_id: string
+          id?: string
+          installed_at?: string | null
+          last_seen_at?: string | null
+          platform: string
+          started_at?: string
+          state?: string
+          user_id: string
+        }
+        Update: {
+          device_id?: string
+          id?: string
+          installed_at?: string | null
+          last_seen_at?: string | null
+          platform?: string
+          started_at?: string
+          state?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "app_installs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       approvals: {
         Row: {
           approved_by: string | null
@@ -2915,6 +2956,7 @@ export type Database = {
         Args: { p_agent: string; p_due: string; p_truck: string }
         Returns: string
       }
+      create_install_code: { Args: never; Returns: string }
       create_invite: {
         Args: {
           p_email?: string
@@ -3042,6 +3084,14 @@ export type Database = {
       }
       has_accepted_terms: { Args: { p_version: string }; Returns: boolean }
       has_app_pin: { Args: never; Returns: boolean }
+      install_checkin: {
+        Args: { p_device: string; p_platform: string; p_standalone: boolean }
+        Returns: boolean
+      }
+      install_started: {
+        Args: { p_device: string; p_platform: string }
+        Returns: undefined
+      }
       invite_details: {
         Args: { p_token: string }
         Returns: {
@@ -3231,6 +3281,10 @@ export type Database = {
       record_fresh_check: {
         Args: { p_session: string; p_user: string }
         Returns: undefined
+      }
+      redeem_install_code: {
+        Args: { p_code: string; p_phone: string }
+        Returns: string
       }
       refund_paid: {
         Args: { p_provider_ref: string; p_refund: string }
