@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus } from "lucide-react";
+import { Ellipsis, X } from "lucide-react";
 import { useOptimistic, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { initialsOf } from "@/components/ui/avatar";
@@ -46,7 +46,7 @@ export function AvatarRow({ name, current, label, moreLabel, fewerLabel }: { nam
         aria-label={open ? fewerLabel : moreLabel}
         className="grid size-15 shrink-0 place-items-center rounded-full border-field border-dashed border-line-strong text-ink-3"
       >
-        <Plus aria-hidden className={cn("size-5 transition-transform", open && "rotate-45")} strokeWidth={1.8} />
+        {open ? <X aria-hidden className="size-5" strokeWidth={1.8} /> : <Ellipsis aria-hidden className="size-5" strokeWidth={1.8} />}
       </button>
     </div>
   );

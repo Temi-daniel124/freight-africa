@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useActionState, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
-import { AuthActions, AuthBody, AuthTop } from "@/features/auth/auth-frame";
+import { AuthActions, AuthBody } from "@/features/auth/auth-frame";
 import { cn } from "@/lib/utils";
 import { chooseRole } from "./actions";
 import type { JoiningAs, RoleState } from "./roles";
@@ -132,7 +132,7 @@ export function RoleForm({ t, choices, preset, agreed, termsHref, privacyHref }:
 
   return (
     <form action={action} noValidate className="flex flex-1 flex-col">
-      <AuthTop middle={<span className="text-label text-ink-3">{t.step}</span>} />
+      <p className="pt-3.5 text-center text-label text-ink-3">{t.step}</p>
       <AuthBody className="pt-7 md:px-0">
         <h1 className="text-title-1 text-balance text-ink">{t.title}</h1>
         <p className="type-signin-lead mt-2.5 text-ink-2">{t.lead}</p>

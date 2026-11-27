@@ -23,23 +23,25 @@ type KeypadProps = {
   canDelete?: boolean;
   /** The bottom-left slot ("Forgot PIN?"), or empty. */
   extra?: { label: string; onPress: () => void };
+  /** P05: 68 px keys, 8 px between rows and 20 px between columns (phones). */
+  roomy?: boolean;
 };
 
 /**
  * Mockup .kp: a 3 × 4 grid with 4 px gaps, 64 px keys with 18 px corners, 28 px digits at weight 500,
  * a soft press colour; 52 px keys with 22 px digits in the desktop card (D01b). The page listens for the physical keyboard itself (see PinKeypad).
  */
-export function Keypad({ onKey, deleteLabel, disabled, canDelete = true, extra }: KeypadProps) {
-  const key = "grid h-16 place-items-center rounded-key text-[28px] md:h-13 md:text-[22px] leading-none font-medium text-ink tabular transition-colors duration-100 active:bg-green-50 hover:bg-paper disabled:opacity-60";
+export function Keypad({ onKey, deleteLabel, disabled, canDelete = true, extra, roomy }: KeypadProps) {
+  const key = cn(roomy ? "h-17" : "h-16", "grid place-items-center rounded-key text-[28px] md:h-13 md:text-[22px] leading-none font-medium text-ink tabular transition-colors duration-100 active:bg-green-50 hover:bg-paper disabled:opacity-60");
   return (
-    <div className="grid grid-cols-3 gap-1">
+    <div className={cn("grid grid-cols-3", roomy ? "gap-x-5 gap-y-2 md:gap-1" : "gap-1")}>
       {DIGITS.map((digit) => (
         <button key={digit} type="button" onClick={() => onKey(digit)} disabled={disabled} aria-label={digit} className={key}>
           {digit}
         </button>
       ))}
       {extra ? (
-        <button type="button" onClick={extra.onPress} disabled={disabled} className="grid h-16 place-items-center rounded-key px-1 text-label font-semibold text-green-700 active:bg-green-50 md:h-13">
+        <button type="button" onClick={extra.onPress} disabled={disabled} className={cn(roomy ? "h-17" : "h-16", "grid place-items-center rounded-key px-1 text-label font-semibold text-green-700 active:bg-green-50 md:invisible md:h-13")}>
           {extra.label}
         </button>
       ) : (

@@ -176,7 +176,7 @@ function HaveAccount({ next }: { next: string }) {
   return (
     <>
       <span className="text-ink-2">{messages.auth.signin.haveAccount}</span>{" "}
-      <Link href={`/auth?mode=signin&next=${encodeURIComponent(next)}`} className="inline-block py-3 font-semibold text-green-700 lg:py-0">
+      <Link href={`/auth?mode=signin&next=${encodeURIComponent(next)}`} className="py-3 font-semibold text-green-700 lg:py-0">
         {messages.auth.signin.signInLink}
       </Link>
     </>

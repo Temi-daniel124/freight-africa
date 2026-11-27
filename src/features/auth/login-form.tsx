@@ -80,7 +80,7 @@ export function LoginForm({ next }: { next: string }) {
         </Button>
         <p className="text-center text-body-sm font-normal text-ink-2 lg:hidden">
           {t.getStarted}{" "}
-          <Link href={startHref} className="inline-block py-3 font-semibold text-green-700">
+          <Link href={startHref} className="py-3 font-semibold text-green-700">
             {t.getStartedLink}
           </Link>
         </p>

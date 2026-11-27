@@ -224,6 +224,7 @@ export function PinSet({ next, avatar }: { next: string; avatar?: React.ReactNod
   return (
     <PinKeypad
       large
+      roomy
       // The email code is behind this step already, so there is no Back: the header only says where you are.
       top={<AuthTop middle={<StepLabel n={2} />} />}
       title={first === null ? t.setTitle : t.confirmTitle}

@@ -35,6 +35,8 @@ type PinKeypadProps = {
   stepKey?: string;
   /** D01b: the "Open Freight Africa" button in the desktop card. */
   openLabel?: string;
+  /** P05: taller keys with wider gaps (68 px, 20 px apart). */
+  roomy?: boolean;
 };
 
 /**
@@ -43,7 +45,7 @@ type PinKeypadProps = {
  * 420 px card on the paper with the logo top left, a compact keypad and the physical keyboard. A wrong PIN
  * shakes the dots and buzzes on Android.
  */
-export function PinKeypad({ title, large, lead, avatar, top, onComplete, forgot, corner, blocked, extra, stepKey, openLabel }: PinKeypadProps) {
+export function PinKeypad({ title, large, lead, avatar, top, onComplete, forgot, corner, blocked, extra, stepKey, openLabel, roomy }: PinKeypadProps) {
   const [pin, setPin] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -121,7 +123,7 @@ export function PinKeypad({ title, large, lead, avatar, top, onComplete, forgot,
       <div className="flex min-h-dvh w-full flex-col md:min-h-0 md:max-w-105 md:rounded-card md:border md:border-line md:bg-surface md:px-8 md:pt-9 md:pb-6 md:text-center md:shadow-[0_40px_80px_-50px_rgba(15,26,20,0.5)]">
         <div className="md:hidden">{top}</div>
         {/* Avatar, title, lead and the six dots, centred in the space above the keypad. */}
-        <div className={cn("flex flex-1 flex-col items-center px-8 pb-6 text-center md:flex-none md:px-0 md:pb-0", top ? "justify-center" : "pt-17.5")}>
+        <div className={cn("flex flex-1 flex-col items-center px-8 pb-6 text-center md:flex-none md:px-0 md:pb-0", top ? "justify-center" : "pt-17.5 md:pt-0")}>
           {avatar}
           <h1 className={cn("text-ink", avatar && "mt-4", large ? "text-step md:text-title-2" : "text-title-2")}>{title}</h1>
           {lead ? <p className={cn("mt-1.5 [overflow-wrap:anywhere]", large ? "mt-2 text-body text-ink-2 md:text-meta md:text-ink-3" : "text-meta text-ink-3")}>{lead}</p> : null}
@@ -146,12 +148,12 @@ export function PinKeypad({ title, large, lead, avatar, top, onComplete, forgot,
         </div>
 
         {/* The keypad: a sheet docked to the bottom on phones, part of the card from 768 px. */}
-        <div className="rounded-t-sheet bg-surface px-6 pt-4 pb-[max(env(safe-area-inset-bottom),30px)] shadow-[0_-10px_40px_-24px_rgba(15,26,20,0.25)] md:mt-3.5 md:rounded-none md:p-0 md:shadow-none">
+        <div className={cn("rounded-t-sheet bg-surface pb-[max(env(safe-area-inset-bottom),30px)] shadow-[0_-10px_40px_-24px_rgba(15,26,20,0.25)] md:mt-3.5 md:rounded-none md:p-0 md:shadow-none", roomy ? "px-7 pt-5" : "px-6 pt-4")}>
           {blocked ? (
             <div className="mx-auto flex w-full max-w-80 flex-col gap-3 py-4">{blocked}</div>
           ) : (
             <>
-              <Keypad onKey={press} deleteLabel={t.delete} disabled={busy} canDelete={pin.length > 0} extra={corner} />
+              <Keypad onKey={press} deleteLabel={t.delete} disabled={busy} canDelete={pin.length > 0} extra={corner} roomy={roomy} />
               {openLabel ? (
                 <Button className="mt-4.5 hidden w-full md:flex" loading={busy} loadingLabel={openLabel} disabled={pin.length < 6} onClick={() => void submit(typed.current)}>
                   {openLabel}
