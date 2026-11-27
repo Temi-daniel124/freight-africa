@@ -30,11 +30,12 @@ export async function DriversPage({ orgId }: { orgId: string | null }) {
     );
   }
   const supabase = await supabaseServer();
-  const [{ data: members }, { data: drivers }, { data: live }] = await Promise.all([
+  const [{ data: members }, { data: drivers }, { data: live }, { count: unread }] = await Promise.all([
     supabase.rpc("team_members", { p_org: orgId }),
     supabase.from("drivers").select("user_id, status, paused, licence_expires_on"),
     // D045: each driver's current truck and whether they're on a trip.
     supabase.from("trips").select("driver_id, ref, truck:trucks(plate_number)").eq("transporter_org_id", orgId).in("status", ["assigned", "to_pickup", "at_pickup", "loading", "loaded", "in_transit", "arrived"]),
+    supabase.from("driver_messages").select("id", { count: "exact", head: true }).eq("org_id", orgId).is("read_at", null),
   ]);
   const onTrip = new Map((live ?? []).map((r) => [r.driver_id, { ref: r.ref, plate: (r.truck as unknown as { plate_number: string } | null)?.plate_number ?? "" }]));
   const list = (members ?? []).filter((m) => m.is_driver && !m.is_me);
@@ -50,7 +51,14 @@ export async function DriversPage({ orgId }: { orgId: string | null }) {
   }
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex justify-end">{add}</div>
+      {/* OD11 (v1.1): Messages from drivers next to Invite a driver. */}
+      <div className="flex justify-end gap-2">
+        <Link href="/app/haul/messages" className={buttonVariants({ size: "md", variant: "secondary" })}>
+          {messages.driverMessages.title}
+          {unread ? <span className="tabular rounded-pill bg-green-700 px-2 py-0.5 text-caption font-semibold text-white">{unread}</span> : null}
+        </Link>
+        {add}
+      </div>
       <ul className="overflow-hidden rounded-tile bg-surface shadow-raised lg:rounded-card">
         {list.map((member) => {
           const driver = byId.get(member.user_id);

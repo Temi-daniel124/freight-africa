@@ -2856,6 +2856,10 @@ export type Database = {
         Args: { p_key: string; p_note?: string; p_value: Json }
         Returns: string
       }
+      change_trip_driver: {
+        Args: { p_driver: string; p_reason?: string; p_trip: string }
+        Returns: undefined
+      }
       check_app_pin: { Args: { p_pin: string }; Returns: string }
       claim_notifications: {
         Args: { p_limit?: number }
