@@ -14,7 +14,7 @@ import { OwnerTripsPage } from "@/features/booking/owner-trips";
 import { OwnerHome } from "@/features/owner/owner-home";
 import { OwnerMore } from "@/features/owner/more";
 import { DriverMe } from "@/features/driver/me";
-import { DriverHelp, DriverHistory, DriverNotifications } from "@/features/driver/history";
+import { DriverHelp, DriverHistory, DriverNextLoad, DriverNotifications } from "@/features/driver/history";
 import { DriverTrip, DriverTripDesk } from "@/features/driver/trip";
 import { OwnerEarnings } from "@/features/owner/earnings";
 import { OwnerPapers, OwnerTrucks } from "@/features/owner/fleet";
@@ -222,6 +222,8 @@ async function sectionBody(page: PageKey, config: ShellConfig, viewer: Promise<V
       ) : (
         <PlaceholderPage config={config} page={page} />
       );
+    case "next":
+      return config.role === "driver" ? <DriverNextLoad viewer={viewer} /> : <PlaceholderPage config={config} page={page} />;
     case "history":
       return config.role === "driver" ? <DriverHistory viewer={viewer} /> : <PlaceholderPage config={config} page={page} />;
     case "notifications":

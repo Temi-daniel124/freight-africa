@@ -152,3 +152,38 @@ export function DriverHelp() {
     </div>
   );
 }
+
+/** DV30 Next load: the trips the owner has already given this driver after the current one. Return loads
+ * near the driver (with "Tell my owner I can take this") need the load board, which drivers don't see:
+ * that comes with return loads (Phase 5). */
+export async function DriverNextLoad({ viewer }: { viewer: Promise<Viewer> }) {
+  await viewer;
+  const t = messages.driverNext;
+  const { supabase, id } = await me();
+  const { data: trips } = await supabase.from("trips").select("id, transporter_org_id, status, created_at").eq("driver_id", id).eq("status", "assigned" as never).order("created_at").limit(10);
+  const { data: live } = await supabase.from("trips").select("id").eq("driver_id", id).in("status", ["to_pickup", "at_pickup", "loading", "loaded", "in_transit", "arrived"] as never[]).limit(1);
+  // The first assigned trip is the one on the Trip tab, unless a trip is already under way.
+  const upcoming = (trips ?? []).slice(live?.length ? 0 : 1);
+  if (!upcoming.length) return <EmptyState title={t.empty} className="pt-16">{t.emptyText}</EmptyState>;
+  const maps = await Promise.all(upcoming.map((trip) => supabase.rpc("trip_map", { p_trip: trip.id }).then((r) => r.data?.[0])));
+  const orgIds = [...new Set(upcoming.map((trip) => trip.transporter_org_id))];
+  const { data: orgs } = await supabase.from("organizations").select("id, name").in("id", orgIds);
+  const orgName = new Map((orgs ?? []).map((o) => [o.id, o.name]));
+  return (
+    <div className="mx-auto flex w-full max-w-[560px] flex-col gap-3">
+      {upcoming.map((trip, i) => {
+        const m = maps[i];
+        if (!m) return null;
+        return (
+          <article key={trip.id} className="rounded-card border border-line bg-surface p-4.5">
+            <p className="text-meta font-semibold tracking-[0.06em] text-ink-3 uppercase">{t.from.replace("{org}", orgName.get(trip.transporter_org_id) ?? "")}</p>
+            <p className="mt-1 text-title-2 text-ink">
+              {m.from_city} → {m.to_city}
+            </p>
+            <p className="text-body text-ink-2">{[m.pickup_from ? lagos(m.pickup_from, { weekday: "short", day: "numeric", month: "short" }) : null, m.goods, m.weight_kg ? `${Math.round(m.weight_kg / 1000)} t` : null].filter(Boolean).join(" · ")}</p>
+          </article>
+        );
+      })}
+    </div>
+  );
+}
