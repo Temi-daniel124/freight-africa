@@ -580,9 +580,9 @@ declare
   v_old record;
   v_back bigint;
 begin
-  -- Same lock order as confirm_payment (payment, then load), so the two never deadlock (money review).
-  perform 1 from public.payments where load_id = p_load and purpose = 'raise' and status = 'pending' for update;
+  -- One lock order everywhere money moves: the load, then its payments (money review).
   select * into v_load from public.loads where id = p_load for update;
+  perform 1 from public.payments where load_id = p_load and purpose = 'raise' and status = 'pending' for update;
   if v_load.id is null or not public.can_in_org(v_load.shipper_org_id, 'pay') then
     raise exception 'not allowed' using errcode = '42501';
   end if;
@@ -656,19 +656,23 @@ declare
   v_needed bigint;
   v_extra bigint := 0;
   v_received bigint;
+  v_load_id uuid;
 begin
   if p_amount_kobo is null or p_amount_kobo <= 0 then
     raise exception 'amount must be positive' using errcode = '22023';
   end if;
-  select * into v_pay from public.payments where provider_ref = p_provider_ref for update;
-  if v_pay.id is null then
+  -- One lock order everywhere money moves: the load, then its payments (money review). A payment's load
+  -- never changes, so reading it first without a lock is safe.
+  select load_id into v_load_id from public.payments where provider_ref = p_provider_ref;
+  if v_load_id is null then
     raise exception 'unknown payment' using errcode = 'P0002';
   end if;
+  select * into v_load from public.loads where id = v_load_id for update;
+  select * into v_pay from public.payments where provider_ref = p_provider_ref for update;
   if exists (select 1 from private.payment_events where provider_event_id = p_event_id) then
     return 'duplicate';
   end if;
   insert into private.payment_events (provider_event_id, payment_id, amount_kobo) values (p_event_id, v_pay.id, p_amount_kobo);
-  select * into v_load from public.loads where id = v_pay.load_id for update;
   v_escrow := private.ledger_account('escrow', null, v_load.id);
   perform private.post_ledger('fund_load', 'pay:' || p_event_id,
     jsonb_build_array(
