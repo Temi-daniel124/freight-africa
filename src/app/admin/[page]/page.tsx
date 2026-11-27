@@ -6,6 +6,7 @@ import { EscrowView, PayoutsView, RefundsView } from "@/features/money/finance-v
 import { FieldTasks } from "@/features/staff/field-tasks";
 import { NoAccess, StaffOverview, StaffWork } from "@/features/staff/home";
 import { StaffTrip, StaffTrips } from "@/features/staff/trips";
+import { StaffApprovals, StaffAudit, StaffFees, StaffMessages, StaffSettings, StaffTeam } from "@/features/staff/admin-pages";
 import { staffMetadata, StaffSuspense } from "@/features/staff/staff-page";
 import { BankQueue } from "@/features/verification/bank-queue";
 import { FleetQueue } from "@/features/verification/fleet-queue";
@@ -62,6 +63,18 @@ async function Console({ params, searchParams }: { params: Promise<{ page: strin
       ) : (
         <StaffTrips view={typeof query.view === "string" ? query.view : "live"} q={typeof query.q === "string" ? query.q : undefined} />
       )
+    ) : page === "approvals" ? (
+      <StaffApprovals />
+    ) : page === "settings" ? (
+      <StaffSettings />
+    ) : page === "fees" ? (
+      <StaffFees />
+    ) : page === "audit" ? (
+      <StaffAudit />
+    ) : page === "staff" ? (
+      <StaffTeam />
+    ) : page === "messages" ? (
+      <StaffMessages />
     ) : page === "overview" ? (
       <StaffOverview now={clock()} />
     ) : page === "tasks" ? (

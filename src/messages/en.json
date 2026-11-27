@@ -3711,5 +3711,87 @@
       "staff.note": "Note"
     },
     "wait": "The balance waits for the sender's problem window to end. It's released then by itself."
+  },
+  "staffAdmin": {
+    "inviteEmail": {
+      "subject": "You're invited to the Freight Africa staff console",
+      "body": "You've been invited to join the Freight Africa staff console. Open the link to set up your PIN and two-step sign-in.",
+      "cta": "Join the staff console",
+      "expires": "The link works for 48 hours."
+    },
+    "reason": "Reason (saved to the audit log)",
+    "reasonHint": "At least 5 characters.",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "failed": "That didn't go through. Reload and try again.",
+    "done": "Done. It's in the audit log.",
+    "approvals": {
+      "lead": "Changes that need a second person. Nobody can approve their own request.",
+      "settings": "Setting changes",
+      "money": "Payouts and refunds over the limit",
+      "none": "Nothing waiting for a second person.",
+      "from": "From",
+      "to": "To",
+      "by": "Asked by {name} · {when}",
+      "yours": "Your request: another super admin decides it",
+      "approve": "Approve",
+      "reject": "Reject",
+      "approveTitle": "Approve this change",
+      "rejectTitle": "Reject this change",
+      "approveEffect": "The setting changes now, for every new load.",
+      "rejectEffect": "The setting stays as it is.",
+      "payout": "Payout",
+      "refund": "Refund",
+      "moneyEffect": "It's paid out from the money held."
+    },
+    "settings": {
+      "lead": "How the platform runs. Money settings need a second super admin.",
+      "money": "Money",
+      "other": "Everything else",
+      "change": "Change",
+      "changeTitle": "Change {key}",
+      "value": "New value",
+      "valueHint": "Keep the same shape (number, true or false, text, or the same keys).",
+      "waiting": "Sent for a second super admin to approve.",
+      "badValue": "That value doesn't fit this setting.",
+      "by": "Changed {when}"
+    },
+    "fees": {
+      "lead": "Service fees, commission and offer limits. Shown only here, never on the public site (D031). Changes need a second super admin."
+    },
+    "audit": {
+      "lead": "Every change to money, status, access and settings. It can't be edited.",
+      "when": "When",
+      "who": "Who",
+      "action": "Action",
+      "what": "What",
+      "none": "Nothing logged yet.",
+      "system": "System"
+    },
+    "team": {
+      "lead": "Staff accounts, roles and invites. Two-step sign-in is required for everyone.",
+      "name": "Name",
+      "role": "Role",
+      "status": "Status",
+      "active": "Active",
+      "inactive": "Off",
+      "joined": "Joined",
+      "invite": "Invite staff",
+      "inviteTitle": "Invite a staff member",
+      "email": "Work email",
+      "sent": "Invite sent. The link works for 48 hours.",
+      "badEmail": "Check the email address.",
+      "codeAgreed": "Staff code agreed",
+      "codeNot": "Staff code not agreed yet"
+    },
+    "messages": {
+      "lead": "What we send by email, SMS, push and in the app. WhatsApp is off until it's connected.",
+      "code": "Message",
+      "channel": "Channel",
+      "text": "Text",
+      "onHold": "On hold",
+      "live": "Live",
+      "whatsappNote": "WhatsApp templates stay on hold until WhatsApp is connected; then they join with the 24-hour reply window."
+    }
   }
 }
