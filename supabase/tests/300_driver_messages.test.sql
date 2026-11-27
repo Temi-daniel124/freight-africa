@@ -21,7 +21,8 @@ insert into public.organization_members (org_id, user_id, transporter_role, is_d
   ('30303030-0000-4000-8000-0000000000b2', '30303030-0000-4000-8000-000000000004', 'driver', true);
 insert into public.drivers (user_id, org_id, status) values
   ('30303030-0000-4000-8000-000000000003', '30303030-0000-4000-8000-0000000000b1', 'active'),
-  ('30303030-0000-4000-8000-000000000004', '30303030-0000-4000-8000-0000000000b2', 'active');
+  ('30303030-0000-4000-8000-000000000004', '30303030-0000-4000-8000-0000000000b2', 'active')
+on conflict (user_id) do update set org_id = excluded.org_id, status = 'active';
 
 create temp table ids (name text primary key, id uuid);
 grant all on ids to authenticated;
