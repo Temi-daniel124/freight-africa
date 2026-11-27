@@ -3223,5 +3223,45 @@
     "help": "Help",
     "switch": "Switch account",
     "signOut": "Sign out"
+  },
+  "ownerEarnings": {
+    "paidMonth": "Paid this month",
+    "coming": "Coming to you",
+    "payouts": "Payouts",
+    "kinds": {
+      "advance": "Advance",
+      "balance": "Balance",
+      "cancellation_fee": "Cancellation fee",
+      "waiting_charge": "Waiting charge",
+      "transload_share": "Transload share",
+      "agent_share": "Agent share"
+    },
+    "status": {
+      "queued": "Waiting",
+      "awaiting_approval": "Being checked",
+      "processing": "Sending",
+      "paid": "Paid",
+      "failed": "Failed",
+      "held": "Held",
+      "reversed": "Reversed"
+    },
+    "statements": "Statements",
+    "trips": "{n} trips",
+    "tripOne": "1 trip",
+    "net": "net paid",
+    "pdf": "PDF",
+    "bank": "Bank account",
+    "verified": "verified",
+    "usableFrom": "usable from {when}",
+    "change": "Change",
+    "step1Advance": "Goods loaded, advance released",
+    "step1Balance": "Delivery confirmed, balance released",
+    "step2": "Sending to your bank",
+    "step3": "Paid",
+    "to": "To",
+    "yourBank": "Your bank account",
+    "reference": "Bank reference",
+    "stillToCome": "Balance still to come",
+    "download": "Download payout advice"
   }
 }
