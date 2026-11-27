@@ -623,3 +623,11 @@
     }
   }
 }
+
+/* Full-screen flows (booking, mockup P08): the phone tabs step aside while they are open. */
+body:has([data-full-screen]) .bottom-tabs {
+  display: none;
+}
+body:has([data-full-screen]) .pb-tabs {
+  padding-bottom: 0;
+}
