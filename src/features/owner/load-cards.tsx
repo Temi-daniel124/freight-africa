@@ -119,7 +119,7 @@ export function LoadCard({ load: l, compact = false, href }: { load: BoardLoad; 
           {dayLabel(l.pickupFrom)}, {slotOf(l.pickupFrom)} · {l.truckType.toLowerCase()}
         </p>
         {compact ? null : (
-          <p className="mt-2.5 flex items-center gap-2 text-body-sm text-ink">
+          <p className="mt-2.5 flex items-center gap-2 text-body-sm font-normal text-ink">
             <Package aria-hidden className="size-4.5 text-[#B8732E]" strokeWidth={1.8} />
             {amountLine(l)}
           </p>

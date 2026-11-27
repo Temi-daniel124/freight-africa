@@ -1,4 +1,4 @@
-import { FileText, Search, Star, Truck, UserX } from "lucide-react";
+import { FileText, Star, Truck, UserX } from "lucide-react";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
 import { StatusChip, type StatusTone } from "@/components/ui/chip";
@@ -255,7 +255,7 @@ export async function OwnerHome({ viewer }: { viewer: Promise<Viewer>; drives?: 
         <Star aria-hidden className="size-5" strokeWidth={1.8} />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block text-body font-semibold text-ink">{fill(o.record, { tier: o.tier[tier], n: tripCount })}</span>
+        <span className="block text-body font-semibold text-ink">{fill(tripCount === 1 ? o.recordOne : o.record, { tier: o.tier[tier], n: tripCount })}</span>
         <span className="block text-meta text-ink-3">{recordSub}</span>
       </span>
     </Link>
@@ -263,6 +263,16 @@ export async function OwnerHome({ viewer }: { viewer: Promise<Viewer>; drives?: 
 
   // Desktop: the trips table under Needs you (OD01).
   const live = trucks.filter((x) => x.trip_id && x.trip_status && LIVE.includes(x.trip_status));
+  const nextPayout = new Map<string, string>();
+  await Promise.all(
+    live.map(async (x) => {
+      const { data } = await supabase.rpc("trip_money", { p_trip: x.trip_id as string });
+      const m = data?.[0];
+      if (!m) return;
+      const paidAdvance = (payouts ?? []).some((p) => p.trip_id === x.trip_id && p.kind === "advance" && p.status === "paid");
+      nextPayout.set(x.trip_id as string, paidAdvance ? fill(o.onDelivery, { amount: naira(Number(m.balance_kobo)) }) : fill(o.atLoading, { amount: naira(Number(m.advance_kobo)) }));
+    }),
+  );
   const tripsTable = live.length ? (
     <section className="hidden rounded-card border border-line bg-surface lg:block">
       <div className="flex items-center justify-between px-6 pt-5">
@@ -274,7 +284,7 @@ export async function OwnerHome({ viewer }: { viewer: Promise<Viewer>; drives?: 
       <table className="mt-3 w-full text-left text-body-sm">
         <thead>
           <tr className="border-b border-line-soft text-caption font-semibold tracking-caps text-ink-3 uppercase">
-            {[o.cols.truck, o.cols.driver, o.cols.route, o.cols.status, o.cols.load].map((c) => (
+            {[o.cols.truck, o.cols.driver, o.cols.route, o.cols.status, o.cols.load, o.cols.next].map((c) => (
               <th key={c} className="px-6 py-2.5 font-semibold first:pl-6">
                 {c}
               </th>
@@ -285,7 +295,7 @@ export async function OwnerHome({ viewer }: { viewer: Promise<Viewer>; drives?: 
           {live.map((x) => (
             <tr key={x.trip_id} className="border-t border-line-soft">
               <td className="tabular px-6 py-3.5 font-semibold">
-                <Link href={`/app/haul/trips/${x.trip_id}`}>{x.plate}</Link>
+                <Link href={`/app/haul/trips/${x.trip_id}`}>{x.plate.replace(/^([A-Z]{3})(\d{3})([A-Z]{2})$/, "$1 $2 $3")}</Link>
               </td>
               <td className="px-6 py-3.5">{x.driver_name ?? "—"}</td>
               <td className="px-6 py-3.5">
@@ -295,6 +305,7 @@ export async function OwnerHome({ viewer }: { viewer: Promise<Viewer>; drives?: 
                 <StatusChip tone={ROAD.includes(x.trip_status ?? "") ? "info" : "success"}>{messages.trips.status[x.trip_status as keyof typeof messages.trips.status] ?? x.trip_status}</StatusChip>
               </td>
               <td className="px-6 py-3.5 text-ink-2">{x.weight_kg ? `${Math.round((x.weight_kg / x.capacity_kg) * 100)}% · ${Math.round(x.weight_kg / 1000)} t` : (x.goods ?? "")}</td>
+              <td className="tabular px-6 py-3.5 text-right">{nextPayout.get(x.trip_id ?? "") ?? "—"}</td>
             </tr>
           ))}
         </tbody>
@@ -304,10 +315,6 @@ export async function OwnerHome({ viewer }: { viewer: Promise<Viewer>; drives?: 
 
   return (
     <div className="flex flex-col gap-5">
-      <form action="/app/haul/trips" className="relative hidden lg:block lg:w-80 lg:self-end">
-        <Search aria-hidden className="pointer-events-none absolute top-1/2 left-4 size-4.5 -translate-y-1/2 text-ink-3" strokeWidth={1.8} />
-        <input name="q" placeholder={o.search} aria-label={o.search} className="h-12 w-full rounded-pill border border-line bg-surface pr-4 pl-11 text-body outline-none focus:border-green-700" />
-      </form>
       {hero}
       <div className="flex flex-col gap-5 lg:grid lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start lg:gap-5">
         <div className="flex min-w-0 flex-col gap-5">
