@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(38);
+select plan(43);
 
 -- Cast: a sender (Adaeze, Okafor Foods) and a second sender (Bisi, Lekki Traders). The fee is on.
 update public.settings set value = 'false' where key = 'first_trip_no_fee';
@@ -52,9 +52,9 @@ insert into ids select 'old', pg_temp.draft('27272727-0000-4000-8000-0000000000a
 select is((select status::text from public.loads where id = (select id from ids where name = 'd1')), 'draft', 'a saved booking is a draft: not placed, nothing held');
 select is(public.load_pay_total((select id from ids where name = 'd1')), (select total_kobo from public.loads where id = (select id from ids where name = 'd1')),
   'the pay screen shows the price paying would take now');
-select is(pg_temp.escrow('d1'), 0::bigint, 'nothing is held for a draft');
 
 reset role;
+select is(pg_temp.escrow('d1'), 0::bigint, 'nothing is held for a draft');
 update public.loads set pickup_from = now() - interval '2 days', pickup_until = now() - interval '1 day' where id = (select id from ids where name = 'old');
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub": "27272727-0000-4000-8000-000000000001", "role": "authenticated"}', true);
@@ -139,6 +139,27 @@ do $$ begin perform public.attach_batch_checkout((select id from ids where name 
 select is(public.fail_payment('demo-batch-2'), 'failed', 'a failed batch');
 reset role;
 select is((select count(*)::int from public.payments where batch_id = (select id from ids where name = 'batch2') and status = 'failed'), 2, 'fails every payment in it, with nothing taken');
+
+-- A first load stays free on Try again (money review): the retry keeps the quote.
+reset role;
+update public.settings set value = 'true' where key = 'first_trip_no_fee';
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub": "27272727-0000-4000-8000-000000000002", "role": "authenticated"}', true);
+insert into ids select 'bisi_pay1', public.request_load_payment((select id from ids where name = 'bisi'));
+select is((select fee_kobo from public.loads where id = (select id from ids where name = 'bisi')), 0::bigint, 'a first load has no service fee');
+reset role;
+set local role service_role;
+do $$ begin perform public.attach_checkout((select id from ids where name = 'bisi_pay1'), 'demo', 'demo-bisi-1', '/pay/demo/demo-bisi-1'); end $$;
+do $$ begin perform public.fail_payment('demo-bisi-1'); end $$;
+reset role;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub": "27272727-0000-4000-8000-000000000002", "role": "authenticated"}', true);
+insert into ids select 'bisi_pay2', public.request_load_payment((select id from ids where name = 'bisi'));
+select is((select amount_kobo from public.payments where id = (select id from ids where name = 'bisi_pay2')),
+  (select amount_kobo from public.payments where id = (select id from ids where name = 'bisi_pay1')), 'Try again asks for the same amount');
+select is((select fee_kobo from public.loads where id = (select id from ids where name = 'bisi')), 0::bigint, 'and the first load is still free');
+select is(public.load_pay_total((select id from ids where name = 'bisi')), (select total_kobo from public.loads where id = (select id from ids where name = 'bisi')), 'the pay screen shows that same amount');
+select throws_ok($$select public.confirm_batch_payment('demo-batch-2', 'evt-x', 100)$$, '42501', null, 'the browser cannot confirm a batch');
 
 select * from finish();
 rollback;
