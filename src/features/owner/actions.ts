@@ -25,3 +25,17 @@ export async function markDriverMessageRead(messageId: string) {
   await assertUnlocked();
   await (await supabaseServer()).rpc("read_driver_message", { p_id: messageId });
 }
+
+/** DV32b: a driver messages their own business (send_driver_message checks it's their business). */
+export async function sendDriverMessage(input: { org: string; reason: "repair" | "day_off" | "papers" | "other"; body: string; voicePath?: string; voiceSeconds?: number }): Promise<{ status: "ok" | "limit" | "error" }> {
+  await assertUnlocked();
+  const { error } = await (await supabaseServer()).rpc("send_driver_message", {
+    p_org: input.org,
+    p_reason: input.reason,
+    p_body: input.body || undefined,
+    p_voice_path: input.voicePath,
+    p_voice_seconds: input.voiceSeconds,
+  });
+  if (!error) return { status: "ok" };
+  return { status: error.message.includes("too many") ? "limit" : "error" };
+}

@@ -14,6 +14,7 @@ import { OwnerTripsPage } from "@/features/booking/owner-trips";
 import { DriverTrip } from "@/features/home/driver-trip";
 import { OwnerHome } from "@/features/owner/owner-home";
 import { OwnerMore } from "@/features/owner/more";
+import { DriverMe } from "@/features/driver/me";
 import { OwnerEarnings } from "@/features/owner/earnings";
 import { OwnerPapers, OwnerTrucks } from "@/features/owner/fleet";
 import { SenderHome } from "@/features/home/sender-home";
@@ -180,7 +181,7 @@ async function sectionBody(page: PageKey, config: ShellConfig, viewer: Promise<V
     case "settings":
       return shipper ? <SenderSettings viewer={viewer} /> : <SettingsPage viewer={viewer} base={config.base} />;
     case "me":
-      return <SettingsPage viewer={viewer} base={config.base} />;
+      return config.role === "driver" ? <DriverMe viewer={viewer} /> : <SettingsPage viewer={viewer} base={config.base} />;
     case "book":
       return <BookPage viewer={viewer} />;
     case "trips":
