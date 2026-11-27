@@ -1,15 +1,17 @@
 "use client";
 
-import { Check, ChevronLeft, ExternalLink, Lock, RefreshCw, ShieldCheck, TriangleAlert } from "lucide-react";
+import { Check, ChevronLeft, ExternalLink, Info, Lock, RefreshCw, ShieldCheck, TriangleAlert } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { Dialog as RadixDialog } from "radix-ui";
 import { useEffect, useMemo, useState, useTransition } from "react";
+import { Drawer } from "vaul";
 import { toast } from "sonner";
 import { Logo } from "@/components/brand/Logo";
 import { Button } from "@/components/ui/button";
 import { SuccessCheck } from "@/components/ui/motion";
-import { Sheet } from "@/components/ui/sheet";
-import { formatNaira } from "@/lib/format";
+import { useWideScreen } from "@/components/ui/sheet";
+import { formatNaira } from "@/lib/money";
 import { cn } from "@/lib/utils";
 import messages from "@/messages/en.json";
 import { type CheckoutResult, checkoutState, finishDemoCheckout, saveAsDraft, startBatchCheckout, startCheckout } from "./actions";
@@ -77,32 +79,56 @@ function PhoneBar({ children }: { children: React.ReactNode }) {
 
 export function DraftSaved({ open, onOpenChange, line }: { open: boolean; onOpenChange: (open: boolean) => void; line: string }) {
   const router = useRouter();
+  const wide = useWideScreen();
+  const body = (Title: typeof RadixDialog.Title | typeof Drawer.Title, Desc: typeof RadixDialog.Description | typeof Drawer.Description) => (
+    <div className="flex flex-col items-center text-center">
+      <SuccessCheck label={c.draftSaved} />
+      <Title className="mt-5 text-title-2 text-ink">{c.draftSaved}</Title>
+      <Desc className="mt-1 text-body-sm text-ink-2">{line}</Desc>
+      <p className="mt-5 flex gap-2.5 rounded-callout bg-warning-100 px-4 py-3.5 text-left text-meta text-ink-2">
+        <Info aria-hidden className="mt-0.5 size-4.5 shrink-0 text-warning" strokeWidth={1.8} />
+        <span>
+          <strong className="font-semibold text-ink">{c.notPlaced}</strong> {c.notPlacedText}
+        </span>
+      </p>
+    </div>
+  );
+  const drafts = () => router.push("/app/ship/trips?tab=drafts");
+  const done = () => router.push("/app/ship");
+  if (wide) {
+    return (
+      <RadixDialog.Root open={open} onOpenChange={onOpenChange}>
+        <RadixDialog.Portal>
+          <RadixDialog.Overlay className="fixed inset-0 z-40 bg-scrim data-[state=open]:animate-in data-[state=open]:fade-in-0 motion-reduce:animate-none" />
+          <RadixDialog.Content className="fixed top-1/2 left-1/2 z-50 w-[min(460px,calc(100vw-32px))] -translate-x-1/2 -translate-y-1/2 rounded-dialog bg-surface p-8 shadow-dialog outline-none data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-96 motion-reduce:animate-none">
+            {body(RadixDialog.Title, RadixDialog.Description)}
+            <div className="mt-6 grid grid-cols-2 gap-2.5">
+              <Button variant="secondary" onClick={done}>
+                {c.done}
+              </Button>
+              <Button onClick={drafts}>{c.viewDrafts}</Button>
+            </div>
+          </RadixDialog.Content>
+        </RadixDialog.Portal>
+      </RadixDialog.Root>
+    );
+  }
   return (
-    <Sheet
-      kind="confirm"
-      open={open}
-      onOpenChange={onOpenChange}
-      title={c.draftSaved}
-      actions={
-        <>
-          <Button variant="secondary" className="lg:min-w-32" onClick={() => router.push("/app/ship")}>
-            {c.done}
-          </Button>
-          <Button className="lg:min-w-44" onClick={() => router.push("/app/ship/trips?tab=drafts")}>
+    <Drawer.Root open={open} onOpenChange={onOpenChange}>
+      <Drawer.Portal>
+        <Drawer.Overlay className="fixed inset-0 z-40 bg-scrim" />
+        <Drawer.Content className="fixed inset-x-0 bottom-0 z-50 flex flex-col rounded-t-sheet bg-surface px-5 pt-2.5 pb-[max(env(safe-area-inset-bottom),20px)] shadow-sheet outline-none">
+          <div aria-hidden className="mx-auto mb-4.5 h-1 w-10 rounded-pill bg-grab" />
+          {body(Drawer.Title, Drawer.Description)}
+          <Button className="mt-5 w-full" onClick={drafts}>
             {c.viewDrafts}
           </Button>
-        </>
-      }
-    >
-      <div className="-mt-12 flex flex-col items-center text-center">
-        <SuccessCheck label={c.draftSaved} className="order-first mb-16" />
-      </div>
-      <p className="-mt-3 text-center text-body-sm text-ink-2">{line}</p>
-      <div className="mt-2 rounded-callout bg-warning-100 px-4 py-3.5 text-left">
-        <p className="text-body-sm font-semibold text-ink">{c.notPlaced}</p>
-        <p className="mt-0.5 text-meta text-ink-2">{c.notPlacedText}</p>
-      </div>
-    </Sheet>
+          <Button variant="tertiary" size="text" className="mx-auto" onClick={done}>
+            {c.done}
+          </Button>
+        </Drawer.Content>
+      </Drawer.Portal>
+    </Drawer.Root>
   );
 }
 
@@ -110,7 +136,7 @@ export function DraftSaved({ open, onOpenChange, line }: { open: boolean; onOpen
 
 export type PayProps = {
   loadId: string;
-  ref: string;
+  reference: string;
   route: string;
   summary: string;
   draftLine: string;
@@ -169,7 +195,7 @@ export function PayScreen(p: PayProps) {
       if (result.status === "ok") setSaved(true);
       else toast.error(c.error);
     });
-  const sub = `${p.route} · ${p.ref}`;
+  const sub = `${p.route} · ${p.reference}`;
   const continueButton = (
     <Button className="w-full" loading={pending} loadingText loadingLabel={c.continuing} onClick={pay}>
       {c.continue}
@@ -252,7 +278,7 @@ export function PayScreen(p: PayProps) {
 export type ReturnProps = {
   kind: "payment" | "batch";
   id: string;
-  ref: string;
+  reference: string;
   amountKobo: number;
   route: string;
   loadId: string | null;
@@ -360,7 +386,7 @@ export function ReturnScreen(p: ReturnProps) {
           <span className="hidden lg:inline">{c.confirmingTextDesk}</span>
         </p>
         <p className="mt-6 inline-flex items-center gap-4 rounded-pill border border-line bg-surface px-5 py-3.5 lg:border-0 lg:py-0">
-          <span className="tabular text-body-sm text-ink-3">{p.ref}</span>
+          <span className="tabular text-body-sm text-ink-3">{p.reference}</span>
           <span className="tabular text-body font-semibold text-ink">{naira(p.amountKobo)}</span>
         </p>
         <p className="mt-auto pb-10 text-caption text-ink-3 lg:mt-6 lg:pb-0">

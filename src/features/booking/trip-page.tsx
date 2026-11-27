@@ -9,7 +9,8 @@ import { cn } from "@/lib/utils";
 import messages from "@/messages/en.json";
 import { loadLine, oneLoad, progressStep } from "./data";
 import { lagosTime, naira, ProgressDots, statusOf } from "./pieces";
-import { CancelButton, CounterCard, PayPanel } from "./trip-controls";
+import { PayTopUpButton } from "@/features/checkout/pay-top-up";
+import { CancelButton, CounterCard } from "./trip-controls";
 
 const t = messages.trips;
 
@@ -36,18 +37,9 @@ export async function SenderTripPage({ id }: { id: string }) {
   if (!data) notFound();
   const { load, payments, offers, stops } = data;
   const supabase = await supabaseServer();
-  const [{ data: demo }, { data: perms }] = await Promise.all([
-    supabase.rpc("am_i_demo"),
-    supabase.rpc("org_permissions", { p_org: data.shipperOrg }),
-  ]);
+  const { data: perms } = await supabase.rpc("org_permissions", { p_org: data.shipperOrg });
   const can = (p: string) => (perms ?? []).includes(p);
   const status = statusOf(load);
-  const pay =
-    payments.find(
-      (p) =>
-        p.purpose === "load" &&
-        (p.status === "pending" || p.status === "received"),
-    ) ?? null;
   const topUp =
     payments.find((p) => p.purpose === "top_up" && p.status === "pending") ??
     null;
@@ -78,22 +70,6 @@ export async function SenderTripPage({ id }: { id: string }) {
   const held =
     ["funded", "matched"].includes(load.status) &&
     load.trip?.status !== "closed";
-  const payView = (p: typeof pay) =>
-    p
-      ? {
-          id: p.id,
-          account: p.virtual_account_number,
-          bank: p.virtual_account_bank,
-          amount: naira(Number(p.amount_kobo)),
-          due:
-            Number(p.received_kobo) > 0 &&
-            Number(p.received_kobo) < Number(p.amount_kobo)
-              ? naira(Number(p.amount_kobo) - Number(p.received_kobo))
-              : null,
-          expires: lagosTime.format(new Date(p.expires_at)),
-          provider: p.provider,
-        }
-      : null;
   const fill = load.weightKg
     ? {
         kind: "weight" as const,
@@ -159,13 +135,8 @@ export async function SenderTripPage({ id }: { id: string }) {
         ) : null}
         {topUp ? (
           <section className="flex flex-col gap-3 rounded-tile bg-surface p-5 shadow-raised lg:rounded-card">
-            <h2 className="text-title-3 text-ink">{t.pay.title}</h2>
-            <PayPanel
-              loadId={load.id}
-              payment={payView(topUp)}
-              amountLabel={naira(Number(topUp.amount_kobo))}
-              demo={demo === true}
-            />
+            <h2 className="text-title-3 text-ink">{messages.checkout.pay}</h2>
+            <PayTopUpButton paymentId={topUp.id} label={messages.finding.accept.replace("{amount}", naira(Number(topUp.amount_kobo)))} />
           </section>
         ) : null}
         <section className="rounded-tile bg-surface p-5 shadow-raised lg:rounded-card lg:p-6">
@@ -222,16 +193,9 @@ export async function SenderTripPage({ id }: { id: string }) {
             </Row>
           </dl>
           {showPay ? (
-            <>
-              <h3 className="text-body font-semibold text-ink">{t.pay.title}</h3>
-              <p className="text-label font-normal text-ink-2">{t.pay.lead}</p>
-              <PayPanel
-                loadId={load.id}
-                payment={payView(pay)}
-                amountLabel={naira(load.totalKobo)}
-                demo={demo === true}
-              />
-            </>
+            <Link href={`/app/pay/${load.id}`} className={cn(buttonVariants(), "w-full")}>
+              {messages.checkout.pay} {naira(load.totalKobo)}
+            </Link>
           ) : null}
           {payments.some((p) => p.status === "received") ? (
             <Link

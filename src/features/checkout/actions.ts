@@ -200,3 +200,9 @@ export async function keepWaiting(loadId: string): Promise<{ status: "ok" | "err
   revalidatePath(`/app/ship/trips/${loadId}`);
   return { status: error ? "error" : "ok" };
 }
+
+/** A difference to pay (an accepted reply or a second offer the owner accepted): its hosted checkout. */
+export async function payTopUp(paymentId: string): Promise<CheckoutResult> {
+  await assertUnlocked();
+  return checkoutFor(await supabaseServer(), paymentId, "top_up");
+}

@@ -133,7 +133,7 @@ export const oneLoad = cache(async (id: string) => {
       supabase
         .from("payments")
         .select(
-          "id, purpose, amount_kobo, received_kobo, status, virtual_account_number, virtual_account_bank, provider, expires_at, received_at, created_at",
+          "id, purpose, amount_kobo, received_kobo, status, provider, expires_at, received_at, created_at",
         )
         .eq("load_id", id)
         .order("created_at", { ascending: false }),

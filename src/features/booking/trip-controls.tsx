@@ -1,134 +1,16 @@
 "use client";
 
-import { Check, Copy } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Sheet, useWideScreen } from "@/components/ui/sheet";
 import messages from "@/messages/en.json";
-import {
-  acceptCounter,
-  cancelLoad,
-  confirmDemoPayment,
-  declineCounter,
-  startPayment,
-  tripStep,
-} from "./actions";
+import { acceptReply, declineReply } from "@/features/checkout/actions";
+import { checkoutMessage } from "@/features/checkout/screens";
+import { cancelLoad, tripStep } from "./actions";
 
 const t = messages.trips;
-
-function CopyText({ text }: { text: string }) {
-  const [done, setDone] = useState(false);
-  return (
-    <button
-      type="button"
-      onClick={() =>
-        void navigator.clipboard?.writeText(text).then(() => setDone(true))
-      }
-      className="inline-flex min-h-11 items-center gap-1.5 px-2 text-label font-semibold text-green-700"
-    >
-      {done ? (
-        <Check aria-hidden className="size-4" strokeWidth={2} />
-      ) : (
-        <Copy aria-hidden className="size-4" strokeWidth={1.75} />
-      )}
-      {done ? t.pay.copied : t.pay.copy}
-    </button>
-  );
-}
-
-/** S-05 Pay: get a one-time account, then (demo) confirm the transfer. */
-export function PayPanel({
-  loadId,
-  payment,
-  amountLabel,
-  demo,
-}: {
-  loadId: string;
-  payment: {
-    id: string;
-    account: string | null;
-    bank: string | null;
-    amount: string;
-    due: string | null;
-    expires: string;
-    provider: string | null;
-  } | null;
-  amountLabel: string;
-  demo: boolean;
-}) {
-  const router = useRouter();
-  const [pending, start] = useTransition();
-  if (!payment?.account) {
-    return (
-      <Button
-        className="w-full"
-        loading={pending}
-        loadingText
-        loadingLabel={t.pay.starting}
-        onClick={() =>
-          start(async () => {
-            const result = await startPayment(loadId);
-            if (result.status === "noProvider") toast(t.pay.noProvider);
-            else if (result.status === "error")
-              toast.error(messages.booking.errors.failed);
-            router.refresh();
-          })
-        }
-      >
-        {t.pay.start.replace("{amount}", amountLabel)}
-      </Button>
-    );
-  }
-  return (
-    <div className="flex flex-col gap-3">
-      <dl className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-4 gap-y-1 rounded-inner bg-paper p-4 text-body-sm">
-        <dt className="text-ink-2">{t.pay.account}</dt>
-        <dd className="flex items-center justify-between gap-2">
-          <span className="tabular text-title-3 font-semibold tracking-[0.06em] text-ink">
-            {payment.account}
-          </span>
-          <CopyText text={payment.account} />
-        </dd>
-        <dt className="text-ink-2">{t.pay.bank}</dt>
-        <dd className="truncate font-semibold text-ink">{payment.bank}</dd>
-        <dt className="text-ink-2">{t.pay.amount}</dt>
-        <dd className="tabular font-semibold text-green-900">
-          {payment.amount}
-        </dd>
-      </dl>
-      {payment.due ? (
-        <p className="text-label font-semibold text-warning">
-          {t.pay.partial.replace("{amount}", payment.due)}
-        </p>
-      ) : null}
-      <p className="text-label font-normal text-ink-2">
-        {t.pay.expires.replace("{time}", payment.expires)}
-      </p>
-      {demo && payment.provider === "demo" ? (
-        <>
-          <Button
-            variant="secondary"
-            className="w-full"
-            loading={pending}
-            onClick={() =>
-              start(async () => {
-                const result = await confirmDemoPayment(payment.id);
-                if (result.status === "error")
-                  toast.error(messages.booking.errors.failed);
-                router.refresh();
-              })
-            }
-          >
-            {t.pay.demoPaid}
-          </Button>
-          <p className="text-caption text-ink-3">{t.pay.demoNote}</p>
-        </>
-      ) : null}
-    </div>
-  );
-}
 
 export function CounterCard({
   offerId,
@@ -151,8 +33,9 @@ export function CounterCard({
           loading={pending}
           onClick={() =>
             start(async () => {
-              await acceptCounter(offerId, loadId);
-              router.refresh();
+              const result = await acceptReply(offerId);
+              if (result.status === "ok") window.location.assign(result.url);
+              else toast.error(checkoutMessage(result));
             })
           }
         >
@@ -163,7 +46,7 @@ export function CounterCard({
           variant="secondary"
           onClick={() =>
             start(async () => {
-              await declineCounter(offerId, loadId);
+              await declineReply(offerId, loadId);
               router.refresh();
             })
           }
@@ -179,9 +62,14 @@ export function CounterCard({
 export function CancelButton({
   loadId,
   atPickup,
+  label,
+  className,
 }: {
   loadId: string;
   atPickup: boolean;
+  /** P11 "Cancel and get a full refund": the same confirmation with the mockup's words. */
+  label?: string;
+  className?: string;
 }) {
   const router = useRouter();
   const wide = useWideScreen();
@@ -198,9 +86,9 @@ export function CancelButton({
         <Button
           variant="tertiary"
           size="text"
-          className="self-start text-danger"
+          className={className ?? "self-start text-danger"}
         >
-          {t.cancel.button}
+          {label ?? t.cancel.button}
         </Button>
       }
       actions={

@@ -4,8 +4,6 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { assertUnlocked } from "@/features/auth/unlock";
 import { processMoneyOut } from "@/features/money/money-out";
-import { paymentProvider } from "@/lib/payments/provider";
-import { supabaseAdmin } from "@/lib/supabase/admin";
 import { supabaseServer } from "@/lib/supabase/server";
 
 // Phase 3 sender and owner actions. The database decides who may do what (create_load, accept_load,
@@ -110,89 +108,6 @@ export async function createLoad(input: BookingInput): Promise<CreateResult> {
   return { status: "ok", id: data as string };
 }
 
-/** S-05 Pay: a one-time account from the PaymentProvider (demo until Bachs, D039). */
-export async function startPayment(
-  loadId: string,
-): Promise<{ status: "ok" } | { status: "error" | "noProvider" }> {
-  await assertUnlocked();
-  const supabase = await supabaseServer();
-  const { data: paymentId, error } = await supabase.rpc(
-    "request_load_payment",
-    { p_load: loadId },
-  );
-  if (error || !paymentId) {
-    console.error("request_load_payment failed", error?.code);
-    return { status: "error" };
-  }
-  const { data: payment } = await supabase
-    .from("payments")
-    .select("id, amount_kobo, expires_at, provider_ref")
-    .eq("id", paymentId as string)
-    .maybeSingle();
-  if (!payment) return { status: "error" };
-  if (!payment.provider_ref) {
-    const { data: demo } = await supabase.rpc("am_i_demo");
-    const provider = paymentProvider(demo === true);
-    // A real business never gets a demo account number (review).
-    if (!provider || (provider.kind === "demo" && demo !== true)) return { status: "noProvider" };
-    const collection = await provider.createCollection({
-      paymentId: payment.id,
-      amountKobo: Number(payment.amount_kobo),
-      expiresAt: payment.expires_at,
-    });
-    const { error: attachError } = await supabaseAdmin().rpc(
-      "attach_collection",
-      {
-        p_payment: payment.id,
-        p_provider: provider.kind,
-        p_ref: collection.ref,
-        p_account: collection.accountNumber,
-        p_bank: collection.bank,
-      },
-    );
-    if (attachError) return { status: "error" };
-  }
-  revalidatePath(`/app/ship/trips/${loadId}`);
-  return { status: "ok" };
-}
-
-/** D039 demo payer: "I've paid" confirms the simulated bank transfer (never for real accounts). */
-export async function confirmDemoPayment(
-  paymentId: string,
-): Promise<{ status: "ok" | "error" }> {
-  await assertUnlocked();
-  const supabase = await supabaseServer();
-  const [{ data: demo }, { data: payment }] = await Promise.all([
-    supabase.rpc("am_i_demo"),
-    supabase
-      .from("payments")
-      .select("id, load_id, amount_kobo, received_kobo, provider, provider_ref")
-      .eq("id", paymentId)
-      .maybeSingle(),
-  ]);
-  if (
-    demo !== true ||
-    !payment ||
-    payment.provider !== "demo" ||
-    !payment.provider_ref
-  )
-    return { status: "error" };
-  const due = Number(payment.amount_kobo) - Number(payment.received_kobo);
-  if (due <= 0) return { status: "ok" };
-  const { error } = await supabaseAdmin().rpc("confirm_payment", {
-    p_provider_ref: payment.provider_ref,
-    p_event_id: `demo:${payment.id}:${payment.received_kobo}`,
-    p_amount_kobo: due,
-  });
-  if (error) {
-    console.error("confirm_payment (demo) failed", error.code);
-    return { status: "error" };
-  }
-  await processMoneyOut();
-  revalidatePath("/app/ship", "layout");
-  return { status: "ok" };
-}
-
 export async function cancelLoad(
   loadId: string,
   reason: string,
@@ -209,49 +124,6 @@ export async function cancelLoad(
   await processMoneyOut();
   revalidatePath("/app/ship", "layout");
   return { status: String(data) };
-}
-
-export async function acceptCounter(
-  offerId: string,
-  loadId: string,
-): Promise<{ status: string }> {
-  await assertUnlocked();
-  const supabase = await supabaseServer();
-  const { data: paymentId, error } = await supabase.rpc("accept_counter", {
-    p_offer: offerId,
-  });
-  if (error || !paymentId) return { status: "error" };
-  const { data: demo } = await supabase.rpc("am_i_demo");
-  const provider = paymentProvider(demo === true);
-  const { data: payment } = await supabase
-    .from("payments")
-    .select("id, amount_kobo, expires_at")
-    .eq("id", paymentId as string)
-    .maybeSingle();
-  if (!provider || (provider.kind === "demo" && demo !== true) || !payment) return { status: "noProvider" };
-  {
-    const c = await provider.createCollection({
-      paymentId: payment.id,
-      amountKobo: Number(payment.amount_kobo),
-      expiresAt: payment.expires_at,
-    });
-    const { error: attachError } = await supabaseAdmin().rpc("attach_collection", {
-      p_payment: payment.id,
-      p_provider: provider.kind,
-      p_ref: c.ref,
-      p_account: c.accountNumber,
-      p_bank: c.bank,
-    });
-    if (attachError) return { status: "error" };
-  }
-  revalidatePath(`/app/ship/trips/${loadId}`);
-  return { status: "ok" };
-}
-
-export async function declineCounter(offerId: string, loadId: string) {
-  await assertUnlocked();
-  await (await supabaseServer()).rpc("decline_counter", { p_offer: offerId });
-  revalidatePath(`/app/ship/trips/${loadId}`);
 }
 
 /** T-05 Accept for ₦X, or T-06 Offer a different price (once, up to +20%). */
