@@ -10,24 +10,33 @@ import messages from "@/messages/en.json";
 
 export const metadata = { ...shellMetadata, title: messages.trips.details };
 
-async function Body({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ details?: string }> }) {
+type Props = { params: Promise<{ id: string }>; searchParams: Promise<{ details?: string }> };
+
+async function Chooser({ params, searchParams }: Props) {
   const [{ id }, { details }] = await Promise.all([params, searchParams]);
   // P11 / D08: a paid booking still waiting for a truck opens on Finding your truck ("View trip" shows the rest).
+  // P14b / P14c / D09: a booking with a truck. Both draw their own phone header (full screen, no tabs).
   const finding = details ? null : await findingProps(id);
-  if (finding) return <FindingView {...finding} />;
-  // P14b / P14c / D09: a booking with a truck.
-  const trip = details ? null : await senderTripView(id);
-  if (trip) return <SenderTrip v={trip} />;
-  return <SenderTripPage id={id} />;
-}
-
-// S-04 to S-07: one of the sender's trips (status, pay, offers, details, cancel, receipt).
-export default function TripPage({ params, searchParams }: { params: Promise<{ id: string }>; searchParams: Promise<{ details?: string }> }) {
+  const trip = details || finding ? null : await senderTripView(id);
+  if (finding || trip) {
+    return (
+      <ShellSubpage role="shipper" title={messages.trips.details} flush>
+        {finding ? <FindingView {...finding} /> : <SenderTrip v={trip!} />}
+      </ShellSubpage>
+    );
+  }
   return (
     <ShellSubpage role="shipper" title={messages.trips.details}>
-      <Suspense fallback={<Skeleton className="h-96 w-full rounded-card" />}>
-        <Body params={params} searchParams={searchParams} />
-      </Suspense>
+      <SenderTripPage id={id} />
     </ShellSubpage>
+  );
+}
+
+// S-04 to S-07: one of the sender's trips.
+export default function TripPage(props: Props) {
+  return (
+    <Suspense fallback={<Skeleton className="m-4 h-96 rounded-card lg:m-8" />}>
+      <Chooser {...props} />
+    </Suspense>
   );
 }
