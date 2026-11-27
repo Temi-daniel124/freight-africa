@@ -2846,5 +2846,163 @@
     "add": "Add",
     "held": "{amount} will be held from the owner's payment while we look into this. We reply within 72 hours.",
     "send": "Send report"
+  },
+  "account": {
+    "profile": "Profile",
+    "switch": "Switch account",
+    "alsoOwn": "You're also in {name}. Switch to see that side.",
+    "yourBusiness": "Your business",
+    "team": "Team",
+    "people": "{n} people",
+    "person": "1 person",
+    "places": "Saved places and receivers",
+    "business": "Business profile",
+    "settingsHead": "Settings",
+    "notifications": "Notifications",
+    "security": "PIN and security",
+    "twoStepOn": "Two-step on",
+    "twoStepOff": "Two-step off",
+    "install": "Install the app",
+    "help": "Help",
+    "signOut": "Sign out",
+    "footer": "Version 1.0 · Terms · Privacy",
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "version": "Version 1.0",
+    "tabs": {
+      "security": "Profile and security",
+      "notifications": "Notifications",
+      "business": "Business profile",
+      "privacy": "Privacy"
+    },
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "changeAvatar": "Change avatar",
+    "signIn": "Sign-in",
+    "pin": "PIN",
+    "changePin": "Change PIN",
+    "twoStep": "Two-step sign-in",
+    "twoStepText": "Adds a code from an authenticator app",
+    "twoStepDesk": "A code from an authenticator app when you sign in on a new device",
+    "lockAfter": "Lock after",
+    "lockText": "{n} minutes unused, or when closed",
+    "signOutEverywhere": "Sign out everywhere",
+    "notifTitle": "Notifications",
+    "push": "Push",
+    "notifRows": [
+      {
+        "key": "trip",
+        "label": "Trip updates and codes",
+        "note": "Needed to protect your trips",
+        "locked": true
+      },
+      {
+        "key": "payments",
+        "label": "Payments and refunds",
+        "note": "Always on",
+        "locked": true
+      },
+      {
+        "key": "offers",
+        "label": "Offers from owners",
+        "note": "",
+        "locked": false
+      },
+      {
+        "key": "problems",
+        "label": "Problems and claims",
+        "note": "",
+        "locked": false
+      },
+      {
+        "key": "news",
+        "label": "News and offers",
+        "note": "",
+        "locked": false
+      }
+    ],
+    "whatsappLater": "WhatsApp updates will be added here when they're switched on.",
+    "businessName": "Business name",
+    "cac": "CAC number",
+    "receiptAddress": "Address on receipts",
+    "receiptEmail": "Email for receipts",
+    "save": "Save",
+    "saved": "Saved.",
+    "onlyOwners": "Only the owner or an admin can change these.",
+    "privacyText": "How we use and keep your information.",
+    "privacyLink": "Read the privacy notice",
+    "termsLink": "Read the terms",
+    "saved_": "Saved",
+    "placesTab": "Places · {n}",
+    "receiversTab": "Receivers · {n}",
+    "usedTimes": "used {n} times",
+    "usedOnce": "1 time",
+    "usedN": "{n} times",
+    "addPlace": "Add a place",
+    "addReceiver": "Add a receiver",
+    "placeLabel": "Name for this place",
+    "city": "City",
+    "address": "Address",
+    "landmark": "Landmark (optional)",
+    "contactName": "Contact at this place (optional)",
+    "contactPhone": "Their phone (optional)",
+    "receiverName": "Receiver's name",
+    "receiverPhone": "Phone",
+    "receiverEmail": "Email (optional)",
+    "delete": "Delete",
+    "noPlaces": "No saved places yet",
+    "noPlacesText": "Save the places you load and deliver to, and booking gets faster.",
+    "noReceivers": "No saved receivers yet",
+    "noReceiversText": "Save the people who receive your goods.",
+    "helpSearch": "How can we help?",
+    "topics": [
+      "Booking",
+      "Paying and refunds",
+      "During a trip",
+      "Codes and delivery"
+    ],
+    "popular": "Popular questions",
+    "faq": [
+      {
+        "q": "What happens if no truck accepts?",
+        "a": "We keep looking. After 24 hours you can raise your price, change the day, or get a full refund. Your money stays held the whole time."
+      },
+      {
+        "q": "How does offering my own price work?",
+        "a": "You pay your offer now and we hold it. Owners accept it or reply with their price once. You choose: pay the difference, offer again once, or wait."
+      },
+      {
+        "q": "When is my money released to the owner?",
+        "a": "Part goes to the owner when your goods are loaded, and the rest when the receiver confirms delivery with the code."
+      },
+      {
+        "q": "Who gets the delivery code?",
+        "a": "The receiver gets it before the truck arrives and gives it to the driver once the goods are delivered. The driver never sees it before."
+      }
+    ],
+    "talk": "Talk to us",
+    "hours": "7 am to 9 pm, every day",
+    "emailUs": "Email us",
+    "call": "Call",
+    "paymentsTitle": "Payments",
+    "heldTitle": "Held safely for your trips",
+    "heldTrips": "{n} trips · released when goods are loaded",
+    "heldTrip": "1 trip · released when goods are loaded",
+    "paidMonth": "Paid this month",
+    "refunds": "Refunds",
+    "draftToPay": "{amount} draft to pay",
+    "draftSub": "{route} · draft, not booked yet",
+    "history": "History",
+    "receipts": "Receipts",
+    "rowHeld": "Held · {route}",
+    "rowPaid": "Paid · {route}",
+    "rowRefund": "Refund · {route}",
+    "delivered": "delivered",
+    "noPayments": "No payments yet",
+    "noPaymentsText": "Money you pay and get back shows here, with a receipt for each.",
+    "placeInvalid": "Add a name, a city and an address of at least 3 letters. A phone is 11 digits, like 0803 123 4567.",
+    "receiverInvalid": "Add a name and a Nigerian phone number, like 0803 123 4567.",
+    "businessInvalid": "Check the CAC number (like RC1234567) and the email."
   }
 }
