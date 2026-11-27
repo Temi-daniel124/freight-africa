@@ -86,7 +86,8 @@ begin
   if v_load.id is null or not public.can_in_org(v_load.shipper_org_id, 'book') then
     raise exception 'not allowed' using errcode = '42501';
   end if;
-  if v_load.status not in ('draft', 'expired', 'awaiting_payment') then
+  -- A load already waiting for payment keeps its quote (it counts towards the first-load rule itself).
+  if v_load.status not in ('draft', 'expired') then
     return v_load.total_kobo;
   end if;
   select * into v_now from private.load_price_now(v_load);
@@ -113,6 +114,18 @@ begin
     if v_payment is not null then
       return v_payment;
     end if;
+    -- Try again after a failed or closed checkout: a new payment at the same quote (re-quoting here
+    -- would count this very load against the first-load rule, money review). Open batch payments for it
+    -- close; money still arriving for them funds the load once and the rest is refunded.
+    if v_load.pickup_from < now() - interval '1 hour' then
+      raise exception 'choose a new pick-up day' using errcode = '22023';
+    end if;
+    update public.payments set status = 'expired' where load_id = p_load and purpose = 'load' and status = 'pending' and batch_id is not null;
+    insert into public.payments (purpose, shipper_org_id, load_id, amount_kobo, expires_at, created_by)
+    values ('load', v_load.shipper_org_id, p_load, v_load.total_kobo,
+      now() + make_interval(hours => (private.setting('payment_expiry_hours'))::int), v_user)
+    returning id into v_payment;
+    return v_payment;
   elsif v_load.status not in ('draft', 'expired') then
     raise exception 'this load is already paid for' using errcode = '22023';
   end if;
@@ -139,11 +152,12 @@ create function public.save_as_draft(p_load uuid) returns void language plpgsql 
 declare
   v_load public.loads;
 begin
-  select * into v_load from public.loads where id = p_load for update;
-  perform 1 from public.payments where load_id = p_load for update;
-  if v_load.id is null or not public.can_in_org(v_load.shipper_org_id, 'book') then
+  -- Check who is asking before taking any lock (money review).
+  if not exists (select 1 from public.loads where id = p_load and public.can_in_org(shipper_org_id, 'book')) then
     raise exception 'not allowed' using errcode = '42501';
   end if;
+  select * into v_load from public.loads where id = p_load for update;
+  perform 1 from public.payments where load_id = p_load for update;
   if v_load.status = 'draft' then
     return;
   end if;
@@ -177,7 +191,13 @@ begin
   if v_n < 2 or v_n > 10 or (select count(distinct x) from unnest(p_loads) x) <> v_n then
     raise exception 'choose two to ten drafts' using errcode = '22023';
   end if;
-  -- Lock the loads in one order (by id), then their payments (money review: one lock order).
+  -- Check who is asking before taking any lock, then lock the loads in one order (by id) and then their
+  -- payments (money review: one lock order).
+  if (select count(*) from public.loads where id = any (p_loads)) <> v_n
+    or (select count(distinct shipper_org_id) from public.loads where id = any (p_loads)) <> 1
+    or not public.can_in_org((select shipper_org_id from public.loads where id = p_loads[1]), 'pay') then
+    raise exception 'not allowed' using errcode = '42501';
+  end if;
   for v_load in select * from public.loads where id = any (p_loads) order by id for update loop
     if v_org is null then
       v_org := v_load.shipper_org_id;
@@ -252,6 +272,9 @@ begin
   if exists (select 1 from private.batch_events where provider_event_id = p_event_id) then
     return 'duplicate';
   end if;
+  -- The batch, then its loads in id order, then their payments: the same order as request_batch_payment.
+  perform 1 from public.loads where id in (select load_id from public.payments where batch_id = v_batch.id) order by id for update;
+  perform 1 from public.payments where batch_id = v_batch.id order by id for update;
   insert into private.batch_events (provider_event_id, batch_id, amount_kobo) values (p_event_id, v_batch.id, p_amount_kobo);
   update public.payment_batches set received_kobo = received_kobo + p_amount_kobo,
     status = case when received_kobo + p_amount_kobo >= amount_kobo then 'received'::public.payment_status else status end
@@ -279,10 +302,15 @@ $$;
 create function public.fail_payment(p_provider_ref text) returns text language plpgsql security definer set search_path = '' as $$
 declare
   v_batch uuid;
+  v_received bigint;
   v_n int;
 begin
-  select id into v_batch from public.payment_batches where provider_ref = p_provider_ref for update;
+  select id, received_kobo into v_batch, v_received from public.payment_batches where provider_ref = p_provider_ref for update;
   if v_batch is not null then
+    -- Part of the batch already arrived: it isn't a failed checkout, whatever the provider says.
+    if v_received > 0 then
+      return 'ignored';
+    end if;
     perform 1 from public.payments where batch_id = v_batch for update;
     update public.payment_batches set status = 'failed' where id = v_batch and status = 'pending' and received_kobo = 0;
     update public.payments set status = 'failed', failed_at = now() where batch_id = v_batch and status = 'pending' and received_kobo = 0;
