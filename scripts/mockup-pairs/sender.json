@@ -19,11 +19,11 @@
   { "mock": "D02c-HomeFirst", "path": "/app/ship?preview=first", "account": "shipper" },
   { "mock": "D14-Notifications", "path": "/app/ship/notifications", "account": "shipper" },
 
-  { "mock": "P08-Book", "path": "/app/ship/book", "account": "shipper" },
-  { "mock": "P08d-Contacts", "path": "/app/ship/book?step=contacts", "account": "shipper" },
-  { "mock": "P09-Price", "path": "/app/ship/book?step=price", "account": "shipper" },
-  { "mock": "P09b-Offer", "path": "/app/ship/book?step=offer", "account": "shipper" },
-  { "mock": "D03-Book", "path": "/app/ship/book", "account": "shipper" },
+  { "mock": "P08-Book", "path": "/app/ship/book?sample=1", "account": "shipper" },
+  { "mock": "P08d-Contacts", "path": "/app/ship/book?sample=1&step=2", "account": "shipper" },
+  { "mock": "P09-Price", "path": "/app/ship/book?sample=1&step=3", "account": "shipper" },
+  { "mock": "P09b-Offer", "path": "/app/ship/book?sample=1&step=3&offer=1", "account": "shipper" },
+  { "mock": "D03-Book", "path": "/app/ship/book?sample=1", "account": "shipper" },
 
   { "mock": "P12-Trips", "path": "/app/ship/trips", "account": "shipper" },
   { "mock": "P12b-Drafts", "path": "/app/ship/trips?tab=drafts", "account": "shipper" },

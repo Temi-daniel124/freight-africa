@@ -164,13 +164,18 @@ async function post(spec) {
   return must(
     await sender.rpc("create_load", {
       p_org: shipperOrg,
-      p_goods: spec.goods,
-      p_description: spec.description ?? "",
       p_truck_type: spec.type,
-      p_weight_kg: spec.kg ?? null,
-      p_quantity: spec.qty ?? null,
-      p_quantity_unit: spec.unit ?? null,
-      p_declared_value_kobo: spec.value ?? 500000000,
+      // D055: one item per demo load.
+      p_items: [
+        {
+          goods: spec.goods,
+          description: spec.description || "Goods",
+          weight_kg: spec.kg ?? null,
+          quantity: spec.qty ?? null,
+          unit: spec.unit ?? null,
+          value_kobo: spec.value ?? 500000000,
+        },
+      ],
       p_pickup_from: day(spec.day ?? 1),
       p_pickup_until: day(spec.day ?? 1, 18),
       p_stops: [

@@ -199,6 +199,8 @@ async function SectionPage({ role, params }: { role: ShellRole; params: Promise<
   if (!isPage(resolved, page)) notFound();
   const config = shells[resolved];
   const viewer = getViewer(config);
+  // Booking draws its own header and, on phones, covers the tabs (mockups P08, D03).
+  if (page === "book") return <>{await sectionBody(page, config, viewer)}</>;
   return (
     <>
       <ShellTopBar config={config} viewer={viewer} title={messages.shell.pages[page].title} />
