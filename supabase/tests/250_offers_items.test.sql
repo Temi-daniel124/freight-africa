@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(50);
+select plan(60);
 
 -- Cast: a sender (Adaeze, Okafor Foods), a truck owner (Ibrahim, Musa Haulage) with two flatbeds that work
 -- Lagos–Kano, and a second owner (Emeka) who only replies. The service fee is on (not a first load).
@@ -187,6 +187,44 @@ select is((select status::text from public.offers where id = (select id from ids
 select lives_ok($$select public.keep_waiting((select id from ids where name = 'atprice'))$$, 'keep waiting');
 select ok((select no_truck_decision_due_at > now() + interval '23 hours' from public.loads where id = (select id from ids where name = 'atprice')), 'gives another day before asking again');
 select throws_ok(format($$select public.raise_load_price((select id from ids where name = 'offer'), %s)$$, (select v + 1000000 from n where name = 'reoffer')), '22023', null, 'a load with a truck cannot be raised');
+
+-- ---- Money review: a replaced raise paid late, a day change while a top-up is part-paid --------------
+reset role;
+insert into n select 'r_total', total_kobo from public.loads where id = (select id from ids where name = 'atprice');
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub": "25252525-0000-4000-8000-000000000001", "role": "authenticated"}', true);
+insert into ids select 'raise_a', public.raise_load_price((select id from ids where name = 'atprice'), (select v + 200000 from n where name = 'r_total'));
+insert into ids select 'raise_b', public.raise_load_price((select id from ids where name = 'atprice'), (select v + 100000 from n where name = 'r_total'));
+reset role;
+select is((select status::text from public.payments where id = (select id from ids where name = 'raise_a')), 'expired', 'a newer raise replaces the older one');
+set local role service_role;
+do $$ begin perform public.attach_collection((select id from ids where name = 'raise_a'), 'demo', 'demo-raise-a', '9912345674', 'Demo Bank'); end $$;
+select is(public.confirm_payment('demo-raise-a', 'evt-raise-a', 200000), 'funded', 'money for the replaced raise arrives late');
+reset role;
+select is((select total_kobo from public.loads where id = (select id from ids where name = 'atprice')), (select v from n where name = 'r_total'), 'the replaced raise never applies');
+select is(pg_temp.escrow('atprice'), (select v from n where name = 'r_total'), 'its money goes straight back');
+
+insert into n select 'r_freight', freight_kobo from public.loads where id = (select id from ids where name = 'atprice');
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub": "25252525-0000-4000-8000-000000000003", "role": "authenticated"}', true);
+insert into ids select 'counter3', public.counter_load((select id from ids where name = 'atprice'), '25252525-0000-4000-8000-0000000000c3', (select v + 10000000 from n where name = 'r_freight'));
+select set_config('request.jwt.claims', '{"sub": "25252525-0000-4000-8000-000000000001", "role": "authenticated"}', true);
+insert into ids select 'topup3', public.accept_counter((select id from ids where name = 'counter3'));
+reset role;
+set local role service_role;
+do $$ begin perform public.attach_collection((select id from ids where name = 'topup3'), 'demo', 'demo-topup-3', '9912345675', 'Demo Bank'); end $$;
+select is(public.confirm_payment('demo-topup-3', 'evt-topup-3', 100000), 'partial', 'part of a top-up is paid');
+reset role;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub": "25252525-0000-4000-8000-000000000001", "role": "authenticated"}', true);
+select lives_ok($$select public.change_load_day((select id from ids where name = 'atprice'), now() + interval '3 days', now() + interval '3 days 6 hours')$$, 'the sender moves the day again');
+reset role;
+select is((select status::text from public.offers where id = (select id from ids where name = 'counter3')), 'expired', 'the reply waiting for its top-up closes too');
+select is(pg_temp.escrow('atprice'), (select v from n where name = 'r_total'), 'and the part already paid goes back');
+set local role service_role;
+select is(public.confirm_payment('demo-topup-3', 'evt-topup-4', 50000), 'funded', 'more money for the closed top-up');
+reset role;
+select is(pg_temp.escrow('atprice'), (select v from n where name = 'r_total'), 'is refunded once, never kept');
 
 -- ---- Who can call what ----------------------------------------------------------------------------
 reset role;
