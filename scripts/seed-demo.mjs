@@ -97,6 +97,69 @@ export const ORGS = [
   },
 ];
 
+// Demo trucks (founder, 27 Nov 2026): approved, active and available on every active corridor, with every
+// required paper approved and in date for a year, so the demo sender sees real free-truck counts on the
+// day chips. Plates as stored (no spaces); the driver is the business's driver member.
+export const FLEET = {
+  "musa-haulage": {
+    driver: "driver",
+    trucks: [
+      { plate: "KJA482XA", type: "Flatbed, 30 tonnes", kg: 30000 },
+      { plate: "APP640QR", type: "Flatbed, 30 tonnes", kg: 30000 },
+      { plate: "KAN219BT", type: "Covered truck, 20 tonnes", kg: 20000 },
+      { plate: "ABJ771KD", type: "Livestock truck", kg: 15000 },
+      { plate: "LSR305GH", type: "Tipper", kg: 20000 },
+      { plate: "EKY118TT", type: "Tanker", kg: 33000 },
+    ],
+  },
+  "nwosu-transport": {
+    driver: "owner-driver",
+    trucks: [
+      { plate: "ENU204KP", type: "Flatbed, 30 tonnes", kg: 30000 },
+      { plate: "AAA118JD", type: "Covered truck, 20 tonnes", kg: 20000 },
+      { plate: "LND552CX", type: "40 ft container", kg: 28000 },
+    ],
+  },
+};
+
+async function seedFleet(orgId, fleet, ids) {
+  const corridors = must(await db.from("corridors").select("id").eq("active", true), "listing corridors").map((row) => row.id);
+  const types = new Map(must(await db.from("truck_types").select("id, name"), "listing truck types").map((row) => [row.name, row.id]));
+  const papers = must(await db.from("document_types").select("id, has_expiry").eq("applies_to", "truck").eq("required", true), "listing required papers");
+  const expires = new Date(Date.now() + 365 * 86_400_000).toISOString().slice(0, 10);
+  const now = new Date().toISOString();
+  must(await db.from("organizations").update({ corridor_ids: corridors }).eq("id", orgId), "business corridors");
+  for (const truck of fleet.trucks) {
+    const typeId = types.get(truck.type);
+    if (!typeId) throw new Error(`truck type "${truck.type}" is not in the catalogue`);
+    const fields = {
+      truck_type_id: typeId,
+      capacity_kg: truck.kg,
+      status: "active",
+      availability: "available",
+      unavailable_until: null,
+      corridor_ids: corridors,
+      default_driver_id: ids[fleet.driver],
+      approved_at: now,
+    };
+    const { data: found } = await db.from("trucks").select("id").eq("org_id", orgId).eq("plate_number", truck.plate).maybeSingle();
+    const truckId = found
+      ? (must(await db.from("trucks").update(fields).eq("id", found.id), `updating ${truck.plate}`), found.id)
+      : must(await db.from("trucks").insert({ org_id: orgId, plate_number: truck.plate, ...fields }).select("id").single(), `adding ${truck.plate}`).id;
+    for (const paper of papers) {
+      const doc = { status: "approved", expires_on: paper.has_expiry ? expires : null, reminded_days: [] };
+      const { data: have } = await db.from("documents").select("id").eq("subject_kind", "truck").eq("subject_id", truckId).eq("doc_type_id", paper.id).order("created_at", { ascending: false }).limit(1).maybeSingle();
+      if (have) must(await db.from("documents").update(doc).eq("id", have.id), `paper for ${truck.plate}`);
+      else
+        must(
+          await db.from("documents").insert({ ...doc, doc_type_id: paper.id, subject_kind: "truck", subject_id: truckId, org_id: orgId, file_path: `demo/${truck.plate}/${paper.id}.jpg` }),
+          `paper for ${truck.plate}`,
+        );
+    }
+    console.log(`    ${truck.plate.padEnd(10)} ${truck.type}`);
+  }
+}
+
 // ---------------------------------------------------------------------------------------------------
 
 async function allUsers() {
@@ -178,6 +241,7 @@ async function apply() {
       must(await db.from("profiles").update({ last_active_org_id: orgId }).eq("id", ids[member.tag]), `active account for ${member.tag}`);
     }
     console.log(`  ${org.name}`);
+    if (FLEET[org.key]) await seedFleet(orgId, FLEET[org.key], ids);
   }
 }
 
@@ -196,7 +260,10 @@ async function remove() {
 if (mode === "dry") {
   console.log("Would create (run with --apply):");
   for (const person of PEOPLE) console.log(`  ${person.role.padEnd(32)} ${email(person.tag)}`);
-  for (const org of ORGS) console.log(`  ${org.name}`);
+  for (const org of ORGS) {
+    console.log(`  ${org.name}`);
+    for (const truck of FLEET[org.key]?.trucks ?? []) console.log(`    ${truck.plate.padEnd(10)} ${truck.type}`);
+  }
 } else if (mode === "apply") {
   console.log("Demo accounts:");
   await apply();
