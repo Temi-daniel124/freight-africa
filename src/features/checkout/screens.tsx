@@ -14,6 +14,7 @@ import { useWideScreen } from "@/components/ui/sheet";
 import { formatNaira } from "@/lib/money";
 import { cn } from "@/lib/utils";
 import messages from "@/messages/en.json";
+import { goToCheckout } from "./go";
 import { type CheckoutResult, checkoutState, finishDemoCheckout, saveAsDraft, startBatchCheckout, startCheckout } from "./actions";
 
 const c = messages.checkout;
@@ -28,10 +29,6 @@ export function checkoutMessage(result: CheckoutResult) {
   return c.error;
 }
 
-/** Off to the provider's page (D048): same tab, like Paystack. */
-function go(url: string) {
-  window.location.assign(url);
-}
 
 // ---- Shared frame -----------------------------------------------------------------------------------
 
@@ -186,7 +183,7 @@ export function PayScreen(p: PayProps) {
   const pay = () =>
     start(async () => {
       const result = await startCheckout(p.loadId);
-      if (result.status === "ok") go(result.url);
+      if (result.status === "ok") goToCheckout(result.url);
       else toast.error(checkoutMessage(result));
     });
   const draft = () =>
@@ -303,6 +300,7 @@ export function ReturnScreen(p: ReturnProps) {
   const next = p.loadId ? `/app/ship/trips/${p.loadId}` : "/app/ship/trips";
 
   useEffect(() => {
+    if (p.id === "preview") return;
     if (state === "paid") router.replace(next);
     if (state !== "pending") return;
     let stop = false;
@@ -323,7 +321,7 @@ export function ReturnScreen(p: ReturnProps) {
       start(async () => {
         if (!p.retryable || !p.loadId) return router.replace(next);
         const result = await startCheckout(p.loadId);
-        if (result.status === "ok") go(result.url);
+        if (result.status === "ok") goToCheckout(result.url);
         else toast.error(checkoutMessage(result));
       });
     const draft = () =>
@@ -405,7 +403,7 @@ export function DemoCheckout({ providerRef, amountKobo, back }: { providerRef: s
   const finish = (outcome: "pay" | "fail") =>
     start(async () => {
       const result = await finishDemoCheckout(providerRef, outcome);
-      if (result.status === "ok") go(back);
+      if (result.status === "ok") window.location.assign(back);
       else toast.error(c.error);
     });
   return (
@@ -442,7 +440,7 @@ export function PaySeveral({ drafts }: { drafts: SeveralDraft[] }) {
   const pay = () =>
     start(async () => {
       const result = await startBatchCheckout(picked);
-      if (result.status === "ok") go(result.url);
+      if (result.status === "ok") goToCheckout(result.url);
       else toast.error(checkoutMessage(result));
     });
   return (
@@ -510,6 +508,16 @@ function SeveralTotal({ count, total }: { count: number; total: number }) {
     <div className="flex items-center justify-between">
       <span className="text-meta text-ink-3">{count === 1 ? c.selectedOne : fill(c.selected, { n: count })}</span>
       <span className="tabular text-title-2 text-ink">{naira(total)}</span>
+    </div>
+  );
+}
+
+/** /dev preview of P10d / D04b: the confirmation open on a plain page. */
+export function DraftSavedPreview({ line }: { line: string }) {
+  const [open, setOpen] = useState(true);
+  return (
+    <div className="min-h-dvh bg-paper">
+      <DraftSaved open={open} onOpenChange={setOpen} line={line} />
     </div>
   );
 }

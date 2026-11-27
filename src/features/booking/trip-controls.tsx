@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Sheet, useWideScreen } from "@/components/ui/sheet";
 import messages from "@/messages/en.json";
+import { goToCheckout } from "@/features/checkout/go";
 import { acceptReply, declineReply } from "@/features/checkout/actions";
 import { checkoutMessage } from "@/features/checkout/screens";
 import { cancelLoad, tripStep } from "./actions";
@@ -34,7 +35,7 @@ export function CounterCard({
           onClick={() =>
             start(async () => {
               const result = await acceptReply(offerId);
-              if (result.status === "ok") window.location.assign(result.url);
+              if (result.status === "ok") goToCheckout(result.url);
               else toast.error(checkoutMessage(result));
             })
           }

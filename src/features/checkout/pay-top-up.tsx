@@ -3,6 +3,7 @@
 import { useTransition } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { goToCheckout } from "./go";
 import { payTopUp } from "./actions";
 import { checkoutMessage } from "./screens";
 
@@ -16,7 +17,7 @@ export function PayTopUpButton({ paymentId, label }: { paymentId: string; label:
       onClick={() =>
         start(async () => {
           const result = await payTopUp(paymentId);
-          if (result.status === "ok") window.location.assign(result.url);
+          if (result.status === "ok") goToCheckout(result.url);
           else toast.error(checkoutMessage(result));
         })
       }
