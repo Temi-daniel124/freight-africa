@@ -218,19 +218,19 @@ export function CancelTrip({ loadId, label, className, preview }: { loadId: stri
         description={text}
         actions={
           <>
-            <Button variant="secondary" onClick={() => setOpen(false)}>
-              {t.keep}
-            </Button>
             <Button variant="destructive" onClick={confirm}>
               {t.cancelYes}
+            </Button>
+            <Button variant="tertiary" size="text" className="text-ink" onClick={() => setOpen(false)}>
+              {t.keep}
             </Button>
           </>
         }
       >
         {quote && quote.refundKobo > 0 ? (
-          <div className="rounded-tile bg-paper px-4 py-3.5">
+          <div className="rounded-tile border border-line bg-surface px-4 py-3.5">
             <div className="flex items-center justify-between gap-3">
-              <span className="text-body-sm text-ink-2">{t.refundTo}</span>
+              <span className="text-meta whitespace-nowrap text-ink-2">{t.refundTo}</span>
               <span className="tabular text-title-3 text-ink">{naira(quote.refundKobo)}</span>
             </div>
             <p className="mt-1 text-meta text-ink-3">{t.refundTime}</p>
