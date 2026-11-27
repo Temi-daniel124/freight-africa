@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(12);
+select plan(15);
 
 -- Cast: a sender (Adaeze, Okafor Foods), a second sender (Bisi), and a truck owner (Ibrahim, Musa Haulage).
 update public.settings set value = 'false' where key = 'first_trip_no_fee';
@@ -57,6 +57,10 @@ insert into ids select 'draft', pg_temp.load();
 insert into ids select 'funded', pg_temp.load();
 insert into ids select 'pickup', pg_temp.load();
 select is((select refund_kobo from public.cancel_quote((select id from ids where name = 'draft'))), 0::bigint, 'a draft: nothing to refund');
+reset role;
+select is((select count(*)::int from public.ledger_accounts where load_id = (select id from ids where name = 'draft')), 0, 'quoting creates no ledger account');
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub": "28282828-0000-4000-8000-000000000001", "role": "authenticated"}', true);
 select ok((select allowed from public.cancel_quote((select id from ids where name = 'draft'))), 'and it can be cancelled');
 
 reset role;
@@ -74,6 +78,16 @@ select is((select owner_fee_kobo + service_kobo from public.cancel_quote((select
 -- A truck at pickup: the owner's fee and our service fee are kept (D019).
 select set_config('request.jwt.claims', '{"sub": "28282828-0000-4000-8000-000000000003", "role": "authenticated"}', true);
 insert into ids select 'trip', public.accept_load((select id from ids where name = 'pickup'), '28282828-0000-4000-8000-0000000000c1');
+reset role;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub": "28282828-0000-4000-8000-000000000001", "role": "authenticated"}', true);
+select is((select refund_kobo from public.cancel_quote((select id from ids where name = 'pickup'))), (select total_kobo from public.loads where id = (select id from ids where name = 'pickup')),
+  'truck assigned, not yet at pickup: everything comes back');
+reset role;
+update public.trips set status = 'transloading' where id = (select id from ids where name = 'trip');
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub": "28282828-0000-4000-8000-000000000001", "role": "authenticated"}', true);
+select is((select owner_fee_kobo from public.cancel_quote((select id from ids where name = 'pickup'))), 2500000::bigint, 'any other live status keeps the fees, as cancel_load does');
 reset role;
 update public.trips set status = 'at_pickup' where id = (select id from ids where name = 'trip');
 set local role authenticated;
@@ -93,7 +107,6 @@ select is((select allowed from public.cancel_quote((select id from ids where nam
 
 -- After loading, cancelling isn't offered.
 reset role;
-update public.trips set status = 'in_transit' where load_id = (select id from ids where name = 'funded');
 update public.loads set status = 'matched' where id = (select id from ids where name = 'funded');
 insert into public.trips (ref, load_id, transporter_org_id, truck_id, freight_kobo, commission_bps, commission_kobo, advance_bps, advance_kobo, status)
 select 'TR-280', id, '28282828-0000-4000-8000-0000000000b1', '28282828-0000-4000-8000-0000000000c2', freight_kobo, 500, 0, 0, 0, 'in_transit' from public.loads where id = (select id from ids where name = 'funded');
