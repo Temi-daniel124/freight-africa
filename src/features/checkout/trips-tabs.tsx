@@ -222,7 +222,7 @@ export function TripsTabs({ counts, lists, desk, drafts, days }: { counts: Recor
             role="tab"
             aria-selected={tab === k}
             onClick={() => router.replace(`${path}?tab=${k}`, { scroll: false })}
-            className={cn("h-10 shrink-0 rounded-pill border px-4 text-body-sm font-semibold whitespace-nowrap", tab === k ? "border-green-900 bg-green-900 text-white" : "border-line bg-surface text-ink")}
+            className={cn("h-11 shrink-0 rounded-pill border px-4 text-body-sm font-semibold whitespace-nowrap", tab === k ? "border-green-900 bg-green-900 text-white" : "border-line bg-surface text-ink")}
           >
             {label(k)}
           </button>

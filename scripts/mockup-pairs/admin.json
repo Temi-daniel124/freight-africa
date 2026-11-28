@@ -1,0 +1,8 @@
+[
+  {"mock": "X26-MyWork", "path": "/dev/staff?screen=work", "width": 1440},
+  {"mock": "X01-Overview", "path": "/dev/staff?screen=overview", "width": 1440},
+  {"mock": "X00k-NoAccess", "path": "/dev/staff?screen=noaccess", "width": 1440},
+  {"mock": "X05-SOS", "path": "/dev/staff?screen=sos", "width": 1440},
+  {"mock": "X08-Disputes", "path": "/dev/staff?screen=disputes", "width": 1440},
+  {"mock": "X13-Inbox", "path": "/dev/staff?screen=inbox", "width": 1440}
+]

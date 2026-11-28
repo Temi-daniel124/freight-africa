@@ -33,7 +33,7 @@ export function PillTabs<T extends string>({ tabs, panels, className }: { tabs: 
             role="tab"
             aria-selected={tab === t.key}
             onClick={() => router.replace(`${path}?tab=${t.key}`, { scroll: false })}
-            className={cn("h-10 shrink-0 rounded-pill border px-4 text-body-sm font-semibold whitespace-nowrap", tab === t.key ? "border-green-900 bg-green-900 text-white" : "border-line bg-surface text-ink")}
+            className={cn("h-11 shrink-0 rounded-pill border px-4 text-body-sm font-semibold whitespace-nowrap", tab === t.key ? "border-green-900 bg-green-900 text-white" : "border-line bg-surface text-ink")}
           >
             {t.label}
           </button>

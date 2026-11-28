@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { StaffShell } from "@/features/shell/staff-shell";
 import { NoAccess, StaffOverview, StaffWork } from "@/features/staff/home";
@@ -16,6 +17,8 @@ type Search = Promise<{ screen?: string }>;
 
 async function Chosen({ searchParams }: { searchParams: Search }) {
   const { screen = "work" } = await searchParams;
+  // The pages read the clock: render at request time.
+  await connection();
   const person = { name: "Kemi Ogunleye", role: "Operations" };
   if (screen === "work") return <StaffShell base="/dev/staff" page="work" person={person}><StaffWork name={person.name} now={clock()} /></StaffShell>;
   if (screen === "overview") return <StaffShell base="/dev/staff" page="overview" person={{ name: "Temi Adebayo", role: "Super admin" }}><StaffOverview now={clock()} /></StaffShell>;

@@ -111,11 +111,11 @@ export async function OwnerHome({ viewer }: { viewer: Promise<Viewer>; drives?: 
     <div className="grid grid-cols-2 gap-0 overflow-hidden rounded-card bg-green-900 text-white lg:gap-4 lg:overflow-visible lg:bg-transparent">
       <Link href="/app/haul/earnings" className="px-4.5 py-4 lg:rounded-card lg:bg-green-900 lg:px-6 lg:py-6">
         <p className="text-meta text-green-300 lg:text-body-sm lg:text-white/80">{o.paidMonth}</p>
-        <p className="tabular text-title-1 font-semibold lg:text-[34px]">{naira(paidMonth)}</p>
+        <p className="tabular truncate text-[clamp(20px,6.4vw,28px)] leading-tight font-semibold lg:text-[34px]">{naira(paidMonth)}</p>
       </Link>
       <Link href="/app/haul/earnings" className="px-4.5 py-4 lg:rounded-card lg:border lg:border-line lg:bg-surface lg:px-6 lg:py-6 lg:text-ink">
         <p className="text-meta text-green-300 lg:text-body-sm lg:text-ink-2">{o.coming}</p>
-        <p className="tabular text-title-1 font-semibold lg:text-[34px]">{naira(coming)}</p>
+        <p className="tabular truncate text-[clamp(20px,6.4vw,28px)] leading-tight font-semibold lg:text-[34px]">{naira(coming)}</p>
       </Link>
     </div>
   );
@@ -179,7 +179,7 @@ export async function OwnerHome({ viewer }: { viewer: Promise<Viewer>; drives?: 
         title={o.loadsForTrucks}
         caps
         action={
-          <Link href="/app/haul/loads" className="text-body-sm font-semibold text-green-700">
+          <Link href="/app/haul/loads" className="-my-3 inline-flex min-h-11 items-center text-body-sm font-semibold text-green-700">
             {loads.length > 2 ? fill(o.seeAll, { n: loads.length }) : o.seeAllPlain}
           </Link>
         }
@@ -225,7 +225,7 @@ export async function OwnerHome({ viewer }: { viewer: Promise<Viewer>; drives?: 
         title={o.yourTrucks}
         caps
         action={
-          <Link href="/app/haul/trucks" className="text-body-sm font-semibold text-green-700">
+          <Link href="/app/haul/trucks" className="-my-3 inline-flex min-h-11 items-center text-body-sm font-semibold text-green-700">
             {o.manage}
           </Link>
         }

@@ -59,11 +59,11 @@ export async function OwnerEarnings({ viewer }: { viewer: Promise<Viewer> }) {
         <div className="grid grid-cols-2 overflow-hidden rounded-card bg-green-900 text-white">
           <div className="px-4.5 py-4 lg:px-6 lg:py-5">
             <p className="text-meta text-green-300">{e.paidMonth}</p>
-            <p className="tabular text-title-1 font-semibold">{naira(paidMonth)}</p>
+            <p className="tabular truncate text-[clamp(20px,6.4vw,28px)] leading-tight font-semibold">{naira(paidMonth)}</p>
           </div>
           <div className="px-4.5 py-4 lg:px-6 lg:py-5">
             <p className="text-meta text-green-300">{e.coming}</p>
-            <p className="tabular text-title-1 font-semibold">{naira(coming)}</p>
+            <p className="tabular truncate text-[clamp(20px,6.4vw,28px)] leading-tight font-semibold">{naira(coming)}</p>
           </div>
         </div>
         <section>
