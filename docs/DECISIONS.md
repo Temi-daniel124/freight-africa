@@ -858,3 +858,16 @@ this log).
   capacity, the app suggests splitting the booking.
 - Money copy: money is held when paid; part goes to the owner when the goods are loaded, and the rest
   when the receiver confirms delivery with the code.
+
+## D056. VAT off for now, company details on PDFs, support phone, sender name on the open board
+
+**Decision (founder, 28 Nov 2026).** Closing brief for Phases 1–3 (`docs/briefs/closing-brief.md`).
+- **VAT:** no VAT line on prices or PDFs for now. A money setting `vat_on_service_fee` (off; D037, so
+  changing it needs a second super admin) lets it be switched on later.
+- **PDFs** show "Freight Africa" and `hello@freight-africa.com`. No postal address until the founder
+  gives one: the setting `company_postal_address` is empty, and an empty value prints nothing.
+- **Help:** the Call button is hidden until the setting `support_phone` is filled in. Email stays.
+- **Open load board:** owners see the sender's business name and the Verified sender badge, as the
+  owner mockups draw it. Never a phone number or an exact address before booking (D018).
+- **Vercel push keys:** Claude Code may add `NEXT_PUBLIC_VAPID_PUBLIC_KEY` and `VAPID_PRIVATE_KEY`
+  (from `.env.local`) to Vercel production and preview.
