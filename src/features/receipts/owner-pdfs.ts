@@ -231,7 +231,11 @@ export async function payoutStatementPdf(orgId: string, month: string) {
 export async function payoutStatementCsv(orgId: string, month: string) {
   const model = await payoutStatementModel(orgId, month);
   if (!model) return null;
-  const cell = (v: string | number) => (/[",\n]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : String(v));
+  // Text that starts like a formula is kept as text (review: CSV injection); numbers stay numbers.
+  const cell = (v: string | number) => {
+    const text = typeof v === "string" && /^[=+\-@]/.test(v) ? `'${v}` : String(v);
+    return /[",\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+  };
   const lines = [
     ["Date", "Trip", "Route", "Truck", "Freight (NGN)", "Commission (NGN)", "Paid to you (NGN)"],
     ...model.rows.map((r) => [r.date.slice(0, 10), r.ref, r.route, r.truck, r.freightKobo / 100, r.commissionKobo / 100, r.paidKobo / 100]),
