@@ -13,6 +13,12 @@ export async function GET(request: Request) {
   const to = url.searchParams.get("to") ?? "";
   const then = url.searchParams.get("then");
   const supabase = await supabaseServer();
+  if (to === "staff-trip") {
+    // Staff read every trip (RLS: is_staff); the newest live one first.
+    const { data } = await supabase.from("trips").select("id").order("created_at", { ascending: false }).limit(1);
+    if (!data?.[0]) notFound();
+    redirect(`/admin/trips?trip=${data[0].id}${then ? `&${then}` : ""}`);
+  }
   const { data: rows } = await supabase.rpc("my_accounts");
   const org = toAccounts(rows ?? []).find((a) => a.active)?.orgId;
   if (!org) notFound();
