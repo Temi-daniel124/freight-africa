@@ -1,5 +1,6 @@
 import "server-only";
 import webpush from "web-push";
+import { isPushEndpoint } from "./push-endpoint";
 
 // Web Push (TOOLING-POLICY: web-push) with VAPID keys from the environment. Without keys this
 // deployment has no push: push rows fail and are retried, and the person still has the in-app copy.
@@ -12,6 +13,7 @@ export function pushReady() {
 
 /** Sends to one device. "gone" means the browser dropped the subscription, so it should be deleted. */
 export async function sendPush(target: PushTarget, title: string, body: string, url = "/app"): Promise<"ok" | "gone"> {
+  if (!isPushEndpoint(target.endpoint)) return "gone";
   webpush.setVapidDetails("mailto:support@freight-africa.com", process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY as string, process.env.VAPID_PRIVATE_KEY as string);
   try {
     await webpush.sendNotification({ endpoint: target.endpoint, keys: { p256dh: target.p256dh, auth: target.auth } }, JSON.stringify({ title, body, url }), { TTL: 60 * 60 * 12 });

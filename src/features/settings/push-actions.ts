@@ -1,6 +1,7 @@
 "use server";
 
 import { assertUnlocked } from "@/features/auth/unlock";
+import { isPushEndpoint } from "@/lib/notify/push-endpoint";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { supabaseServer } from "@/lib/supabase/server";
 
@@ -14,7 +15,7 @@ export async function savePushSubscription(sub: Sub, userAgent: string): Promise
   const { data } = await (await supabaseServer()).auth.getClaims();
   const userId = data?.claims?.sub;
   if (typeof userId !== "string") return false;
-  if (!/^https:\/\//.test(sub?.endpoint ?? "") || sub.endpoint.length > 1000 || !sub.keys?.p256dh || !sub.keys?.auth || sub.keys.p256dh.length > 200 || sub.keys.auth.length > 100) return false;
+  if (!isPushEndpoint(sub?.endpoint ?? "") || !sub.keys?.p256dh || !sub.keys?.auth || sub.keys.p256dh.length > 200 || sub.keys.auth.length > 100) return false;
   const { error } = await supabaseAdmin()
     .from("push_subscriptions")
     .upsert({ user_id: userId, endpoint: sub.endpoint, p256dh: sub.keys.p256dh, auth: sub.keys.auth, user_agent: userAgent.slice(0, 512) }, { onConflict: "endpoint" });
