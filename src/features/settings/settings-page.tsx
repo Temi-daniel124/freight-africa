@@ -1,4 +1,5 @@
 import type { Viewer } from "@/features/shell/viewer";
+import { PushToggle } from "./push-toggle";
 import { supabaseServer } from "@/lib/supabase/server";
 import messages from "@/messages/en.json";
 import { lockMinutes } from "@/features/auth/unlock";
@@ -36,6 +37,7 @@ export async function SettingsPage({ viewer, base }: { viewer: Promise<Viewer>; 
           <DriveSwitch orgId={orgId} drives={!!active?.is_driver} />
         </Section>
       ) : null}
+      <PushToggle />
       <Section title={t.security.title}>
         <SecuritySection back={`${base}/settings`} twoStep={twoStep} staff={!!staff} lockMinutes={minutes} changed={false} />
       </Section>

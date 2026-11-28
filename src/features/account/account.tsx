@@ -14,6 +14,7 @@ import { siteHref } from "@/lib/hosts";
 import { supabaseServer } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
 import messages from "@/messages/en.json";
+import { PushToggle } from "@/features/settings/push-toggle";
 import { AvatarChange, BusinessForm, HelpQuestions, NotificationTable, PillTabs, SavedPlaces, type Place, type Receiver } from "./account-client";
 
 // Sender account screens (combined brief 5e): P16 More, P16a switch (on More), P16d / D11 saved places,
@@ -165,7 +166,12 @@ export async function SenderSettings({ viewer }: { viewer: Promise<Viewer> }) {
       </section>
     </div>
   );
-  const notifications = <NotificationTable prefs={prefMap} />;
+  const notifications = (
+    <div className="flex flex-col gap-4">
+      <PushToggle />
+      <NotificationTable prefs={prefMap} />
+    </div>
+  );
   const business = v.orgId ? (
     <BusinessForm
       org={v.orgId}

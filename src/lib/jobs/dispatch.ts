@@ -24,6 +24,10 @@ export type DispatchDeps = {
   /** The email sender, when this deployment has one. Its last argument is the notification id, used as
    *  the provider's idempotency key so a retry never sends twice. */
   email?: (to: string, subject: string, text: string, id: string) => Promise<string | undefined>;
+  /** SMS (the demo provider until an SMS account exists, D039). Returns the provider's message id. */
+  sms?: (to: string, text: string, id: string) => Promise<string>;
+  /** Push to every device the notification's person turned on; the number of devices reached (0: none). */
+  push?: (id: string, title: string, body: string) => Promise<number>;
 };
 
 /** Fills {{name}} from the payload; unknown names stay empty (never "undefined"). */
@@ -55,7 +59,19 @@ export async function dispatchNotifications(deps: DispatchDeps, limit = 25) {
           const providerId = await deps.email(row.to_email, render(template.subject ?? "Freight Africa", row.payload), render(template.body, row.payload), row.id);
           outcome = { result: "sent", providerId };
         }
-      } else outcome = { result: "skipped", error: `${row.channel} is not built yet (Phase 4)` };
+      } else if (row.channel === "sms") {
+        if (!deps.sms) outcome = { result: "failed", error: "sms is not set up on this deployment" };
+        else if (!row.to_phone) outcome = { result: "skipped", error: "no phone number" };
+        else outcome = { result: "sent", providerId: await deps.sms(row.to_phone, render(template.body, row.payload), row.id) };
+      } else if (row.channel === "push") {
+        if (!deps.push) outcome = { result: "failed", error: "push is not set up on this deployment" };
+        else {
+          const reached = await deps.push(row.id, render(template.subject ?? "Freight Africa", row.payload), render(template.body, row.payload));
+          // No device turned on is not a fault: the in-app copy is there.
+          outcome = reached > 0 ? { result: "sent" } : { result: "skipped", error: "push not turned on" };
+        }
+      } else if (row.channel === "whatsapp") outcome = { result: "skipped", error: "WhatsApp is off" };
+      else outcome = { result: "skipped", error: `${row.channel} is delivered in the app` };
     } catch (error) {
       outcome = { result: "failed", error: reason(error) };
     }

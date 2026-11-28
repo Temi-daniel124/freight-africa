@@ -3864,5 +3864,14 @@
       },
       "noPrices": "No lane prices yet."
     }
+  },
+  "push": {
+    "title": "Notifications on this phone",
+    "on": "On: trip changes and replies arrive even when the app is closed.",
+    "off": "Off: you'll still see everything in the app.",
+    "blocked": "Blocked in your browser settings. Allow notifications for Freight Africa there.",
+    "turnOn": "Turn on",
+    "turnOff": "Turn off",
+    "failed": "That didn't work. Try again."
   }
 }
