@@ -1,3 +1,4 @@
+import { publicSettings } from "@/lib/settings/public";
 import { Phone } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { StatusChip } from "@/components/ui/chip";
@@ -111,9 +112,10 @@ export async function DriverNotifications({ viewer }: { viewer: Promise<Viewer> 
   );
 }
 
-export function DriverHelp() {
+export async function DriverHelp() {
   const t = messages.driverHelp;
-  const phone = process.env.NEXT_PUBLIC_SUPPORT_PHONE;
+  // D056: the Call button only once a super admin fills in support_phone.
+  const phone = (await publicSettings()).supportPhone;
   return (
     <div className="mx-auto flex w-full max-w-[560px] flex-col gap-4">
       <h1 className="text-title-1 text-ink">{t.title}</h1>
