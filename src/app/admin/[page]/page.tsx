@@ -7,7 +7,7 @@ import { FieldTasks } from "@/features/staff/field-tasks";
 import { NoAccess, StaffOverview, StaffWork } from "@/features/staff/home";
 import { StaffTrip, StaffTrips } from "@/features/staff/trips";
 import { StaffCatalogue, StaffCorridors, StaffLoads, StaffUsers } from "@/features/staff/lists";
-import { StaffApprovals, StaffAudit, StaffFees, StaffMessages, StaffSettings, StaffTeam } from "@/features/staff/admin-pages";
+import { StaffApprovals, StaffAudit, StaffFees, StaffMessages, StaffReconciliation, StaffSettings, StaffTeam } from "@/features/staff/admin-pages";
 import { staffMetadata, StaffSuspense } from "@/features/staff/staff-page";
 import { BankQueue } from "@/features/verification/bank-queue";
 import { FleetQueue } from "@/features/verification/fleet-queue";
@@ -64,6 +64,8 @@ async function Console({ params, searchParams }: { params: Promise<{ page: strin
       ) : (
         <StaffTrips view={typeof query.view === "string" ? query.view : "live"} q={typeof query.q === "string" ? query.q : undefined} />
       )
+    ) : page === "reconciliation" ? (
+      <StaffReconciliation />
     ) : page === "approvals" ? (
       <StaffApprovals />
     ) : page === "settings" ? (

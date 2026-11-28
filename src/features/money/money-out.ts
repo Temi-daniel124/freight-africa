@@ -16,6 +16,8 @@ export async function processMoneyOut(limit = 20): Promise<Sent> {
     .from("payouts")
     .select("id, amount_kobo, bank_account_id, organizations!inner(is_demo)")
     .eq("status", "queued")
+    // SYSTEM-LOGIC 7.5: a failed one waits for its next try (1, 5, 15, 60 minutes).
+    .lte("next_attempt_at", new Date().toISOString())
     .order("created_at")
     .limit(limit);
   for (const payout of payouts ?? []) {
@@ -30,8 +32,9 @@ export async function processMoneyOut(limit = 20): Promise<Sent> {
     // Claim it first, so two runs at once never send it twice.
     const { data: claimed } = await admin.from("payouts").update({ status: "processing" }).eq("id", payout.id).eq("status", "queued").select("id");
     if (!claimed?.length) continue;
+    let ref: string | null = null;
     try {
-      const ref = await provider.sendPayout({
+      ref = await provider.sendPayout({
         payoutId: payout.id,
         amountKobo: Number(payout.amount_kobo),
         bankAccountId: payout.bank_account_id,
@@ -43,11 +46,12 @@ export async function processMoneyOut(limit = 20): Promise<Sent> {
       if (error) throw new Error(error.code);
       sent.payouts += 1;
     } catch (error) {
-      console.error(
-        "payout failed",
-        payout.id,
-        error instanceof Error ? error.message : "unknown",
-      );
+      const why = error instanceof Error ? error.message : "unknown";
+      console.error("payout failed", payout.id, why);
+      // Back to the queue for its next try, or failed for finance after the last (money_out_failed).
+      // Only when the bank didn't take it: if it did and only recording failed, a retry could pay twice,
+      // so it stays "processing" for finance to check (reconciliation).
+      if (ref === null) await admin.rpc("money_out_failed", { p_kind: "payout", p_id: payout.id, p_error: why });
     }
   }
 
@@ -55,6 +59,7 @@ export async function processMoneyOut(limit = 20): Promise<Sent> {
     .from("refunds")
     .select("id, amount_kobo, organizations!inner(is_demo)")
     .eq("status", "queued")
+    .lte("next_attempt_at", new Date().toISOString())
     .order("created_at")
     .limit(limit);
   for (const refund of refunds ?? []) {
@@ -67,8 +72,9 @@ export async function processMoneyOut(limit = 20): Promise<Sent> {
     }
     const { data: claimedRefund } = await admin.from("refunds").update({ status: "processing" }).eq("id", refund.id).eq("status", "queued").select("id");
     if (!claimedRefund?.length) continue;
+    let ref: string | null = null;
     try {
-      const ref = await provider.sendRefund({
+      ref = await provider.sendRefund({
         refundId: refund.id,
         amountKobo: Number(refund.amount_kobo),
       });
@@ -79,11 +85,9 @@ export async function processMoneyOut(limit = 20): Promise<Sent> {
       if (error) throw new Error(error.code);
       sent.refunds += 1;
     } catch (error) {
-      console.error(
-        "refund failed",
-        refund.id,
-        error instanceof Error ? error.message : "unknown",
-      );
+      const why = error instanceof Error ? error.message : "unknown";
+      console.error("refund failed", refund.id, why);
+      if (ref === null) await admin.rpc("money_out_failed", { p_kind: "refund", p_id: refund.id, p_error: why });
     }
   }
   return sent;

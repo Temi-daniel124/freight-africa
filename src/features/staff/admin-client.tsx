@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import messages from "@/messages/en.json";
-import { changeSetting, decideApproval, inviteStaff } from "./admin-actions";
+import { changeSetting, decideApproval, inviteStaff, resolveReconciliation } from "./admin-actions";
 
 const t = messages.staffAdmin;
 const field = "w-full rounded-input border border-line-field px-3 py-2.5 text-control outline-none focus:border-green-700";
@@ -148,4 +148,8 @@ export function InviteStaff({ roles }: { roles: { value: string; label: string }
       </Dialog>
     </>
   );
+}
+
+export function ResolveItem({ id }: { id: string }) {
+  return <ReasonDialog label={t.recon.resolve} title={t.recon.resolveTitle} effect={t.recon.resolveEffect} onConfirm={(reason) => resolveReconciliation(id, reason)} />;
 }
