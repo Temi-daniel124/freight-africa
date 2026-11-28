@@ -59,7 +59,7 @@ async function DemoStrip({ viewer }: { viewer: Promise<Viewer> }) {
   const v = await viewer;
   if (!v.isDemo) return null;
   return (
-    <p role="note" className="bg-warning-100 px-4 py-2 text-center text-label font-semibold text-warning lg:px-8">
+    <p role="note" data-layout-wide className="bg-warning-100 px-4 py-2 text-center text-label font-semibold text-warning lg:px-8">
       {t.demo}
     </p>
   );

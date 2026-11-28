@@ -1,0 +1,18 @@
+[
+  {"mock": "DV05-Phone", "path": "/dev/driver?screen=start"},
+  {"mock": "DV05b-Waiting", "path": "/dev/driver?screen=waiting"},
+  {"mock": "DV05c-NotInstalled", "path": "/dev/driver?screen=failed"},
+  {"mock": "DV05d-iPhone", "path": "/dev/driver?screen=ios"},
+  {"mock": "DV05e-Installed", "path": "/dev/driver?screen=done"},
+  {"mock": "DV06-GPS", "path": "/dev/driver?screen=gps"},
+  {"mock": "DV13-ToPickup", "path": "/dev/driver?screen=topickup"},
+  {"mock": "DV14-AtPickup", "path": "/dev/driver?screen=atpickup"},
+  {"mock": "DV16-LoadCode", "path": "/dev/driver?screen=loadcode"},
+  {"mock": "DV17-OnRoad", "path": "/dev/driver?screen=onroad"},
+  {"mock": "DV19-DeliveryCode", "path": "/dev/driver?screen=deliverycode"},
+  {"mock": "DV10-NoTrip", "path": "/app/drive", "account": "driver"},
+  {"mock": "DV31-History", "path": "/app/drive/history", "account": "driver"},
+  {"mock": "DV32-Me", "path": "/app/drive/me", "account": "driver"},
+  {"mock": "DV33-Notifications", "path": "/app/drive/notifications", "account": "driver"},
+  {"mock": "DV34-Help", "path": "/app/drive/help", "account": "driver"}
+]

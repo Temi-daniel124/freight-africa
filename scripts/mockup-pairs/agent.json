@@ -1,0 +1,8 @@
+[
+  {"mock": "G01-Home", "path": "/dev/agent?screen=home"},
+  {"mock": "G02-Invite", "path": "/dev/agent?screen=invite"},
+  {"mock": "G03-People", "path": "/dev/agent?screen=people"},
+  {"mock": "G04-Person", "path": "/dev/agent?screen=person"},
+  {"mock": "G05-Earnings", "path": "/dev/agent?screen=earnings"},
+  {"mock": "G07-Me", "path": "/dev/agent?screen=me"}
+]

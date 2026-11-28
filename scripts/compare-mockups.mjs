@@ -13,7 +13,7 @@ import { pathToFileURL } from "node:url";
 const [set = "sender", filter = ""] = process.argv.slice(2);
 const BASE = process.env.BASE_URL ?? "http://localhost:3000";
 const PIN = process.env.DEMO_PIN;
-const OUT = `test-results/mockups/${set}`;
+const OUT = process.env.OUT_DIR ?? `docs/acceptance/mockup-compare/${set}`;
 const INBOX = (tag) => `temmydaniel124+fa-${tag}@gmail.com`;
 const pairs = JSON.parse(readFileSync(`scripts/mockup-pairs/${set}.json`, "utf8")).filter(
   (p) => p.path && (!filter || p.mock.startsWith(filter)),

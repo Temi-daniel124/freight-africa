@@ -1,4 +1,4 @@
-import { Banknote, Copy, House, Plus, QrCode, Share2, Truck, User, UserRound, Users } from "lucide-react";
+import { Banknote, Bell, Copy, House, Plus, QrCode, Share2, Truck, User, UserRound, Users } from "lucide-react";
 import Link from "next/link";
 import QRCode from "qrcode";
 import type { ReactNode } from "react";
@@ -27,7 +27,12 @@ function Phone({ tab, title, children }: { tab: string; title: string; children:
     <div className="mx-auto flex min-h-dvh w-full max-w-[430px] flex-col bg-paper">
       <header className="flex items-center gap-3 px-5 pt-5 pb-3">
         {tab === "home" ? <Avatar name={AGENT.name} size={40} className="bg-green-900 text-white" /> : null}
-        <h1 className="text-title-1 text-ink">{title}</h1>
+        <h1 className="text-title-2 text-ink">{title}</h1>
+        {tab === "home" ? (
+          <span className="ml-auto grid size-11 place-items-center rounded-full border border-line bg-surface text-ink" aria-label="Notifications">
+            <Bell aria-hidden className="size-4.5" strokeWidth={1.8} />
+          </span>
+        ) : null}
       </header>
       <main className="flex flex-1 flex-col gap-4 px-5 pb-32">{children}</main>
       <nav aria-label="Agent" className="fixed inset-x-0 bottom-3 mx-auto flex h-17 w-[calc(100%-32px)] max-w-[398px] items-center justify-around rounded-pill border border-line bg-surface shadow-floating">
@@ -54,7 +59,7 @@ function Phone({ tab, title, children }: { tab: string; title: string; children:
 function Totals() {
   const t = agentTotals(SHARES);
   const cells: [string, string][] = [
-    ["This month", naira(t.totalKobo + 3_940_000)],
+    ["This month", "₦63,100"],
     ["Waiting", naira(t.waitingKobo)],
     ["All time", "₦318,400"],
   ];
@@ -112,6 +117,31 @@ function Home() {
           </li>
         ))}
       </ul>
+      <h2 className="text-title-3 text-ink">Recent activity</h2>
+      <ul className={cn(card, "px-4")}>
+        {[
+          [Banknote, "Musa Haulage finished a trip. You earned ₦11,800.", "Today 13:10"],
+          [UserRound, "Sahel Grains signed up as a sender.", "Yesterday"],
+          [Truck, "Garba & Sons' truck was approved.", "Mon"],
+        ].map(([Icon, text, when]) => {
+          const I = Icon as typeof Truck;
+          return (
+            <li key={text as string} className="flex gap-3 border-b border-line-soft py-3.5 last:border-b-0">
+              <I aria-hidden className="mt-0.5 size-4.5 shrink-0 text-green-800" strokeWidth={1.8} />
+              <span>
+                <span className="block text-body text-ink">{text as string}</span>
+                <span className="block text-meta text-ink-3">{when as string}</span>
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+      <Link href="/dev/agent?screen=people" className={cn(card, "flex items-center justify-between px-4 py-3.5 text-body text-ink")}>
+        <span>
+          <b>9 owners · 5 senders</b> · 11 active
+        </span>
+        <span className="font-semibold text-green-800">See all</span>
+      </Link>
     </Phone>
   );
 }

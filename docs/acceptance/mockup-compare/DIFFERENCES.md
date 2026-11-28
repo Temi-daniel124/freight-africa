@@ -12,3 +12,11 @@ Each one is required by a decision, a security rule or a data rule (combined bri
 | P14b, D09, P14c | Driver and owner show initials, not a photo | No driver photos are stored yet (Phase 4 onboarding photo); never a stock face |
 | P14b, D09 | Loading code, Call driver / Call owner, delivery photos, rating and "Report a problem" are shown only in /dev/trips | UI built, backend Phase 4 (codes, calls during a live trip D018, photos), Phase 6 (ratings), Phase 5 (problem reports) |
 | P12, D05 | "Arrives Sat 28 Nov, about 2 pm" reads "Pick-up …" | No arrival estimate is computed until Phase 4 tracking |
+
+## Slices 7–12 (28 Nov 2026)
+
+- Compare images for every role are in this folder: `sender/`, `owner/`, `driver/`, `admin/`, `agent/` (made with `npm run check:mockups -- <role>` against a local server while Vercel builds were rate limited).
+- Signed-in screens show the demo accounts' own data (for example "Sani Abubakar", "Ibrahim Musa"), not the mockups' sample names; layouts match.
+- Staff My work and Overview show only what the database holds today: the SOS strip, tracking-lost items, Assigned/Unassigned tabs, on-call hours and playbooks join with their backends (Phase 4/5). The red SOS indicator in the top bar is hidden until SOS exists (Phase 5).
+- Driver Me: no star rating (ratings are Phase 5) and the phone line falls back to the email for accounts without a phone.
+- Desktop sign-in buttons are wider than 560 px by design (the split sign-in panel, sender mockups A-01 desktop).

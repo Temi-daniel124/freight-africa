@@ -18,7 +18,8 @@
     "demo:seed": "node scripts/seed-demo.mjs --apply",
     "demo:remove": "node scripts/seed-demo.mjs --remove",
     "check:layout": "node --env-file-if-exists=.env.founder.local scripts/check-layout.mjs",
-    "demo:trips": "node --env-file=.env.local scripts/seed-demo-trips.mjs"
+    "demo:trips": "node --env-file=.env.local scripts/seed-demo-trips.mjs",
+    "check:mockups": "node --env-file-if-exists=.env.founder.local scripts/compare-mockups.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^7.0.5",

@@ -99,7 +99,13 @@ function audit(width) {
       if (!visible(el) || el.closest("[data-layout-ignore]") || el.closest(wide)) continue;
       // Only buttons styled as buttons: a link counts when it is a block (a button-looking link).
       if (el.tagName === "A" && getComputedStyle(el).display.startsWith("inline") && !el.matches("[class*=rounded-button]")) continue;
-      const w = el.getBoundingClientRect().width;
+      // Text is measured by its lines, not its box: a short heading in a wide column isn't stretched.
+      let w = el.getBoundingClientRect().width;
+      if (/^(P|H[1-4]|BLOCKQUOTE)$/.test(el.tagName)) {
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        w = Math.max(0, ...[...range.getClientRects()].map((r) => r.width));
+      }
       if (w > 560.5) problems.push(`wider than 560 px (${Math.round(w)}px): ${name(el)}`);
     }
   }

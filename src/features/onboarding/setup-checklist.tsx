@@ -17,7 +17,7 @@ export async function SetupChecklist({ role }: { role: SetupRole }) {
   const done = setup.steps.filter((step) => step.done).length;
   const next = setup.steps.find((step) => !step.done);
   return (
-    <section aria-labelledby="setup-title" className="rounded-tile bg-surface p-4.5 shadow-raised lg:rounded-card lg:p-6">
+    <section aria-labelledby="setup-title" className="w-full max-w-[560px] rounded-tile bg-surface p-4.5 shadow-raised lg:rounded-card lg:p-6">
       <div className="flex items-baseline justify-between gap-3">
         <h2 id="setup-title" className="text-body-lg leading-5.5 font-semibold tracking-close text-ink">
           {t.title}

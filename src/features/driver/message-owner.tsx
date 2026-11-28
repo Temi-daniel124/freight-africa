@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader, TriangleAlert, X } from "lucide-react";
+import { Loader, MessageSquare, TriangleAlert, X } from "lucide-react";
 import { useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -78,6 +78,7 @@ export function MessageOwner({ orgId, orgName, userId }: { orgId: string; orgNam
       description={sent ? t.sentText.replace("{org}", orgName) : t.msgText}
       trigger={
         <Button variant="secondary" size="md" className="w-full">
+          <MessageSquare aria-hidden className="size-4.5" strokeWidth={1.8} />
           {t.message.replace("{org}", orgName)}
         </Button>
       }
