@@ -49,7 +49,7 @@ grant execute on function public.money_out_failed(text, uuid, text) to service_r
 create table public.reconciliation_items (
   id uuid primary key default gen_random_uuid(),
   day date not null,
-  kind text not null check (kind in ('escrow_not_zero', 'payout_without_posting', 'refund_without_posting', 'provider_difference')),
+  kind text not null check (kind in ('escrow_not_zero', 'payout_without_posting', 'refund_without_posting', 'stuck_processing', 'provider_difference')),
   subject_id uuid,
   ref text,
   expected_kobo bigint,
@@ -74,28 +74,50 @@ declare
   v_count int := 0;
   v_rows int;
 begin
-  -- Escrow of a load whose trip is finished (closed or cancelled), or of a refunded load, must be zero.
+  -- One open item per difference: an unresolved one is not added again each day (review).
+  -- Escrow of a finished load must be zero: a closed trip, or a load cancelled or refunded. (An expired
+  -- load may still hold a part payment correctly, so it is not checked; review.)
   insert into public.reconciliation_items (day, kind, subject_id, ref, expected_kobo, found_kobo)
   select p_day, 'escrow_not_zero', l.id, l.ref, 0, private.ledger_balance(a.id)
   from public.ledger_accounts a
   join public.loads l on l.id = a.load_id
   where a.kind = 'escrow'
-    and (l.status in ('refunded', 'cancelled', 'expired') or exists (select 1 from public.trips t where t.load_id = l.id and t.status in ('closed', 'cancelled')))
+    and (l.status in ('refunded', 'cancelled') or exists (select 1 from public.trips t where t.load_id = l.id and t.status = 'closed'))
     and coalesce(private.ledger_balance(a.id), 0) <> 0
+    and not exists (select 1 from public.reconciliation_items i where i.kind = 'escrow_not_zero' and i.subject_id = l.id and i.status = 'open')
   on conflict (day, kind, subject_id) do nothing;
   get diagnostics v_rows = row_count;
   v_count := v_count + v_rows;
+  -- Every paid payout and refund has its cash-out posting (payout_paid / refund_paid; review).
   insert into public.reconciliation_items (day, kind, subject_id, expected_kobo)
   select p_day, 'payout_without_posting', p.id, p.amount_kobo
   from public.payouts p
-  where p.status = 'paid' and p.ledger_transaction_id is null and (p.paid_at at time zone 'Africa/Lagos')::date <= p_day
+  where p.status = 'paid' and (p.paid_at at time zone 'Africa/Lagos')::date <= p_day
+    and not exists (select 1 from public.ledger_transactions x where x.idempotency_key = 'payout-paid:' || p.id)
+    and not exists (select 1 from public.reconciliation_items i where i.kind = 'payout_without_posting' and i.subject_id = p.id and i.status = 'open')
   on conflict (day, kind, subject_id) do nothing;
   get diagnostics v_rows = row_count;
   v_count := v_count + v_rows;
   insert into public.reconciliation_items (day, kind, subject_id, expected_kobo)
   select p_day, 'refund_without_posting', r.id, r.amount_kobo
   from public.refunds r
-  where r.status = 'paid' and r.ledger_transaction_id is null and (r.paid_at at time zone 'Africa/Lagos')::date <= p_day
+  where r.status = 'paid' and (r.paid_at at time zone 'Africa/Lagos')::date <= p_day
+    and not exists (select 1 from public.ledger_transactions x where x.idempotency_key = 'refund-paid:' || r.id)
+    and not exists (select 1 from public.reconciliation_items i where i.kind = 'refund_without_posting' and i.subject_id = r.id and i.status = 'open')
+  on conflict (day, kind, subject_id) do nothing;
+  get diagnostics v_rows = row_count;
+  v_count := v_count + v_rows;
+  -- A payment out left "sending" for over an hour: the bank may have taken it but we could not record it,
+  -- so it is never retried by itself; finance checks it with Bachs (review).
+  insert into public.reconciliation_items (day, kind, subject_id, expected_kobo)
+  select p_day, 'stuck_processing', x.id, x.amount_kobo
+  from (
+    select id, amount_kobo, created_at from public.payouts where status = 'processing'
+    union all
+    select id, amount_kobo, created_at from public.refunds where status = 'processing'
+  ) x
+  where x.created_at < now() - interval '1 hour'
+    and not exists (select 1 from public.reconciliation_items i where i.kind = 'stuck_processing' and i.subject_id = x.id and i.status = 'open')
   on conflict (day, kind, subject_id) do nothing;
   get diagnostics v_rows = row_count;
   v_count := v_count + v_rows;

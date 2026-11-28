@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(8);
+select plan(11);
 
 -- Musa Haulage (owner Musa, drivers Sani and Bello) has a trip assigned to Sani; Emeka's owner is a stranger.
 insert into auth.users (id, instance_id, aud, role, email, email_confirmed_at, raw_user_meta_data, created_at, updated_at) values
@@ -52,14 +52,25 @@ do $$ begin
   end loop;
 end $$;
 update public.payouts set status = 'processing' where id = '35035035-0000-4000-8000-0000000000ab';
-select is(public.money_out_failed('payout', '35035035-0000-4000-8000-0000000000ab', 'account closed'), 'failed', 'after four tries it is failed, for finance');
+select is(public.money_out_failed('payout', '35035035-0000-4000-8000-0000000000ab', 'account closed'), 'failed', 'the fifth failure (after four retries) is failed, for finance');
 select is((select last_error from public.payouts where id = '35035035-0000-4000-8000-0000000000ab'), 'account closed', 'with the reason');
 select is(public.money_out_failed('payout', '35035035-0000-4000-8000-0000000000ab', 'again'), null, 'only a payout being sent can fail');
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub": "35035035-0000-4000-8000-000000000001", "role": "authenticated"}', true);
 select throws_ok($$select public.money_out_failed('payout', '35035035-0000-4000-8000-0000000000ab', 'x')$$, '42501', null, 'only the server reports failures');
 reset role;
+-- Reconciliation: a paid payout with no cash-out posting, and one stuck in sending, are found once.
+insert into public.ledger_transactions (id, kind, idempotency_key) values ('35035035-0000-4000-8000-0000000000ac', 'balance', 'test-350-payout-2');
+insert into public.payouts (id, trip_id, kind, org_id, amount_kobo, ledger_transaction_id, status, idempotency_key, paid_at)
+values ('35035035-0000-4000-8000-0000000000ad', '35035035-0000-4000-8000-0000000000e1', 'balance', '35035035-0000-4000-8000-0000000000b1', 40000000, '35035035-0000-4000-8000-0000000000ac', 'paid', 'test-350-payout-2', now() - interval '2 days');
+insert into public.ledger_transactions (id, kind, idempotency_key) values ('35035035-0000-4000-8000-0000000000ae', 'balance', 'test-350-payout-3');
+insert into public.payouts (id, trip_id, kind, org_id, amount_kobo, ledger_transaction_id, status, idempotency_key, created_at)
+values ('35035035-0000-4000-8000-0000000000af', '35035035-0000-4000-8000-0000000000e1', 'cancellation_fee', '35035035-0000-4000-8000-0000000000b1', 1000000, '35035035-0000-4000-8000-0000000000ae', 'processing', 'test-350-payout-3', now() - interval '3 hours');
 select lives_ok($$select private.daily_reconciliation()$$, 'the daily reconciliation runs');
+select is((select count(*)::int from public.reconciliation_items where subject_id = '35035035-0000-4000-8000-0000000000ad' and kind = 'payout_without_posting'), 1, 'a paid payout without its posting is found');
+select is((select count(*)::int from public.reconciliation_items where subject_id = '35035035-0000-4000-8000-0000000000af' and kind = 'stuck_processing'), 1, 'a payout stuck in sending is found');
+select private.daily_reconciliation(current_date);
+select is((select count(*)::int from public.reconciliation_items where subject_id = '35035035-0000-4000-8000-0000000000ad'), 1, 'and not again while it is open');
 
 select * from finish();
 rollback;
