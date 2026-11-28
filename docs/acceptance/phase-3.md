@@ -21,10 +21,19 @@ idempotent.
 | Independent review of money, auth and RLS | Done | Every PR: findings fixed before merge (see PR descriptions and commits marked "review") |
 | Demo data | Done | `npm run demo:trips`: loads in every state; six trucks across all states, one with cattle, one with the weight not known |
 
-## Not built yet
+## Finished in the combined brief (slices 5c and 11, 27–28 Nov 2026)
 
-- Payout and refund failure retries (1, 5, 15, 60 minutes) and the finance task on failure; today a failed send stays queued and is retried on the next minute.
-- The no-truck-after-24-hours decision (raise the price, keep waiting, refund) and the automatic refund at `pickup_until`.
-- Batch payment for several loads.
-- The 06:00 daily reconciliation run.
-- Loading and delivery through Phase 4's codes (the demo trip buttons stand in).
+| Item | State | Where |
+| --- | --- | --- |
+| Payout and refund retries at 1, 5, 15 and 60 minutes, then failed for finance | Built | `money_out_failed` (#139), `money-out.ts`; a send the bank took but we couldn't record is never retried (stays "processing" for finance); failed ones show in My work |
+| No truck after 24 hours: raise, change day, keep waiting, refund | Built | P06d/P06e screens and `raise_price`, `change_day`, `keep_waiting` (slice 5c, #99–#101) |
+| Batch payment ("Pay for several") | Built | `request_batch_payment`, `confirm_batch_payment`, `/app/pay/several` (#99, #101) |
+| Bachs hosted checkout (demo provider until the Bachs account) | Built | D048, `/app/pay/[load]`, labelled demo page |
+| Daily reconciliation at 06:00 | Built | `private.daily_reconciliation` on pg_cron, `reconciliation_items`, staff X12 with resolve and a note (#139); the comparison with the Bachs report joins when the Bachs account is live |
+| Receipts and statements as PDFs | Built | Sender receipt and statement, owner payout advice and statement (slice 5f, 6c) |
+| PageSpeed for /auth and sender Home | Not run | The PageSpeed API quota was used up in Phase 2 and Vercel builds were rate limited on 28 Nov; run `npx lighthouse` against production once deployments resume |
+
+## Still to come (later phases)
+
+- Loading and delivery through Phase 4's codes (the demo trip buttons and staff "Mark loaded / delivered" with a reason stand in).
+- The Bachs settlement report in the daily reconciliation (needs the Bachs account).

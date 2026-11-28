@@ -2,7 +2,7 @@ import { StatusChip } from "@/components/ui/chip";
 import { ApproveButton } from "@/features/money/approve-button";
 import { supabaseServer } from "@/lib/supabase/server";
 import messages from "@/messages/en.json";
-import { DecideButtons, InviteStaff, SettingChange } from "./admin-client";
+import { DecideButtons, InviteStaff, ResolveItem, SettingChange } from "./admin-client";
 
 // X17 approvals, X21 settings, X18 fees, X25 audit log, X24 staff and X20 messages, from the database.
 // Reads are checked by RLS (super admins and finance for approvals, super admins for the audit log).
@@ -272,6 +272,50 @@ export async function StaffMessages() {
             ))}
           </tbody>
         </table>
+      </div>
+    </div>
+  );
+}
+
+export async function StaffReconciliation() {
+  const { supabase } = await me();
+  const { data: items } = await supabase.from("reconciliation_items").select("id, day, kind, ref, expected_kobo, found_kobo, status, note, created_at").order("status").order("day", { ascending: false }).limit(100);
+  const r = t.recon;
+  return (
+    <div className="flex flex-col">
+      <Lead>{r.lead}</Lead>
+      <div className={card}>
+        {items?.length ? (
+          <table className="w-full min-w-[820px] text-left text-body-sm">
+            <thead className="border-b border-line">
+              <tr>
+                <th className={th}>{r.day}</th>
+                <th className={th}>{r.what}</th>
+                <th className={th}>{r.expected}</th>
+                <th className={th}>{r.found}</th>
+                <th className={th}>{r.status}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((i) => (
+                <tr key={i.id} className="border-b border-line-soft align-top last:border-b-0">
+                  <td className="px-4 py-3 whitespace-nowrap text-ink-2">{i.day}</td>
+                  <td className="px-4 py-3 text-ink">
+                    {r.kinds[i.kind as keyof typeof r.kinds] ?? i.kind}
+                    {i.ref ? <span className="block text-caption text-ink-3">{i.ref}</span> : null}
+                  </td>
+                  <td className="tabular px-4 py-3 text-ink">{i.expected_kobo == null ? "—" : naira(i.expected_kobo)}</td>
+                  <td className="tabular px-4 py-3 text-ink">{i.found_kobo == null ? "—" : naira(i.found_kobo)}</td>
+                  <td className="px-4 py-3">
+                    {i.status === "open" ? <ResolveItem id={i.id} /> : <span className="text-meta text-ink-3">{[r.resolved, i.note].filter(Boolean).join(" · ")}</span>}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p className="px-6 py-10 text-center text-body text-ink-2">{r.none}</p>
+        )}
       </div>
     </div>
   );

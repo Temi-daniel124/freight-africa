@@ -3795,7 +3795,27 @@
       "live": "Live",
       "whatsappNote": "WhatsApp templates stay on hold until WhatsApp is connected; then they join with the 24-hour reply window."
     },
-    "fresh": "Enter your authenticator code again, then try once more."
+    "fresh": "Enter your authenticator code again, then try once more.",
+    "recon": {
+      "lead": "Every morning at 06:00 the ledger is checked: money held for finished loads must be zero, and every payment out must be posted. The Bachs report joins this when the Bachs account is live.",
+      "day": "Day",
+      "what": "What",
+      "expected": "Expected",
+      "found": "Found",
+      "status": "Status",
+      "none": "Everything matched.",
+      "resolved": "Resolved",
+      "resolve": "Resolve",
+      "resolveTitle": "Resolve this difference",
+      "resolveEffect": "It's marked resolved with your note, in the audit log.",
+      "kinds": {
+        "escrow_not_zero": "Money still held for a finished load",
+        "payout_without_posting": "Payout without a ledger posting",
+        "refund_without_posting": "Refund without a ledger posting",
+        "provider_difference": "Bachs report differs from the ledger",
+        "stuck_processing": "Payment out stuck in sending"
+      }
+    }
   },
   "staffLists": {
     "demo": "Demo",

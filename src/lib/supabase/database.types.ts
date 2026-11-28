@@ -1788,6 +1788,7 @@ export type Database = {
           kind: Database["public"]["Enums"]["payout_kind"]
           last_error: string | null
           ledger_transaction_id: string
+          next_attempt_at: string
           org_id: string
           paid_at: string | null
           provider_ref: string | null
@@ -1806,6 +1807,7 @@ export type Database = {
           kind: Database["public"]["Enums"]["payout_kind"]
           last_error?: string | null
           ledger_transaction_id: string
+          next_attempt_at?: string
           org_id: string
           paid_at?: string | null
           provider_ref?: string | null
@@ -1824,6 +1826,7 @@ export type Database = {
           kind?: Database["public"]["Enums"]["payout_kind"]
           last_error?: string | null
           ledger_transaction_id?: string
+          next_attempt_at?: string
           org_id?: string
           paid_at?: string | null
           provider_ref?: string | null
@@ -1997,15 +2000,71 @@ export type Database = {
           },
         ]
       }
+      reconciliation_items: {
+        Row: {
+          created_at: string
+          day: string
+          expected_kobo: number | null
+          found_kobo: number | null
+          id: string
+          kind: string
+          note: string | null
+          ref: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          status: string
+          subject_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          day: string
+          expected_kobo?: number | null
+          found_kobo?: number | null
+          id?: string
+          kind: string
+          note?: string | null
+          ref?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+          subject_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          day?: string
+          expected_kobo?: number | null
+          found_kobo?: number | null
+          id?: string
+          kind?: string
+          note?: string | null
+          ref?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+          subject_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reconciliation_items_resolved_by_fkey"
+            columns: ["resolved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       refunds: {
         Row: {
           amount_kobo: number
           approved_by: string | null
+          attempts: number
           created_at: string
           id: string
           idempotency_key: string
+          last_error: string | null
           ledger_transaction_id: string
           load_id: string
+          next_attempt_at: string
           paid_at: string | null
           provider_ref: string | null
           reason: string
@@ -2016,11 +2075,14 @@ export type Database = {
         Insert: {
           amount_kobo: number
           approved_by?: string | null
+          attempts?: number
           created_at?: string
           id?: string
           idempotency_key: string
+          last_error?: string | null
           ledger_transaction_id: string
           load_id: string
+          next_attempt_at?: string
           paid_at?: string | null
           provider_ref?: string | null
           reason: string
@@ -2031,11 +2093,14 @@ export type Database = {
         Update: {
           amount_kobo?: number
           approved_by?: string | null
+          attempts?: number
           created_at?: string
           id?: string
           idempotency_key?: string
+          last_error?: string | null
           ledger_transaction_id?: string
           load_id?: string
+          next_attempt_at?: string
           paid_at?: string | null
           provider_ref?: string | null
           reason?: string
@@ -3187,6 +3252,10 @@ export type Database = {
       }
       mark_notifications_read: { Args: { p_ids: string[] }; Returns: undefined }
       member_role: { Args: { p_org: string }; Returns: string }
+      money_out_failed: {
+        Args: { p_error: string; p_id: string; p_kind: string }
+        Returns: string
+      }
       my_accounts: {
         Args: never
         Returns: {
@@ -3319,6 +3388,10 @@ export type Database = {
       }
       request_batch_payment: { Args: { p_loads: string[] }; Returns: string }
       request_load_payment: { Args: { p_load: string }; Returns: string }
+      resolve_reconciliation: {
+        Args: { p_id: string; p_note: string }
+        Returns: undefined
+      }
       revoke_invite: { Args: { p_invite: string }; Returns: undefined }
       save_as_draft: { Args: { p_load: string }; Returns: undefined }
       save_place: {

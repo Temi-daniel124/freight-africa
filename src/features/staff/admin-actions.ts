@@ -50,3 +50,12 @@ export async function inviteStaff(email: string, role: string): Promise<Result> 
   revalidatePath("/admin/staff");
   return { status: sent ? "ok" : "notSent" };
 }
+
+export async function resolveReconciliation(id: string, note: string): Promise<Result> {
+  await assertUnlocked();
+  if (!reasonOk(note)) return { status: "reason" };
+  const { error } = await (await supabaseServer()).rpc("resolve_reconciliation", { p_id: id, p_note: note.trim() });
+  if (error) return { status: "error" };
+  revalidatePath("/admin/reconciliation");
+  return { status: "ok" };
+}
