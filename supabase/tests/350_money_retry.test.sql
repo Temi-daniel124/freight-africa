@@ -35,7 +35,7 @@ insert into public.trips (id, ref, load_id, transporter_org_id, truck_id, driver
 values ('35035035-0000-4000-8000-0000000000e1', 'FA-35035-T1', '35035035-0000-4000-8000-0000000000d1', '35035035-0000-4000-8000-0000000000b1', '35035035-0000-4000-8000-0000000000c1',
   '35035035-0000-4000-8000-000000000002', 100000000, 400, 4000000, 5000, 50000000, 'assigned');
 
-insert into public.ledger_transactions (id, kind, idempotency_key) values ('35035035-0000-4000-8000-0000000000aa', 'payout', 'test-350-payout');
+insert into public.ledger_transactions (id, kind, idempotency_key) values ('35035035-0000-4000-8000-0000000000aa', 'advance', 'test-350-payout');
 insert into public.payouts (id, trip_id, kind, org_id, amount_kobo, ledger_transaction_id, status, idempotency_key)
 values ('35035035-0000-4000-8000-0000000000ab', '35035035-0000-4000-8000-0000000000e1', 'advance', '35035035-0000-4000-8000-0000000000b1', 50000000, '35035035-0000-4000-8000-0000000000aa', 'processing', 'test-350-payout-1');
 
