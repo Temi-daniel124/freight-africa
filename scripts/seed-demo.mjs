@@ -160,6 +160,37 @@ async function seedFleet(orgId, fleet, ids) {
   }
 }
 
+
+// Finished setup (closing brief §3): the demo accounts' Homes show the real Home (P07, D02, O10, OD01,
+// DV10), not "Finish setting up". Identity approved, a payout account usable now, the drivers' licence,
+// record and an installed app. Demo rows only; the setup card stays for real new people (P07b, D02c).
+const DEMO_BANKS = { "musa-haulage": "0123456789", "nwosu-transport": "0234567891", "long-name-haulage": "0345678912" };
+async function finishSetup(ids, orgIds) {
+  const people = PEOPLE.filter((person) => !person.staff).map((person) => ids[person.tag]);
+  must(await db.from("profiles").update({ kyc_status: "approved" }).in("id", people), "identity approved");
+  for (const org of ORGS.filter((o) => o.kind === "transporter")) {
+    const orgId = orgIds[org.key];
+    const owner = org.members.find((member) => member.transporter_role === "owner");
+    const { data: row } = await db.from("organizations").select("default_bank_account_id").eq("id", orgId).single();
+    let bankId = row?.default_bank_account_id;
+    if (!bankId) {
+      bankId = must(await db.rpc("add_bank_account", { p_user: ids[owner.tag], p_org: orgId, p_bank_code: "058", p_bank_name: "GTBank", p_account_number: DEMO_BANKS[org.key], p_resolved_name: org.name, p_score: 100 }), `bank for ${org.name}`);
+    }
+    must(await db.from("bank_accounts").update({ status: "active", usable_from: new Date(Date.now() - 86_400_000).toISOString() }).eq("id", bankId), `bank usable for ${org.name}`);
+    const licence = (await db.from("document_types").select("id").eq("code", "drivers_licence").single()).data;
+    for (const member of org.members.filter((m) => m.is_driver)) {
+      const user = ids[member.tag];
+      must(await db.from("drivers").upsert({ user_id: user, org_id: orgId, licence_number: `LAG${String(user).replace(/\D/g, "").slice(0, 8).padEnd(8, "0")}`, licence_expires_on: new Date(Date.now() + 2 * 365 * 86_400_000).toISOString().slice(0, 10), status: "active" }, { onConflict: "user_id" }), `driver ${member.tag}`);
+      const { data: doc } = await db.from("documents").select("id").eq("subject_kind", "driver").eq("subject_id", user).eq("doc_type_id", licence.id).limit(1).maybeSingle();
+      const fields = { status: "approved", expires_on: new Date(Date.now() + 2 * 365 * 86_400_000).toISOString().slice(0, 10) };
+      if (doc) must(await db.from("documents").update(fields).eq("id", doc.id), `licence for ${member.tag}`);
+      else must(await db.from("documents").insert({ ...fields, doc_type_id: licence.id, subject_kind: "driver", subject_id: user, org_id: orgId, file_path: `demo/licence/${member.tag}.jpg` }), `licence for ${member.tag}`);
+      const now = new Date().toISOString();
+      must(await db.from("app_installs").upsert({ user_id: user, device_id: "00000000-0000-4000-8000-00000000d000", platform: "android", state: "installed", installed_at: now, last_seen_at: now }, { onConflict: "user_id,device_id" }), `install for ${member.tag}`);
+    }
+  }
+}
+
 // ---------------------------------------------------------------------------------------------------
 
 async function allUsers() {
@@ -182,6 +213,7 @@ async function apply() {
   const existing = new Map(everyone.map((user) => [user.email?.toLowerCase(), user]));
   const byPhone = new Map(everyone.filter((user) => user.phone).map((user) => [user.phone, user]));
   const ids = {};
+  const orgIds = {};
   // The demo PIN lives only in the founder's git-ignored .env.founder.local (D044).
   const pin = process.env.DEMO_PIN || fromEnvFile("DEMO_PIN", ".env.founder.local");
   if (!pin) console.warn("  DEMO_PIN is not set in .env.founder.local: demo accounts get no PIN (they choose one at sign-in).");
@@ -240,9 +272,12 @@ async function apply() {
       );
       must(await db.from("profiles").update({ last_active_org_id: orgId }).eq("id", ids[member.tag]), `active account for ${member.tag}`);
     }
+    orgIds[org.key] = orgId;
     console.log(`  ${org.name}`);
     if (FLEET[org.key]) await seedFleet(orgId, FLEET[org.key], ids);
   }
+  await finishSetup(ids, orgIds);
+  console.log("  setup finished for every demo account");
 }
 
 async function remove() {

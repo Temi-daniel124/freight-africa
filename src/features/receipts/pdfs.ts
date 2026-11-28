@@ -1,5 +1,6 @@
 import "server-only";
 import { block, C, finish, header, label, naira, newDocument, PAGE, px } from "@/lib/pdf/document";
+import { companyLines } from "@/lib/settings/public";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { supabaseServer } from "@/lib/supabase/server";
 import { monthRange, receiptLines, statementTotals, type StatementLoad } from "./pdf-models";
@@ -11,7 +12,8 @@ import { monthRange, receiptLines, statementTotals, type StatementLoad } from ".
 const day = (iso: string) => new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "Africa/Lagos" }).format(new Date(iso));
 const dayShort = (iso: string) => new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", timeZone: "Africa/Lagos" }).format(new Date(iso));
 const when = (iso: string) => new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit", hour12: true, timeZone: "Africa/Lagos" }).format(new Date(iso));
-const FROM = ["Freight Africa", process.env.COMPANY_LEGAL_NAME, process.env.COMPANY_ADDRESS, "hello@freight-africa.com"].filter((x): x is string => !!x);
+// D056: name and email; a postal address only once the setting is filled in.
+const FROM = ["Freight Africa", "hello@freight-africa.com"];
 
 type Org = { name: string; cac_number: string | null; receipt_address: string | null; receipt_email: string | null };
 
@@ -48,6 +50,7 @@ export async function receiptPdf(paymentId: string): Promise<{ bytes: Buffer; na
   const o = org as Org | null;
   const truck = [name(load.truck_type).toLowerCase(), name(load.goods).toLowerCase(), load.weight_kg ? `${Math.round(Number(load.weight_kg) / 1000)} t` : null].filter(Boolean).join(", ");
   return renderReceipt({
+    from: await companyLines(),
     number: `FA-R-${payment.id.replace(/-/g, "").slice(0, 6).toUpperCase()}`,
     issuedAt: payment.received_at ?? new Date().toISOString(),
     billed: [o?.name ?? "", o?.cac_number ? `RC ${o.cac_number.replace(/^RC/i, "")}` : "", o?.receipt_address ?? "", o?.receipt_email ?? ""].filter(Boolean),
@@ -67,6 +70,7 @@ export async function receiptPdf(paymentId: string): Promise<{ bytes: Buffer; na
 }
 
 export type ReceiptModel = {
+  from?: string[];
   number: string;
   issuedAt: string;
   billed: string[];
@@ -87,7 +91,7 @@ export async function renderReceipt(m: ReceiptModel): Promise<{ bytes: Buffer; n
 
   const colW = (PAGE.right - PAGE.x - px(40)) / 3;
   const cols: [string, string[]][] = [
-    ["From", FROM],
+    ["From", m.from ?? FROM],
     ["Billed to", m.billed],
     ["Trip", m.trip],
   ];

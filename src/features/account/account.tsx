@@ -1,3 +1,4 @@
+import { publicSettings } from "@/lib/settings/public";
 import { Bell, Check, ChevronRight, Download, FileText, Key, LifeBuoy, Lock, LogOut, Mail, MapPin, Phone, ShieldCheck, Users } from "lucide-react";
 import Link from "next/link";
 import { Avatar } from "@/components/ui/avatar";
@@ -350,7 +351,9 @@ export async function SenderPayments({ viewer }: { viewer: Promise<Viewer> }) {
 }
 
 /** P25 / D13 Help: topics, popular questions, and how to reach us. */
-export function SenderHelp() {
+export async function SenderHelp() {
+  // D056: the Call button only once a super admin fills in support_phone.
+  const { supportPhone } = await publicSettings();
   const icons = [MapPin, FileText, MapPin, Key];
   return (
     <div className="mx-auto flex w-full max-w-[760px] flex-col gap-4">
@@ -376,8 +379,8 @@ export function SenderHelp() {
             <Mail aria-hidden strokeWidth={1.8} />
             {a.emailUs}
           </a>
-          {process.env.NEXT_PUBLIC_SUPPORT_PHONE ? (
-            <a href={`tel:${process.env.NEXT_PUBLIC_SUPPORT_PHONE}`} className={cn(buttonVariants({ variant: "secondary", size: "sm" }), "border-white/30 bg-transparent text-white hover:bg-white/10")}>
+          {supportPhone ? (
+            <a href={`tel:${supportPhone}`} className={cn(buttonVariants({ variant: "secondary", size: "sm" }), "border-white/30 bg-transparent text-white hover:bg-white/10")}>
               <Phone aria-hidden strokeWidth={1.8} />
               {a.call}
             </a>

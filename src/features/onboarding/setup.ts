@@ -32,14 +32,14 @@ type MyJoining = {
   kyc: string;
   kinds: { shipper: boolean; transporter: boolean; drives: boolean };
   /** The transporter business this person owns: whether T-ON-02 (routes) and T-ON-04 (bank) are done. */
-  transporter: { routes: boolean; bank: boolean; truck: boolean };
+  transporter: { routes: boolean; bank: boolean; truck: boolean; drivers: boolean };
 };
 
 export const getMyJoining = cache(async (): Promise<MyJoining> => {
   const supabase = await supabaseServer();
   const { data: claims } = await supabase.auth.getClaims();
   const sub = claims?.claims?.sub;
-  if (!sub) return { joined: null, kyc: "not_started", kinds: { shipper: false, transporter: false, drives: false }, transporter: { routes: false, bank: false, truck: false } };
+  if (!sub) return { joined: null, kyc: "not_started", kinds: { shipper: false, transporter: false, drives: false }, transporter: { routes: false, bank: false, truck: false, drivers: false } };
   const [{ data: profile }, { data: rows }] = await Promise.all([
     supabase.from("profiles").select("joining_as, kyc_status").eq("id", sub).maybeSingle(),
     supabase.rpc("my_accounts"),
@@ -52,10 +52,13 @@ export const getMyJoining = cache(async (): Promise<MyJoining> => {
   const { count: trucks } = transporterId
     ? await supabase.from("trucks").select("id", { count: "exact", head: true }).eq("org_id", transporterId).neq("status", "retired")
     : { count: 0 };
+  const { count: drivers } = transporterId
+    ? await supabase.from("drivers").select("user_id", { count: "exact", head: true }).eq("org_id", transporterId)
+    : { count: 0 };
   return {
     joined: parseJoined(profile?.joining_as),
     kyc: profile?.kyc_status ?? "not_started",
-    transporter: { routes: (org?.corridor_ids?.length ?? 0) > 0, bank: !!org?.default_bank_account_id, truck: (trucks ?? 0) > 0 },
+    transporter: { routes: (org?.corridor_ids?.length ?? 0) > 0, bank: !!org?.default_bank_account_id, truck: (trucks ?? 0) > 0, drivers: (drivers ?? 0) > 0 },
     kinds: {
       shipper: owned.some((row) => row.kind === "shipper"),
       transporter: owned.some((row) => row.kind === "transporter"),
@@ -106,6 +109,7 @@ export async function getSetup(role: SetupRole): Promise<Setup> {
     identity: identitySent,
     bank: transporter.bank,
     truck: transporter.truck,
+    drivers: transporter.drivers,
     licence: (licences ?? 0) > 0,
     install: (installs ?? 0) > 0,
     pin: hasPin === true,

@@ -1,4 +1,5 @@
 import "server-only";
+import { companyLines } from "@/lib/settings/public";
 import { block, C, finish, header, label, naira, newDocument, PAGE, px } from "@/lib/pdf/document";
 import { supabaseServer } from "@/lib/supabase/server";
 import { monthRange } from "./pdf-models";
@@ -10,12 +11,14 @@ import { monthRange } from "./pdf-models";
 const day = (iso: string) => new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric", timeZone: "Africa/Lagos" }).format(new Date(iso));
 const dayShort = (iso: string) => new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", timeZone: "Africa/Lagos" }).format(new Date(iso));
 const when = (iso: string) => new Intl.DateTimeFormat("en-GB", { day: "numeric", month: "short", year: "numeric", hour: "numeric", minute: "2-digit", hour12: true, timeZone: "Africa/Lagos" }).format(new Date(iso));
-const FROM = ["Freight Africa", process.env.COMPANY_LEGAL_NAME, process.env.COMPANY_ADDRESS].filter((x): x is string => !!x);
+// D056: name and email; a postal address only once the setting is filled in.
+const FROM = ["Freight Africa", "hello@freight-africa.com"];
 const spaced = (p?: string | null) => (p ?? "").replace(/^([A-Z]{3})(\d{3})([A-Z]{2})$/, "$1 $2 $3");
 const TIER: Record<string, string> = { new: "New", established: "Established", gold: "Gold" };
 const KIND: Record<string, string> = { advance: "advance at loading", balance: "balance after delivery", waiting_charge: "waiting charge", cancellation_fee: "cancellation fee" };
 
 export type AdviceModel = {
+  from?: string[];
   number: string;
   paidAt: string;
   owner: string;
@@ -45,7 +48,7 @@ export async function renderAdvice(m: AdviceModel) {
   const colW = (PAGE.right - PAGE.x - px(40)) / 3;
   let bottom = y;
   ([
-    ["From", FROM],
+    ["From", m.from ?? FROM],
     ["Paid to", [m.owner, ...m.bank]],
     ["Trip", m.trip],
   ] as [string, string[]][]).forEach(([title, body], i) => {
@@ -107,6 +110,7 @@ export async function advicePdf(payoutId: string) {
   const balance = Number(m.balance_kobo);
   const balancePaid = (others ?? []).some((o) => o.kind === "balance" && o.status === "paid");
   return renderAdvice({
+    from: await companyLines(),
     number: `FA-P-${p.id.replace(/-/g, "").slice(0, 6).toUpperCase()}`,
     paidAt: p.paid_at,
     owner: org.name,
