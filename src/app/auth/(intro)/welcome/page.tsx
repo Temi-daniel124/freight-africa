@@ -10,8 +10,11 @@ export const metadata: Metadata = { title: messages.welcome.title, robots: { ind
 type Params = Promise<Record<string, string | string[] | undefined>>;
 
 async function Flow({ searchParams }: { searchParams: Params }) {
-  const seen = Boolean((await cookies()).get(WELCOME_COOKIE)) || (await searchParams).slides === "0";
-  return <WelcomeFlow seen={seen} />;
+  const params = await searchParams;
+  // ?slide=1 or 2 opens on that slide (mockups P01b, P01c), so each slide can be linked and compared.
+  const start = params.slide === "1" ? 1 : params.slide === "2" ? 2 : 0;
+  const seen = !start && (Boolean((await cookies()).get(WELCOME_COOKIE)) || params.slides === "0");
+  return <WelcomeFlow seen={seen} start={start} />;
 }
 
 // W-00 and W-01 (D045, mockups P01–P02): the first visit to app.freight-africa.com shows the slides; after

@@ -1,11 +1,12 @@
 import { publicSettings } from "@/lib/settings/public";
-import { Bell, Check, ChevronRight, Download, FileText, Key, LifeBuoy, Lock, LogOut, Mail, MapPin, Phone, ShieldCheck, Users } from "lucide-react";
+import { HelpCenter } from "./help-center";
+import { SwitchSheet, type SwitchAccount } from "./switch-sheet";
+import { Bell, Check, ChevronRight, Download, FileText, Key, LifeBuoy, Lock, LogOut, MapPin, ShieldCheck, Users } from "lucide-react";
 import Link from "next/link";
 import { Avatar } from "@/components/ui/avatar";
 import { buttonVariants } from "@/components/ui/button";
 import { lockMinutes } from "@/features/auth/unlock";
 import { signOut } from "@/features/auth/actions";
-import { switchAccount } from "@/features/org/actions";
 import { shipperLoads } from "@/features/booking/data";
 import { naira } from "@/features/booking/pieces";
 import { AvatarPicker } from "@/features/settings/avatar-picker";
@@ -16,7 +17,7 @@ import { supabaseServer } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
 import messages from "@/messages/en.json";
 import { PushToggle } from "@/features/settings/push-toggle";
-import { AvatarChange, BusinessForm, HelpQuestions, NotificationTable, PillTabs, SavedPlaces, type Place, type Receiver } from "./account-client";
+import { AvatarChange, BusinessForm, NotificationTable, PillTabs, SavedPlaces, type Place, type Receiver } from "./account-client";
 
 // Sender account screens (combined brief 5e): P16 More, P16a switch (on More), P16d / D11 saved places,
 // P16e / P16f / P16g / D12 settings tabs, P15 / D07 payments, P25 / D13 help.
@@ -54,22 +55,35 @@ async function twoStepOn() {
 }
 
 /** P16 More, with P16a Switch account only for people in more than one business. */
-export async function SenderMore({ viewer }: { viewer: Promise<Viewer> }) {
+export async function SenderMore({ viewer, sheet }: { viewer: Promise<Viewer>; sheet?: string }) {
   const v = await viewer;
   const supabase = await supabaseServer();
   const [{ count }, twoStep] = await Promise.all([
     v.orgId ? supabase.from("organization_members").select("user_id", { count: "exact", head: true }).eq("org_id", v.orgId) : Promise.resolve({ count: 0 }),
     twoStepOn(),
   ]);
-  const active = v.accounts.find((x) => x.active) ?? null;
-  const other = v.accounts.find((x) => !x.active) ?? null;
+  return (
+    <SenderMoreView
+      person={{ name: v.fullName, avatar: v.avatar, contact: v.contact }}
+      accounts={v.accounts.map((x) => ({ orgId: x.orgId, name: x.name, label: x.label, initials: initials(x.name), active: x.active }))}
+      people={count ?? 0}
+      twoStep={twoStep}
+      switchOpen={sheet === "switch"}
+    />
+  );
+}
+
+/** The More screen from data already read (also shown on /dev/sender with two businesses, P16a). */
+export function SenderMoreView({ person, accounts, people, twoStep, switchOpen = false }: { person: { name: string; avatar: string | null; contact: string }; accounts: SwitchAccount[]; people: number; twoStep: boolean; switchOpen?: boolean }) {
+  const active = accounts.find((x) => x.active) ?? null;
+  const other = accounts.find((x) => !x.active) ?? null;
   return (
     <div className="mx-auto flex w-full max-w-[560px] flex-col gap-4">
       <div className="flex items-center gap-3.5">
-        <Avatar name={v.fullName} src={v.avatar} size={56} />
+        <Avatar name={person.name} src={person.avatar} size={56} />
         <div className="min-w-0 flex-1">
-          <p className="truncate text-title-3 text-ink">{v.fullName}</p>
-          <p className="truncate text-meta text-ink-3">{v.contact}</p>
+          <p className="truncate text-title-3 text-ink">{person.name}</p>
+          <p className="truncate text-meta text-ink-3">{person.contact}</p>
         </div>
         <Link href="/app/ship/settings?tab=security" className="text-body-sm font-semibold text-green-700">
           {a.profile}
@@ -78,25 +92,18 @@ export async function SenderMore({ viewer }: { viewer: Promise<Viewer> }) {
       {active ? (
         <div>
           <div className="flex items-center gap-3 rounded-card border border-line bg-surface p-3.5">
-            <span className="grid size-11 shrink-0 place-items-center rounded-icon bg-green-900 text-body-sm font-semibold text-white">{initials(active.name)}</span>
+            <span className="grid size-11 shrink-0 place-items-center rounded-icon bg-green-900 text-body-sm font-semibold text-white">{active.initials}</span>
             <div className="min-w-0 flex-1">
               <p className="truncate text-body font-semibold text-ink">{active.name}</p>
               <p className="truncate text-meta text-ink-3">{active.label}</p>
             </div>
-            {other ? (
-              <form action={switchAccount}>
-                <input type="hidden" name="org" value={other.orgId} />
-                <button type="submit" className="min-h-11 text-body-sm font-semibold text-green-800">
-                  {a.switch}
-                </button>
-              </form>
-            ) : null}
+            {other ? <SwitchSheet accounts={accounts} startOpen={switchOpen} /> : null}
           </div>
           {other ? <p className="mt-1.5 px-1 text-caption text-ink-3">{fill(a.alsoOwn, { name: other.name })}</p> : null}
         </div>
       ) : null}
       <Group title={a.yourBusiness}>
-        <Row href="/app/ship/team" icon={Users} label={a.team} value={count === 1 ? a.person : fill(a.people, { n: count ?? 0 })} />
+        <Row href="/app/ship/team" icon={Users} label={a.team} value={people === 1 ? a.person : fill(a.people, { n: people })} />
         <Row href="/app/ship/places" icon={MapPin} label={a.places} />
         <Row href="/app/ship/settings?tab=business" icon={FileText} label={a.business} />
       </Group>
@@ -350,43 +357,8 @@ export async function SenderPayments({ viewer }: { viewer: Promise<Viewer> }) {
   );
 }
 
-/** P25 / D13 Help: topics, popular questions, and how to reach us. */
+/** P25 / D13 Help: topics, questions, and how to reach us (Call only once support_phone is set, D056). */
 export async function SenderHelp() {
-  // D056: the Call button only once a super admin fills in support_phone.
   const { supportPhone } = await publicSettings();
-  const icons = [MapPin, FileText, MapPin, Key];
-  return (
-    <div className="mx-auto flex w-full max-w-[760px] flex-col gap-4">
-      <div className="grid grid-cols-2 gap-2.5 lg:grid-cols-4">
-        {a.topics.map((t, i) => {
-          const Icon = icons[i];
-          return (
-            <div key={t} className="flex min-h-24 flex-col justify-between gap-3 rounded-card border border-line bg-surface p-4">
-              <span className="grid size-10 place-items-center rounded-icon bg-green-50 text-green-700">
-                <Icon aria-hidden className="size-4.5" strokeWidth={1.8} />
-              </span>
-              <span className="text-body font-semibold text-ink">{t}</span>
-            </div>
-          );
-        })}
-      </div>
-      <HelpQuestions />
-      <section className="rounded-card bg-green-900 p-5 text-white">
-        <p className="text-lead font-semibold">{a.talk}</p>
-        <p className="text-meta text-white/75">{a.hours}</p>
-        <div className="mt-4 flex gap-2.5">
-          <a href="mailto:hello@freight-africa.com" className={buttonVariants({ variant: "inverse", size: "sm" })}>
-            <Mail aria-hidden strokeWidth={1.8} />
-            {a.emailUs}
-          </a>
-          {supportPhone ? (
-            <a href={`tel:${supportPhone}`} className={cn(buttonVariants({ variant: "secondary", size: "sm" }), "border-white/30 bg-transparent text-white hover:bg-white/10")}>
-              <Phone aria-hidden strokeWidth={1.8} />
-              {a.call}
-            </a>
-          ) : null}
-        </div>
-      </section>
-    </div>
-  );
+  return <HelpCenter supportPhone={supportPhone} />;
 }

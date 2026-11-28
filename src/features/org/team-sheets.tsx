@@ -90,12 +90,16 @@ export function InviteSheet({
   orgId,
   orgName,
   roles,
+  startOpen = false,
 }: {
   orgId: string;
   orgName: string;
   roles: Role[];
+  /** ?sheet=invite (P16c): open on arrival. */
+  startOpen?: boolean;
 }) {
   const inviteForm = useRef<HTMLFormElement>(null);
+  const [open, setOpen] = useState(startOpen);
   const [state, action, pending] = useActionState<InviteState, FormData>(
     createInvite,
     { status: "idle" },
@@ -112,6 +116,8 @@ export function InviteSheet({
     : "";
   return (
     <Sheet
+      open={open}
+      onOpenChange={setOpen}
       title={state.link ? t.created : t.inviteTitle}
       description={
         state.link

@@ -1,5 +1,6 @@
 import "server-only";
 import { cache } from "react";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 import { supabaseServer } from "@/lib/supabase/server";
 
 // Reads for the Phase 3 screens. Row-level security decides what each person sees; drivers never get
@@ -38,7 +39,7 @@ export type LoadRow = {
 };
 
 const LOAD_SELECT =
-  "id, ref, status, weight_kg, quantity, quantity_unit, pickup_from, pickup_until, freight_kobo, fee_kobo, total_kobo, created_at, from:cities!loads_from_city_id_fkey(name), to:cities!loads_to_city_id_fkey(name), goods:goods_categories(name), truck_type:truck_types(name, code, capacity_kg_default), trips(id, status, last_ping_at, loaded_at, delivered_at, truck:trucks(plate_number), driver:profiles(full_name))";
+  "id, ref, status, weight_kg, quantity, quantity_unit, pickup_from, pickup_until, freight_kobo, fee_kobo, total_kobo, created_at, from:cities!loads_from_city_id_fkey(name), to:cities!loads_to_city_id_fkey(name), goods:goods_categories(name), truck_type:truck_types(name, code, capacity_kg_default), trips(id, status, last_ping_at, loaded_at, delivered_at, driver_id, truck:trucks(plate_number), driver:profiles(full_name))";
 
 type Raw = Record<string, unknown> & {
   from: { name: string } | null;
@@ -55,6 +56,7 @@ type Raw = Record<string, unknown> & {
     last_ping_at: string | null;
     loaded_at: string | null;
     delivered_at: string | null;
+    driver_id: string | null;
     truck: { plate_number: string } | null;
     driver: { full_name: string | null } | null;
   }[];
@@ -108,9 +110,26 @@ export const shipperLoads = cache(
       .order("created_at", { ascending: false })
       .limit(limit);
     if (error) console.error("loading loads failed", error.code);
-    return ((data ?? []) as unknown as Raw[]).map(toRow);
+    return withDriverNames(((data ?? []) as unknown as Raw[]).map(toRow), (data ?? []) as unknown as Raw[]);
   },
 );
+
+/**
+ * Senders can't read drivers' profiles (RLS), but the mockups show the driver's name on their own trip
+ * (P07, D02, P14b). Only the full names of drivers on trips these rows already showed are read, with the
+ * service key; never a phone number (D018).
+ */
+async function withDriverNames(rows: LoadRow[], raw: Raw[]): Promise<LoadRow[]> {
+  const ids = [...new Set(raw.flatMap((r) => (r.trips ?? []).map((t) => t.driver_id)).filter((x): x is string => !!x))];
+  if (!ids.length) return rows;
+  const { data } = await supabaseAdmin().from("profiles").select("id, full_name").in("id", ids);
+  const names = new Map((data ?? []).map((p) => [p.id, p.full_name]));
+  return rows.map((row, i) => {
+    if (!row.trip || row.trip.driverName) return row;
+    const live = raw[i].trips?.find((t) => t.id === row.trip?.id);
+    return { ...row, trip: { ...row.trip, driverName: (live?.driver_id && names.get(live.driver_id)) || null } };
+  });
+}
 
 export const oneLoad = cache(async (id: string) => {
   const supabase = await supabaseServer();

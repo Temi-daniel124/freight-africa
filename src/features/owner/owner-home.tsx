@@ -1,5 +1,6 @@
-import { FileText, Star, Truck, UserX } from "lucide-react";
+import { FileText, Star, UserX } from "lucide-react";
 import Link from "next/link";
+import { MiniTruck } from "@/components/art/mini-truck";
 import { buttonVariants } from "@/components/ui/button";
 import { StatusChip, type StatusTone } from "@/components/ui/chip";
 import { naira } from "@/features/booking/pieces";
@@ -50,7 +51,7 @@ function Head({ title, action, caps }: { title: string; action?: React.ReactNode
   );
 }
 
-export async function OwnerHome({ viewer }: { viewer: Promise<Viewer>; drives?: boolean }) {
+export async function OwnerHome({ viewer }: { viewer: Promise<Viewer>; drives?: boolean; preview?: string }) {
   const { orgId } = await viewer;
   if (!orgId) return null;
   const supabase = await supabaseServer();
@@ -69,7 +70,9 @@ export async function OwnerHome({ viewer }: { viewer: Promise<Viewer>; drives?: 
   const tier = (org?.tier ?? "new") as keyof typeof o.tier;
   const rate = (key: string) => Number(((rates ?? []).find((r) => r.key === key)?.value as Record<string, number> | undefined)?.[tier] ?? 0) / 100;
   const paidMonth = (payouts ?? []).filter((p) => p.status === "paid" && p.paid_at && p.paid_at >= monthStart).reduce((s, p) => s + Number(p.amount_kobo), 0);
-  const coming = (payouts ?? []).filter((p) => ["queued", "awaiting_approval", "processing", "held"].includes(p.status)).reduce((s, p) => s + Number(p.amount_kobo), 0);
+  const coming = (payouts ?? []).filter((p) => ["queued", "awaiting_approval", "processing"].includes(p.status)).reduce((s, p) => s + Number(p.amount_kobo), 0);
+  // OD01 "Held for a problem": payouts staff hold while a problem is open (disputes are Phase 5).
+  const held = (payouts ?? []).filter((p) => p.status === "held").reduce((s, p) => s + Number(p.amount_kobo), 0);
   const paperFor = new Map<string, { days: number; type: string }>();
   for (const p of papers ?? []) {
     if (!p.expires_on || !p.subject_id) continue;
@@ -105,19 +108,46 @@ export async function OwnerHome({ viewer }: { viewer: Promise<Viewer>; drives?: 
   const advancePaid = road?.trip_id ? (payouts ?? []).some((p) => p.trip_id === road.trip_id && p.kind === "advance" && p.status === "paid") : false;
   const loads: BoardLoad[] = ((board ?? []) as Parameters<typeof toBoardLoad>[0][]).map((l) => toBoardLoad(l, trucks));
   const tripCount = (trips ?? []).length;
-  const recordSub = fill(tier === "gold" ? o.recordGold : o.recordSub, { advance: rate("advance_bps"), commission: rate("commission_bps") });
+  const recordSub = fill(o.levelSub, { n: tripCount, advance: rate("advance_bps"), commission: rate("commission_bps") });
+  // Return loads (OD01): open loads starting where a truck on a trip is heading.
+  const heading = trucks.filter((x) => x.trip_id && x.to_city);
+  const returns = loads
+    .map((l) => ({ l, truck: heading.find((x) => x.to_city === l.from) }))
+    .filter((r): r is { l: BoardLoad; truck: FleetTruck } => !!r.truck)
+    .slice(0, 2);
 
+  const tile = "tabular truncate text-[30px] leading-tight font-semibold tracking-[-0.035em]";
   const hero = (
-    <div className="grid grid-cols-2 gap-0 overflow-hidden rounded-card bg-green-900 text-white lg:gap-4 lg:overflow-visible lg:bg-transparent">
-      <Link href="/app/haul/earnings" className="px-4.5 py-4 lg:rounded-card lg:bg-green-900 lg:px-6 lg:py-6">
-        <p className="text-meta text-green-300 lg:text-body-sm lg:text-white/80">{o.paidMonth}</p>
-        <p className="tabular truncate text-[clamp(20px,6.4vw,28px)] leading-tight font-semibold lg:text-[34px]">{naira(paidMonth)}</p>
+    <>
+      {/* phone (O10): one deep card, paid and coming */}
+      <Link href="/app/haul/earnings" className="relative flex overflow-hidden rounded-card bg-green-900 p-5 text-white lg:hidden">
+        <span aria-hidden className="absolute -top-15 -right-12.5 size-42.5 rounded-full bg-green-700" />
+        <span className="relative min-w-0 flex-1">
+          <span className="block text-caption text-green-300">{o.paidMonth}</span>
+          <span className="tabular block truncate text-[24px] leading-tight font-semibold tracking-[-0.03em]">{naira(paidMonth)}</span>
+        </span>
+        <span aria-hidden className="relative mx-4 h-11 w-px self-center bg-white/15" />
+        <span className="relative min-w-0 flex-1">
+          <span className="block text-caption text-green-300">{o.coming}</span>
+          <span className="tabular block truncate text-[24px] leading-tight font-semibold tracking-[-0.03em]">{naira(coming)}</span>
+        </span>
       </Link>
-      <Link href="/app/haul/earnings" className="px-4.5 py-4 lg:rounded-card lg:border lg:border-line lg:bg-surface lg:px-6 lg:py-6 lg:text-ink">
-        <p className="text-meta text-green-300 lg:text-body-sm lg:text-ink-2">{o.coming}</p>
-        <p className="tabular truncate text-[clamp(20px,6.4vw,28px)] leading-tight font-semibold lg:text-[34px]">{naira(coming)}</p>
-      </Link>
-    </div>
+      {/* desktop (OD01): three tiles */}
+      <div className="hidden grid-cols-3 gap-4 lg:grid">
+        <Link href="/app/haul/earnings" className="rounded-card bg-green-900 px-5.5 py-5 text-white">
+          <span className="block text-meta text-green-300">{o.paidMonth}</span>
+          <span className={cn(tile, "block")}>{naira(paidMonth)}</span>
+        </Link>
+        <Link href="/app/haul/earnings" className="rounded-card border border-line bg-surface px-5.5 py-5 text-ink">
+          <span className="block text-meta text-ink-2">{o.coming}</span>
+          <span className={cn(tile, "block")}>{naira(coming)}</span>
+        </Link>
+        <Link href="/app/haul/earnings" className="rounded-card border border-line bg-surface px-5.5 py-5 text-ink">
+          <span className="block text-meta text-ink-2">{o.held}</span>
+          <span className={cn(tile, "block")}>{naira(held)}</span>
+        </Link>
+      </div>
+    </>
   );
 
   const needsYou = needs.length ? (
@@ -236,8 +266,8 @@ export async function OwnerHome({ viewer }: { viewer: Promise<Viewer>; drives?: 
           return (
             <li key={x.truck_id}>
               <Link href={`/app/haul/trucks/${x.truck_id}`} className="flex flex-col gap-2 rounded-card border border-line bg-surface p-4 lg:flex-row lg:items-center lg:gap-3 lg:rounded-none lg:border-0 lg:border-t lg:border-line-soft lg:px-0 lg:py-3.5 lg:first:border-t-0">
-                <Truck aria-hidden className="size-6 text-green-900" strokeWidth={1.8} />
-                <span className="tabular text-body font-semibold text-ink lg:flex-1">{x.plate.replace(/^([A-Z]{3})(\d{3})([A-Z]{2})$/, "$1 $2 $3")}</span>
+                <MiniTruck code={x.truck_type_code} className="shrink-0" />
+                <span className="tabular text-body font-semibold tracking-[0.04em] text-ink lg:flex-1 lg:text-body-sm">{x.plate.replace(/^([A-Z]{3})(\d{3})([A-Z]{2})$/, "$1 $2 $3")}</span>
                 <span className="self-start lg:self-auto">
                   <StatusChip tone={pill.tone}>{pill.text}</StatusChip>
                 </span>
@@ -249,17 +279,39 @@ export async function OwnerHome({ viewer }: { viewer: Promise<Viewer>; drives?: 
     </section>
   );
 
+  // The level card (OD01 "Gold · ★ 4.8"): the tier and its terms; star ratings join in Phase 6.
   const record = (
-    <Link href="/app/haul/record" className="flex items-center gap-3.5 rounded-card border border-line bg-surface p-4.5">
-      <span className="grid size-11 shrink-0 place-items-center rounded-icon bg-[#FFF4CC] text-[#8A6100]">
+    <Link href="/app/haul/record" className="flex items-center gap-3 rounded-card border border-line bg-surface px-5 py-4">
+      <span className="grid size-10 shrink-0 place-items-center rounded-icon bg-[#FDF3D0] text-[#8A6100]">
         <Star aria-hidden className="size-5" strokeWidth={1.8} />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block text-body font-semibold text-ink">{fill(tripCount === 1 ? o.recordOne : o.record, { tier: o.tier[tier], n: tripCount })}</span>
-        <span className="block text-meta text-ink-3">{recordSub}</span>
+        <span className="block text-body font-semibold text-ink">{o.tier[tier]}</span>
+        <span className="block text-caption text-ink-3">{recordSub}</span>
       </span>
     </Link>
   );
+
+  const returnLoads = returns.length ? (
+    <section className="rounded-card border border-line bg-surface px-5 pt-4.5 pb-1.5">
+      <h2 className="text-caption font-semibold tracking-caps text-ink-3 uppercase">{o.returnLoads}</h2>
+      <ul>
+        {returns.map(({ l, truck }) => (
+          <li key={l.id} className="border-line-soft not-first:border-t">
+            <Link href={`/app/haul/loads/${l.id}`} className="flex min-h-15 items-center gap-3 py-3">
+              <span className="min-w-0 flex-1">
+                <span className="block truncate text-body-sm font-semibold text-ink">
+                  {l.from} → {l.to} · {dayLabel(l.pickupFrom).split(" ").slice(0, 2).join(" ")}
+                </span>
+                <span className="block truncate text-caption text-ink-3">{fill(o.returnFor, { plate: truck.plate.replace(/^([A-Z]{3})(\d{3})([A-Z]{2})$/, "$1 $2 $3"), city: l.from })}</span>
+              </span>
+              <span className="tabular text-body-sm font-semibold text-ink">{naira(l.payoutKobo)}</span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </section>
+  ) : null;
 
   // Desktop: the trips table under Needs you (OD01).
   const live = trucks.filter((x) => x.trip_id && x.trip_status && LIVE.includes(x.trip_status));
@@ -323,7 +375,8 @@ export async function OwnerHome({ viewer }: { viewer: Promise<Viewer>; drives?: 
           {tripsTable}
           {loadsSection}
         </div>
-        <div className="flex min-w-0 flex-col gap-5">
+        <div className="flex min-w-0 flex-col gap-4">
+          {returnLoads}
           {trucksSection}
           {record}
         </div>

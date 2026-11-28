@@ -11,8 +11,10 @@ const t = messages.onboarding.setup;
  * "Finish setting up" (founder, 24 Nov 2026): the first card on Home until the role's setup is done.
  * One primary action, the next open step; the rest are listed so the person sees how far they are.
  */
-export async function SetupChecklist({ role }: { role: SetupRole }) {
-  const setup = await getSetup(role);
+export async function SetupChecklist({ role, force = false }: { role: SetupRole; force?: boolean }) {
+  const real = await getSetup(role);
+  // ?preview=setup (O10b): the card as a new owner sees it, with the first three steps done.
+  const setup = force && real.complete ? { ...real, complete: false, steps: real.steps.map((step, i) => ({ ...step, done: i < 3 })) } : real;
   if (setup.complete) return null;
   const done = setup.steps.filter((step) => step.done).length;
   const next = setup.steps.find((step) => !step.done);
