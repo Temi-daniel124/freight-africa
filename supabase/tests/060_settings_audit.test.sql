@@ -20,13 +20,13 @@ insert into public.staff_members (user_id, role) values
 select is((select count(*)::int from public.settings), 62, 'all 62 settings are seeded (D037 dispute settings, D039 demo_identity_checks, D044 app_lock_minutes, Phase 3 fees, D047 offers)');
 select is((select value from public.settings where key = 'advance_bps'), '{"new": 3000, "established": 4000, "gold": 5000}'::jsonb, 'advance rates by tier');
 select is((select value from public.settings where key = 'payout_two_person_kobo'), '500000000'::jsonb, 'payouts above ₦5m need two people');
-select is((select value from public.settings where key = 'agents_enabled'), 'true'::jsonb, 'agents are on');
+select is((select value from public.settings where key = 'agents_enabled'), 'false'::jsonb, 'agents are off until Phase 6 (brief 5e)');
 select is((select count(*)::int from public.settings where is_money), 24, 'twenty-four money settings need a second approval (D037)');
 select throws_ok($$insert into public.approvals (kind, subject_id, payload, requested_by, approved_by) values ('setting_change', 'x', '{}', 'eeeeeeee-0000-4000-8000-000000000001', 'eeeeeeee-0000-4000-8000-000000000001')$$, '23514', null, 'nobody approves their own request');
 
 -- Reading.
 set local role anon;
-select is(public.public_setting('agents_enabled'), 'true'::jsonb, 'the app can read whether agents are on, before sign-in');
+select is(public.public_setting('agents_enabled'), 'false'::jsonb, 'the app can read whether agents are on, before sign-in');
 select ok(public.public_setting('advance_bps') is null, 'but not money settings');
 reset role;
 set local role authenticated;
