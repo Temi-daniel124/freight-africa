@@ -64,14 +64,12 @@ async function contextFor(account) {
   return context;
 }
 
-/** The mockup's own width: phone frames are 390, PDF pages 794, everything else 1440. */
-async function mockWidth(url) {
-  const page = await (await contextFor(null)).newPage();
-  await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto(url);
-  const width = await page.evaluate(() => (document.querySelector(".doc") ? 794 : document.querySelector(".ph, .phone") ? 390 : 1440));
-  await page.close();
-  return width;
+/** The mockup's own width, as each file declares it ($preview in data-props): 390 phone, 1440 desktop, 794 PDF. */
+function mockWidth(mock) {
+  const html = readFileSync(`${SCREENS}/${mock}.html`, "utf8");
+  if (/class="doc"/.test(html)) return 794;
+  const w = Number(/"\$preview":\{"width":(\d+)/.exec(html)?.[1] ?? 0);
+  return w && w < 600 ? 390 : 1440;
 }
 
 async function shot(context, url, width, height, cookies = []) {
@@ -107,7 +105,7 @@ let failures = 0;
 for (const mock of chosen) {
   const pair = pairs.get(mock);
   const mockUrl = pathToFileURL(resolve(`${SCREENS}/${mock}.html`)).href;
-  const width = pair?.width ?? (await mockWidth(mockUrl));
+  const width = pair?.width ?? mockWidth(mock);
   const height = width > 600 && width !== 794 ? 900 : 844;
   if (!pair || (!pair.path && !pair.pdf)) {
     rows.push([mock, "", "NO PAIR"]);

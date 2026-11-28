@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
-import { BadgeCheck } from "lucide-react";
 import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { cache, Suspense, type ReactNode } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { supabaseServer } from "@/lib/supabase/server";
 import messages from "@/messages/en.json";
 import { AppShell, ShellContent, ShellTopBar } from "./app-shell";
 import { shellPages, shells, type PageKey, type ShellConfig, type ShellRole } from "./config";
@@ -82,19 +80,6 @@ export function shellLayout(role: ShellRole) {
 
 const SETUP_ROLES: Partial<Record<ShellRole, SetupRole>> = { shipper: "shipper", owner: "owner", ownerDriver: "ownerDriver", agent: "agent", driver: "driver" };
 
-/** D041: once an owner of the sending business is verified, Home says so (owners see the same badge). */
-async function VerifiedSender() {
-  const viewer = await getViewer(shells.shipper);
-  if (!viewer.orgId) return null;
-  const { data: verified } = await (await supabaseServer()).rpc("is_verified_sender", { p_org: viewer.orgId });
-  if (!verified) return null;
-  return (
-    <p className="flex items-center gap-1.5 self-start rounded-pill bg-success-100 px-3 py-1.5 text-label font-semibold text-success">
-      <BadgeCheck aria-hidden className="size-4" strokeWidth={2} />
-      {messages.shell.verifiedSender}
-    </p>
-  );
-}
 
 async function HomeContent({ role, preview }: { role: ShellRole; preview?: string }) {
   const resolved = await resolveRole(role);
@@ -109,8 +94,7 @@ async function HomeContent({ role, preview }: { role: ShellRole; preview?: strin
   const showSetup = setupRole && !(resolved === "shipper" && hasOrg) && (preview === "setup" || !preview);
   return (
     <div className="flex flex-col gap-5">
-      {resolved === "shipper" && !preview ? <VerifiedSender /> : null}
-      {showSetup ? <SetupChecklist role={setupRole} force={preview === "setup"} /> : null}
+            {showSetup ? <SetupChecklist role={setupRole} force={preview === "setup"} /> : null}
       {resolved === "shipper" ? (
         hasOrg ? <SenderHome viewer={getViewer(config)} preview={preview} /> : <ShipperHomeFirstVisit config={config} />
       ) : resolved === "owner" || resolved === "ownerDriver" ? (

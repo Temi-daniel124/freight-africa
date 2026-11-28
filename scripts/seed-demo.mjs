@@ -186,6 +186,20 @@ async function finishSetup(ids, orgIds) {
       if (doc) must(await db.from("documents").update(fields).eq("id", doc.id), `licence for ${member.tag}`);
       else must(await db.from("documents").insert({ ...fields, doc_type_id: licence.id, subject_kind: "driver", subject_id: user, org_id: orgId, file_path: `demo/licence/${member.tag}.jpg` }), `licence for ${member.tag}`);
       const now = new Date().toISOString();
+      if (org.key === "musa-haulage" && member.tag === "driver") {
+        // O19d / O19e: two messages from the driver, one new, one already read (demo rows only).
+        const { count } = await db.from("driver_messages").select("id", { count: "exact", head: true }).eq("org_id", orgId);
+        if (!count) {
+          const truck = (await db.from("trucks").select("id").eq("org_id", orgId).eq("plate_number", "KAN219BT").maybeSingle()).data?.id ?? null;
+          must(
+            await db.from("driver_messages").insert([
+              { org_id: orgId, driver_id: user, truck_id: truck, reason: "repair", body: "Front left tyre is worn. Can we change it before Friday's trip?", created_at: new Date(Date.now() - 3_600_000).toISOString() },
+              { org_id: orgId, driver_id: user, truck_id: truck, reason: "papers", body: "When does the new road worthiness come?", read_at: new Date(Date.now() - 2 * 86_400_000).toISOString(), created_at: new Date(Date.now() - 3 * 86_400_000).toISOString() },
+            ]),
+            "driver messages",
+          );
+        }
+      }
       must(await db.from("app_installs").upsert({ user_id: user, device_id: "00000000-0000-4000-8000-00000000d000", platform: "android", state: "installed", installed_at: now, last_seen_at: now }, { onConflict: "user_id,device_id" }), `install for ${member.tag}`);
     }
   }

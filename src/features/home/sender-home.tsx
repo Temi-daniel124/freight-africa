@@ -1,4 +1,4 @@
-import { ArrowRight, ChevronRight, Clock, Lock, MapPin, MessageSquare, Search, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, ChevronRight, Clock, FileText, Lock, MapPin, Search, ShieldCheck, Sparkles, Tag } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Box } from "@/components/art/pieces";
@@ -11,6 +11,7 @@ import { loadLine, progressStep } from "@/features/booking/format";
 import { naira, ProgressDots, statusOf, TripRow } from "@/features/booking/pieces";
 import { dayLabel } from "@/features/checkout/data";
 import type { Viewer } from "@/features/shell/viewer";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 import { supabaseServer } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
 import messages from "@/messages/en.json";
@@ -146,7 +147,7 @@ function CurrentCard({ row }: { row: LoadRow }) {
         </div>
         <ol className="mt-4 grid grid-cols-4 gap-1.5">
           {[messages.trips.progress.booked, messages.trips.progress.loaded, messages.trips.progress.road, messages.trips.progress.delivered].map((label, i) => (
-            <li key={label} className={cn("text-meta", i === 3 ? "text-right" : i === 0 ? "" : "text-center", i === step ? "font-semibold text-green-800" : "text-ink-2")}>
+            <li key={label} className={cn("text-caption", i === 3 ? "text-right" : i === 0 ? "" : "text-center", i === step ? "font-semibold text-green-800" : "text-ink-2")}>
               <span aria-hidden className={cn("mb-2 block h-1.5 rounded-pill", i < step ? "bg-green-700" : i === step ? "bg-[linear-gradient(to_right,var(--color-green-700)_55%,var(--color-line)_55%)]" : "bg-line")} />
               {label}
             </li>
@@ -260,18 +261,23 @@ async function openReplies(rows: LoadRow[]): Promise<Reply[]> {
   const supabase = await supabaseServer();
   const { data } = await supabase
     .from("offers")
-    .select("id, load_id, amount_kobo, expires_at, transporter:organizations(name)")
+    .select("id, load_id, amount_kobo, expires_at, transporter_org_id")
     .in(
       "load_id",
       funded.map((r) => r.id),
     )
     .eq("kind", "counter")
     .eq("status", "pending")
+    .gt("expires_at", new Date().toISOString())
     .order("created_at", { ascending: false })
     .limit(3);
+  // Senders can't read other businesses (RLS); the replying owner's business name is shown on the reply
+  // (P11b), so only those names are read with the service key.
+  const ids = [...new Set((data ?? []).map((o) => o.transporter_org_id))];
+  const { data: orgs } = ids.length ? await supabaseAdmin().from("organizations").select("id, name").in("id", ids) : { data: [] };
   return (data ?? []).map((o) => {
     const row = funded.find((r) => r.id === o.load_id);
-    const owner = (o.transporter as { name?: string } | null)?.name ?? "";
+    const owner = orgs?.find((x) => x.id === o.transporter_org_id)?.name ?? "";
     return { id: o.id, loadId: o.load_id, owner, amountKobo: Number(o.amount_kobo), route: row ? `${row.from} → ${row.to}` : "", expiresAt: o.expires_at };
   });
 }
@@ -284,7 +290,7 @@ function timeLeft(at: string | null, now: number) {
 
 /** D02b (and its phone parts): nothing on the road. Needs you, recently delivered, book again. */
 function NoTripHome({ rows, drafts, replies, now }: { rows: LoadRow[]; drafts: LoadRow[]; replies: Reply[]; now: number }) {
-  const delivered = rows.find((r) => r.trip?.status === "delivered" || r.trip?.status === "completed");
+  const delivered = rows.find((r) => ["delivered", "delivered_with_exception", "closed"].includes(r.trip?.status ?? ""));
   const seen = new Set<string>();
   const again = rows
     .filter((r) => {
@@ -301,7 +307,7 @@ function NoTripHome({ rows, drafts, replies, now }: { rows: LoadRow[]; drafts: L
       <div className="flex flex-col gap-5">
         {needs ? (
           <section className="rounded-card border border-line bg-surface px-5 pt-5 pb-2 lg:px-6">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-between gap-2">
               <h2 className="text-caption font-semibold tracking-caps text-ink-3 uppercase">{t.needsYou}</h2>
               <span className="tabular rounded-pill bg-warning-100 px-2 py-0.5 text-caption font-semibold text-warning">{needs}</span>
             </div>
@@ -309,7 +315,7 @@ function NoTripHome({ rows, drafts, replies, now }: { rows: LoadRow[]; drafts: L
               {drafts.map((d) => (
                 <li key={d.id} className="flex items-center gap-3 border-line-soft py-3.5 not-first:border-t">
                   <span className="grid size-10 shrink-0 place-items-center rounded-icon bg-warning-100 text-warning">
-                    <Clock aria-hidden className="size-5" strokeWidth={1.8} />
+                    <FileText aria-hidden className="size-4.5" strokeWidth={1.8} />
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-body font-semibold text-ink">{fill(t.draftIs, { route: route(d) })}</span>
@@ -323,7 +329,7 @@ function NoTripHome({ rows, drafts, replies, now }: { rows: LoadRow[]; drafts: L
               {replies.map((r) => (
                 <li key={r.id} className="flex items-center gap-3 border-line-soft py-3.5 not-first:border-t">
                   <span className="grid size-10 shrink-0 place-items-center rounded-icon bg-warning-100 text-warning">
-                    <MessageSquare aria-hidden className="size-5" strokeWidth={1.8} />
+                    <Tag aria-hidden className="size-4.5" strokeWidth={1.8} />
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-body font-semibold text-ink">{fill(nt.replied, { owner: r.owner })}</span>
@@ -408,12 +414,12 @@ export async function SenderHome({ viewer, preview }: { viewer: Promise<Viewer>;
   const current = preview === "notrip" ? undefined : live;
   const draft = rows.find((r) => UNPAID.includes(r.status));
   if (!current) {
-    const drafts = rows.filter((r) => UNPAID.includes(r.status)).slice(0, 2);
+    const drafts = rows.filter((r) => UNPAID.includes(r.status)).slice(0, 1);
     const replies = await openReplies(rows);
     return <NoTripHome rows={rows} drafts={drafts} replies={replies} now={new Date().getTime()} />;
   }
   const route = (r: LoadRow) => `${r.from} → ${r.to}`;
-  const recent = rows.slice(0, 5);
+  const recent = rows.slice(0, 3);
   return (
     <div className="flex flex-col gap-5 lg:gap-6">
       <div className="lg:hidden">

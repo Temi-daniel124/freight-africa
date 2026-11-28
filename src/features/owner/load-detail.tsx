@@ -1,12 +1,13 @@
 "use client";
 
-import { ChevronLeft, Info, MapPin, Package, ShieldCheck, TriangleAlert, Truck } from "lucide-react";
+import { Banknote, CalendarDays, ChevronLeft, Info, MapPin, Package, ShieldCheck, TriangleAlert, Truck } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { Avatar } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { SuccessCheck } from "@/components/ui/motion";
 import { StatusChip } from "@/components/ui/chip";
 import { Sheet } from "@/components/ui/sheet";
 import { takeLoad } from "@/features/booking/actions";
@@ -30,6 +31,8 @@ export type LoadDetailProps = {
   advanceBps: number;
   trucks: { id: string; plate: string; type: string; capacityKg: number; busy: boolean; driverName: string | null }[];
   drivers: { id: string; name: string }[];
+  /** Previews (O13b, O13d, O13f, O13c): open on that step. */
+  start?: "accept" | "offer" | "done";
 };
 
 function Row({ icon, tone, label, value }: { icon: React.ReactNode; tone: string; label: string; value: string }) {
@@ -44,7 +47,7 @@ function Row({ icon, tone, label, value }: { icon: React.ReactNode; tone: string
   );
 }
 
-export function LoadDetail({ load: l, tierLabel, commissionBps, advanceBps, trucks, drivers }: LoadDetailProps) {
+export function LoadDetail({ load: l, tierLabel, commissionBps, advanceBps, trucks, drivers, start: opening }: LoadDetailProps) {
   const router = useRouter();
   const fits = (x: LoadDetailProps["trucks"][number]) => x.type === l.truckType && (!l.weightKg || x.capacityKg >= l.weightKg);
   const ordered = [...trucks].sort((a, b) => Number(!fits(a) || a.busy) - Number(!fits(b) || b.busy));
@@ -52,8 +55,10 @@ export function LoadDetail({ load: l, tierLabel, commissionBps, advanceBps, truc
   const [truck, setTruck] = useState(firstFit?.id ?? "");
   const usual = trucks.find((x) => x.id === truck)?.driverName;
   const [driver, setDriver] = useState(drivers.find((d) => d.name === usual)?.id ?? drivers[0]?.id ?? "");
-  const [confirm, setConfirm] = useState(false);
-  const [offer, setOffer] = useState(false);
+  const [confirm, setConfirm] = useState(opening === "accept");
+  const [offer, setOffer] = useState(opening === "offer");
+  // O13c: after a successful accept, the trip id (or "preview").
+  const [taken, setTaken] = useState<string | null>(opening === "done" ? "preview" : null);
   const [price, setPrice] = useState("");
   const [pending, start] = useTransition();
   const commission = l.freightKobo - l.payoutKobo;
@@ -68,7 +73,8 @@ export function LoadDetail({ load: l, tierLabel, commissionBps, advanceBps, truc
     start(async () => {
       const r = await takeLoad(l.id, truck, driver || null);
       if (r.status !== "ok") return void toast.error(say[r.status] ?? t.failed);
-      router.push(r.tripId ? `/app/haul/trips/${r.tripId}` : "/app/haul/trips");
+      setConfirm(false);
+      setTaken(r.tripId ?? "");
     });
   const send = () =>
     start(async () => {
@@ -80,6 +86,44 @@ export function LoadDetail({ load: l, tierLabel, commissionBps, advanceBps, truc
       router.push("/app/haul/loads");
     });
   const chosen = trucks.find((x) => x.id === truck);
+  if (taken !== null) {
+    const name = drivers.find((d) => d.id === driver)?.name.split(" ")[0] ?? "";
+    return (
+      <div className="mx-auto flex min-h-[calc(100dvh-4rem)] w-full max-w-[440px] flex-col px-7 pt-24 pb-6 text-center lg:min-h-0 lg:pt-16">
+        <SuccessCheck label={t.yours} className="mx-auto" />
+        <h1 className="mt-5 text-title-1 text-ink">{t.yours}</h1>
+        <p className="mt-2 text-body text-ink-2">{fill(t.yoursText, { driver: name, plate: chosen?.plate ?? "" })}</p>
+        <ul className="mt-5.5 rounded-card border border-line bg-surface px-4 text-left">
+          <li className="flex items-center gap-3 border-b border-line-soft py-3.5">
+            <span className="grid size-10 shrink-0 place-items-center rounded-icon bg-green-50 text-green-700">
+              <CalendarDays aria-hidden className="size-4.5" strokeWidth={1.8} />
+            </span>
+            <span>
+              <span className="block text-body font-semibold text-ink">{l.when}</span>
+              <span className="block text-meta text-ink-3">{fill(t.goToPickup, { driver: name })}</span>
+            </span>
+          </li>
+          <li className="flex items-center gap-3 py-3.5">
+            <span className="grid size-10 shrink-0 place-items-center rounded-icon bg-green-50 text-green-700">
+              <Banknote aria-hidden className="size-4.5" strokeWidth={1.8} />
+            </span>
+            <span>
+              <span className="block text-body font-semibold text-ink">{fill(t.whenLoaded, { amount: naira(advance) })}</span>
+              <span className="block text-meta text-ink-3">{fill(t.afterDelivery, { amount: naira(balance) })}</span>
+            </span>
+          </li>
+        </ul>
+        <div className="mt-auto flex flex-col gap-1 pt-8">
+          <Link href={taken && taken !== "preview" ? `/app/haul/trips/${taken}` : "/app/haul/trips"} className={buttonVariants({ size: "lg" })}>
+            {t.viewTrip}
+          </Link>
+          <Link href="/app/haul/loads" className={buttonVariants({ variant: "tertiary", size: "text" })}>
+            {t.backToLoads}
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div data-full-screen className="min-h-dvh bg-paper pb-44 lg:mx-auto lg:max-w-[720px] lg:px-10 lg:py-8 lg:pb-8">
