@@ -3204,7 +3204,8 @@
     "recordOne": "{tier} · 1 trip",
     "held": "Held for a problem",
     "returnFor": "For {plate} arriving {city}",
-    "levelSub": "{n} trips · {advance}% advance · {commission}%"
+    "levelSub": "{n} trips · {advance}% advance · {commission}%",
+    "levelSubOne": "1 trip · {advance}% advance · {commission}%"
   },
   "ownerLoad": {
     "pickup": "Pick up · area only until you accept",

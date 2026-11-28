@@ -17,6 +17,7 @@ import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "nod
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
+import { totp } from "./totp.mjs";
 
 const [role = "sender", filter = ""] = process.argv.slice(2);
 const BASE = process.env.BASE_URL ?? "http://localhost:3000";
@@ -42,6 +43,15 @@ async function signIn(page, login) {
   await page.waitForURL(/\/auth\/pin/, { timeout: 60000 });
   await page.waitForTimeout(1500);
   await page.keyboard.type(PIN, { delay: 60 });
+  // Demo staff (scripts/seed-staff-totp.mjs): two-step sign-in asks for the authenticator code.
+  const secret = process.env[`DEMO_TOTP_${login.match(/\+fa-([a-z-]+)@/)?.[1]?.toUpperCase()}`];
+  if (secret) {
+    await page.waitForURL(/\/auth\/two-step|\/(app|admin)/, { timeout: 60000 });
+    if (page.url().includes("/auth/two-step")) {
+      await page.waitForTimeout(1200);
+      await page.keyboard.type(totp(secret), { delay: 60 });
+    }
+  }
   await page.waitForURL((url) => !url.pathname.startsWith("/auth"), { timeout: 60000 });
 }
 
@@ -58,6 +68,16 @@ async function contextFor(account) {
     if (!/^\d{6}$/.test(PIN ?? "")) throw new Error("DEMO_PIN is needed (node --env-file=.env.founder.local ...).");
     const page = await context.newPage();
     await signIn(page, INBOX(account));
+    // The console may ask for the code again (a fresh check).
+    const secret = process.env[`DEMO_TOTP_${account.toUpperCase()}`];
+    if (secret) {
+      await page.goto(`${BASE}/admin`, { waitUntil: "networkidle" });
+      if (page.url().includes("/admin/verify")) {
+        await page.waitForTimeout(800);
+        await page.keyboard.type(totp(secret), { delay: 60 });
+        await page.waitForURL((url) => !url.pathname.startsWith("/admin/verify"), { timeout: 60000 });
+      }
+    }
     await page.close();
   }
   contexts.set(key, context);

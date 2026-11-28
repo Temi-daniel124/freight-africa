@@ -74,7 +74,7 @@ export const ORGS = [
     kind: "transporter",
     name: "Musa Haulage Ltd",
     cac: "RC7654321",
-    tier: "established",
+    tier: "gold",
     members: [
       { tag: "owner", transporter_role: "owner" },
       { tag: "driver", transporter_role: "driver", is_driver: true },
@@ -187,6 +187,11 @@ async function finishSetup(ids, orgIds) {
       else must(await db.from("documents").insert({ ...fields, doc_type_id: licence.id, subject_kind: "driver", subject_id: user, org_id: orgId, file_path: `demo/licence/${member.tag}.jpg` }), `licence for ${member.tag}`);
       const now = new Date().toISOString();
       if (org.key === "musa-haulage" && member.tag === "driver") {
+        // OD01 Needs you: one truck licence ends in 6 days (demo rows only).
+        const lsr = (await db.from("trucks").select("id").eq("org_id", orgId).eq("plate_number", "LSR305GH").maybeSingle()).data?.id;
+        const vl = (await db.from("document_types").select("id").eq("code", "vehicle_licence").single()).data?.id;
+        if (lsr && vl) must(await db.from("documents").update({ expires_on: new Date(Date.now() + 6 * 86_400_000).toISOString().slice(0, 10) }).eq("subject_id", lsr).eq("doc_type_id", vl), "licence ending soon");
+
         // O19d / O19e: two messages from the driver, one new, one already read (demo rows only).
         const { count } = await db.from("driver_messages").select("id", { count: "exact", head: true }).eq("org_id", orgId);
         if (!count) {
@@ -286,6 +291,7 @@ async function apply() {
       );
       must(await db.from("profiles").update({ last_active_org_id: orgId }).eq("id", ids[member.tag]), `active account for ${member.tag}`);
     }
+    if (org.tier) must(await db.from("organizations").update({ tier: org.tier }).eq("id", orgId), `tier for ${org.name}`);
     orgIds[org.key] = orgId;
     console.log(`  ${org.name}`);
     if (FLEET[org.key]) await seedFleet(orgId, FLEET[org.key], ids);

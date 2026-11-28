@@ -42,9 +42,9 @@ function truckPill(x: FleetTruck, paperDays: number | null): { text: string; ton
 
 const fullLine = (w: number | null, cap: number) => (w ? fill(o.full, { p: Math.round((w / cap) * 100), w: Math.round(w / 1000), c: Math.round(cap / 1000) }) : null);
 
-function Head({ title, action, caps }: { title: string; action?: React.ReactNode; caps?: boolean }) {
+function Head({ title, action, caps, inset }: { title: string; action?: React.ReactNode; caps?: boolean; inset?: boolean }) {
   return (
-    <div className="mb-2.5 flex items-center justify-between gap-3 px-1">
+    <div className={cn("mb-2.5 flex items-center justify-between gap-3 px-1 lg:mb-1 lg:px-0", inset && "lg:px-6")}>
       <h2 className={cn(caps ? "text-caption font-semibold tracking-caps text-ink-3 uppercase" : "text-lead font-semibold text-ink")}>{title}</h2>
       {action}
     </div>
@@ -108,7 +108,7 @@ export async function OwnerHome({ viewer }: { viewer: Promise<Viewer>; drives?: 
   const advancePaid = road?.trip_id ? (payouts ?? []).some((p) => p.trip_id === road.trip_id && p.kind === "advance" && p.status === "paid") : false;
   const loads: BoardLoad[] = ((board ?? []) as Parameters<typeof toBoardLoad>[0][]).map((l) => toBoardLoad(l, trucks));
   const tripCount = (trips ?? []).length;
-  const recordSub = fill(o.levelSub, { n: tripCount, advance: rate("advance_bps"), commission: rate("commission_bps") });
+  const recordSub = fill(tripCount === 1 ? o.levelSubOne : o.levelSub, { n: tripCount, advance: rate("advance_bps"), commission: rate("commission_bps") });
   // Return loads (OD01): open loads starting where a truck on a trip is heading.
   const heading = trucks.filter((x) => x.trip_id && x.to_city);
   const returns = loads
@@ -204,10 +204,11 @@ export async function OwnerHome({ viewer }: { viewer: Promise<Viewer>; drives?: 
   ) : null;
 
   const loadsSection = (
-    <section>
+    <section className="lg:rounded-card lg:border lg:border-line lg:bg-surface lg:pt-4.5">
       <Head
         title={o.loadsForTrucks}
         caps
+        inset
         action={
           <Link href="/app/haul/loads" className="-my-3 inline-flex min-h-11 items-center text-body-sm font-semibold text-green-700">
             {loads.length > 2 ? fill(o.seeAll, { n: loads.length }) : o.seeAllPlain}
@@ -221,9 +222,9 @@ export async function OwnerHome({ viewer }: { viewer: Promise<Viewer>; drives?: 
               <LoadCard key={l.id} load={l} compact />
             ))}
           </ul>
-          <ul className="hidden rounded-card border border-line bg-surface lg:block">
+          <ul className="hidden lg:block">
             {loads.slice(0, 3).map((l) => (
-              <li key={l.id} className="grid grid-cols-[minmax(0,1.1fr)_minmax(0,1.4fr)_auto_auto_auto] items-center gap-4 border-t border-line-soft px-6 py-4 first:border-t-0">
+              <li key={l.id} className="grid grid-cols-[minmax(0,1.1fr)_minmax(0,1.4fr)_auto_auto_auto] items-center gap-4 border-t border-line-soft px-6 py-4">
                 <span className="text-body font-semibold text-ink">
                   {l.from} → {l.to}
                 </span>
@@ -250,7 +251,7 @@ export async function OwnerHome({ viewer }: { viewer: Promise<Viewer>; drives?: 
   );
 
   const trucksSection = (
-    <section>
+    <section className="lg:rounded-card lg:border lg:border-line lg:bg-surface lg:px-5 lg:pt-4.5 lg:pb-1">
       <Head
         title={o.yourTrucks}
         caps
@@ -260,7 +261,7 @@ export async function OwnerHome({ viewer }: { viewer: Promise<Viewer>; drives?: 
           </Link>
         }
       />
-      <ul className="grid grid-cols-2 gap-2.5 lg:grid-cols-1 lg:gap-0 lg:rounded-card lg:border lg:border-line lg:bg-surface lg:px-5">
+      <ul className="grid grid-cols-2 gap-2.5 lg:grid-cols-1 lg:gap-0">
         {trucks.slice(0, 6).map((x) => {
           const pill = truckPill(x, paperFor.get(x.truck_id)?.days ?? null);
           return (
@@ -346,11 +347,11 @@ export async function OwnerHome({ viewer }: { viewer: Promise<Viewer>; drives?: 
         <tbody>
           {live.map((x) => (
             <tr key={x.trip_id} className="border-t border-line-soft">
-              <td className="tabular px-6 py-3.5 font-semibold">
+              <td className="tabular px-6 py-3.5 font-semibold whitespace-nowrap">
                 <Link href={`/app/haul/trips/${x.trip_id}`}>{x.plate.replace(/^([A-Z]{3})(\d{3})([A-Z]{2})$/, "$1 $2 $3")}</Link>
               </td>
               <td className="px-6 py-3.5">{x.driver_name ?? "—"}</td>
-              <td className="px-6 py-3.5">
+              <td className="px-6 py-3.5 whitespace-nowrap">
                 {x.from_city} → {x.to_city}
               </td>
               <td className="px-6 py-3.5">

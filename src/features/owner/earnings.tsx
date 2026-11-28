@@ -143,7 +143,7 @@ export async function OwnerEarnings({ viewer, month: askedMonth, kind: askedKind
       <Link href="/app/haul/earnings/bank" className="text-body-sm font-semibold text-green-700 lg:hidden">
         {e.change}
       </Link>
-      <Link href="/app/haul/earnings/bank" className={cn(buttonVariants({ size: "sm", variant: "secondary" }), "mt-3 hidden lg:inline-flex")}>
+      <Link href="/app/haul/earnings/bank" className={cn(buttonVariants({ size: "sm", variant: "secondary" }), "mt-3 hidden w-full lg:inline-flex")}>
         {e.changeBank}
       </Link>
     </section>
@@ -152,7 +152,8 @@ export async function OwnerEarnings({ viewer, month: askedMonth, kind: askedKind
   return (
     <div className="mx-auto flex w-full max-w-[1080px] flex-col gap-5">
       {statementMonth ? (
-        <div className="hidden justify-end lg:flex">
+        // OD06: the statement button sits on the page title row, which the shell draws just above.
+        <div className="hidden justify-end lg:-mt-[4.5rem] lg:mb-3 lg:flex">
           <a href={`/app/haul/statements/${statementMonth}/pdf`} className={buttonVariants({ size: "sm", variant: "secondary" })}>
             <Download aria-hidden strokeWidth={1.8} />
             {fill(e.statementFor, { month: monthName(statementMonth) })}
