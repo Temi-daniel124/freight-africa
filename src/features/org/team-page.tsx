@@ -19,7 +19,7 @@ const lagosDate = (iso: string) => new Intl.DateTimeFormat("en-GB", { day: "nume
  * S-20 (senders) and T-16 (truck owners): the team, open invites, and inviting someone. What each person
  * may do comes from the database (org_permissions, team_members); this page only hides what they can't.
  */
-export async function TeamPage({ viewer }: { viewer: Promise<Viewer> }) {
+export async function TeamPage({ viewer, sheet }: { viewer: Promise<Viewer>; sheet?: string }) {
   const v = await viewer;
   if (!v.orgId) {
     return (
@@ -57,16 +57,17 @@ export async function TeamPage({ viewer }: { viewer: Promise<Viewer> }) {
         const payload = i.role_payload as { shipper_role?: Role; transporter_role?: Role };
         return { id: i.id, phone: i.phone, email: i.email, role: payload.shipper_role ?? payload.transporter_role ?? null, expiresAt: i.expires_at };
       })}
+      sheet={sheet}
     />
   );
 }
 
 export type TeamMember = { userId: string; name: string | null; role: Role; phone: string | null; email: string | null; isMe: boolean };
 export type TeamInvite = { id: string; phone: string | null; email: string | null; role: Role | null; expiresAt: string };
-type TeamViewProps = { orgId: string; orgName: string; grantable: Role[]; members: TeamMember[]; invites: TeamInvite[] };
+type TeamViewProps = { orgId: string; orgName: string; grantable: Role[]; members: TeamMember[]; invites: TeamInvite[]; sheet?: string };
 
 /** The Team screen itself, from data the server has already checked (also shown on /dev/team). */
-export function TeamView({ orgId: org, orgName, grantable, members, invites }: TeamViewProps) {
+export function TeamView({ orgId: org, orgName, grantable, members, invites, sheet }: TeamViewProps) {
   const inviteRoles = grantable.filter((role) => role !== "owner");
   const organisation = { name: orgName };
   const owners = members.filter((member) => member.role === "owner").length;
@@ -77,7 +78,7 @@ export function TeamView({ orgId: org, orgName, grantable, members, invites }: T
         <p className="min-w-0 truncate text-body text-ink-2">
           {organisation.name} · {people}
         </p>
-        {inviteRoles.length ? <InviteSheet orgId={org} orgName={organisation.name} roles={inviteRoles} /> : null}
+        {inviteRoles.length ? <InviteSheet orgId={org} orgName={organisation.name} roles={inviteRoles} startOpen={sheet === "invite"} /> : null}
       </div>
 
       <ul className="overflow-hidden rounded-tile bg-surface shadow-raised lg:rounded-card">

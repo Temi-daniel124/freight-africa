@@ -221,8 +221,26 @@ export async function renderPayoutStatement(m: { month: string; owner: string; o
   return { bytes, name: `payout-statement-${m.month}.pdf` };
 }
 
-/** A month: every payout paid in it (Lagos), one row per trip and one per fee, so the total matches Earnings. */
+/** The month's payout statement as a PDF (ODOC-Statement). */
 export async function payoutStatementPdf(orgId: string, month: string) {
+  const model = await payoutStatementModel(orgId, month);
+  return model ? renderPayoutStatement(model) : null;
+}
+
+/** The same month as a spreadsheet (CSV), one row per line of the PDF (OD06 "Spreadsheet"). */
+export async function payoutStatementCsv(orgId: string, month: string) {
+  const model = await payoutStatementModel(orgId, month);
+  if (!model) return null;
+  const cell = (v: string | number) => (/[",\n]/.test(String(v)) ? `"${String(v).replace(/"/g, '""')}"` : String(v));
+  const lines = [
+    ["Date", "Trip", "Route", "Truck", "Freight (NGN)", "Commission (NGN)", "Paid to you (NGN)"],
+    ...model.rows.map((r) => [r.date.slice(0, 10), r.ref, r.route, r.truck, r.freightKobo / 100, r.commissionKobo / 100, r.paidKobo / 100]),
+  ];
+  return { text: lines.map((l) => l.map(cell).join(",")).join("\r\n") + "\r\n", name: `payout-statement-${month}.csv` };
+}
+
+/** A month: every payout paid in it (Lagos), one row per trip and one per fee, so the total matches Earnings. */
+async function payoutStatementModel(orgId: string, month: string) {
   const range = monthRange(month);
   if (!range) return null;
   const supabase = await supabaseServer();
@@ -265,7 +283,7 @@ export async function payoutStatementPdf(orgId: string, month: string) {
   const { data: bank } = lastBank ? await supabase.from("bank_accounts").select("bank_name, account_last4, resolved_name").eq("id", lastBank).limit(1) : { data: null };
   const ba = bank?.[0];
   const city = org.home_city_id ? (await supabase.from("cities").select("name").eq("id", org.home_city_id).maybeSingle()).data?.name : null;
-  return renderPayoutStatement({
+  return {
     month,
     owner: org.name,
     ownerLine: [org.cac_number ? `RC ${org.cac_number.replace(/^RC/i, "")}` : null, city, TIER[org.tier ?? "new"]].filter(Boolean).join(" · "),
@@ -273,5 +291,5 @@ export async function payoutStatementPdf(orgId: string, month: string) {
     rows,
     issuedAt: new Date().toISOString(),
     tierLabel: TIER[org.tier ?? "new"] ?? "New",
-  });
+  };
 }

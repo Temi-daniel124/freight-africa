@@ -36,8 +36,8 @@ function Split({ art, tone, children }: { art: ReactNode; tone: "white" | "paper
  * than the words; Skip top right; progress pills bottom left; the deep green corner block bottom right
  * holds 1, 2, 3, with a quick vertical slide. Then the Welcome screen.
  */
-export function WelcomeFlow({ seen = false }: { seen?: boolean }) {
-  const [index, setIndex] = useState(0);
+export function WelcomeFlow({ seen = false, start = 0 }: { seen?: boolean; start?: number }) {
+  const [index, setIndex] = useState(start);
   const [done, setDone] = useState(seen);
   const x = useMotionValue(0);
   const slowX = useTransform(x, (value) => value * 0.6);

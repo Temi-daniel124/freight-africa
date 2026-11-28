@@ -85,7 +85,9 @@ export function BookFlow({ orgId, myName, cities, truckTypes, goods, defaultFrom
   const [mode, setMode] = useState<"price" | "offer">(sample && params.get("offer") === "1" ? "offer" : "price");
   const [offer, setOffer] = useState<number | null>(null);
   const [quote, setQuote] = useState<Quote | null | "none">(null);
-  const [sheet, setSheet] = useState<null | "from" | "to" | "item" | "noTruck" | "offer">(null);
+  // Previews: ?sheet=place|goods opens that sheet (P08a, P08b), ?full=1 a full day (P08c, D03b).
+  const [sheet, setSheet] = useState<null | "from" | "to" | "item" | "noTruck" | "offer">(sample && params.get("sheet") === "place" ? "from" : sample && params.get("sheet") === "goods" ? "item" : null);
+  const fullDay = sample && params.get("full") === "1";
   const [editing, setEditing] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [savedLine, setSavedLine] = useState<string | null>(null);
@@ -129,6 +131,14 @@ export function BookFlow({ orgId, myName, cities, truckTypes, goods, defaultFrom
     let live = true;
     void availability(orgId, from.city, to.city, 7).then((rows) => {
       if (!live) return;
+      if (fullDay) {
+        // P08c preview: the third day is full for every truck, as the mockup draws it.
+        const third = [...new Set(rows.map((r) => r.day))][2];
+        setDays(rows.map((r) => (r.day === third ? { ...r, free: 0 } : r)));
+        setDay(third ?? "");
+        setSheet("noTruck");
+        return;
+      }
       setDays(rows);
       const first = rows.find((r) => r.day > rows[0]?.day)?.day ?? rows[0]?.day ?? "";
       setDay((d) => d || first);
@@ -136,7 +146,7 @@ export function BookFlow({ orgId, myName, cities, truckTypes, goods, defaultFrom
     return () => {
       live = false;
     };
-  }, [orgId, from.city, to.city]);
+  }, [orgId, from.city, to.city, fullDay]);
 
   // The price for the route and truck.
   useEffect(() => {
@@ -144,13 +154,14 @@ export function BookFlow({ orgId, myName, cities, truckTypes, goods, defaultFrom
     let live = true;
     void quoteBooking(orgId, from.city, to.city, truckType, 1 + via.length).then((q) => {
       if (!live) return;
-      setQuote(q ?? "none");
+      // Previews only: the mockup's usual range when the database has no history behind one yet.
+      setQuote(q ? (sample && !q.usual ? { ...q, usual: { low: 170000000, high: 200000000 } } : q) : "none");
       setOffer((o) => (q && o !== null ? Math.min(Math.max(o, q.minOffer), q.total - 100000) : o));
     });
     return () => {
       live = false;
     };
-  }, [orgId, from.city, to.city, truckType, via.length]);
+  }, [orgId, from.city, to.city, truckType, via.length, sample]);
 
   const dayList = useMemo(() => [...new Set(days.map((d) => d.day))], [days]);
   const freeOn = (d: string, t = truckType) => days.find((r) => r.day === d && r.truckType === t)?.free ?? 0;
@@ -469,7 +480,7 @@ export function BookFlow({ orgId, myName, cities, truckTypes, goods, defaultFrom
   const summary: { label: string; value: string; step: number }[] = [
     { label: pr.route, value: `${from.address || cityName(from.city)}${from.address ? `, ${cityName(from.city)}` : ""} → ${to.address || cityName(to.city)}${to.address ? `, ${cityName(to.city)}` : ""}`, step: 1 },
     { label: pr.pickup, value: day ? `${dayLabel(day, { weekday: "short", day: "numeric", month: "short" })} · ${f.slots[slot].toLowerCase()}` : "", step: 1 },
-    { label: items.length > 1 ? fill(pr.goods, { n: items.length }) : pr.goodsOne, value: items.map((i) => `${i.description}, ${itemLine(i, goods)}`).join(" · "), step: 1 },
+    { label: items.length > 1 ? fill(pr.goods, { n: items.length }) : pr.goodsOne, value: items.map((i) => `${i.description}, ${i.kind === "tonnes" ? fill(f.itemTonnes, { n: i.amount }) : `${Number(i.amount).toLocaleString("en-NG")} ${f.item.units[unitFor(goods.find((g) => g.id === i.goods)?.code ?? "")]}`}`).join(" · "), step: 1 },
     { label: pr.truck, value: type ? `${f.trucks[type.code as keyof typeof f.trucks] ?? type.name}, ${fill(f.tonnesShort, { n: type.capacity / 1000 })}` : "", step: 1 },
     { label: pr.contacts, value: `${loadingMe ? pr.youLoad : fill(pr.loadsBy, { name: loading.name })} · ${receiverMe ? pr.youReceive : fill(pr.receives, { name: receiver.name })}`, step: 2 },
   ];

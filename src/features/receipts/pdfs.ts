@@ -20,6 +20,12 @@ type Org = { name: string; cac_number: string | null; receipt_address: string | 
 // ---- Receipt ----------------------------------------------------------------------------------------
 
 export async function receiptPdf(paymentId: string): Promise<{ bytes: Buffer; name: string } | null> {
+  const model = await receiptModel(paymentId);
+  return model ? renderReceipt(model) : null;
+}
+
+/** One payment's receipt (P15b, D07b, DOC-Receipt): read once, drawn in the app and as a PDF. */
+export async function receiptModel(paymentId: string): Promise<ReceiptModel | null> {
   const supabase = await supabaseServer();
   const { data: payment } = await supabase.from("payments").select("id, load_id, provider, provider_ref, received_at, received_kobo").eq("id", paymentId).maybeSingle();
   if (!payment || Number(payment.received_kobo) <= 0) return null;
@@ -49,7 +55,7 @@ export async function receiptPdf(paymentId: string): Promise<{ bytes: Buffer; na
   });
   const o = org as Org | null;
   const truck = [name(load.truck_type).toLowerCase(), name(load.goods).toLowerCase(), load.weight_kg ? `${Math.round(Number(load.weight_kg) / 1000)} t` : null].filter(Boolean).join(", ");
-  return renderReceipt({
+  return {
     from: await companyLines(),
     number: `FA-R-${payment.id.replace(/-/g, "").slice(0, 6).toUpperCase()}`,
     issuedAt: payment.received_at ?? new Date().toISOString(),
@@ -66,7 +72,7 @@ export async function receiptPdf(paymentId: string): Promise<{ bytes: Buffer; na
     provider: load.is_demo || payment.provider !== "bachs" ? "demo" : "bachs",
     providerRef: payment.provider_ref,
     deliveredAt: trip?.delivered_at ?? null,
-  });
+  };
 }
 
 export type ReceiptModel = {

@@ -1,3 +1,4 @@
+import { UndoToastPreview } from "@/features/trips/undo-preview";
 import { dayLabel } from "@/features/checkout/data";
 import { type DeskRow, type DraftCard, TripsTabs } from "@/features/checkout/trips-tabs";
 import { Receipt } from "lucide-react";
@@ -119,14 +120,17 @@ function tripNext(row: Awaited<ReturnType<typeof shipperLoads>>[number]) {
 }
 
 /** S-03 / P12 Trips: Active, Drafts (D049), Done, Cancelled. */
-export async function TripsPage({ viewer }: { viewer: Promise<Viewer> }) {
+export async function TripsPage({ viewer, preview }: { viewer: Promise<Viewer>; preview?: string }) {
   const { orgId } = await viewer;
-  const rows = orgId ? await shipperLoads(orgId) : [];
+  // ?preview=empty (P12c) shows the empty state for this account; ?preview=undo (P14f) the undo toast,
+  // in previews only, so production never shows a cancellation that didn't happen.
+  const previews = process.env.NODE_ENV === "development" || process.env.VERCEL_ENV === "preview";
+  const rows = orgId && preview !== "empty" ? await shipperLoads(orgId) : [];
   if (!rows.length) {
     return (
       <Empty
-        title={messages.trips.empty}
-        text={messages.trips.emptyText}
+        title={messages.trips.emptyRoad}
+        text={messages.trips.emptyRoadText}
         action={
           <Link
             href="/app/ship/book"
@@ -157,6 +161,8 @@ export async function TripsPage({ viewer }: { viewer: Promise<Viewer> }) {
     );
   const { drafts, days } = draftCards(groups.drafts);
   return (
+    <>
+      {previews && preview === "undo" ? <UndoToastPreview /> : null}
     <Suspense>
       <TripsTabs
         counts={{ active: groups.active.length, drafts: groups.drafts.length, done: groups.done.length, cancelled: groups.cancelled.length }}
@@ -166,6 +172,7 @@ export async function TripsPage({ viewer }: { viewer: Promise<Viewer> }) {
         days={days}
       />
     </Suspense>
+    </>
   );
 }
 

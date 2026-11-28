@@ -2335,7 +2335,9 @@
     "delivered": "Mark delivered",
     "release": "Release the balance",
     "nextPickup": "Pick-up {day}",
-    "nextDelivered": "Delivered {day}"
+    "nextDelivered": "Delivered {day}",
+    "emptyRoad": "No trips on the road",
+    "emptyRoadText": "When a truck is carrying your goods, you'll follow it here."
   },
   "payments": {
     "title": "Payments",
@@ -2396,7 +2398,7 @@
   },
   "track": {
     "title": "Track a trip",
-    "lead": "Enter the trip reference to see where your goods are.",
+    "lead": "See where your goods are, live.",
     "placeholder": "Trip reference, like FA-7K3Q9",
     "button": "Track",
     "live": "On the road now",
@@ -2408,7 +2410,9 @@
     "callClosed": "Calling opens when the trip starts.",
     "held": "{amount} held safely",
     "lastSeen": "Last seen {time}",
-    "back": "Back"
+    "back": "Back",
+    "refLabel": "Trip reference",
+    "hint": "It's on your booking message, e.g. {ref}"
   },
   "home2": {
     "book": "Book a truck",
@@ -2461,7 +2465,32 @@
     "replyWaiting": "{route}: an owner replied",
     "replySub": "Answer before the reply closes",
     "answer": "Answer",
-    "full": "{n}% full"
+    "full": "{n}% full",
+    "first": {
+      "welcome": "Welcome",
+      "title": "Your trips will show here",
+      "text": "Book your first truck. It takes about two minutes.",
+      "textDesk": "Book your first truck. It takes about two minutes, and you see the full price before you pay.",
+      "offer": "No service fee on your first trip",
+      "cta": "Book your first truck",
+      "points": [
+        "Pay once. Your money is held until delivery.",
+        "Only verified truck owners and drivers.",
+        "Track your goods all the way."
+      ]
+    },
+    "noTrip": {
+      "nothing": "Nothing on the road right now",
+      "bookAgain": "Book again",
+      "delivered": "Recently delivered",
+      "rate": "Rate trip",
+      "receipt": "Receipt",
+      "last": "last {amount}",
+      "replied": "{owner} replied to your offer",
+      "repliedSub": "{amount} for {route} · {left} left",
+      "review": "Review",
+      "draftSub": "{amount} · pay to book it. Trucks arent held for drafts."
+    }
   },
   "driverTrip": {
     "noTrip": "No trip right now",
@@ -2997,25 +3026,53 @@
       "Booking",
       "Paying and refunds",
       "During a trip",
-      "Codes and delivery"
+      "Codes and delivery",
+      "Problems and claims",
+      "Your account"
     ],
     "popular": "Popular questions",
     "faq": [
       {
         "q": "What happens if no truck accepts?",
-        "a": "We keep looking. After 24 hours you can raise your price, change the day, or get a full refund. Your money stays held the whole time."
+        "a": "We keep looking. After 24 hours you can raise your price, change the day, or get a full refund. Your money stays held the whole time.",
+        "topic": 0,
+        "popular": true
       },
       {
         "q": "How does offering my own price work?",
-        "a": "You pay your offer now and we hold it. Owners accept it or reply with their price once. You choose: pay the difference, offer again once, or wait."
+        "a": "You pay the price you offer, and we hold it safely. Verified owners on your route see it. They can accept it, or reply with their own price. If they reply, you choose to pay the difference, offer again once, or decline. If nobody agrees within 24 hours, you can raise your offer, change the day, or get every naira back.",
+        "topic": 0,
+        "popular": true
       },
       {
         "q": "When is my money released to the owner?",
-        "a": "Part goes to the owner when your goods are loaded, and the rest when the receiver confirms delivery with the code."
+        "a": "Part goes to the owner when your goods are loaded, and the rest when the receiver confirms delivery with the code.",
+        "topic": 1,
+        "popular": true
       },
       {
         "q": "Who gets the delivery code?",
-        "a": "The receiver gets it before the truck arrives and gives it to the driver once the goods are delivered. The driver never sees it before."
+        "a": "The receiver gets it before the truck arrives and gives it to the driver once the goods are delivered. The driver never sees it before.",
+        "topic": 3,
+        "popular": true
+      },
+      {
+        "q": "Can I see where my goods are?",
+        "a": "Yes. Open the trip and tap Track. You see the truck on the map while it is on the road, and each step as it happens.",
+        "topic": 2,
+        "popular": false
+      },
+      {
+        "q": "Something arrived damaged or short. What do I do?",
+        "a": "Use Report a problem on the trip. We hold the owner's balance while we look into it.",
+        "topic": 4,
+        "popular": false
+      },
+      {
+        "q": "How do I add someone from my team?",
+        "a": "Go to Team and tap Invite. They get an email to join your business.",
+        "topic": 5,
+        "popular": false
       }
     ],
     "talk": "Talk to us",
@@ -3042,7 +3099,20 @@
     "receiverInvalid": "Add a name and a Nigerian phone number, like 0803 123 4567.",
     "businessInvalid": "Check the CAC number (like RC1234567) and the email.",
     "downloadReceipt": "Download receipt (PDF)",
-    "statement": "This month’s statement"
+    "statement": "This month’s statement",
+    "helpTitle": "How can we help?",
+    "helpSearchDesk": "Search questions",
+    "topicsLabel": "Help topics",
+    "results": "Results",
+    "helped": "Did this help?",
+    "yes": "Yes",
+    "no": "No",
+    "noResults": "No questions match. Try other words, or email us.",
+    "stuck": "Still stuck?",
+    "stuckHours": "We reply 7 am to 9 pm, every day.",
+    "switchText": "You're part of more than one business. Pick the one to use now.",
+    "addBusiness": "Add a business",
+    "switchNote": "Only shown to people in more than one business. Everyone else never sees this."
   },
   "owner": {
     "paidMonth": "Paid this month",
@@ -3124,7 +3194,10 @@
     "paidDone": "Paid in full",
     "noTrips": "No trips here",
     "noTripsText": "Trips you take show here.",
-    "recordOne": "{tier} · 1 trip"
+    "recordOne": "{tier} · 1 trip",
+    "held": "Held for a problem",
+    "returnFor": "For {plate} arriving {city}",
+    "levelSub": "{n} trips · {advance}% advance · {commission}%"
   },
   "ownerLoad": {
     "pickup": "Pick up · area only until you accept",
@@ -3299,7 +3372,27 @@
     "yourBank": "Your bank account",
     "reference": "Bank reference",
     "stillToCome": "Balance still to come",
-    "download": "Download payout advice"
+    "download": "Download payout advice",
+    "held": "Held for a problem",
+    "heldPart": "Held part",
+    "heldWaiting": "Waiting for the problem review",
+    "statementFor": "{month} statement",
+    "netPaid": "Net paid to you",
+    "spreadsheet": "Spreadsheet",
+    "changeBank": "Change bank account",
+    "filters": {
+      "all": "All",
+      "advances": "Advances",
+      "balances": "Balances",
+      "charges": "Charges"
+    },
+    "cols": {
+      "date": "Date",
+      "trip": "Trip",
+      "kind": "Kind",
+      "status": "Status",
+      "amount": "Amount"
+    }
   },
   "fleet": {
     "add": "Add",
@@ -3893,5 +3986,24 @@
     "turnOn": "Turn on",
     "turnOff": "Turn off",
     "failed": "That didn't work. Try again."
+  },
+  "receipt": {
+    "title": "Receipt",
+    "paid": "Paid",
+    "trip": "Trip",
+    "route": "Route",
+    "delivered": "Delivered",
+    "billed": "Billed to",
+    "truck": "Truck and driver",
+    "fee": "Service fee",
+    "refunded": "Refunded",
+    "total": "Total paid",
+    "paidBachs": "Paid through Bachs",
+    "paidDemo": "Paid through the demo checkout (no real money)",
+    "ref": "ref",
+    "download": "Download PDF",
+    "back": "Payments",
+    "item": "Item",
+    "amount": "Amount"
   }
 }

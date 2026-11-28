@@ -132,15 +132,12 @@ async function Greeting({ viewer, greeting, phone }: { viewer: Promise<Viewer>; 
       </p>
     );
   }
+  // Mockups D02, OD01: the greeting is the page heading, "Good morning" small and the name large.
   return (
-    <p className="min-w-0 shrink truncate text-control font-medium whitespace-nowrap text-ink-2">
-      {hello}
-      {v.firstName ? (
-        <>
-          , <b className="font-semibold text-ink">{v.firstName}</b>
-        </>
-      ) : null}
-    </p>
+    <div className="min-w-0 flex-1">
+      <p className="text-body-sm font-normal text-ink-3">{hello}</p>
+      {v.firstName ? <h1 className="mt-0.5 truncate text-[2.125rem] leading-tight font-semibold tracking-[-0.035em] text-ink">{v.firstName}</h1> : null}
+    </div>
   );
 }
 
@@ -151,8 +148,8 @@ function Bell_({ href, unread, size }: { href: string; unread: number; size: "md
       href={href}
       aria-label={label}
       className={cn(
-        "relative grid size-11 shrink-0 place-items-center rounded-pill border border-line bg-surface text-ink-2 transition-colors hover:bg-paper",
-        size === "md" ? "" : "",
+        "relative grid shrink-0 place-items-center rounded-pill border border-line bg-surface text-ink-2 transition-colors hover:bg-paper",
+        size === "md" ? "size-12" : "size-11",
       )}
     >
       <Bell aria-hidden className="size-5" strokeWidth={1.75} />
@@ -258,15 +255,42 @@ type TopBarProps = {
   viewer: Promise<Viewer>;
   /** Every page but Home shows its title; Home shows the greeting instead (Gate 4). */
   title?: string;
+  /** A different heading on desktop (D13 "How can we help?" over the phone's "Help"). */
+  deskTitle?: string;
   greeting?: Promise<string>;
 };
 
-export function ShellTopBar({ config, viewer, title, greeting }: TopBarProps) {
+export function ShellTopBar({ config, viewer, title, deskTitle, greeting }: TopBarProps) {
   const bell = pageHref(config, "notifications");
   const settings = pageHref(config, config.footer.find((item) => item.page === "settings") ? "settings" : "me");
   return (
     <>
-      <header className="sticky top-0 z-10 hidden h-16 items-center gap-4 border-b border-line bg-surface px-8 lg:flex">
+      {greeting ? (
+        // Home on desktop (D02, OD01): no top bar; the greeting, search and bell head the page.
+        <header className="mx-auto hidden w-full max-w-316 items-center gap-4 px-8 pt-8 lg:flex">
+          <Suspense fallback={<Skeleton className="h-14 w-60" />}>
+            <Greeting viewer={viewer} greeting={greeting} />
+          </Suspense>
+          <Link
+            href={pageHref(config, "search")}
+            className="flex h-12 w-80 shrink items-center gap-2.5 rounded-pill border border-line bg-surface px-4 text-body-sm font-normal text-ink-3 transition-colors hover:border-line-strong"
+          >
+            <Search aria-hidden className="size-4.5 shrink-0" strokeWidth={1.8} />
+            <span className="truncate">{t.search}</span>
+          </Link>
+          <SearchShortcut href={pageHref(config, "search")} />
+          <Suspense fallback={<Bell_ href={bell} unread={0} size="md" />}>
+            <UnreadBell viewer={viewer} href={bell} size="md" />
+          </Suspense>
+        </header>
+      ) : null}
+      {greeting ? null : (
+        // Every desktop mockup (D05, D07, D10, D12, OD04 …): no top bar, the page title as a 34 px heading.
+        <header className="mx-auto hidden w-full max-w-316 px-8 pt-8 lg:block">
+          <h1 className="truncate text-[2.125rem] leading-tight font-semibold tracking-[-0.035em] text-ink">{deskTitle ?? title}</h1>
+        </header>
+      )}
+      <header className="sticky top-0 z-10 hidden h-16 items-center gap-4 border-b border-line bg-surface px-8">
         {greeting ? (
           <Suspense fallback={<Skeleton className="h-6 w-48" />}>
             <Greeting viewer={viewer} greeting={greeting} />

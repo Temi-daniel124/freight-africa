@@ -96,20 +96,25 @@ async function VerifiedSender() {
   );
 }
 
-async function HomeContent({ role }: { role: ShellRole }) {
+async function HomeContent({ role, preview }: { role: ShellRole; preview?: string }) {
   const resolved = await resolveRole(role);
   // Pages check the PIN themselves too: layouts don't run again on in-app navigation.
   await requireUnlocked(shells[resolved].base);
   const config = shells[resolved];
   const setupRole = SETUP_ROLES[resolved];
+  const hasOrg = !!(await getViewer(config)).orgId;
+  // Closing brief §3: "Finish setting up" never takes over Home. A sender with a business has nothing
+  // required left (the identity check is optional, D041), so their Home is P07/D02 or P07b/D02c; owners
+  // and drivers see the card only while a required step is open, or with ?preview=setup (O10b).
+  const showSetup = setupRole && !(resolved === "shipper" && hasOrg) && (preview === "setup" || !preview);
   return (
     <div className="flex flex-col gap-5">
-      {resolved === "shipper" ? <VerifiedSender /> : null}
-      {setupRole ? <SetupChecklist role={setupRole} /> : null}
+      {resolved === "shipper" && !preview ? <VerifiedSender /> : null}
+      {showSetup ? <SetupChecklist role={setupRole} force={preview === "setup"} /> : null}
       {resolved === "shipper" ? (
-        (await getViewer(config)).orgId ? <SenderHome viewer={getViewer(config)} /> : <ShipperHomeFirstVisit config={config} />
+        hasOrg ? <SenderHome viewer={getViewer(config)} preview={preview} /> : <ShipperHomeFirstVisit config={config} />
       ) : resolved === "owner" || resolved === "ownerDriver" ? (
-        <OwnerHome viewer={getViewer(config)} drives={resolved === "ownerDriver"} />
+        <OwnerHome viewer={getViewer(config)} drives={resolved === "ownerDriver"} preview={preview} />
       ) : resolved === "driver" ? (
         <>
           <div className="lg:hidden">
@@ -134,9 +139,15 @@ async function HomeTopBar({ role }: { role: ShellRole }) {
   return <ShellTopBar config={config} viewer={viewer} greeting={greeting} />;
 }
 
+async function HomeBody({ role, searchParams }: { role: ShellRole; searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const raw = (await searchParams).preview;
+  const preview = typeof raw === "string" && ["first", "notrip", "setup", "locked", "driver"].includes(raw) ? raw : undefined;
+  return <HomeContent role={role} preview={preview} />;
+}
+
 /** The role's first tab: the greeting instead of a title (Gate 4), and "Finish setting up" until setup is done. */
 export function shellHome(role: ShellRole) {
-  return function ShellHome() {
+  return function ShellHome({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
     return (
       <>
         <Suspense>
@@ -144,7 +155,7 @@ export function shellHome(role: ShellRole) {
         </Suspense>
         <ShellContent>
           <Suspense fallback={<Skeleton className="h-60 w-full rounded-card" />}>
-            <HomeContent role={role} />
+            <HomeBody role={role} searchParams={searchParams} />
           </Suspense>
         </ShellContent>
       </>
@@ -175,11 +186,14 @@ export function shellPageMetadata(role: ShellRole) {
 }
 
 /** The page body for a shell tab; pages not built yet show their placeholder. */
-async function sectionBody(page: PageKey, config: ShellConfig, viewer: Promise<Viewer>) {
+/** The query string a section page was opened with (tabs, sheets, months and compare previews). */
+export type Query = Record<string, string | undefined>;
+
+async function sectionBody(page: PageKey, config: ShellConfig, viewer: Promise<Viewer>, q: Query = {}) {
   const shipper = config.role === "shipper";
   switch (page) {
     case "team":
-      return <TeamPage viewer={viewer} />;
+      return <TeamPage viewer={viewer} sheet={q.sheet} />;
     case "trucks":
       return <OwnerTrucks viewer={viewer} />;
     case "documents":
@@ -193,12 +207,12 @@ async function sectionBody(page: PageKey, config: ShellConfig, viewer: Promise<V
     case "book":
       return <BookPage viewer={viewer} />;
     case "trips":
-      return shipper ? <TripsPage viewer={viewer} /> : <OwnerTripsPage viewer={viewer} />;
+      return shipper ? <TripsPage viewer={viewer} preview={q.preview} /> : <OwnerTripsPage viewer={viewer} />;
     case "payments":
       return shipper ? <SenderPayments viewer={viewer} /> : <PaymentsPage viewer={viewer} />;
     case "more":
       return shipper ? (
-        <SenderMore viewer={viewer} />
+        <SenderMore viewer={viewer} sheet={q.sheet} />
       ) : config.role === "owner" || config.role === "ownerDriver" ? (
         <OwnerMore viewer={viewer} drives={config.role === "ownerDriver"} />
       ) : (
@@ -232,14 +246,16 @@ async function sectionBody(page: PageKey, config: ShellConfig, viewer: Promise<V
     case "findLoads":
       return <LoadsPage viewer={viewer} />;
     case "earnings":
-      return config.role === "agent" ? <PlaceholderPage config={config} page={page} /> : <OwnerEarnings viewer={viewer} />;
+      return config.role === "agent" ? <PlaceholderPage config={config} page={page} /> : <OwnerEarnings viewer={viewer} month={q.month} kind={q.kind} />;
     default:
       return <PlaceholderPage config={config} page={page} />;
   }
 }
 
-async function SectionPage({ role, params }: { role: ShellRole; params: Promise<{ page: string }> }) {
+async function SectionPage({ role, params, searchParams }: { role: ShellRole; params: Promise<{ page: string }>; searchParams?: Promise<Record<string, string | string[] | undefined>> }) {
   const { page } = await params;
+  const raw = (await searchParams) ?? {};
+  const q: Query = Object.fromEntries(Object.entries(raw).map(([k, v]) => [k, typeof v === "string" ? v : undefined]));
   const resolved = await resolveRole(role);
   // Each page checks the PIN itself too: layouts don't run again on in-app navigation (D044).
   await requireUnlocked(shells[resolved].base);
@@ -247,20 +263,20 @@ async function SectionPage({ role, params }: { role: ShellRole; params: Promise<
   const config = shells[resolved];
   const viewer = getViewer(config);
   // Booking draws its own header and, on phones, covers the tabs (mockups P08, D03).
-  if (page === "book") return <>{await sectionBody(page, config, viewer)}</>;
+  if (page === "book") return <>{await sectionBody(page, config, viewer, q)}</>;
   return (
     <>
-      <ShellTopBar config={config} viewer={viewer} title={messages.shell.pages[page].title} />
-      <ShellContent>{await sectionBody(page, config, viewer)}</ShellContent>
+      <ShellTopBar config={config} viewer={viewer} title={messages.shell.pages[page].title} deskTitle={page === "help" && config.role === "shipper" ? messages.account.helpTitle : undefined} />
+      <ShellContent>{await sectionBody(page, config, viewer, q)}</ShellContent>
     </>
   );
 }
 
 export function shellSection(role: ShellRole) {
-  return function ShellSection({ params }: { params: Promise<{ page: string }> }) {
+  return function ShellSection({ params, searchParams }: { params: Promise<{ page: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }) {
     return (
       <Suspense fallback={<Skeleton className="m-4 h-40 lg:m-8" />}>
-        <SectionPage role={role} params={params} />
+        <SectionPage role={role} params={params} searchParams={searchParams} />
       </Suspense>
     );
   };
