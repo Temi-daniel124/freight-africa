@@ -19,7 +19,8 @@ export function HelpCenter({ supportPhone }: { supportPhone: string }) {
   const [voted, setVoted] = useState<Record<string, "yes" | "no">>({});
   const term = q.trim().toLowerCase();
   const matches = a.faq.filter((f) => !term || `${f.q} ${f.a}`.toLowerCase().includes(term));
-  const inTopic = term ? matches : a.faq.filter((f) => f.topic === topic);
+  // D13 opens on the question the mockup shows first in each topic.
+  const inTopic = term ? matches : a.faq.filter((f) => f.topic === topic).sort((x, y) => Number(y.lead) - Number(x.lead));
   const contact = (dark: "talk" | "stuck") => (
     <div className="mt-3.5 flex flex-wrap gap-2 lg:mt-0">
       <a href="mailto:hello@freight-africa.com" className={buttonVariants({ variant: "inverse", size: "sm" })}>

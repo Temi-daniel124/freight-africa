@@ -2489,7 +2489,7 @@
       "replied": "{owner} replied to your offer",
       "repliedSub": "{amount} for {route} · {left} left",
       "review": "Review",
-      "draftSub": "{amount} · pay to book it. Trucks arent held for drafts."
+      "draftSub": "{amount} · pay to book it. Trucks aren't held for drafts."
     }
   },
   "driverTrip": {
@@ -3036,43 +3036,50 @@
         "q": "What happens if no truck accepts?",
         "a": "We keep looking. After 24 hours you can raise your price, change the day, or get a full refund. Your money stays held the whole time.",
         "topic": 0,
-        "popular": true
+        "popular": true,
+        "lead": false
       },
       {
         "q": "How does offering my own price work?",
         "a": "You pay the price you offer, and we hold it safely. Verified owners on your route see it. They can accept it, or reply with their own price. If they reply, you choose to pay the difference, offer again once, or decline. If nobody agrees within 24 hours, you can raise your offer, change the day, or get every naira back.",
         "topic": 0,
-        "popular": true
+        "popular": true,
+        "lead": true
       },
       {
         "q": "When is my money released to the owner?",
         "a": "Part goes to the owner when your goods are loaded, and the rest when the receiver confirms delivery with the code.",
         "topic": 1,
-        "popular": true
+        "popular": true,
+        "lead": false
       },
       {
         "q": "Who gets the delivery code?",
         "a": "The receiver gets it before the truck arrives and gives it to the driver once the goods are delivered. The driver never sees it before.",
         "topic": 3,
-        "popular": true
+        "popular": true,
+        "lead": false
       },
       {
         "q": "Can I see where my goods are?",
         "a": "Yes. Open the trip and tap Track. You see the truck on the map while it is on the road, and each step as it happens.",
         "topic": 2,
-        "popular": false
+        "popular": false,
+        "lead": false
       },
       {
         "q": "Something arrived damaged or short. What do I do?",
         "a": "Use Report a problem on the trip. We hold the owner's balance while we look into it.",
         "topic": 4,
-        "popular": false
+        "popular": false,
+        "lead": false
       },
       {
         "q": "How do I add someone from my team?",
         "a": "Go to Team and tap Invite. They get an email to join your business.",
         "topic": 5,
-        "popular": false
+        "popular": false,
+        "lead": false
       }
     ],
     "talk": "Talk to us",
@@ -3247,7 +3254,14 @@
     "noTruck": "Add a truck that fits this load first.",
     "noDriver": "Choose a driver",
     "failed": "That didn't work. Please try again.",
-    "notFound": "This load was just taken or is no longer open."
+    "notFound": "This load was just taken or is no longer open.",
+    "yours": "The load is yours",
+    "yoursText": "{driver} has the trip on their phone. We told the sender {plate} is coming.",
+    "goToPickup": "{driver} taps \"Go to pickup\" an hour before",
+    "whenLoaded": "{amount} when loaded",
+    "afterDelivery": "{amount} more after delivery",
+    "viewTrip": "View trip",
+    "backToLoads": "Back to loads"
   },
   "ownerTrip": {
     "live": "Live · {when}",

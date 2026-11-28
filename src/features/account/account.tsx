@@ -1,4 +1,5 @@
 import { publicSettings } from "@/lib/settings/public";
+import { VerifiedSender } from "./verified-sender";
 import { HelpCenter } from "./help-center";
 import { SwitchSheet, type SwitchAccount } from "./switch-sheet";
 import { Bell, Check, ChevronRight, Download, FileText, Key, LifeBuoy, Lock, LogOut, MapPin, ShieldCheck, Users } from "lucide-react";
@@ -69,12 +70,13 @@ export async function SenderMore({ viewer, sheet }: { viewer: Promise<Viewer>; s
       people={count ?? 0}
       twoStep={twoStep}
       switchOpen={sheet === "switch"}
+      badge={<VerifiedSender />}
     />
   );
 }
 
 /** The More screen from data already read (also shown on /dev/sender with two businesses, P16a). */
-export function SenderMoreView({ person, accounts, people, twoStep, switchOpen = false }: { person: { name: string; avatar: string | null; contact: string }; accounts: SwitchAccount[]; people: number; twoStep: boolean; switchOpen?: boolean }) {
+export function SenderMoreView({ person, accounts, people, twoStep, switchOpen = false, badge }: { person: { name: string; avatar: string | null; contact: string }; accounts: SwitchAccount[]; people: number; twoStep: boolean; switchOpen?: boolean; badge?: React.ReactNode }) {
   const active = accounts.find((x) => x.active) ?? null;
   const other = accounts.find((x) => !x.active) ?? null;
   return (
@@ -102,6 +104,7 @@ export function SenderMoreView({ person, accounts, people, twoStep, switchOpen =
           {other ? <p className="mt-1.5 px-1 text-caption text-ink-3">{fill(a.alsoOwn, { name: other.name })}</p> : null}
         </div>
       ) : null}
+      {badge}
       <Group title={a.yourBusiness}>
         <Row href="/app/ship/team" icon={Users} label={a.team} value={people === 1 ? a.person : fill(a.people, { n: people })} />
         <Row href="/app/ship/places" icon={MapPin} label={a.places} />

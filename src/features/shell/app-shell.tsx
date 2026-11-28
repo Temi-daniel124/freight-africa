@@ -267,7 +267,7 @@ export function ShellTopBar({ config, viewer, title, deskTitle, greeting }: TopB
     <>
       {greeting ? (
         // Home on desktop (D02, OD01): no top bar; the greeting, search and bell head the page.
-        <header className="mx-auto hidden w-full max-w-316 items-center gap-4 px-8 pt-8 lg:flex">
+        <header className="mx-auto hidden w-full max-w-[1160px] items-center gap-4 px-10 pt-8 lg:flex">
           <Suspense fallback={<Skeleton className="h-14 w-60" />}>
             <Greeting viewer={viewer} greeting={greeting} />
           </Suspense>
@@ -286,7 +286,7 @@ export function ShellTopBar({ config, viewer, title, deskTitle, greeting }: TopB
       ) : null}
       {greeting ? null : (
         // Every desktop mockup (D05, D07, D10, D12, OD04 …): no top bar, the page title as a 34 px heading.
-        <header className="mx-auto hidden w-full max-w-316 px-8 pt-8 lg:block">
+        <header className="mx-auto hidden w-full max-w-[1160px] px-10 pt-8 lg:block">
           <h1 className="truncate text-[2.125rem] leading-tight font-semibold tracking-[-0.035em] text-ink">{deskTitle ?? title}</h1>
         </header>
       )}
@@ -343,7 +343,7 @@ export function ShellTopBar({ config, viewer, title, deskTitle, greeting }: TopB
 
 /** The page body under the top bar: 28/32 px padding on desktop, 16 px on phones, 1264 px wide at most. */
 export function ShellContent({ children, className }: { children: ReactNode; className?: string }) {
-  return <main className={cn("mx-auto w-full max-w-316 px-4 pt-4 pb-6 lg:px-8 lg:pt-7 lg:pb-12", className)}>{children}</main>;
+  return <main className={cn("mx-auto w-full max-w-316 px-4 pt-4 pb-6 lg:max-w-[1160px] lg:px-10 lg:pt-6 lg:pb-12", className)}>{children}</main>;
 }
 
 /** D045: a small "Install app" item in the sidebar footer (hidden once installed). */
