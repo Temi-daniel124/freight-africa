@@ -7,6 +7,7 @@ import type { Viewer } from "@/features/shell/viewer";
 import { supabaseServer } from "@/lib/supabase/server";
 import messages from "@/messages/en.json";
 import { MessageOwner } from "./message-owner";
+import { PushToggle } from "@/features/settings/push-toggle";
 import { NightChoice } from "./night";
 
 // DV32 Me: who you drive for (Message, never the owner's number: D051), licence, phone check, emergency
@@ -97,6 +98,7 @@ export async function DriverMe({ viewer }: { viewer: Promise<Viewer> }) {
         <Row href={`/auth/pin/change?back=${encodeURIComponent("/app/drive/me")}`} icon={KeyRound} title={t.changePin} />
         <Row href="/app/drive/help" icon={LifeBuoy} title={t.help} />
       </ul>
+      <PushToggle />
       <form action={signOut}>
         <button type="submit" className="flex h-14 w-full items-center justify-center gap-2 rounded-button border border-line bg-surface text-control font-semibold text-danger">
           <LogOut aria-hidden className="size-4.5" strokeWidth={1.8} />

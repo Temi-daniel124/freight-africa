@@ -66,3 +66,38 @@ describe("dispatchNotifications", () => {
     expect(finished).toEqual([{ id: "w1", result: "skipped" }]);
   });
 });
+
+describe("messaging while WhatsApp is off (combined brief 6)", () => {
+  const row = (channel: Claimed["channel"], extra: Partial<Claimed> = {}): Claimed => ({ id: `n-${channel}`, event: "e", channel, template_code: "t", language: "en", payload: { name: "Ada" }, to_phone: "+2348031234567", to_email: null, attempts: 0, ...extra });
+  const deps = (rows: Claimed[], extra: Partial<DispatchDeps> = {}) => {
+    const results: Record<string, string> = {};
+    let given = false;
+    const d: DispatchDeps = {
+      claim: async () => (given ? [] : ((given = true), rows)),
+      template: async () => ({ subject: "Hi {{name}}", body: "Hello {{name}}" }),
+      finish: async (id, o) => void (results[id] = o.result),
+      ...extra,
+    };
+    return { d, results };
+  };
+  it("sends SMS through the provider with the filled-in text", async () => {
+    const sent: string[] = [];
+    const { d, results } = deps([row("sms")], { sms: async (_to, text) => (sent.push(text), "demo-1") });
+    await dispatchNotifications(d);
+    expect(sent).toEqual(["Hello Ada"]);
+    expect(results["n-sms"]).toBe("sent");
+  });
+  it("skips push when no device is turned on, and sends when one is", async () => {
+    const none = deps([row("push")], { push: async () => 0 });
+    await dispatchNotifications(none.d);
+    expect(none.results["n-push"]).toBe("skipped");
+    const one = deps([row("push")], { push: async () => 1 });
+    await dispatchNotifications(one.d);
+    expect(one.results["n-push"]).toBe("sent");
+  });
+  it("never sends WhatsApp", async () => {
+    const { d, results } = deps([row("whatsapp")], { sms: async () => "x" });
+    await dispatchNotifications(d);
+    expect(results["n-whatsapp"]).toBe("skipped");
+  });
+});
